@@ -1,10 +1,8 @@
 """Configure Test Suite.
-
 This file is used to configure the behavior of pytest when using the Astropy
 test infrastructure. It needs to live inside the package in order for it to
 get picked up when running the tests inside an interpreter using
 packagename.test
-
 """
 
 import os
@@ -26,11 +24,9 @@ else:
 
 def pytest_configure(config):
     """Configure Pytest with Astropy.
-
     Parameters
     ----------
     config : pytest configuration
-
     """
     if ASTROPY_HEADER:
 
