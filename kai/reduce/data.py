@@ -44,7 +44,8 @@ outputVerify = 'ignore'
 
 
 def clean(files, nite, wave, refSrc, strSrc, badColumns=None, field=None,
-          skyscale=False, skyfile=None, angOff=0.0, fixDAR=True,
+          skyscale=False, skyfile=None, angOff=0.0, cent_box=12,
+          fixDAR=True,
           raw_dir=None, clean_dir=None,
           instrument=instruments.default_inst, check_ref_loc=True):
     """
@@ -100,7 +101,7 @@ def clean(files, nite, wave, refSrc, strSrc, badColumns=None, field=None,
         An optional absolute offset in the rotator
         mirror angle for cases (wave='lp') when sky subtraction is done with
         skies taken at matching rotator mirror angles.
-    cent_box: int (def = 12) 
+    cent_box: int (def = 12)
         the box to use for better centroiding the reference star
     badColumns : int array, default = None
         An array specifying the bad columns (zero-based).

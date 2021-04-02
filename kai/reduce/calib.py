@@ -8,6 +8,7 @@ import numpy as np
 from astropy import stats
 import astropy
 from datetime import datetime
+from pkg_resources import parse_version
 
 module_dir = os.path.dirname(__file__)
 
@@ -272,7 +273,7 @@ def makemask(dark, flat, output, instrument=instruments.default_inst):
 
     # Get the sigma-clipped mean and stddev on the dark
     img_dk = fits.getdata(_dark)
-    if float(astropy.__version__) < 3.0:
+    if parse_version(astropy.__version__) < parse_version('3.0'):
         dark_stats = stats.sigma_clipped_stats(img_dk,
                                                sigma=3,
                                                iters=10)
@@ -292,7 +293,7 @@ def makemask(dark, flat, output, instrument=instruments.default_inst):
     # Make dead pixel mask
     ##########
     img_fl = fits.getdata(_flat)
-    if float(astropy.__version__) < 3.0:
+    if parse_version(astropy.__version__) < parse_version('3.0'):
         flat_stats = stats.sigma_clipped_stats(img_dk,
                                                sigma=3,
                                                iters=10)
@@ -359,7 +360,7 @@ def make_instrument_mask(dark, flat, outDir, instrument=instruments.default_inst
     ##########
     # Get the sigma-clipped mean and stddev on the dark
     img_dk = fits.getdata(_dark)
-    if float(astropy.__version__) < 3.0:
+    if parse_version(astropy.__version__) < parse_version('3.0'):
         dark_stats = stats.sigma_clipped_stats(img_dk,
                                                sigma=3,
                                                iters=10)
@@ -379,7 +380,7 @@ def make_instrument_mask(dark, flat, outDir, instrument=instruments.default_inst
     # Make dead pixel mask
     ##########
     img_fl = fits.getdata(_flat)
-    if float(astropy.__version__) < 3.0:
+    if parse_version(astropy.__version__) < parse_version('3.0'):
         flat_stats = stats.sigma_clipped_stats(img_dk,
                                                sigma=3,
                                                iters=10)
@@ -434,7 +435,7 @@ def analyzeDarkCalib(firstFrame, skipcombo=False):
 
         # Get the sigma-clipped mean and stddev on the dark
         img_dk = fits.getdata(darkDir + fileName)
-        if float(astropy.__version__) < 3.0:
+        if parse_version(astropy.__version__) < parse_version('3.0'):
             dark_stats = stats.sigma_clipped_stats(img_dk,
                                                    sigma=3,
                                                    iters=10)
