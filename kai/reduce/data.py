@@ -410,7 +410,6 @@ def combine(files, wave, outroot, field=None, outSuffix=None,
     Each image must have an associated *.coo file which gives the rough
     position of the reference source.
     
-    
     Parameters
     ----------
     files : list of int
@@ -460,13 +459,8 @@ def combine(files, wave, outroot, field=None, outSuffix=None,
         Instrument of data. Default is `instruments.default_inst`
     """
     
-    # Make sure directory for current passband exists and switch into it
-    util.mkdir(wave)
-    os.chdir(wave)
-    
     # Setup some files and directories
-    waveDir = util.getcwd()
-    redDir = util.trimdir( os.path.abspath(waveDir + '../') + '/')
+    redDir = util.getcwd()
     rootDir = util.trimdir( os.path.abspath(redDir + '../') + '/')
     
     # Determine clean directory and add field and suffixes to outroot
@@ -512,9 +506,8 @@ def combine(files, wave, outroot, field=None, outSuffix=None,
     
     
     # Make strings out of all the filename roots.
-    allroots = instrument.make_filenames(files)
+    allroots = instrument.make_filenames(files, prefix='')
     allroots = [aa.replace('.fits', '') for aa in allroots]
-    
     
     # If clean directories were specified for each file, copy over
     # clean files to a common clean directory into new combo directory
