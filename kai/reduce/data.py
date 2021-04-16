@@ -159,7 +159,7 @@ def clean(files, nite, wave, refSrc, strSrc, badColumns=None, field=None,
     util.mkdir(masks)
     
     # Open a text file to document sources of data files
-    data_sources_file = open(clean + 'data_sources.txt', 'w')
+    data_sources_file = open(clean + 'data_sources.txt', 'a')
     
     try:
         # Setup flat. Try wavelength specific, but if it doesn't
