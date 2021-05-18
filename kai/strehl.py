@@ -123,14 +123,21 @@ def calc_strehl_single(img_file, radius, dl_peak_flux_ratio, instrument=instrume
     img, hdr = fits.getdata(img_file, header=True)
     wavelength = instrument.get_central_wavelength(hdr) # microns
     scale = instrument.get_plate_scale(hdr)
-
+    
     # Read in the coordinate file to get the position of the Strehl source. 
     coo_file = img_file.replace('.fits', '.coo')
     _coo = open(coo_file, 'r')
     coo_tmp = _coo.readline().split()
     coords = np.array([float(coo_tmp[0]), float(coo_tmp[1])])
     coords -= 1  # Coordinate were 1 based; but python is 0 based.
-
+    
+    # Use Strehl source coordinates in the header, if available and recorded
+    if 'XSTREHL' in hdr:
+        coords = np.array([float(hdr['XSTREHL']),
+                           float(hdr['YSTREHL'])])
+        coords -= 1     # Coordinate were 1 based; but python is 0 based.
+    
+    
     # Calculate the FWHM using a 2D gaussian fit. We will just average the two.
     # To make this fit more robust, we will change our boxsize around, slowly
     # shrinking it until we get a reasonable value.
