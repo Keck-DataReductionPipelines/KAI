@@ -231,6 +231,13 @@ class OSIRIS(Instrument):
         """
         inst_angle = (hdr['INSTANGL'] - 42.5)
         return inst_angle
+
+    def get_parallactic_angle(self,hdr):
+        """
+        Get the parallactic angle in degrees East of North
+        """
+        q = hdr['PARANG']
+        return q
     
     def get_central_wavelength(self, hdr):
         """
