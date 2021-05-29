@@ -83,10 +83,10 @@ def keckDARcoeffs(lamda, year, month, day, hour, minute):
     eps = 1.0e-9
     # Height above sea level (meters)
     # hm = obs.altitude
-    hm = 4160.0                             #hard coded to remove iraf dependency
+    hm = 4160.0                             #Keck height. Hard coded to remove iraf dependency
     # Latitude of the observer (radian)
     # phi = math.radians(obs.latitude)
-    phi = math.radians(19.82833333333333)   #hard coded to remove iraf dependency
+    phi = math.radians(19.82833333333333)   #Keck latitude. Hard coded to remove iraf dependency
 
     # Pull from atmosphere logs.
     logDir = module_dir + '/weather/'
@@ -172,15 +172,15 @@ def kaidar(fitsFile, instrument=instruments.default_inst):
 
     tanz = math.tan(math.radians(90.0 - elevation))
     tmp = 1.0 + tanz**2
-    darCoeffL = tmp * (refA + 3.0 * refB * tanz**2)
+    darCoeffL = tmp * (refA + 3.0 * refB * tanz**2)   #unitless
     darCoeffQ = -tmp * (refA*tanz +
-                            3.0 * refB * (tanz + 2.0*tanz**3))
+                            3.0 * refB * (tanz + 2.0*tanz**3))   #units: radians^-1
 
     # Convert DAR coefficients for use with arcseconds
     # scale = instrument.get_plate_scale(hdr)
     # darCoeffQ *= 1.0 * scale / 206265.0
     darCoeffL *= 1.0
-    darCoeffQ *= 1.0 / 206265.0
+    darCoeffQ *= 1.0 / 206265.0             #units now arcsec^-1
    
     # # Lets determine the zenith and horizon unit vectors for
     # # this image.
@@ -235,8 +235,8 @@ def darPlusDistortion(inputFits, outputRoot, xgeoim=None, ygeoim=None, instrumen
     (darCoeffL, darCoeffQ) = kaidar(inputFits, instrument=instrument)
     # Convert DAR coefficients for use with units of NIRC2 pixels
     scale = instrument.get_plate_scale(hdr)
-    darCoeffL *= 1.0
-    darCoeffQ *= 1.0 * scale #/ 206265.0
+    darCoeffL *= 1.0                
+    darCoeffQ *= 1.0 * scale #/ 206265.0    
     pa = math.radians(instrument.get_parallactic_angle(hdr) + instrument.get_position_angle(hdr))
     #(a, b) = kaidarPoly(inputFits)
 
@@ -297,9 +297,11 @@ def darPlusDistortion(inputFits, outputRoot, xgeoim=None, ygeoim=None, instrumen
     return (xout, yout)
 
 
-def applyDAR(inputFits, spaceStarlist, plot=False, instrument=instruments.default_inst):
+def applyDAR(inputFits, spaceStarlist, plot=False, instrument=instruments.default_inst, plotdir = './'):
     """
-    inputFits: (str) name if fits file associated with this starlist
+    inputFits: (str) name of fits file associated with this starlist
+
+    spaceStarlist: (astropy table) must include columns 'x0' and 'y0'.
 
     Input a starlist in x=RA (+x = west) and y=Dec (arcseconds) taken from
     space and introduce differential atmospheric refraction (DAR). The amount
@@ -309,9 +311,9 @@ def applyDAR(inputFits, spaceStarlist, plot=False, instrument=instruments.defaul
     starlight passed through the telescope. Only achromatic DAR is 
     applied in this code.
 
-    The output file has the name <fitsFile>_acs.lis and is saved to the
-    current directory.
+    returns spaceStarlist with updated 'x0' and 'y0'
     """
+
     # Get header info
     #hdr = pyfits.getheader(fits)
 
@@ -434,8 +436,8 @@ def applyDAR(inputFits, spaceStarlist, plot=False, instrument=instruments.defaul
         quiv_label = '1 mas'
         quiv_label_val = 0.001
         plt.quiverkey(q, 0.80, 0.85, quiv_label_val, quiv_label, coordinates='figure', labelpos='E', color='green')     
-        # plt.savefig('./n1/plots/dar/' + inputFits[-26:-5] + '.jpg', bbox_inches='tight')
-        plt.show()
+        plt.savefig(plotdir+ inputFits[-26:-5] + '.jpg', bbox_inches='tight')
+        # plt.show()
 
     spaceStarlist['x0'] = xnew
     spaceStarlist['y0'] = ynew 
