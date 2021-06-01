@@ -31,7 +31,7 @@ def psfRadius(starPeak, imagePeak, scale = 0.009942):
     Arbitrary function that ties the predicted radius of the star to the peak brightness in the image.
     returns a radius: 10 < (Ratio of "magnitudes" cubed * 80) < 60 and scaled acc. to plate scale in arcsec
     """
-    return ((max(min(80 * ((np.log10(starPeak) / np.log10(imagePeak)) ** 3), 60), 10) / 0.00942) * scale)
+    return ((max(min(80 * ((np.log10(starPeak) / np.log10(imagePeak)) ** 3), 60), 10) / scale) * 0.00942)
 
 
 
@@ -126,7 +126,7 @@ def removeCloseStars(imgArr, newTable, pixelDist = 10, x = "xcentroid", y = "yce
         if mainIndex not in invalidStarIndices:
             
             mainCoo = (newTable[x][mainIndex], newTable[y][mainIndex], newTable["peak"][mainIndex])
-            psfr = psfRadius(mainCoo[2], imagePeak)
+            psfr = psfRadius(mainCoo[2], imagePeak, scale)
             
             if verbose: print("Found PSF Star: " + str(np.round(mainCoo, 2)))
                 
