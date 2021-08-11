@@ -31,6 +31,9 @@ class Instrument(object):
     def get_position_angle(self, hdr):
         pass
 
+    def get_parallactic_angle(self,hdr):
+        pass
+
     def get_instrument_angle(self, hdr):
         pass
     
@@ -109,6 +112,13 @@ class NIRC2(Instrument):
         Get the sky PA in degrees East of North. 
         """
         return float(hdr['ROTPOSN']) - float(hdr['INSTANGL'])
+
+    def get_parallactic_angle(self,hdr):
+        """
+        Get the parallactic angle in degrees East of North
+        """
+        q = hdr['PARANG']
+        return q
 
     def get_instrument_angle(self, hdr):
         return float(hdr['INSTANGL'])
@@ -231,6 +241,13 @@ class OSIRIS(Instrument):
         """
         inst_angle = (hdr['INSTANGL'] - 42.5)
         return inst_angle
+
+    def get_parallactic_angle(self,hdr):
+        """
+        Get the parallactic angle in degrees East of North
+        """
+        q = hdr['PARANG']
+        return q
     
     def get_central_wavelength(self, hdr):
         """
