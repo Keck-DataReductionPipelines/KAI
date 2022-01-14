@@ -21,6 +21,16 @@ An example dataset with scripts can be found at this
 `Google Drive link <https://drive.google.com/drive/folders/1FpTN3wiG4U826H328JIJcPLbScNCTRQW?usp=sharing>`_. 
 This is a great place to start to test the pipeline.
 
+Installation Guide
+------------------
+
+Make sure the python paths point to the appropriate code directories. For example, this can be done by using setup.py:
+
+``python setup.py install``
+
+Or manually putting in the path to the repository in your ``.bash_profile``, such as:
+
+``export PYTHONPATH=$PYTHONPATH:path/to/KAI``
 
 Contributing
 ------------
