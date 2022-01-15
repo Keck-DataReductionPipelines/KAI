@@ -32,6 +32,8 @@ Or manually putting in the path to the repository in your ``.bash_profile``, suc
 
 ``export PYTHONPATH=$PYTHONPATH:path/to/KAI``
 
+It is best to create a separate conda environment. Currently, the pipeline uses IRAF/PyRAF, and it is helpful to create an environment as instructed here on the `STScI astroconda website <https://astroconda.readthedocs.io/en/latest/installation.html>`_. Note that this pipelines requires operating systems that support 32-bit software.
+
 Contributing
 ------------
 
