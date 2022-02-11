@@ -15,6 +15,24 @@ the `Astropy package template <https://github.com/astropy/package-template>`_
 which is licensed under the BSD 3-clause license. See the licenses folder for
 more information.
 
+Example Dataset
+---------------
+An example dataset with scripts can be found at this 
+`Google Drive link <https://drive.google.com/drive/folders/1FpTN3wiG4U826H328JIJcPLbScNCTRQW?usp=sharing>`_. 
+This is a great place to start to test the pipeline.
+
+Installation Guide
+------------------
+
+Make sure the python paths point to the appropriate code directories. For example, this can be done by using setup.py:
+
+``python setup.py install``
+
+Or manually putting in the path to the repository in your ``.bash_profile``, such as:
+
+``export PYTHONPATH=$PYTHONPATH:path/to/KAI``
+
+It is best to create a separate conda environment. Currently, the pipeline uses IRAF/PyRAF, and it is helpful to create an environment as instructed here on the `STScI astroconda website <https://astroconda.readthedocs.io/en/latest/installation.html>`_. Note that this pipelines requires operating systems that support 32-bit software.
 
 Contributing
 ------------
