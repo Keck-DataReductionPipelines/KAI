@@ -1,9 +1,6 @@
 # KAI
 
-.. image:: http://img.shields.io/badge/powered%20by-AstroPy-orange.svg?style=flat
-    :target: http://www.astropy.org
-    :alt: Powered by Astropy Badge
-
+[![Powered by Astropy Badge](http://img.shields.io/badge/powered%20by-AstroPy-orange.svg?style=flat)](http://www.astropy.org)
 
 ## Installation
 
@@ -18,7 +15,7 @@ Or manually putting in the path to the repository in your `.bashrc` or `.bash_pr
 export PYTHONPATH=$PYTHONPATH:path/to/KAI
 ```
 
-In order to run KAI, we recommend creating a separate [conda](https://docs.conda.io/en/latest/miniconda.html) environment for the required dependencies. The pipeline uses IRAF/PyRAF, and we recommend using the `environment_iraf27.yml` file in this repository to create a conda environment with the dependencies correctly installed. This file will create a new conda environment called `iraf27`, and must be activated before running KAI using
+In order to run KAI, we recommend creating a separate [conda](https://docs.conda.io/en/latest/miniconda.html) environment for the required dependencies. The pipeline uses IRAF/PyRAF, and we recommend using the [`environment_iraf27.yml`](environment_iraf27.yml) file in this repository to create a conda environment with the dependencies correctly installed. This file will create a new conda environment called `iraf27`, and must be activated before running KAI using
 ```
 conda activate iraf27
 ```
