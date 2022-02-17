@@ -133,9 +133,6 @@ def go():
     # Kp-band reduction
     ##########
 
-    util.mkdir('kp')
-    os.chdir('kp')
-
     target = 'mb19284'
     sci_files = ['i200822_a011{0:03d}_flip'.format(ii) for ii in range(2, 5+1)]
     sci_files += ['i200822_a012{0:03d}_flip'.format(ii) for ii in range(2, 25+1)]
@@ -148,7 +145,6 @@ def go():
     data.calcStrehl(sci_files, 'kp_tdOpen', field=target, instrument=osiris)
     data.combine(sci_files, 'kp_tdOpen', epoch, field=target,
                      trim=0, weight='strehl', submaps=3, instrument=osiris)
-    os.chdir('../')
 
     ##########
     #
@@ -159,9 +155,6 @@ def go():
     ##########
     # Kp-band reduction
     ##########
-
-    util.mkdir('kp')
-    os.chdir('kp')
 
     #    -- If you have more than one position angle, make sure to
     #       clean them seperatly.
