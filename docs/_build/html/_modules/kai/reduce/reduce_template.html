@@ -1,0 +1,350 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>kai.reduce.reduce_template &#8212; KAI  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/alabaster.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for kai.reduce.reduce_template</h1><div class="highlight"><pre>
+<span></span><span class="c1">##################################################</span>
+<span class="c1">#</span>
+<span class="c1"># General Notes:</span>
+<span class="c1"># -- python uses spaces to figure out the beginnings</span>
+<span class="c1">#    and ends of functions/loops/etc. So make sure</span>
+<span class="c1">#    to preserve spacings properly (indent). This</span>
+<span class="c1">#    is easy to do if you use emacs with python mode</span>
+<span class="c1">#    and color coding.</span>
+<span class="c1"># -- You will probably need to edit almost every</span>
+<span class="c1">#    single line of the go() function.</span>
+<span class="c1"># -- If you need help on the individual function calls,</span>
+<span class="c1">#    then in the pyraf prompt, import the module and</span>
+<span class="c1">#    then print the documentation for that function:</span>
+<span class="c1">#    --&gt; print kai.kailog.__doc__</span>
+<span class="c1">#    --&gt; print range.__doc__</span>
+<span class="c1">#</span>
+<span class="c1">##################################################</span>
+
+<span class="c1"># Import python and iraf modules</span>
+<span class="kn">from</span> <span class="nn">pyraf</span> <span class="kn">import</span> <span class="n">iraf</span> <span class="k">as</span> <span class="n">ir</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">glob</span>
+
+<span class="c1"># Import our own custom modules</span>
+<span class="kn">from</span> <span class="nn">kai.reduce</span> <span class="kn">import</span> <span class="n">calib</span>
+<span class="kn">from</span> <span class="nn">kai.reduce</span> <span class="kn">import</span> <span class="n">sky</span>
+<span class="kn">from</span> <span class="nn">kai.reduce</span> <span class="kn">import</span> <span class="n">data</span>
+<span class="kn">from</span> <span class="nn">kai.reduce</span> <span class="kn">import</span> <span class="n">util</span>
+<span class="kn">from</span> <span class="nn">kai.reduce</span> <span class="kn">import</span> <span class="n">dar</span>
+<span class="kn">from</span> <span class="nn">kai.reduce</span> <span class="kn">import</span> <span class="n">kai_util</span>
+<span class="kn">from</span> <span class="nn">kai</span> <span class="kn">import</span> <span class="n">instruments</span>
+
+
+<span class="c1">##########</span>
+<span class="c1"># Change the epoch, instrument, and distortion solution.</span>
+<span class="c1">##########</span>
+<div class="viewcode-block" id="epoch"><a class="viewcode-back" href="../../../autoapi/kai/reduce/reduce_template/index.html#kai.reduce.reduce_template.epoch">[docs]</a><span class="n">epoch</span> <span class="o">=</span> <span class="s1">&#39;19apr21&#39;</span></div>
+<div class="viewcode-block" id="nirc2"><a class="viewcode-back" href="../../../autoapi/kai/reduce/reduce_template/index.html#kai.reduce.reduce_template.nirc2">[docs]</a><span class="n">nirc2</span> <span class="o">=</span> <span class="n">instruments</span><span class="o">.</span><span class="n">NIRC2</span><span class="p">()</span>  <span class="c1"># don&#39;t necessarily need this as NIRC2 is the default.</span></div>
+
+<span class="c1">##########</span>
+<span class="c1"># Make electronic logs</span>
+<span class="c1">#    - run this first thing for a new observing run.</span>
+<span class="c1">##########</span>
+<div class="viewcode-block" id="makelog"><a class="viewcode-back" href="../../../autoapi/kai/reduce/reduce_template/index.html#kai.reduce.reduce_template.makelog">[docs]</a><span class="k">def</span> <span class="nf">makelog</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Make an electronic log from all the files in the ../raw/ directory.</span>
+<span class="sd">    The file will be called kai.log and stored in the same directory.</span>
+
+<span class="sd">    @author Jessica Lu</span>
+<span class="sd">    @author Sylvana Yelda</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">kai_util</span><span class="o">.</span><span class="n">makelog</span><span class="p">(</span><span class="s1">&#39;../raw&#39;</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">nirc2</span><span class="p">)</span>
+
+    <span class="c1"># If you are reducing OSIRIS, you need to flip the images first. </span>
+    <span class="c1"># raw_files = glob.glob(&#39;../raw/i*.fits&#39;)</span>
+    <span class="c1"># osiris.flip_images(raw_files)</span>
+
+    <span class="c1"># Download weather data we will need.</span>
+    <span class="n">dar</span><span class="o">.</span><span class="n">get_atm_conditions</span><span class="p">(</span><span class="s1">&#39;2020&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span></div>
+    
+
+<span class="c1">###############</span>
+<span class="c1"># Analyze darks</span>
+<span class="c1">###############</span>
+<div class="viewcode-block" id="analyze_darks"><a class="viewcode-back" href="../../../autoapi/kai/reduce/reduce_template/index.html#kai.reduce.reduce_template.analyze_darks">[docs]</a><span class="k">def</span> <span class="nf">analyze_darks</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Analyze the dark_calib results</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">util</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="s1">&#39;calib&#39;</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="s1">&#39;calib&#39;</span><span class="p">)</span>
+
+    <span class="n">first_dark</span> <span class="o">=</span> <span class="mi">16</span>
+    <span class="n">calib</span><span class="o">.</span><span class="n">analyzeDarkCalib</span><span class="p">(</span><span class="n">first_dark</span><span class="p">)</span>  <span class="c1"># Doesn&#39;t support OSIRIS yet</span>
+
+    <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="s1">&#39;../&#39;</span><span class="p">)</span></div>
+
+<span class="c1">##########</span>
+<span class="c1"># Reduce</span>
+<span class="c1">##########</span>
+<div class="viewcode-block" id="go"><a class="viewcode-back" href="../../../autoapi/kai/reduce/reduce_template/index.html#kai.reduce.reduce_template.go">[docs]</a><span class="k">def</span> <span class="nf">go</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Do the full data reduction.</span>
+
+<span class="sd">    @author Jessica Lu</span>
+<span class="sd">    @author Sylvana Yelda</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1">####################</span>
+    <span class="c1">#</span>
+    <span class="c1"># Calibration files:</span>
+    <span class="c1">#     everything created under calib/</span>
+    <span class="c1">#</span>
+    <span class="c1">####################</span>
+    <span class="c1"># Darks - created in subdir darks/</span>
+    <span class="c1"># Files n0001 - n0009</span>
+    <span class="c1">#  - darks needed to make bad pixel mask</span>
+    <span class="c1">#  - store the resulting dark in the file name that indicates the</span>
+    <span class="c1">#    integration time (2.8s) and the coadds (10ca).</span>
+    <span class="c1">#    -- If you use the OSIRIS image, you must include the full filename in the list. </span>
+    <span class="n">darkFiles</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">9</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+    <span class="n">calib</span><span class="o">.</span><span class="n">makedark</span><span class="p">(</span><span class="n">darkFiles</span><span class="p">,</span> <span class="s1">&#39;dark_2.8s_10ca.fits&#39;</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">nirc2</span><span class="p">)</span>
+
+    <span class="c1"># Flats - created in subdir flats/</span>
+    <span class="c1"># Files n0037,n0039,n0041,n0043,n0045: lamps off for flats at K</span>
+    <span class="c1"># Files n0038,n0040,n0042,n0044,n0046: lamps on for flats at K</span>
+    <span class="n">offFiles</span> <span class="o">=</span> <span class="p">[</span><span class="mi">37</span><span class="p">,</span> <span class="mi">39</span><span class="p">,</span> <span class="mi">41</span><span class="p">,</span> <span class="mi">43</span><span class="p">,</span> <span class="mi">45</span><span class="p">]</span>
+    <span class="n">onFiles</span> <span class="o">=</span> <span class="p">[</span><span class="mi">38</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">42</span><span class="p">,</span> <span class="mi">44</span><span class="p">,</span> <span class="mi">46</span><span class="p">]</span>
+    <span class="n">calib</span><span class="o">.</span><span class="n">makeflat</span><span class="p">(</span><span class="n">onFiles</span><span class="p">,</span> <span class="n">offFiles</span><span class="p">,</span> <span class="s1">&#39;flat_kp.fits&#39;</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">nirc2</span><span class="p">)</span>
+    
+    <span class="c1"># Masks (assumes files were created under calib/darks/ and calib/flats/)</span>
+    <span class="n">calib</span><span class="o">.</span><span class="n">makemask</span><span class="p">(</span><span class="s1">&#39;dark_2.8s_10ca.fits&#39;</span><span class="p">,</span> <span class="s1">&#39;flat_kp.fits&#39;</span><span class="p">,</span>
+                   <span class="s1">&#39;supermask.fits&#39;</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">nirc2</span><span class="p">)</span>
+
+
+    <span class="c1">####################</span>
+    <span class="c1">#</span>
+    <span class="c1"># Galactic Center</span>
+    <span class="c1">#</span>
+    <span class="c1">####################</span>
+
+    <span class="c1">##########</span>
+    <span class="c1"># K-band reduction</span>
+    <span class="c1">##########</span>
+    <span class="c1">#util.mkdir(&#39;kp&#39;)</span>
+    <span class="c1">#os.chdir(&#39;kp&#39;)</span>
+
+    <span class="c1"># Nite 1:</span>
+    <span class="c1">#    SCI frames (don&#39;t forget to add 1 at end): 108-237</span>
+    <span class="c1">#    reference star position in first image:  [407.77, 673.87]</span>
+    <span class="c1">#    use a different Strehl star at position: [521.79, 398.92]</span>
+    <span class="c1">#    Sky frames (don&#39;t forget to add 1 at end): 252-261</span>
+    <span class="c1">#</span>
+    <span class="c1">#    -- If you have more than one position angle, make sure to</span>
+    <span class="c1">#       clean them seperatly.</span>
+    <span class="c1">#    -- Strehl and Ref src should be the pixel coordinates of a bright</span>
+    <span class="c1">#       (but non saturated) source in the first exposure of sci_files.</span>
+    <span class="c1">#    -- If you use the OSIRIS image, you must include the full filename in the list. </span>
+    <span class="n">sci_files1</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">108</span><span class="p">,</span> <span class="mi">237</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+    <span class="n">refSrc1</span> <span class="o">=</span> <span class="p">[</span><span class="mf">407.77</span><span class="p">,</span> <span class="mf">673.87</span><span class="p">]</span>
+    <span class="n">strSrc1</span> <span class="o">=</span> <span class="p">[</span><span class="mf">521.79</span><span class="p">,</span> <span class="mf">398.92</span><span class="p">]</span>
+    <span class="n">sky_files1</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">252</span><span class="p">,</span> <span class="mi">261</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+    <span class="c1">#</span>
+    <span class="n">sky</span><span class="o">.</span><span class="n">makesky</span><span class="p">(</span><span class="n">sky_files1</span><span class="p">,</span> <span class="s1">&#39;nite1&#39;</span><span class="p">,</span> <span class="s1">&#39;kp&#39;</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">nirc2</span><span class="p">)</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">clean</span><span class="p">(</span><span class="n">sci_files1</span><span class="p">,</span> <span class="s1">&#39;nite1&#39;</span><span class="p">,</span> <span class="s1">&#39;kp&#39;</span><span class="p">,</span> <span class="n">refSrc1</span><span class="p">,</span> <span class="n">strSrc1</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">nirc2</span><span class="p">)</span> 
+    
+
+    <span class="c1"># Nite 2:</span>
+    <span class="c1">#    SCI frames (don&#39;t forget to add 1 at end): 1108-1237</span>
+    <span class="c1">#    reference star position in first image:  [407.77, 673.87]</span>
+    <span class="c1">#    use a different Strehl star at position: [521.79, 398.92]</span>
+    <span class="c1">#    Sky frames (don&#39;t forget to add 1 at end): 1252-1261 and 1400-1405</span>
+    <span class="c1">#    -- If you use the OSIRIS image, you must include the full filename in the list. </span>
+    <span class="n">sci_files2</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1108</span><span class="p">,</span> <span class="mi">1237</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+    <span class="n">refSrc2</span> <span class="o">=</span> <span class="p">[</span><span class="mf">407.77</span><span class="p">,</span> <span class="mf">673.87</span><span class="p">]</span>
+    <span class="n">strSrc2</span> <span class="o">=</span> <span class="p">[</span><span class="mf">521.79</span><span class="p">,</span> <span class="mf">398.92</span><span class="p">]</span>
+    <span class="n">sky_files2</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1252</span><span class="p">,</span> <span class="mi">1261</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1400</span><span class="p">,</span> <span class="mi">1405</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+    <span class="c1">#</span>
+    <span class="n">sky</span><span class="o">.</span><span class="n">makesky</span><span class="p">(</span><span class="n">sky_files2</span><span class="p">,</span> <span class="s1">&#39;nite2&#39;</span><span class="p">,</span> <span class="s1">&#39;kp&#39;</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">nirc2</span><span class="p">)</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">clean</span><span class="p">(</span><span class="n">sci_files2</span><span class="p">,</span> <span class="s1">&#39;nite2&#39;</span><span class="p">,</span> <span class="s1">&#39;kp&#39;</span><span class="p">,</span> <span class="n">refSrc2</span><span class="p">,</span> <span class="n">strSrc2</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">nirc2</span><span class="p">)</span> 
+
+    <span class="c1"># Combine:</span>
+    <span class="c1">#    Combine all of them together (from both nights).</span>
+    <span class="c1">#    Do frame selection (trim=1).</span>
+    <span class="c1">#    Weight by Strehl (weight=&#39;strehl&#39;).</span>
+    <span class="c1">#    Make 3 submaps.</span>
+    <span class="c1">#    -- If you use the OSIRIS image, you must include the full filename in the list. </span>
+    <span class="n">sci_files</span> <span class="o">=</span> <span class="n">sci_files1</span> <span class="o">+</span> <span class="n">sci_files2</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">calcStrehl</span><span class="p">(</span><span class="n">sci_files</span><span class="p">,</span> <span class="s1">&#39;kp&#39;</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">nirc2</span><span class="p">)</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">combine</span><span class="p">(</span><span class="n">sci_files</span><span class="p">,</span> <span class="s1">&#39;kp&#39;</span><span class="p">,</span> <span class="s1">&#39;06junlgs&#39;</span><span class="p">,</span> <span class="n">trim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="s1">&#39;strehl&#39;</span><span class="p">,</span>
+                   <span class="n">submaps</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">nirc2</span><span class="p">)</span>
+
+    <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="s1">&#39;../&#39;</span><span class="p">)</span>
+
+    
+    <span class="c1">############</span>
+    <span class="c1"># Lp</span>
+    <span class="c1">############</span>
+
+    <span class="c1">#util.mkdir(&#39;lp&#39;)</span>
+    <span class="c1">#os.chdir(&#39;lp&#39;)</span>
+
+    <span class="c1"># Nite 1</span>
+    <span class="n">sky_files</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">38</span><span class="p">,</span> <span class="mi">53</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+    <span class="n">sci_files</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">87</span><span class="p">,</span> <span class="mi">94</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">115</span><span class="p">,</span><span class="mi">122</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+    <span class="n">refSrc</span> <span class="o">=</span> <span class="p">[</span><span class="mf">695.</span><span class="p">,</span> <span class="mf">543.</span><span class="p">]</span>
+    <span class="n">strSrc</span> <span class="o">=</span> <span class="p">[</span><span class="mf">680.</span><span class="p">,</span> <span class="mf">839.</span><span class="p">]</span>
+
+    <span class="n">sky</span><span class="o">.</span><span class="n">makesky_lp</span><span class="p">(</span><span class="n">sky_files</span><span class="p">,</span> <span class="s1">&#39;nite1&#39;</span><span class="p">,</span> <span class="s1">&#39;lp&#39;</span><span class="p">)</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">clean</span><span class="p">(</span><span class="n">sci_files</span><span class="p">,</span> <span class="s1">&#39;nite1&#39;</span><span class="p">,</span> <span class="s1">&#39;lp&#39;</span><span class="p">,</span> <span class="n">refSrc</span><span class="p">,</span> <span class="n">strSrc</span><span class="p">)</span> 
+    <span class="n">data</span><span class="o">.</span><span class="n">calcStrehl</span><span class="p">(</span><span class="n">sci_files</span><span class="p">,</span> <span class="s1">&#39;lp&#39;</span><span class="p">)</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">combine</span><span class="p">(</span><span class="n">sci_files</span><span class="p">,</span> <span class="s1">&#39;lp&#39;</span><span class="p">,</span> <span class="s1">&#39;06junlgs&#39;</span><span class="p">,</span> 
+                   <span class="n">trim</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">submaps</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+
+    <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="s1">&#39;../&#39;</span><span class="p">)</span></div>
+
+    <span class="c1">#</span>
+    <span class="c1"># Could do other wavelengths or different fields (e.g. Arches).</span>
+    <span class="c1"># Can pass in a field flag, for example:</span>
+    <span class="c1"># data.clean(arch_files,&#39;nite1&#39;,&#39;kp&#39;,refSrc,strSrc,</span>
+    <span class="c1">#              field=&#39;f1&#39;)</span>
+    <span class="c1"># data.combine(arch_files,&#39;kp&#39;,&#39;06maylgs1&#39;,trim=1,weight=&#39;strehl&#39;</span>
+    <span class="c1">#                field=&#39;f1&#39;,submaps=3)</span>
+    <span class="c1">#</span>
+
+<span class="c1">############</span>
+<span class="c1"># Jackknife</span>
+<span class="c1">############</span>
+<div class="viewcode-block" id="jackknife"><a class="viewcode-back" href="../../../autoapi/kai/reduce/reduce_template/index.html#kai.reduce.reduce_template.jackknife">[docs]</a><span class="k">def</span> <span class="nf">jackknife</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Perform the Jackknife data reduction. The methodology is as follows:</span>
+<span class="sd">    For N total images, there are N stacked images created by data.combine(),</span>
+<span class="sd">    each of these combo frames consists of N-1 images. The suffix &#39;_{i}&#39; is</span>
+<span class="sd">    given to each jackknife combo frame (i.e. mag27maylgs_12_ks.fits would be</span>
+<span class="sd">    the 12th jackknife combo frame created). Submaps flag has been turned off</span>
+<span class="sd">    for this function, as it is not needed.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1">##########</span>
+    <span class="c1"># Ks-band reduction</span>
+    <span class="c1">##########</span>
+
+    <span class="c1"># Nite 1</span>
+    <span class="n">sci_files1</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">173</span><span class="p">,</span> <span class="mi">177</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+    <span class="n">sky_files1</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">206</span><span class="p">,</span> <span class="mi">215</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+    <span class="n">refSrc1</span> <span class="o">=</span> <span class="p">[</span><span class="mf">385.</span><span class="p">,</span> <span class="mf">440.</span><span class="p">]</span> <span class="c1">#This is the target nearest to center</span>
+
+    <span class="n">sky</span><span class="o">.</span><span class="n">makesky</span><span class="p">(</span><span class="n">sky_files1</span><span class="p">,</span> <span class="s1">&#39;nite1&#39;</span><span class="p">,</span> <span class="s1">&#39;ks&#39;</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">nirc2</span><span class="p">)</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">clean</span><span class="p">(</span><span class="n">sci_files1</span><span class="p">,</span> <span class="s1">&#39;nite1&#39;</span><span class="p">,</span> <span class="s1">&#39;ks&#39;</span><span class="p">,</span> <span class="n">refSrc1</span><span class="p">,</span> <span class="n">refSrc1</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">nirc2</span><span class="p">)</span>
+
+
+    <span class="c1"># Nite 2</span>
+    <span class="n">sci_files2</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">195</span><span class="p">,</span> <span class="mi">203</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+    <span class="n">sky_files2</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">206</span><span class="p">,</span> <span class="mi">215</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+    <span class="n">refSrc2</span> <span class="o">=</span> <span class="p">[</span><span class="mf">387.</span><span class="p">,</span> <span class="mf">443.</span><span class="p">]</span> <span class="c1">#This is the target nearest to center</span>
+
+    <span class="n">sky</span><span class="o">.</span><span class="n">makesky</span><span class="p">(</span><span class="n">sky_files2</span><span class="p">,</span> <span class="s1">&#39;nite2&#39;</span><span class="p">,</span> <span class="s1">&#39;ks&#39;</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">nirc2</span><span class="p">)</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">clean</span><span class="p">(</span><span class="n">sci_files2</span><span class="p">,</span> <span class="s1">&#39;nite2&#39;</span><span class="p">,</span> <span class="s1">&#39;ks&#39;</span><span class="p">,</span> <span class="n">refSrc2</span><span class="p">,</span> <span class="n">refSrc2</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">nirc2</span><span class="p">)</span>
+    <span class="c1">#-----------------</span>
+
+    <span class="n">sci_files</span> <span class="o">=</span> <span class="n">sci_files1</span> <span class="o">+</span> <span class="n">sci_files2</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sci_files</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="n">jack_list</span> <span class="o">=</span> <span class="n">sci_files</span><span class="p">[:]</span>
+        <span class="n">jack_list</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">calcStrehl</span><span class="p">(</span><span class="n">jack_list</span><span class="p">,</span> <span class="s1">&#39;ks&#39;</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">nirc2</span><span class="p">)</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">combine</span><span class="p">(</span><span class="n">jack_list</span><span class="p">,</span> <span class="s1">&#39;ks&#39;</span><span class="p">,</span> <span class="s1">&#39;27maylgs&#39;</span><span class="p">,</span> <span class="n">trim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="s1">&#39;strehl&#39;</span><span class="p">,</span>
+                    <span class="n">instrument</span><span class="o">=</span><span class="n">nirc2</span><span class="p">,</span> <span class="n">outSuffix</span><span class="o">=</span><span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="s1">&#39;reduce&#39;</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">KAI</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../autoapi/index.html">API Reference</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2022, J. R. Lu, A. K. Gautam, T. Do.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.2.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

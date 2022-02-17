@@ -1,0 +1,172 @@
+:py:mod:`kai.photometry`
+========================
+
+.. py:module:: kai.photometry
+
+.. autoapi-nested-parse::
+
+   
+   ..
+       !! processed by numpydoc !!
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   kai.photometry.setup_phot
+   kai.photometry.run_phot
+   kai.photometry.get_phot_output
+   kai.photometry.get_filter_profile
+   kai.photometry.test_filter_profile_interp
+   kai.photometry.test_atmosphere_profile_interp
+
+
+
+.. py:function:: setup_phot(imageRoot, silent=False, apertures=[25, 50, 75, 100, 125, 150, 175, 200], sky_annulus=200, sky_dannulus=50, zmag=0)
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: run_phot(imageRoot, silent=False, apertures=[25, 50, 75, 100, 125, 150, 175, 200], sky_annulus=200, sky_dannulus=50, zmag=0)
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: get_phot_output(output, silent=False)
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: get_filter_profile(filter)
+
+   
+   Returns the wavelength (in microns) and the transmission for 
+   the specified NIRC2 filter.
+
+   Example: 
+   (wave, trans) = kai.photometry.get_filter_profile('Kp')
+   py.clf()
+   py.plot(wave, trans)
+   py.xlabel('Wavelength (microns)')
+   py.ylabel('Transmission')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: test_filter_profile_interp()
+
+   
+   Plot up the filter transmission curves and their interpolations
+   for the three K-band filters (K, Kp, Ks).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: test_atmosphere_profile_interp()
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+

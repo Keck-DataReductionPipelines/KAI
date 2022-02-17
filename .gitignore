@@ -17,9 +17,9 @@ htmlcov
 MANIFEST
 .ipynb_checkpoints
 
-# Sphinx
-docs/api
-docs/_build
+# # Sphinx
+# docs/api
+# docs/_build
 
 # Eclipse editor project files
 .project
@@ -125,10 +125,10 @@ instance/
 # Scrapy stuff:
 .scrapy
 
-# Sphinx documentation
-docs/_build/
-doc/_build/
-docs/build/
+# # Sphinx documentation
+# docs/_build/
+# doc/_build/
+# docs/build/
 
 # PyBuilder
 target/

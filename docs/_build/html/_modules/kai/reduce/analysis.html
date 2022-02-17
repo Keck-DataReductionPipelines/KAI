@@ -1,0 +1,1084 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>kai.reduce.analysis &#8212; KAI  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/alabaster.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for kai.reduce.analysis</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">shutil</span>
+<span class="kn">from</span> <span class="nn">kai.reduce</span> <span class="kn">import</span> <span class="n">util</span>
+<span class="kn">from</span> <span class="nn">astropy.table</span> <span class="kn">import</span> <span class="n">Table</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">astropy.io</span> <span class="kn">import</span> <span class="n">fits</span>
+<span class="kn">from</span> <span class="nn">astropy.table</span> <span class="kn">import</span> <span class="n">Table</span>
+<span class="kn">from</span> <span class="nn">kai.reduce</span> <span class="kn">import</span> <span class="n">kai_util</span>
+<span class="kn">from</span> <span class="nn">kai.reduce</span> <span class="kn">import</span> <span class="n">calibrate</span>
+<span class="kn">from</span> <span class="nn">kai.reduce</span> <span class="kn">import</span> <span class="n">align_rms</span>
+<span class="kn">from</span> <span class="nn">kai</span> <span class="kn">import</span> <span class="n">instruments</span>
+<span class="kn">from</span> <span class="nn">kai</span> <span class="kn">import</span> <span class="n">strehl</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">import</span> <span class="nn">pylab</span> <span class="k">as</span> <span class="nn">py</span>
+<span class="kn">import</span> <span class="nn">pdb</span>
+
+<div class="viewcode-block" id="Analysis"><a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis">[docs]</a><span class="k">class</span> <span class="nc">Analysis</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Object that will perform our standard post-data-reduction analysis.</span>
+<span class="sd">    This includes running starfinder, calibrating, and extracting positional</span>
+<span class="sd">    and photometric errors via align_rms. </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">epoch</span><span class="p">,</span> <span class="n">rootDir</span><span class="o">=</span><span class="s1">&#39;/g/lu/data/orion/&#39;</span><span class="p">,</span> <span class="n">filt</span><span class="o">=</span><span class="s1">&#39;kp&#39;</span><span class="p">,</span>
+                 <span class="n">clean_dir</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">combo_dir</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">combo_stf_dir</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">epochDirSuffix</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">imgSuffix</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">stfDir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">useDistorted</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">cleanList</span><span class="o">=</span><span class="s1">&#39;c.lis&#39;</span><span class="p">,</span>
+                 <span class="n">airopa_mode</span><span class="o">=</span><span class="s1">&#39;single&#39;</span><span class="p">,</span> <span class="n">stf_version</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set up Analysis object.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        epoch : str</span>
+<span class="sd">            Name of the combo epoch</span>
+<span class="sd">        rootDir : str, default=&#39;/g/lu/data/orion/&#39;</span>
+<span class="sd">            Path of the root directory</span>
+<span class="sd">        filt : str, default=&#39;kp&#39;</span>
+<span class="sd">            Name of the filter of reduction</span>
+<span class="sd">        clean_dir : str, optional</span>
+<span class="sd">            Directory where clean files are stored. By default,</span>
+<span class="sd">            assumes that clean files are stored in &#39;../clean&#39;</span>
+<span class="sd">        combo_dir : str, optional</span>
+<span class="sd">            Directory where combo files are stored. By default,</span>
+<span class="sd">            assumes that combo files are stored in &#39;../combo&#39;</span>
+<span class="sd">        combo_stf_dir : str, optional</span>
+<span class="sd">            Directory where starfinder files will be stored. By default,</span>
+<span class="sd">            starfinder output is stored in &#39;../combo/starfinder/&#39;</span>
+<span class="sd">        airopa_mode : str, default=&#39;single&#39;</span>
+<span class="sd">            The airopa mode to use. Available options are &#39;legacy&#39;, &#39;single&#39;,</span>
+<span class="sd">            or &#39;variable&#39;.</span>
+<span class="sd">        stf_version : str, default=None</span>
+<span class="sd">            If specified, adds a version suffix to the starfinder directory</span>
+<span class="sd">            (e.g.: &#39;v3_1&#39;)</span>
+<span class="sd">        instrument : instruments object, optional</span>
+<span class="sd">            Instrument of data. Default is `instruments.default_inst`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup default parameters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="s1">&#39;ao&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">corrMain</span> <span class="o">=</span> <span class="mf">0.8</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">corrSub</span> <span class="o">=</span> <span class="mf">0.6</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">corrClean</span> <span class="o">=</span> <span class="mf">0.7</span>
+        <span class="c1"># airopa mode can be &quot;legacy&quot;, &quot;single&quot;, or &quot;variable&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">airopa_mode</span> <span class="o">=</span> <span class="n">airopa_mode</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trimfake</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stfFlags</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">starlist</span> <span class="o">=</span> <span class="n">rootDir</span> <span class="o">+</span> <span class="s1">&#39;source_list/psf_central.dat&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">labellist</span> <span class="o">=</span> <span class="n">rootDir</span><span class="o">+</span> <span class="s1">&#39;source_list/label.dat&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">orbitlist</span> <span class="o">=</span> <span class="n">rootDir</span><span class="o">+</span> <span class="s1">&#39;source_list/orbits.dat&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">calFile</span> <span class="o">=</span> <span class="n">rootDir</span> <span class="o">+</span> <span class="s1">&#39;source_list/photo_calib.dat&#39;</span>
+
+        <span class="c1"># Keep track of the instrument these images are from.</span>
+        <span class="c1"># We need this to get things like plate scale, etc.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">instrument</span> <span class="o">=</span> <span class="n">instrument</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">calStars</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;irs16NW&#39;</span><span class="p">,</span> <span class="s1">&#39;S3-22&#39;</span><span class="p">,</span> <span class="s1">&#39;S1-17&#39;</span><span class="p">,</span> <span class="s1">&#39;S1-34&#39;</span><span class="p">,</span> <span class="s1">&#39;S4-3&#39;</span><span class="p">,</span> <span class="s1">&#39;S1-1&#39;</span><span class="p">,</span>
+                         <span class="s1">&#39;S1-21&#39;</span><span class="p">,</span> <span class="s1">&#39;S3-370&#39;</span><span class="p">,</span> <span class="s1">&#39;S3-88&#39;</span><span class="p">,</span> <span class="s1">&#39;S3-36&#39;</span><span class="p">,</span> <span class="s1">&#39;S2-63&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">calFlags</span> <span class="o">=</span> <span class="s1">&#39;-f 1 -R &#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapFilter2Cal</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;kp&#39;</span><span class="p">:</span> <span class="s1">&#39;Kp&#39;</span><span class="p">,</span> <span class="s1">&#39;h&#39;</span><span class="p">:</span> <span class="s1">&#39;H&#39;</span><span class="p">,</span> <span class="s1">&#39;lp&#39;</span><span class="p">:</span> <span class="s1">&#39;Lp_o1&#39;</span><span class="p">,</span> <span class="s1">&#39;ms&#39;</span><span class="p">:</span> <span class="s1">&#39;Ms_o1&#39;</span><span class="p">}</span>
+        <span class="k">if</span> <span class="s1">&#39;kp&#39;</span> <span class="ow">in</span> <span class="n">filt</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">calColumn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mapFilter2Cal</span><span class="p">[</span><span class="s1">&#39;kp&#39;</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="s1">&#39;J&#39;</span> <span class="ow">in</span> <span class="n">filt</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">calColumn</span> <span class="o">=</span> <span class="s1">&#39;K_o2&#39;</span>
+        <span class="k">elif</span> <span class="n">filt</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mapFilter2Cal</span><span class="p">:</span> <span class="c1"># case for Maser mosaic, deep mosaic</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">calColumn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mapFilter2Cal</span><span class="p">[</span><span class="n">filt</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>                           <span class="c1">#default to kp if filt not in mapFilter2Cal.  Consider other solution to deal with unexpected filt</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">calColumn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mapFilter2Cal</span><span class="p">[</span><span class="s1">&#39;kp&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">calCooStar</span> <span class="o">=</span> <span class="s1">&#39;irs16C&#39;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">cooStar</span> <span class="o">=</span> <span class="s1">&#39;irs16C&#39;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">deblend</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">alignFlags</span> <span class="o">=</span> <span class="s1">&#39;-R 3 -v -p -a 0&#39;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">numSubMaps</span> <span class="o">=</span> <span class="mi">3</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">minSubMaps</span> <span class="o">=</span> <span class="mi">3</span>
+        
+        <span class="c1"># Setup input parameters </span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">epoch</span> <span class="o">=</span> <span class="n">epoch</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">rootDir</span> <span class="o">=</span> <span class="n">rootDir</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">rootDir</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rootDir</span> <span class="o">+=</span> <span class="s1">&#39;/&#39;</span>     
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">filt</span> <span class="o">=</span> <span class="n">filt</span>
+        
+        <span class="k">if</span> <span class="n">epochDirSuffix</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">suffix</span> <span class="o">=</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">epochDirSuffix</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">suffix</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+
+        <span class="k">if</span> <span class="n">imgSuffix</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">imgSuffix</span> <span class="o">=</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">imgSuffix</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">imgSuffix</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+
+        <span class="c1"># Setup Directories</span>
+        <span class="c1"># Epoch directory</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dirEpoch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rootDir</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">epoch</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">suffix</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span>
+        
+        <span class="c1"># Clean directory</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dirClean</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dirEpoch</span> <span class="o">+</span> <span class="s1">&#39;clean/&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">filt</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span>
+        <span class="k">if</span> <span class="n">clean_dir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dirClean</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">trimdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">clean_dir</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span>
+                                         <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">filt</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">useDistorted</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dirClean</span> <span class="o">+=</span> <span class="s1">&#39;distort/&#39;</span>
+        <span class="k">if</span> <span class="n">stfDir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dirCleanStf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dirClean</span> <span class="o">+</span> <span class="s1">&#39;starfinder/&#39;</span> <span class="o">+</span> <span class="n">stfDir</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dirCleanStf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dirClean</span> <span class="o">+</span> <span class="s1">&#39;starfinder/&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dirCleanAln</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dirCleanStf</span> <span class="o">+</span> <span class="s1">&#39;align/&#39;</span>
+        
+        <span class="c1"># Combo directory</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dirCombo</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dirEpoch</span> <span class="o">+</span> <span class="s1">&#39;combo/&#39;</span>
+        <span class="k">if</span> <span class="n">combo_dir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dirCombo</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">trimdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">combo_dir</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span>
+        
+        <span class="c1"># Starfinder directory</span>
+        <span class="n">starfinder_dir_name</span> <span class="o">=</span> <span class="s1">&#39;starfinder/&#39;</span>
+        <span class="k">if</span> <span class="n">stf_version</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">starfinder_dir_name</span> <span class="o">=</span> <span class="s1">&#39;starfinder_</span><span class="si">{0}</span><span class="s1">/&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">stf_version</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">stfDir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dirComboStf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dirCombo</span> <span class="o">+</span> <span class="n">starfinder_dir_name</span> <span class="o">+</span> <span class="n">stfDir</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dirComboStf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dirCombo</span> <span class="o">+</span> <span class="n">starfinder_dir_name</span>
+        
+        <span class="k">if</span> <span class="n">combo_stf_dir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dirComboStf</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">trimdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">combo_stf_dir</span><span class="p">)</span>
+                                            <span class="o">+</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">stfDir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">dirComboStf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dirComboStf</span> <span class="o">+</span> <span class="n">starfinder_dir_name</span> <span class="o">+</span> <span class="n">stfDir</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">dirComboStf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dirComboStf</span> <span class="o">+</span> <span class="n">starfinder_dir_name</span>
+        
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">dirComboAln</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dirComboStf</span> <span class="o">+</span> <span class="s1">&#39;align/&#39;</span>
+        
+        <span class="c1"># make the directories if we need to</span>
+        <span class="k">if</span> <span class="n">cleanList</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">util</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dirCleanStf</span><span class="p">)</span>
+            <span class="n">util</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dirCleanAln</span><span class="p">)</span>
+        <span class="n">util</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dirComboStf</span><span class="p">)</span>
+        <span class="n">util</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dirComboAln</span><span class="p">)</span>
+        
+        <span class="c1"># Get the list of clean files to work on</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cleanList</span> <span class="o">=</span> <span class="n">cleanList</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cleanFiles</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">cleanList</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">_list</span> <span class="o">=</span> <span class="n">Table</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dirClean</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">cleanList</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;ascii&#39;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">_list</span><span class="p">)):</span>
+                <span class="n">fields</span> <span class="o">=</span> <span class="n">_list</span><span class="p">[</span><span class="n">_list</span><span class="o">.</span><span class="n">colnames</span><span class="p">[</span><span class="mi">0</span><span class="p">]][</span><span class="n">ii</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+                <span class="n">filename</span> <span class="o">=</span> <span class="n">fields</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.fits&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">cleanFiles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+
+        <span class="c1"># Keep track of the current directory we started in</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dirStart</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
+
+        <span class="c1"># Set the default magnitude cut for plotPosError</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plotPosMagCut</span> <span class="o">=</span> <span class="mf">15.0</span>
+        
+<div class="viewcode-block" id="Analysis.prepStarfinder"><a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.prepStarfinder">[docs]</a>    <span class="k">def</span> <span class="nf">prepStarfinder</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">targetName</span><span class="p">,</span> <span class="n">targetCoords</span><span class="p">,</span> <span class="n">psfStars</span><span class="p">,</span> <span class="n">filterName</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Creates a _psf.list file and saves it in the source_list/ directory.&quot;&quot;&quot;</span>
+        
+        <span class="c1"># Covering possible variable inputs and initializing</span>
+        <span class="n">targetName</span> <span class="o">=</span> <span class="n">targetName</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="n">filterName</span> <span class="o">=</span> <span class="n">filterName</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span>
+        <span class="n">targetCoords</span> <span class="o">=</span> <span class="n">targetCoords</span><span class="p">[:]</span>
+        <span class="n">psfListLocation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rootDir</span> <span class="o">+</span> <span class="s1">&#39;source_list/&#39;</span> <span class="o">+</span> <span class="n">targetName</span> <span class="o">+</span> <span class="s1">&#39;_psf.list&#39;</span>
+        <span class="n">year</span> <span class="o">=</span> <span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y&quot;</span> <span class="o">+</span> <span class="s2">&quot;.0&quot;</span><span class="p">)</span>
+        
+        <span class="c1"># Modifying the starlist provided into an astropy table</span>
+        <span class="n">starno</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">star</span> <span class="ow">in</span> <span class="n">psfStars</span><span class="p">:</span>
+            <span class="n">star</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{:.3f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(((</span><span class="n">star</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">targetCoords</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">*</span> <span class="p">(</span><span class="mf">9.942</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">)</span> <span class="o">*</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+            <span class="n">star</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{:.3f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(((</span><span class="n">star</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">targetCoords</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">*</span> <span class="p">(</span><span class="mf">9.942</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">)))</span>
+            <span class="n">star</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;1.000&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">starno</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">star</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;S&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">starno</span><span class="p">)</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">star</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">targetName</span><span class="p">)</span>
+            <span class="n">star</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">)</span>
+            <span class="n">star</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">year</span><span class="p">)</span>
+            <span class="n">star</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="s2">&quot;0.000&quot;</span><span class="p">)</span>
+            <span class="n">star</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="s2">&quot;0.000&quot;</span><span class="p">)</span>
+            <span class="n">starno</span> <span class="o">+=</span> <span class="mi">1</span>
+            
+        <span class="n">psfStars</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">psfStars</span><span class="p">)</span>
+        <span class="n">psfStarTable</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">psfStars</span><span class="p">,</span> <span class="n">names</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;#Name&#39;</span><span class="p">,</span> <span class="s1">&#39;Kp&#39;</span><span class="p">,</span> <span class="s1">&#39;Xarc&#39;</span><span class="p">,</span>
+                                                      <span class="s1">&#39;Yarc&#39;</span><span class="p">,</span> <span class="s1">&#39;Vx&#39;</span><span class="p">,</span> <span class="s1">&#39;Vy&#39;</span><span class="p">,</span>
+                                                      <span class="s1">&#39;t0&#39;</span><span class="p">,</span> <span class="s1">&#39;Filt&#39;</span><span class="p">,</span> <span class="s1">&#39;PSF?&#39;</span><span class="p">))</span>
+        
+        <span class="n">ascii</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">psfStarTable</span><span class="p">,</span> <span class="n">psfListLocation</span><span class="p">,</span> 
+                    <span class="nb">format</span> <span class="o">=</span> <span class="s1">&#39;fixed_width&#39;</span><span class="p">,</span> 
+                    <span class="n">delimiter</span> <span class="o">=</span> <span class="s1">&#39;  &#39;</span><span class="p">,</span> 
+                    <span class="n">bookend</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> 
+                    <span class="n">overwrite</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span></div>
+    
+<div class="viewcode-block" id="Analysis.analyzeCombo"><a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.analyzeCombo">[docs]</a>    <span class="k">def</span> <span class="nf">analyzeCombo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">starfinderCombo</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">calibrateCombo</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alignCombo</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Analysis.analyzeClean"><a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.analyzeClean">[docs]</a>    <span class="k">def</span> <span class="nf">analyzeClean</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">starfinderClean</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">calibrateClean</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alignClean</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Analysis.analyzeComboClean"><a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.analyzeComboClean">[docs]</a>    <span class="k">def</span> <span class="nf">analyzeComboClean</span><span class="p">():</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">starfinderCombo</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">starfinderClean</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">calibrateCombo</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">calibrateClean</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alignCombo</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alignClean</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="Analysis.starfinderCombo"><a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.starfinderCombo">[docs]</a>    <span class="k">def</span> <span class="nf">starfinderCombo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">oldPsf</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;COMBO starfinder&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Coo Star: &#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">cooStar</span><span class="p">)</span>
+            
+            <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dirComboStf</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s1">&#39;ao&#39;</span><span class="p">:</span>
+                <span class="c1"># Write an IDL batch file</span>
+                <span class="n">fileIDLbatch</span> <span class="o">=</span> <span class="s1">&#39;idlbatch_combo_&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">filt</span>
+                <span class="n">fileIDLlog</span> <span class="o">=</span> <span class="n">fileIDLbatch</span> <span class="o">+</span> <span class="s1">&#39;.log&#39;</span>
+                <span class="n">util</span><span class="o">.</span><span class="n">rmall</span><span class="p">([</span><span class="n">fileIDLlog</span><span class="p">,</span> <span class="n">fileIDLbatch</span><span class="p">])</span>
+
+                <span class="n">_batch</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">fileIDLbatch</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+                <span class="n">_batch</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;find_stf_new, &quot;</span><span class="p">)</span>
+                <span class="n">_batch</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">epoch</span> <span class="o">+</span> <span class="s2">&quot;&#39;, &quot;</span><span class="p">)</span>
+                <span class="n">_batch</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">filt</span> <span class="o">+</span> <span class="s2">&quot;&#39;, &quot;</span><span class="p">)</span>
+                <span class="n">_batch</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;corr_main=</span><span class="si">%3.1f</span><span class="s2">, &quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">corrMain</span><span class="p">)</span>
+                <span class="n">_batch</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;corr_subs=</span><span class="si">%3.1f</span><span class="s2">, &quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">corrSub</span><span class="p">)</span>
+                <span class="c1"># Only send in the deblend flag if using it!</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">deblend</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">_batch</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;deblend=&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">deblend</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;, &quot;</span><span class="p">)</span>
+                <span class="n">_batch</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;cooStar=&#39;&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">cooStar</span> <span class="o">+</span> <span class="s2">&quot;&#39;, &quot;</span><span class="p">)</span>
+                <span class="n">_batch</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;suffixEpoch=&#39;&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">suffix</span> <span class="o">+</span> <span class="s2">&quot;&#39;, &quot;</span><span class="p">)</span>
+                <span class="n">_batch</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;imgSuffix=&#39;&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">imgSuffix</span> <span class="o">+</span> <span class="s2">&quot;&#39;, &quot;</span><span class="p">)</span>
+                <span class="n">_batch</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;starlist=&#39;&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">starlist</span> <span class="o">+</span> <span class="s2">&quot;&#39;, &quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">airopa_mode</span> <span class="o">==</span> <span class="s1">&#39;legacy&#39;</span><span class="p">:</span>
+                    <span class="n">_batch</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;/legacy, &quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">airopa_mode</span> <span class="o">==</span> <span class="s1">&#39;variable&#39;</span><span class="p">:</span>
+                    <span class="n">_batch</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;/aoopt, &quot;</span><span class="p">)</span>
+                <span class="n">_batch</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;trimfake=&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">trimfake</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;, &quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">oldPsf</span><span class="p">:</span>
+                    <span class="n">_batch</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;/makePsf, &quot;</span><span class="p">)</span>
+                
+                <span class="n">_batch</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;rootDir=&#39;&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">rootDir</span> <span class="o">+</span> <span class="s2">&quot;&#39;&quot;</span><span class="p">)</span>
+
+                <span class="c1"># Support for arbitrary starfinder flags.</span>
+                <span class="n">_batch</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stfFlags</span><span class="p">)</span>
+                
+                <span class="n">_batch</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">_batch</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;exit</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">_batch</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s1">&#39;speckle&#39;</span><span class="p">:</span>
+                <span class="n">fileIDLbatch</span> <span class="o">=</span> <span class="s1">&#39;idlbatch_combo&#39;</span> 
+                <span class="n">fileIDLlog</span> <span class="o">=</span> <span class="n">fileIDLbatch</span> <span class="o">+</span> <span class="s1">&#39;.log&#39;</span>
+                <span class="n">util</span><span class="o">.</span><span class="n">rmall</span><span class="p">([</span><span class="n">fileIDLlog</span><span class="p">,</span> <span class="n">fileIDLbatch</span><span class="p">])</span>
+                
+                <span class="n">_batch</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">fileIDLbatch</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+                <span class="n">_batch</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;find_new_speck, &quot;</span><span class="p">)</span>
+                <span class="n">_batch</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">epoch</span> <span class="o">+</span> <span class="s2">&quot;&#39;, &quot;</span><span class="p">)</span>
+                <span class="n">_batch</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;corr_main=</span><span class="si">%3.1f</span><span class="s2">, &quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">corrMain</span><span class="p">)</span>
+                <span class="n">_batch</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;corr_subs=</span><span class="si">%3.1f</span><span class="s2">, &quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">corrSub</span><span class="p">)</span>
+                <span class="n">_batch</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;starlist=&#39;&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">starlist</span> <span class="o">+</span> <span class="s2">&quot;&#39;, &quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">airopa_mode</span> <span class="o">==</span> <span class="s1">&#39;legacy&#39;</span><span class="p">:</span>
+                    <span class="n">_batch</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;/legacy, &quot;</span><span class="p">)</span>
+                <span class="c1"># Variable mode isn&#39;t supported for Speckle data. </span>
+                <span class="c1"># if mode == &#39;variable&#39;:</span>
+                <span class="c1">#     _batch.write(&quot;/aoopt, &quot;)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">oldPsf</span><span class="p">:</span>
+                    <span class="n">_batch</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;/makePsf, &quot;</span><span class="p">)</span>
+                <span class="n">_batch</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;rootDir=&#39;&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">rootDir</span> <span class="o">+</span> <span class="s2">&quot;&#39;&quot;</span><span class="p">)</span>
+                
+                <span class="c1"># Support for arbitrary starfinder flags.</span>
+                <span class="n">_batch</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stfFlags</span><span class="p">)</span>
+                
+                <span class="n">_batch</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">_batch</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;exit</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">_batch</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            
+            <span class="n">cmd</span> <span class="o">=</span> <span class="s1">&#39;idl &lt; &#39;</span> <span class="o">+</span> <span class="n">fileIDLbatch</span> <span class="o">+</span> <span class="s1">&#39; &gt;&amp; &#39;</span> <span class="o">+</span> <span class="n">fileIDLlog</span>            
+            <span class="c1">#os.system(cmd)</span>
+            <span class="n">subp</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">executable</span><span class="o">=</span><span class="s2">&quot;/bin/tcsh&quot;</span><span class="p">)</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="n">subp</span><span class="o">.</span><span class="n">communicate</span><span class="p">()</span>
+            
+            <span class="c1"># Write data_sources file</span>
+            <span class="n">data_sources_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dirComboStf</span> <span class="o">+</span> <span class="s1">&#39;/data_sources.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+            <span class="n">data_sources_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;---</span><span class="se">\n</span><span class="s1"># Starfinder run on image files</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+            
+            <span class="c1"># Copy over the starfinder FITS files to the current directory</span>
+            <span class="n">epoch_file_root</span> <span class="o">=</span> <span class="s1">&#39;mag</span><span class="si">{0}</span><span class="s1">_</span><span class="si">{1}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">epoch</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">filt</span><span class="p">)</span>
+            
+            <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dirCombo</span> <span class="o">+</span> <span class="n">epoch_file_root</span> <span class="o">+</span> <span class="s1">&#39;_back.fits&#39;</span><span class="p">,</span>
+                            <span class="n">epoch_file_root</span> <span class="o">+</span> <span class="s1">&#39;_back.fits&#39;</span><span class="p">)</span>
+            <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dirCombo</span> <span class="o">+</span> <span class="n">epoch_file_root</span> <span class="o">+</span> <span class="s1">&#39;_psf.fits&#39;</span><span class="p">,</span>
+                            <span class="n">epoch_file_root</span> <span class="o">+</span> <span class="s1">&#39;_psf.fits&#39;</span><span class="p">)</span>
+            <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dirCombo</span> <span class="o">+</span> <span class="n">epoch_file_root</span> <span class="o">+</span> <span class="s1">&#39;_res.fits&#39;</span><span class="p">,</span>
+                            <span class="n">epoch_file_root</span> <span class="o">+</span> <span class="s1">&#39;_res.fits&#39;</span><span class="p">)</span>
+            <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dirCombo</span> <span class="o">+</span> <span class="n">epoch_file_root</span> <span class="o">+</span> <span class="s1">&#39;_stars.fits&#39;</span><span class="p">,</span>
+                            <span class="n">epoch_file_root</span> <span class="o">+</span> <span class="s1">&#39;_stars.fits&#39;</span><span class="p">)</span>
+            
+            <span class="n">out_line</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{0}</span><span class="s1"> from </span><span class="si">{1}{2}</span><span class="s1"> (</span><span class="si">{3}</span><span class="s1">)</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">epoch_file_root</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dirCombo</span><span class="p">,</span>
+                <span class="n">epoch_file_root</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">())</span>
+            <span class="n">data_sources_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">out_line</span><span class="p">)</span>
+            
+            <span class="c1"># Copy over submap starfinder FITS files to the current directory</span>
+            <span class="n">epoch_sub_root</span> <span class="o">=</span> <span class="s1">&#39;m</span><span class="si">{0}</span><span class="s1">_</span><span class="si">{1}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">epoch</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">filt</span><span class="p">)</span>
+            
+            <span class="k">for</span> <span class="n">cur_sub_index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numSubMaps</span><span class="p">):</span>
+                <span class="n">cur_sub_str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">cur_sub_index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+                            
+                <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dirCombo</span> <span class="o">+</span> <span class="n">epoch_sub_root</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">cur_sub_str</span> <span class="o">+</span> <span class="s1">&#39;_back.fits&#39;</span><span class="p">,</span>
+                                <span class="n">epoch_sub_root</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">cur_sub_str</span> <span class="o">+</span> <span class="s1">&#39;_back.fits&#39;</span><span class="p">)</span>
+                <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dirCombo</span> <span class="o">+</span> <span class="n">epoch_sub_root</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">cur_sub_str</span> <span class="o">+</span> <span class="s1">&#39;_psf.fits&#39;</span><span class="p">,</span>
+                                <span class="n">epoch_sub_root</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">cur_sub_str</span> <span class="o">+</span> <span class="s1">&#39;_psf.fits&#39;</span><span class="p">)</span>
+                <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dirCombo</span> <span class="o">+</span> <span class="n">epoch_sub_root</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">cur_sub_str</span> <span class="o">+</span> <span class="s1">&#39;_res.fits&#39;</span><span class="p">,</span>
+                                <span class="n">epoch_sub_root</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">cur_sub_str</span> <span class="o">+</span> <span class="s1">&#39;_res.fits&#39;</span><span class="p">)</span>
+                <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dirCombo</span> <span class="o">+</span> <span class="n">epoch_sub_root</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">cur_sub_str</span> <span class="o">+</span> <span class="s1">&#39;_stars.fits&#39;</span><span class="p">,</span>
+                                <span class="n">epoch_sub_root</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">cur_sub_str</span> <span class="o">+</span> <span class="s1">&#39;_stars.fits&#39;</span><span class="p">)</span>
+                
+                <span class="n">out_line</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{0}</span><span class="s1"> from </span><span class="si">{1}{2}</span><span class="s1"> (</span><span class="si">{3}</span><span class="s1">)</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="n">epoch_sub_root</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">cur_sub_str</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dirCombo</span><span class="p">,</span>
+                    <span class="n">epoch_sub_root</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">cur_sub_str</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">,</span>
+                    <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">())</span>
+                <span class="n">data_sources_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">out_line</span><span class="p">)</span>
+            
+            <span class="c1"># Close data_sources file</span>
+            <span class="n">data_sources_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            
+            <span class="c1"># Copy over the PSF starlist that was used (for posterity).</span>
+            <span class="n">outPsfs</span> <span class="o">=</span> <span class="s1">&#39;mag</span><span class="si">%s%s</span><span class="s1">_</span><span class="si">%s</span><span class="s1">_psf_list.txt&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">epoch</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">imgSuffix</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">filt</span><span class="p">)</span>
+            <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">starlist</span><span class="p">,</span> <span class="n">outPsfs</span><span class="p">)</span>
+            
+            
+            <span class="c1"># Run the Strehl calculator to calculate Strehl on StarFinder PSFs</span>
+            <span class="c1"># Need list of PSFs file and coo files associated with each PSF file</span>
+            <span class="n">psf_file_list</span> <span class="o">=</span> <span class="p">[]</span>
+            
+            <span class="n">cur_psf_file</span> <span class="o">=</span> <span class="n">epoch_file_root</span> <span class="o">+</span> <span class="s1">&#39;_psf.fits&#39;</span>
+            <span class="n">cur_coo_file</span> <span class="o">=</span> <span class="n">epoch_file_root</span> <span class="o">+</span> <span class="s1">&#39;_psf.coo&#39;</span>
+            
+            <span class="n">psf_img</span><span class="p">,</span> <span class="n">psf_hdr</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getdata</span><span class="p">(</span><span class="n">cur_psf_file</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="p">(</span><span class="n">psf_y_size</span><span class="p">,</span> <span class="n">psf_x_size</span><span class="p">)</span> <span class="o">=</span> <span class="n">psf_img</span><span class="o">.</span><span class="n">shape</span>
+            
+            <span class="n">psf_x_coord</span> <span class="o">=</span> <span class="n">psf_x_size</span><span class="o">/</span><span class="mf">2.0</span>
+            <span class="n">psf_y_coord</span> <span class="o">=</span> <span class="n">psf_y_size</span><span class="o">/</span><span class="mf">2.0</span>
+            
+            <span class="n">coo_output</span> <span class="o">=</span> <span class="s1">&#39; </span><span class="si">{0:.3f}</span><span class="s1">   </span><span class="si">{1:.3f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">psf_x_coord</span><span class="p">,</span> <span class="n">psf_y_coord</span><span class="p">)</span>
+            
+            <span class="n">psf_file_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cur_psf_file</span><span class="p">)</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">cur_coo_file</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">out_coo_file</span><span class="p">:</span>
+                <span class="n">out_coo_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">coo_output</span><span class="p">)</span>
+            
+            <span class="k">for</span> <span class="n">cur_sub_index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numSubMaps</span><span class="p">):</span>
+                <span class="n">cur_sub_str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">cur_sub_index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="n">cur_psf_file</span> <span class="o">=</span> <span class="n">epoch_sub_root</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">cur_sub_str</span> <span class="o">+</span> <span class="s1">&#39;_psf.fits&#39;</span>
+                <span class="n">cur_coo_file</span> <span class="o">=</span> <span class="n">epoch_sub_root</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">cur_sub_str</span> <span class="o">+</span> <span class="s1">&#39;_psf.coo&#39;</span>
+                
+                <span class="n">psf_file_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cur_psf_file</span><span class="p">)</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">cur_coo_file</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">out_coo_file</span><span class="p">:</span>
+                    <span class="n">out_coo_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">coo_output</span><span class="p">)</span>
+            
+            <span class="n">strehl</span><span class="o">.</span><span class="n">calc_strehl</span><span class="p">(</span><span class="n">psf_file_list</span><span class="p">,</span>
+                               <span class="s1">&#39;stf_psf_strehl_</span><span class="si">{0}</span><span class="s1">.txt&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filt</span><span class="p">),</span>
+                               <span class="n">instrument</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">instrument</span><span class="p">)</span>
+            
+            <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dirStart</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dirStart</span><span class="p">)</span>
+            <span class="k">raise</span></div>
+            
+        
+<div class="viewcode-block" id="Analysis.starfinderClean"><a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.starfinderClean">[docs]</a>    <span class="k">def</span> <span class="nf">starfinderClean</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;CLEAN starfinder&#39;</span><span class="p">)</span>
+            
+            <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dirCleanStf</span><span class="p">)</span>
+            
+            <span class="c1"># Write an IDL batch file</span>
+            <span class="n">fileIDLbatch</span> <span class="o">=</span> <span class="s1">&#39;idlbatch_clean_&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">filt</span>
+            <span class="n">fileIDLlog</span> <span class="o">=</span> <span class="n">fileIDLbatch</span> <span class="o">+</span> <span class="s1">&#39;.log&#39;</span>
+            <span class="n">util</span><span class="o">.</span><span class="n">rmall</span><span class="p">([</span><span class="n">fileIDLlog</span><span class="p">,</span> <span class="n">fileIDLbatch</span><span class="p">])</span>
+            
+            <span class="n">_batch</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">fileIDLbatch</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+            <span class="n">_batch</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;find_stf_clean, &quot;</span><span class="p">)</span>
+            <span class="n">_batch</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">epoch</span> <span class="o">+</span> <span class="s2">&quot;&#39;, &quot;</span><span class="p">)</span>
+            <span class="n">_batch</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">filt</span> <span class="o">+</span> <span class="s2">&quot;&#39;, &quot;</span><span class="p">)</span>
+            <span class="n">_batch</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;corr=&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">corrClean</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;, &quot;</span><span class="p">)</span>
+            <span class="n">_batch</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;cooStar=&#39;&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">cooStar</span> <span class="o">+</span> <span class="s2">&quot;&#39;, &quot;</span><span class="p">)</span>
+            <span class="n">_batch</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;suffixEpoch=&#39;&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">suffix</span> <span class="o">+</span> <span class="s2">&quot;&#39;, &quot;</span><span class="p">)</span>
+            <span class="n">_batch</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;starlist=&#39;&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">starlist</span> <span class="o">+</span> <span class="s2">&quot;&#39;, &quot;</span><span class="p">)</span>
+            <span class="n">_batch</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;fileList=&#39;&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">cleanList</span> <span class="o">+</span> <span class="s2">&quot;&#39;, &quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">airopa_mode</span> <span class="o">==</span> <span class="s1">&#39;legacy&#39;</span><span class="p">:</span>
+                <span class="n">_batch</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;/legacy, &quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">airopa_mode</span> <span class="o">==</span> <span class="s1">&#39;variable&#39;</span><span class="p">:</span>
+                <span class="n">_batch</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;/aoopt, &quot;</span><span class="p">)</span>
+            <span class="n">_batch</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;trimfake=&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">trimfake</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;, &quot;</span><span class="p">)</span>
+            <span class="n">_batch</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;rootDir=&#39;&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">rootDir</span> <span class="o">+</span> <span class="s2">&quot;&#39;&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Support for arbitrary starfinder flags.</span>
+            <span class="n">_batch</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stfFlags</span><span class="p">)</span>
+            
+            <span class="n">_batch</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">_batch</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;exit</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">_batch</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            
+            <span class="n">cmd</span> <span class="o">=</span> <span class="s1">&#39;idl &lt; &#39;</span> <span class="o">+</span> <span class="n">fileIDLbatch</span> <span class="o">+</span> <span class="s1">&#39; &gt;&amp; &#39;</span> <span class="o">+</span> <span class="n">fileIDLlog</span>
+            <span class="c1">#os.system(cmd)</span>
+            <span class="n">subp</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">executable</span><span class="o">=</span><span class="s2">&quot;/bin/tcsh&quot;</span><span class="p">)</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="n">subp</span><span class="o">.</span><span class="n">communicate</span><span class="p">()</span>
+            
+            <span class="c1"># Copy over the PSF starlist that was used (for posterity).</span>
+            <span class="n">outPsfs</span> <span class="o">=</span> <span class="s1">&#39;c_</span><span class="si">%s</span><span class="s1">_</span><span class="si">%s</span><span class="s1">_psf_list.txt&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">epoch</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">filt</span><span class="p">)</span>
+            <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">starlist</span><span class="p">,</span> <span class="n">outPsfs</span><span class="p">)</span>
+            
+            <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dirStart</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dirStart</span><span class="p">)</span>
+            <span class="k">raise</span></div>
+
+<div class="viewcode-block" id="Analysis.starfinderCleanLoop"><a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.starfinderCleanLoop">[docs]</a>    <span class="k">def</span> <span class="nf">starfinderCleanLoop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;CLEAN starfinder loop&#39;</span><span class="p">)</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dirCleanStf</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">filename</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cleanFiles</span><span class="p">):</span>
+                <span class="c1"># Write an IDL batch file</span>
+                <span class="n">fileIDLbatch</span> <span class="o">=</span> <span class="n">filename</span> <span class="o">+</span> <span class="s1">&#39;_idlbatch&#39;</span>
+                <span class="n">fileIDLlog</span> <span class="o">=</span> <span class="n">fileIDLbatch</span> <span class="o">+</span> <span class="s1">&#39;.log&#39;</span>
+                <span class="n">util</span><span class="o">.</span><span class="n">rmall</span><span class="p">([</span><span class="n">fileIDLlog</span><span class="p">,</span> <span class="n">fileIDLbatch</span><span class="p">])</span>
+
+                <span class="n">_batch</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">fileIDLbatch</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+                <span class="n">_batch</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;find_stf, &quot;</span><span class="p">)</span>
+                <span class="n">_batch</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">dirClean</span> <span class="o">+</span> <span class="n">filename</span> <span class="o">+</span> <span class="s2">&quot;.fits&#39;, &quot;</span><span class="p">)</span>
+                <span class="n">_batch</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;[&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">corrClean</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;], &quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">airopa_mode</span> <span class="o">==</span><span class="s1">&#39;single&#39;</span><span class="p">:</span>
+                    <span class="n">_batch</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;aoopt=0, &quot;</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">airopa_mode</span> <span class="o">==</span> <span class="s1">&#39;legacy&#39;</span><span class="p">:</span>
+                    <span class="n">_batch</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;/legacy, &quot;</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">airopa_mode</span> <span class="o">==</span> <span class="s1">&#39;variable&#39;</span><span class="p">:</span>
+                    <span class="n">_batch</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;/aoopt, &quot;</span><span class="p">)</span>
+
+                <span class="c1"># Support for arbitrary starfinder flags.</span>
+                <span class="n">_batch</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stfFlags</span><span class="p">)</span>
+
+                <span class="n">_batch</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;starlist=&#39;&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">starlist</span> <span class="o">+</span> <span class="s2">&quot;&#39;, &quot;</span><span class="p">)</span>
+                <span class="n">_batch</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;cooStar=&#39;&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">cooStar</span> <span class="o">+</span> <span class="s2">&quot;&#39;&quot;</span><span class="p">)</span>          <span class="c1">#no trailing comma for final parameter</span>
+
+                <span class="n">_batch</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">_batch</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;exit</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">_batch</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+                
+                <span class="n">cmd</span> <span class="o">=</span> <span class="s1">&#39;idl &lt; &#39;</span> <span class="o">+</span> <span class="n">fileIDLbatch</span> <span class="o">+</span> <span class="s1">&#39; &gt;&amp; &#39;</span> <span class="o">+</span> <span class="n">fileIDLlog</span>
+                <span class="c1">#os.system(cmd)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Running&#39;</span><span class="p">,</span> <span class="n">cmd</span><span class="p">)</span>
+                <span class="n">subp</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">executable</span><span class="o">=</span><span class="s2">&quot;/bin/tcsh&quot;</span><span class="p">)</span>
+                <span class="n">tmp</span> <span class="o">=</span> <span class="n">subp</span><span class="o">.</span><span class="n">communicate</span><span class="p">()</span>
+            
+            <span class="c1"># Copy over the PSF starlist that was used (for posterity).</span>
+            <span class="n">outPsfs</span> <span class="o">=</span> <span class="s1">&#39;c_</span><span class="si">%s</span><span class="s1">_</span><span class="si">%s</span><span class="s1">_psf_list.txt&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">epoch</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">filt</span><span class="p">)</span>
+            <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">starlist</span><span class="p">,</span> <span class="n">outPsfs</span><span class="p">)</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dirStart</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dirStart</span><span class="p">)</span>
+            <span class="k">raise</span></div>
+
+<div class="viewcode-block" id="Analysis.calibrateCombo"><a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.calibrateCombo">[docs]</a>    <span class="k">def</span> <span class="nf">calibrateCombo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;COMBO calibrate&#39;</span><span class="p">)</span>
+            
+            <span class="c1"># Get the position angle from the *.fits header</span>
+            <span class="c1"># We assume that the submaps have the same PA as the main maps</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dirCombo</span><span class="p">)</span>
+
+            <span class="n">calCamera</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s1">&#39;ao&#39;</span><span class="p">:</span>
+                <span class="n">fitsFile</span> <span class="o">=</span> <span class="s1">&#39;mag</span><span class="si">%s%s</span><span class="s1">_</span><span class="si">%s</span><span class="s1">.fits&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">epoch</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">imgSuffix</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">filt</span><span class="p">)</span>
+                <span class="n">hdr</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getheader</span><span class="p">(</span><span class="n">fitsFile</span><span class="p">)</span>
+                <span class="n">angle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">instrument</span><span class="o">.</span><span class="n">get_position_angle</span><span class="p">(</span><span class="n">hdr</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">instrument</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+                
+                <span class="c1"># Check for wide camera</span>
+                <span class="n">calCamera</span> <span class="o">=</span> <span class="n">calibrate</span><span class="o">.</span><span class="n">get_camera_type</span><span class="p">(</span><span class="n">fitsFile</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s1">&#39;speckle&#39;</span><span class="p">:</span>
+                <span class="n">angle</span> <span class="o">=</span> <span class="mf">0.0</span>
+                <span class="n">fitsFile</span> <span class="o">=</span> <span class="s1">&#39;mag</span><span class="si">%s</span><span class="s1">.fits&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">epoch</span>
+
+            
+            <span class="c1"># CALIBRATE</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dirComboStf</span><span class="p">)</span>
+
+            <span class="n">cmd</span> <span class="o">=</span> <span class="s1">&#39;calibrate_new </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">calFlags</span>
+            <span class="n">cmd</span> <span class="o">+=</span> <span class="s1">&#39;-T </span><span class="si">%.1f</span><span class="s1"> &#39;</span> <span class="o">%</span> <span class="n">angle</span>
+            <span class="n">cmd</span> <span class="o">+=</span> <span class="s1">&#39;-I </span><span class="si">%s</span><span class="s1"> &#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">calCooStar</span>
+            <span class="n">cmd</span> <span class="o">+=</span> <span class="s1">&#39;-N </span><span class="si">%s</span><span class="s1"> &#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">calFile</span>
+            <span class="n">cmd</span> <span class="o">+=</span> <span class="s1">&#39;-M </span><span class="si">%s</span><span class="s1"> &#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">calColumn</span>
+            <span class="n">cmd</span> <span class="o">+=</span> <span class="s1">&#39;-c </span><span class="si">%d</span><span class="s1"> &#39;</span> <span class="o">%</span> <span class="n">calCamera</span>
+            <span class="n">cmd</span> <span class="o">+=</span> <span class="s1">&#39;-V &#39;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">calStars</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">calStars</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">):</span>
+                <span class="n">cmd</span> <span class="o">+=</span> <span class="s1">&#39;-S &#39;</span>
+                <span class="k">for</span> <span class="n">cc</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">calStars</span><span class="p">)):</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="n">cc</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">):</span>
+                        <span class="n">cmd</span> <span class="o">+=</span> <span class="s1">&#39;,&#39;</span>
+                    <span class="n">cmd</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calStars</span><span class="p">[</span><span class="n">cc</span><span class="p">]</span>
+            <span class="n">cmd</span> <span class="o">+=</span> <span class="s1">&#39; &#39;</span>
+
+            <span class="c1"># Calibrate Main Map</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s1">&#39;speckle&#39;</span><span class="p">:</span>   <span class="c1"># This stuff is left over.</span>
+                <span class="n">fileMain</span> <span class="o">=</span> <span class="s1">&#39;mag</span><span class="si">%s</span><span class="s1">_</span><span class="si">%3.1f</span><span class="s1">_stf.lis&#39;</span> <span class="o">%</span> \
+                <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">epoch</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">corrMain</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">deblend</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">fileMain</span> <span class="o">=</span> <span class="s1">&#39;mag</span><span class="si">%s%s</span><span class="s1">_</span><span class="si">%s</span><span class="s1">_</span><span class="si">%3.1f</span><span class="s1">d_stf.lis&#39;</span> <span class="o">%</span> \
+                    <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">epoch</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">imgSuffix</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">filt</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">corrMain</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">fileMain</span> <span class="o">=</span> <span class="s1">&#39;mag</span><span class="si">%s%s</span><span class="s1">_</span><span class="si">%s</span><span class="s1">_</span><span class="si">%3.1f</span><span class="s1">_stf.lis&#39;</span> <span class="o">%</span> \
+                    <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">epoch</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">imgSuffix</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">filt</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">corrMain</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">cmd</span> <span class="o">+</span> <span class="n">fileMain</span><span class="p">)</span>
+
+            <span class="c1"># Now call from within python... don&#39;t bother with command line anymore.</span>
+            <span class="n">argsTmp</span> <span class="o">=</span> <span class="n">cmd</span> <span class="o">+</span> <span class="n">fileMain</span>
+            <span class="n">args</span> <span class="o">=</span> <span class="n">argsTmp</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">1</span><span class="p">:]</span>
+            <span class="n">calibrate</span><span class="o">.</span><span class="n">main</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+
+            <span class="c1"># Copy over the calibration list.</span>
+            <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">calFile</span><span class="p">,</span> <span class="n">fileMain</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.lis&#39;</span><span class="p">,</span> <span class="s1">&#39;_cal_phot_list.txt&#39;</span><span class="p">))</span>
+            
+            <span class="c1"># Calibrate Sub Maps</span>
+            <span class="k">for</span> <span class="n">ss</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numSubMaps</span><span class="p">):</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s1">&#39;speckle&#39;</span><span class="p">:</span>
+                    <span class="n">fileSub</span> <span class="o">=</span> <span class="s1">&#39;m</span><span class="si">%s</span><span class="s1">_</span><span class="si">%d</span><span class="s1">_</span><span class="si">%3.1f</span><span class="s1">_stf.lis&#39;</span> <span class="o">%</span> \
+                        <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">epoch</span><span class="p">,</span> <span class="n">ss</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">corrSub</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">deblend</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="n">fileSub</span> <span class="o">=</span> <span class="s1">&#39;m</span><span class="si">%s%s</span><span class="s1">_</span><span class="si">%s</span><span class="s1">_</span><span class="si">%d</span><span class="s1">_</span><span class="si">%3.1f</span><span class="s1">d_stf.lis&#39;</span> <span class="o">%</span> \
+                        <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">epoch</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">imgSuffix</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">filt</span><span class="p">,</span> <span class="n">ss</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">corrSub</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">fileSub</span> <span class="o">=</span> <span class="s1">&#39;m</span><span class="si">%s%s</span><span class="s1">_</span><span class="si">%s</span><span class="s1">_</span><span class="si">%d</span><span class="s1">_</span><span class="si">%3.1f</span><span class="s1">_stf.lis&#39;</span> <span class="o">%</span> \
+                        <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">epoch</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">imgSuffix</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">filt</span><span class="p">,</span> <span class="n">ss</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">corrSub</span><span class="p">)</span>
+
+                <span class="nb">print</span><span class="p">(</span><span class="n">cmd</span> <span class="o">+</span> <span class="n">fileSub</span><span class="p">)</span>
+                
+                <span class="n">argsTmp</span> <span class="o">=</span> <span class="n">cmd</span> <span class="o">+</span> <span class="n">fileSub</span>
+                <span class="n">args</span> <span class="o">=</span> <span class="n">argsTmp</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">1</span><span class="p">:]</span>
+                <span class="n">calibrate</span><span class="o">.</span><span class="n">main</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+
+            <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dirStart</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dirStart</span><span class="p">)</span>
+            <span class="k">raise</span></div>
+
+<div class="viewcode-block" id="Analysis.calibrateClean"><a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.calibrateClean">[docs]</a>    <span class="k">def</span> <span class="nf">calibrateClean</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Calibrate each file</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dirCleanStf</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;DEBUG 2nd dec --&quot;</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">dirCleanStf</span><span class="p">)</span>
+            <span class="c1"># open writeable file for log</span>
+            <span class="n">_log</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;calibrate.log&#39;</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">)</span>
+
+
+            <span class="n">cmdBase</span> <span class="o">=</span> <span class="s1">&#39;calibrate_new </span><span class="si">%s</span><span class="s1"> &#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">calFlags</span>
+            <span class="n">cmdBase</span> <span class="o">+=</span> <span class="s1">&#39;-I </span><span class="si">%s</span><span class="s1"> &#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">calCooStar</span>
+            <span class="n">cmdBase</span> <span class="o">+=</span> <span class="s1">&#39;-N </span><span class="si">%s</span><span class="s1"> &#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">calFile</span>
+            <span class="n">cmdBase</span> <span class="o">+=</span> <span class="s1">&#39;-M </span><span class="si">%s</span><span class="s1"> &#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">calColumn</span>
+            <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">calStars</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">calStars</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">):</span>
+                <span class="n">cmdBase</span> <span class="o">+=</span> <span class="s1">&#39;-S &#39;</span>
+                <span class="k">for</span> <span class="n">cc</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">calStars</span><span class="p">)):</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="n">cc</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">):</span>
+                        <span class="n">cmdBase</span> <span class="o">+=</span> <span class="s1">&#39;,&#39;</span>
+                    <span class="n">cmdBase</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calStars</span><span class="p">[</span><span class="n">cc</span><span class="p">]</span>
+            <span class="n">cmdBase</span> <span class="o">+=</span> <span class="s1">&#39; &#39;</span>
+
+            <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cleanFiles</span><span class="p">:</span>
+                <span class="n">fitsFile</span> <span class="o">=</span> <span class="s1">&#39;../</span><span class="si">%s</span><span class="s1">.fits&#39;</span> <span class="o">%</span> <span class="n">file</span>
+                <span class="n">listFile</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">_</span><span class="si">%3.1f</span><span class="s1">_stf.lis&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">corrClean</span><span class="p">)</span>
+
+                <span class="c1"># Get the position angle</span>
+                <span class="n">angle</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">fits</span><span class="o">.</span><span class="n">getval</span><span class="p">(</span><span class="n">fitsFile</span><span class="p">,</span> <span class="s1">&#39;ROTPOSN&#39;</span><span class="p">))</span> <span class="o">-</span> <span class="mf">0.7</span>
+                <span class="n">calCamera</span> <span class="o">=</span> <span class="n">calibrate</span><span class="o">.</span><span class="n">get_camera_type</span><span class="p">(</span><span class="n">fitsFile</span><span class="p">)</span>
+
+                <span class="n">cmd</span> <span class="o">=</span> <span class="n">cmdBase</span> <span class="o">+</span> <span class="p">(</span><span class="s1">&#39;-T </span><span class="si">%.1f</span><span class="s1"> -c </span><span class="si">%d</span><span class="s1"> &#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">angle</span><span class="p">,</span> <span class="n">calCamera</span><span class="p">))</span>
+
+                <span class="n">cmd</span> <span class="o">+=</span> <span class="n">listFile</span>
+
+                <span class="c1"># 2nd dec 2009 - changed &quot;_out&quot; &quot;_log&quot;</span>
+                <span class="n">_log</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">cmd</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+                <span class="n">args</span> <span class="o">=</span> <span class="n">cmd</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">1</span><span class="p">:]</span>
+                <span class="n">calibrate</span><span class="o">.</span><span class="n">main</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+
+            <span class="n">_log</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>  <span class="c1"># clean up</span>
+
+            <span class="c1"># Copy over the calibration list.</span>
+            <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">calFile</span><span class="p">,</span> <span class="s1">&#39;clean_phot_list.txt&#39;</span><span class="p">)</span>
+            
+            <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dirStart</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dirStart</span><span class="p">)</span>
+            <span class="k">raise</span></div>
+
+<div class="viewcode-block" id="Analysis.alignCombo"><a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.alignCombo">[docs]</a>    <span class="k">def</span> <span class="nf">alignCombo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;ALIGN_RMS combo&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s1">&#39;ao&#39;</span><span class="p">:</span>
+            <span class="n">file_ext</span> <span class="o">=</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">filt</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">file_ext</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filt</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dirCombo</span><span class="p">)</span>
+            <span class="c1"># Get the align data type</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s1">&#39;ao&#39;</span><span class="p">:</span>
+                <span class="n">fitsFile</span> <span class="o">=</span> <span class="s1">&#39;mag</span><span class="si">%s%s</span><span class="s1">_</span><span class="si">%s</span><span class="s1">.fits&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">epoch</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">imgSuffix</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">filt</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s1">&#39;speckle&#39;</span><span class="p">:</span>
+                <span class="n">fitsFile</span> <span class="o">=</span> <span class="s1">&#39;mag</span><span class="si">%s</span><span class="s1">.fits&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">epoch</span>
+            <span class="n">hdr</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getheader</span><span class="p">(</span><span class="n">fitsFile</span><span class="p">)</span>
+            <span class="n">alignType</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">instrument</span><span class="o">.</span><span class="n">get_align_type</span><span class="p">(</span><span class="n">hdr</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+
+            <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dirComboAln</span><span class="p">)</span>
+
+            <span class="c1"># Put the files in to the align*.list file</span>
+            <span class="n">alnList1</span> <span class="o">=</span> <span class="s1">&#39;align</span><span class="si">%s%s</span><span class="s1">_</span><span class="si">%3.1f</span><span class="s1">.list&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">imgSuffix</span><span class="p">,</span> <span class="n">file_ext</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">corrMain</span><span class="p">)</span>
+            <span class="n">alnList2</span> <span class="o">=</span> <span class="s1">&#39;align</span><span class="si">%s%s</span><span class="s1">_</span><span class="si">%3.1f</span><span class="s1">_named.list&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">imgSuffix</span><span class="p">,</span> <span class="n">file_ext</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">corrMain</span><span class="p">)</span>
+
+
+            <span class="n">_list</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">alnList1</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">deblend</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">_list</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;../mag</span><span class="si">%s%s%s</span><span class="s1">_</span><span class="si">%3.1f</span><span class="s1">d_stf_cal.lis </span><span class="si">%d</span><span class="s1"> ref</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">%</span>
+                            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">epoch</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">imgSuffix</span><span class="p">,</span> <span class="n">file_ext</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">corrMain</span><span class="p">,</span> <span class="n">alignType</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">_list</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;../mag</span><span class="si">%s%s%s</span><span class="s1">_</span><span class="si">%3.1f</span><span class="s1">_stf_cal.lis </span><span class="si">%d</span><span class="s1"> ref</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">%</span>
+                            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">epoch</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">imgSuffix</span><span class="p">,</span> <span class="n">file_ext</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">corrMain</span><span class="p">,</span> <span class="n">alignType</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">ss</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numSubMaps</span><span class="p">):</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">deblend</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">_list</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;../m</span><span class="si">%s%s%s</span><span class="s1">_</span><span class="si">%d</span><span class="s1">_</span><span class="si">%3.1f</span><span class="s1">d_stf_cal.lis </span><span class="si">%d</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">%</span>
+                                <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">epoch</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">imgSuffix</span><span class="p">,</span> <span class="n">file_ext</span><span class="p">,</span> <span class="n">ss</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">corrSub</span><span class="p">,</span> <span class="n">alignType</span><span class="p">))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">_list</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;../m</span><span class="si">%s%s%s</span><span class="s1">_</span><span class="si">%d</span><span class="s1">_</span><span class="si">%3.1f</span><span class="s1">_stf_cal.lis </span><span class="si">%d</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">%</span>
+                                <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">epoch</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">imgSuffix</span><span class="p">,</span> <span class="n">file_ext</span><span class="p">,</span> <span class="n">ss</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">corrSub</span><span class="p">,</span> <span class="n">alignType</span><span class="p">))</span>
+
+                    
+            <span class="n">_list</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+            <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">alnList1</span><span class="p">,</span> <span class="n">alnList2</span><span class="p">)</span>
+
+            <span class="c1"># Make an unlabeled version</span>
+            <span class="n">cmd</span> <span class="o">=</span> <span class="s1">&#39;java -Xmx1024m align </span><span class="si">%s</span><span class="s1"> &#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">alignFlags</span><span class="p">)</span>
+            <span class="n">cmd</span> <span class="o">+=</span> <span class="s1">&#39;-r align</span><span class="si">%s%s</span><span class="s1">_</span><span class="si">%3.1f</span><span class="s1"> &#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">imgSuffix</span><span class="p">,</span> <span class="n">file_ext</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">corrMain</span><span class="p">)</span>
+            <span class="n">cmd</span> <span class="o">+=</span> <span class="n">alnList1</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+            <span class="c1">#os.system(cmd)</span>
+            <span class="n">subp</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">executable</span><span class="o">=</span><span class="s2">&quot;/bin/tcsh&quot;</span><span class="p">)</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="n">subp</span><span class="o">.</span><span class="n">communicate</span><span class="p">()</span>
+
+            <span class="c1"># Make a named/labeled version</span>
+            <span class="n">cmd</span> <span class="o">=</span> <span class="s1">&#39;java -Xmx1024m align </span><span class="si">%s</span><span class="s1"> &#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">alignFlags</span><span class="p">)</span>
+            <span class="n">cmd</span> <span class="o">+=</span> <span class="s1">&#39;-N </span><span class="si">%s</span><span class="s1"> &#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">labellist</span>
+            <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">orbitlist</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">orbitlist</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span><span class="p">):</span>
+                <span class="n">cmd</span> <span class="o">+=</span> <span class="s1">&#39;-o </span><span class="si">%s</span><span class="s1"> &#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">orbitlist</span>
+            <span class="n">cmd</span> <span class="o">+=</span> <span class="s1">&#39;-r align</span><span class="si">%s%s</span><span class="s1">_</span><span class="si">%3.1f</span><span class="s1">_named &#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">imgSuffix</span><span class="p">,</span> <span class="n">file_ext</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">corrMain</span><span class="p">)</span>
+            <span class="n">cmd</span> <span class="o">+=</span> <span class="n">alnList2</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+
+            <span class="n">subp</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">executable</span><span class="o">=</span><span class="s2">&quot;/bin/tcsh&quot;</span><span class="p">)</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="n">subp</span><span class="o">.</span><span class="n">communicate</span><span class="p">()</span>
+
+
+            <span class="n">align_options</span> <span class="o">=</span> <span class="s1">&#39;align</span><span class="si">%s%s</span><span class="s1">_</span><span class="si">%3.1f</span><span class="s1"> </span><span class="si">%d</span><span class="s1"> -e&#39;</span> <span class="o">%</span> \
+              <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">imgSuffix</span><span class="p">,</span> <span class="n">file_ext</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">corrMain</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">minSubMaps</span><span class="p">)</span>
+            <span class="n">align_rms</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">align_options</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+
+            <span class="n">align_options</span> <span class="o">=</span> <span class="s1">&#39;align</span><span class="si">%s%s</span><span class="s1">_</span><span class="si">%3.1f</span><span class="s1">_named </span><span class="si">%d</span><span class="s1"> -e&#39;</span> <span class="o">%</span> \
+              <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">imgSuffix</span><span class="p">,</span> <span class="n">file_ext</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">corrMain</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">minSubMaps</span><span class="p">)</span>
+            <span class="n">align_rms</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">align_options</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+
+
+            <span class="c1"># Move the resulting files to their final resting place</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="s1">&#39;align</span><span class="si">%s%s</span><span class="s1">_</span><span class="si">%3.1f</span><span class="s1">_rms.lis&#39;</span> <span class="o">%</span> 
+                      <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">imgSuffix</span><span class="p">,</span> <span class="n">file_ext</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">corrMain</span><span class="p">),</span>
+                      <span class="s1">&#39;../mag</span><span class="si">%s%s%s</span><span class="s1">_rms.lis&#39;</span> <span class="o">%</span> 
+                      <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">epoch</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">imgSuffix</span><span class="p">,</span> <span class="n">file_ext</span><span class="p">))</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="s1">&#39;align</span><span class="si">%s%s</span><span class="s1">_</span><span class="si">%3.1f</span><span class="s1">_named_rms.lis&#39;</span> <span class="o">%</span> 
+                      <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">imgSuffix</span><span class="p">,</span> <span class="n">file_ext</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">corrMain</span><span class="p">),</span>
+                      <span class="s1">&#39;../mag</span><span class="si">%s%s%s</span><span class="s1">_rms_named.lis&#39;</span> <span class="o">%</span> 
+                      <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">epoch</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">imgSuffix</span><span class="p">,</span> <span class="n">file_ext</span><span class="p">))</span>
+
+            <span class="c1"># Copy over the label.dat and orbit.dat file that was used.</span>
+            <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">labellist</span><span class="p">,</span>
+                            <span class="s1">&#39;align</span><span class="si">%s%s</span><span class="s1">_</span><span class="si">%3.1f</span><span class="s1">_named_label_list.txt&#39;</span> <span class="o">%</span> 
+                            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">imgSuffix</span><span class="p">,</span> <span class="n">file_ext</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">corrMain</span><span class="p">))</span>
+                            
+            <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">orbitlist</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">orbitlist</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span><span class="p">):</span>
+                <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">orbitlist</span><span class="p">,</span>
+                                <span class="s1">&#39;align</span><span class="si">%s%s</span><span class="s1">_</span><span class="si">%3.1f</span><span class="s1">_named_orbit_list.txt&#39;</span> <span class="o">%</span> 
+                                <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">imgSuffix</span><span class="p">,</span> <span class="n">file_ext</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">corrMain</span><span class="p">))</span>
+
+            <span class="c1"># Now plot up the results</span>
+            <span class="n">plotSuffix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">imgSuffix</span> <span class="o">+</span> <span class="n">file_ext</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dirComboStf</span><span class="p">)</span>
+            <span class="n">plotPosError</span><span class="p">(</span><span class="s1">&#39;mag</span><span class="si">%s%s%s</span><span class="s1">_rms.lis&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">epoch</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">imgSuffix</span><span class="p">,</span> <span class="n">file_ext</span><span class="p">),</span>
+                         <span class="n">raw</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="n">plotSuffix</span><span class="p">,</span> <span class="n">magCutOff</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">plotPosMagCut</span><span class="p">)</span>
+
+            <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dirStart</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dirStart</span><span class="p">)</span>
+            <span class="k">raise</span></div>
+
+    
+<div class="viewcode-block" id="Analysis.alignClean"><a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.alignClean">[docs]</a>    <span class="k">def</span> <span class="nf">alignClean</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dirClean</span><span class="p">)</span>
+
+            <span class="c1"># Get the align data type</span>
+            <span class="n">fitsFile</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cleanFiles</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span>
+            <span class="n">hdr</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getheader</span><span class="p">(</span><span class="n">fitsFile</span><span class="p">)</span>
+            <span class="n">alignType</span> <span class="o">=</span> <span class="n">instrument</span><span class="o">.</span><span class="n">get_align_type</span><span class="p">(</span><span class="n">hdr</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">alignCombo</span> <span class="o">=</span> <span class="n">alignType</span> <span class="o">+</span> <span class="mi">1</span>
+
+            <span class="c1"># Make the align*.list file</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dirCleanAln</span><span class="p">)</span>
+            <span class="n">alnList</span> <span class="o">=</span> <span class="s1">&#39;align_</span><span class="si">%s%s</span><span class="s1">_</span><span class="si">%3.1f</span><span class="s1">.list&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">imgSuffix</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">filt</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">corrClean</span><span class="p">)</span>
+            <span class="n">_list</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">alnList</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+
+            <span class="c1"># copy main map into it</span>
+            <span class="n">_list</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">mag</span><span class="si">%s%s</span><span class="s1">_</span><span class="si">%s</span><span class="s1">_rms.lis </span><span class="si">%d</span><span class="s1"> ref</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">%</span> 
+                        <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dirComboStf</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">epoch</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">imgSuffix</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">filt</span><span class="p">,</span> <span class="n">alignCombo</span><span class="p">))</span>
+            <span class="c1"># Add each clean file</span>
+            <span class="k">for</span> <span class="n">ff</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cleanFiles</span><span class="p">:</span>
+                <span class="n">_list</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;../</span><span class="si">%s</span><span class="s1">_</span><span class="si">%3.1f</span><span class="s1">_stf_cal.lis </span><span class="si">%d</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">%</span>
+                            <span class="p">(</span><span class="n">ff</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">corrClean</span><span class="p">,</span> <span class="n">alignType</span><span class="p">))</span>
+            <span class="n">_list</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+            <span class="c1"># Run align</span>
+            <span class="n">cmd</span> <span class="o">=</span> <span class="s1">&#39;java -Xmx1024m align </span><span class="si">%s</span><span class="s1"> &#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">alignFlags</span><span class="p">)</span>
+            <span class="n">cmd</span> <span class="o">+=</span> <span class="s1">&#39;-N </span><span class="si">%s</span><span class="s1"> &#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">labellist</span>
+            <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">orbitlist</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">orbitlist</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span><span class="p">):</span>
+                <span class="n">cmd</span> <span class="o">+=</span> <span class="s1">&#39;-o </span><span class="si">%s</span><span class="s1"> &#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">orbitlist</span>
+            <span class="n">cmd</span> <span class="o">+=</span> <span class="s1">&#39;-r align_</span><span class="si">%s%s</span><span class="s1">_</span><span class="si">%3.1f</span><span class="s1">_named &#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">imgSuffix</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">filt</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">corrClean</span><span class="p">)</span>
+            <span class="n">cmd</span> <span class="o">+=</span> <span class="n">alnList</span>
+
+            <span class="c1">#os.system(cmd)</span>
+            <span class="n">subp</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">executable</span><span class="o">=</span><span class="s2">&quot;/bin/tcsh&quot;</span><span class="p">)</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="n">subp</span><span class="o">.</span><span class="n">communicate</span><span class="p">()</span>
+
+
+            <span class="c1"># Copy over the label.dat file that was used.</span>
+            <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">labellist</span><span class="p">,</span>
+                            <span class="s1">&#39;align_</span><span class="si">%s%s</span><span class="s1">_</span><span class="si">%3.1f</span><span class="s1">_named_label_list.txt&#39;</span> <span class="o">%</span> 
+                            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">imgSuffix</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">filt</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">corrClean</span><span class="p">))</span>
+            <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">orbitlist</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">orbitlist</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span><span class="p">):</span>
+                <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">orbitlist</span><span class="p">,</span>
+                                <span class="s1">&#39;align_</span><span class="si">%s%s</span><span class="s1">_</span><span class="si">%3.1f</span><span class="s1">_named_orbit_list.txt&#39;</span> <span class="o">%</span> 
+                                <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">imgSuffix</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">filt</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">corrClean</span><span class="p">))</span>
+                            
+            <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dirStart</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dirStart</span><span class="p">)</span>
+            <span class="k">raise</span></div></div>
+
+
+<div class="viewcode-block" id="plotPosError"><a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.plotPosError">[docs]</a><span class="k">def</span> <span class="nf">plotPosError</span><span class="p">(</span><span class="n">starlist</span><span class="p">,</span> <span class="n">raw</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">magCutOff</span><span class="o">=</span><span class="mf">15.0</span><span class="p">,</span>
+                 <span class="n">title</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Make three standard figures that show the data quality </span>
+<span class="sd">    from  a *_rms.lis file. </span>
+
+<span class="sd">    1. astrometric error as a function of magnitude.</span>
+<span class="sd">    2. photometric error as a function of magnitude.</span>
+<span class="sd">    3. histogram of number of stars vs. magnitude.</span>
+
+<span class="sd">    Use raw=True to plot the individual stars in plots 1 and 2.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Load up the starlist</span>
+    <span class="n">lis</span> <span class="o">=</span> <span class="n">Table</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">starlist</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;ascii&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Assume this is NIRC2 data.</span>
+    <span class="n">scale</span> <span class="o">=</span> <span class="mf">0.00995</span>
+    
+    <span class="n">name</span> <span class="o">=</span> <span class="n">lis</span><span class="p">[</span><span class="n">lis</span><span class="o">.</span><span class="n">colnames</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+    <span class="n">mag</span> <span class="o">=</span> <span class="n">lis</span><span class="p">[</span><span class="n">lis</span><span class="o">.</span><span class="n">colnames</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">lis</span><span class="p">[</span><span class="n">lis</span><span class="o">.</span><span class="n">colnames</span><span class="p">[</span><span class="mi">3</span><span class="p">]]</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">lis</span><span class="p">[</span><span class="n">lis</span><span class="o">.</span><span class="n">colnames</span><span class="p">[</span><span class="mi">4</span><span class="p">]]</span>
+    <span class="n">xerr</span> <span class="o">=</span> <span class="n">lis</span><span class="p">[</span><span class="n">lis</span><span class="o">.</span><span class="n">colnames</span><span class="p">[</span><span class="mi">5</span><span class="p">]]</span>
+    <span class="n">yerr</span> <span class="o">=</span> <span class="n">lis</span><span class="p">[</span><span class="n">lis</span><span class="o">.</span><span class="n">colnames</span><span class="p">[</span><span class="mi">6</span><span class="p">]]</span>
+    <span class="n">snr</span> <span class="o">=</span> <span class="n">lis</span><span class="p">[</span><span class="n">lis</span><span class="o">.</span><span class="n">colnames</span><span class="p">[</span><span class="mi">7</span><span class="p">]]</span>
+    <span class="n">corr</span> <span class="o">=</span> <span class="n">lis</span><span class="p">[</span><span class="n">lis</span><span class="o">.</span><span class="n">colnames</span><span class="p">[</span><span class="mi">8</span><span class="p">]]</span>
+
+    <span class="n">merr</span> <span class="o">=</span> <span class="mf">1.086</span> <span class="o">/</span> <span class="n">snr</span>
+
+    <span class="c1"># Convert into arsec offset from field center</span>
+    <span class="c1"># We determine the field center by assuming that stars</span>
+    <span class="c1"># are detected all the way out the edge.</span>
+    <span class="n">xhalf</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">/</span> <span class="mf">2.0</span>
+    <span class="n">yhalf</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">/</span> <span class="mf">2.0</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">xhalf</span><span class="p">)</span> <span class="o">*</span> <span class="n">scale</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="n">yhalf</span><span class="p">)</span> <span class="o">*</span> <span class="n">scale</span>
+    <span class="n">xerr</span> <span class="o">*=</span> <span class="n">scale</span> <span class="o">*</span> <span class="mf">1000.0</span>
+    <span class="n">yerr</span> <span class="o">*=</span> <span class="n">scale</span> <span class="o">*</span> <span class="mf">1000.0</span>
+
+    <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hypot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+    <span class="n">err</span> <span class="o">=</span> <span class="p">(</span><span class="n">xerr</span> <span class="o">+</span> <span class="n">yerr</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>
+
+    <span class="n">magStep</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">radStep</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">magBins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">20.0</span><span class="p">,</span> <span class="n">magStep</span><span class="p">)</span>
+    <span class="n">radBins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">9.5</span><span class="p">,</span> <span class="n">radStep</span><span class="p">)</span>
+    
+    <span class="n">errMag</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">magBins</span><span class="p">),</span> <span class="nb">float</span><span class="p">)</span>
+    <span class="n">errRad</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">radBins</span><span class="p">),</span> <span class="nb">float</span><span class="p">)</span>
+    <span class="n">merrMag</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">magBins</span><span class="p">),</span> <span class="nb">float</span><span class="p">)</span>
+    <span class="n">merrRad</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">radBins</span><span class="p">),</span> <span class="nb">float</span><span class="p">)</span>
+
+    <span class="c1">##########</span>
+    <span class="c1"># Compute errors in magnitude bins</span>
+    <span class="c1">########## </span>
+    <span class="c1">#print &#39;%4s  %s&#39; % (&#39;Mag&#39;, &#39;Err (mas)&#39;)</span>
+    <span class="k">for</span> <span class="n">mm</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">magBins</span><span class="p">)):</span>
+        <span class="n">mMin</span> <span class="o">=</span> <span class="n">magBins</span><span class="p">[</span><span class="n">mm</span><span class="p">]</span> <span class="o">-</span> <span class="p">(</span><span class="n">magStep</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">)</span>
+        <span class="n">mMax</span> <span class="o">=</span> <span class="n">magBins</span><span class="p">[</span><span class="n">mm</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">magStep</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">)</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">mag</span> <span class="o">&gt;=</span> <span class="n">mMin</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">mag</span> <span class="o">&lt;</span> <span class="n">mMax</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">r</span> <span class="o">&lt;</span> <span class="n">radius</span><span class="p">)))[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="n">errMag</span><span class="p">[</span><span class="n">mm</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">err</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
+            <span class="n">merrMag</span><span class="p">[</span><span class="n">mm</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">merr</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
+        
+        <span class="c1">#print &#39;%4.1f  %5.2f&#39; % (magBins[mm], errMag[mm])</span>
+        
+                       
+    <span class="c1">##########</span>
+    <span class="c1"># Compute errors in radius bins</span>
+    <span class="c1">########## </span>
+    <span class="k">for</span> <span class="n">rr</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">radBins</span><span class="p">)):</span>
+        <span class="n">rMin</span> <span class="o">=</span> <span class="n">radBins</span><span class="p">[</span><span class="n">rr</span><span class="p">]</span> <span class="o">-</span> <span class="p">(</span><span class="n">radStep</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">)</span>
+        <span class="n">rMax</span> <span class="o">=</span> <span class="n">radBins</span><span class="p">[</span><span class="n">rr</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">radStep</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">)</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">r</span> <span class="o">&gt;=</span> <span class="n">rMin</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">r</span> <span class="o">&lt;</span> <span class="n">rMax</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">mag</span> <span class="o">&lt;</span> <span class="n">magCutOff</span><span class="p">)))[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="n">errRad</span><span class="p">[</span><span class="n">rr</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">err</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
+            <span class="n">merrRad</span><span class="p">[</span><span class="n">rr</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">err</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
+
+    <span class="n">idx</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">mag</span> <span class="o">&lt;</span> <span class="n">magCutOff</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">r</span> <span class="o">&lt;</span> <span class="n">radius</span><span class="p">)))[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">errMedian</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">err</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
+    <span class="n">numInMedian</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+
+    <span class="c1">##########</span>
+    <span class="c1">#</span>
+    <span class="c1"># Plot astrometry errors</span>
+    <span class="c1">#</span>
+    <span class="c1">##########</span>
+ 
+    <span class="c1"># Remove figures if they exist -- have to do this</span>
+    <span class="c1"># b/c sometimes the file won&#39;t be overwritten and</span>
+    <span class="c1"># the program crashes saying &#39;Permission denied&#39;</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="s1">&#39;plotPosError</span><span class="si">%s</span><span class="s1">.png&#39;</span> <span class="o">%</span> <span class="n">suffix</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;plotPosError</span><span class="si">%s</span><span class="s1">.png&#39;</span> <span class="o">%</span> <span class="n">suffix</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="s1">&#39;plotMagError</span><span class="si">%s</span><span class="s1">.png&#39;</span> <span class="o">%</span> <span class="n">suffix</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;plotMagError</span><span class="si">%s</span><span class="s1">.png&#39;</span> <span class="o">%</span> <span class="n">suffix</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="s1">&#39;plotNumStars</span><span class="si">%s</span><span class="s1">.png&#39;</span> <span class="o">%</span> <span class="n">suffix</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;plotNumStars</span><span class="si">%s</span><span class="s1">.png&#39;</span> <span class="o">%</span> <span class="n">suffix</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="s1">&#39;plotPosError</span><span class="si">%s</span><span class="s1">.eps&#39;</span> <span class="o">%</span> <span class="n">suffix</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;plotPosError</span><span class="si">%s</span><span class="s1">.eps&#39;</span> <span class="o">%</span> <span class="n">suffix</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="s1">&#39;plotMagError</span><span class="si">%s</span><span class="s1">.eps&#39;</span> <span class="o">%</span> <span class="n">suffix</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;plotMagError</span><span class="si">%s</span><span class="s1">.eps&#39;</span> <span class="o">%</span> <span class="n">suffix</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="s1">&#39;plotNumStars</span><span class="si">%s</span><span class="s1">.eps&#39;</span> <span class="o">%</span> <span class="n">suffix</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;plotNumStars</span><span class="si">%s</span><span class="s1">.eps&#39;</span> <span class="o">%</span> <span class="n">suffix</span><span class="p">)</span>
+
+    <span class="n">py</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="mi">6</span><span class="p">))</span>
+    <span class="n">py</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+    <span class="n">py</span><span class="o">.</span><span class="n">subplots_adjust</span><span class="p">(</span><span class="n">left</span><span class="o">=</span><span class="mf">0.15</span><span class="p">,</span> <span class="n">top</span><span class="o">=</span><span class="mf">0.92</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="mf">0.95</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">raw</span> <span class="o">==</span> <span class="kc">True</span><span class="p">):</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">r</span> <span class="o">&lt;</span> <span class="n">radius</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">py</span><span class="o">.</span><span class="n">semilogy</span><span class="p">(</span><span class="n">mag</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">err</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="s1">&#39;k.&#39;</span><span class="p">)</span>
+        
+    <span class="n">py</span><span class="o">.</span><span class="n">semilogy</span><span class="p">(</span><span class="n">magBins</span><span class="p">,</span> <span class="n">errMag</span><span class="p">,</span> <span class="s1">&#39;g.-&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">py</span><span class="o">.</span><span class="n">axis</span><span class="p">([</span><span class="mi">8</span><span class="p">,</span> <span class="mi">22</span><span class="p">,</span> <span class="mf">1e-2</span><span class="p">,</span> <span class="mf">30.0</span><span class="p">])</span>
+    <span class="n">py</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;K Magnitude for r &lt; </span><span class="si">%4.1f</span><span class="s1">&quot;&#39;</span> <span class="o">%</span> <span class="n">radius</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+    <span class="n">py</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Positional Uncertainty (mas)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">title</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">py</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">starlist</span><span class="p">)</span>
+    
+    <span class="n">py</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;plotPosError</span><span class="si">%s</span><span class="s1">.png&#39;</span> <span class="o">%</span> <span class="n">suffix</span><span class="p">)</span>
+    <span class="c1">#py.savefig(&#39;plotPosError%s.eps&#39; % suffix)</span>
+
+    <span class="c1">##########</span>
+    <span class="c1">#</span>
+    <span class="c1"># Plot photometry errors</span>
+    <span class="c1">#</span>
+    <span class="c1">##########</span>
+    <span class="n">py</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">raw</span> <span class="o">==</span> <span class="kc">True</span><span class="p">):</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">r</span> <span class="o">&lt;</span> <span class="n">radius</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">py</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mag</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">merr</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="s1">&#39;k.&#39;</span><span class="p">)</span>
+        
+    <span class="n">py</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">magBins</span><span class="p">,</span> <span class="n">merrMag</span><span class="p">,</span> <span class="s1">&#39;g.-&#39;</span><span class="p">)</span>
+    <span class="n">py</span><span class="o">.</span><span class="n">axis</span><span class="p">([</span><span class="mi">8</span><span class="p">,</span> <span class="mi">22</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.15</span><span class="p">])</span>
+    <span class="n">py</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;K Magnitude for r &lt; </span><span class="si">%4.1f</span><span class="s1">&quot;&#39;</span> <span class="o">%</span> <span class="n">radius</span><span class="p">)</span>
+    <span class="n">py</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Photo. Uncertainty (mag)&#39;</span><span class="p">)</span>
+    <span class="n">py</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">starlist</span><span class="p">)</span>
+    
+    <span class="n">py</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;plotMagError</span><span class="si">%s</span><span class="s1">.png&#39;</span> <span class="o">%</span> <span class="n">suffix</span><span class="p">)</span>
+    <span class="c1">#py.savefig(&#39;plotMagError%s.eps&#39; % suffix)</span>
+
+    <span class="c1">##########</span>
+    <span class="c1"># </span>
+    <span class="c1"># Plot histogram of number of stars detected</span>
+    <span class="c1">#</span>
+    <span class="c1">##########</span>
+    <span class="n">py</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+    <span class="n">idx</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">r</span> <span class="o">&lt;</span> <span class="n">radius</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">bb</span><span class="p">,</span> <span class="n">pp</span><span class="p">)</span> <span class="o">=</span> <span class="n">py</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">mag</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">bins</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">22</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">))</span>
+    <span class="n">py</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;K Magnitude for r &lt; </span><span class="si">%4.1f</span><span class="s1">&quot;&#39;</span> <span class="o">%</span> <span class="n">radius</span><span class="p">)</span>
+    <span class="n">py</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Number of Stars&#39;</span><span class="p">)</span>
+
+    <span class="n">py</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;plotNumStars</span><span class="si">%s</span><span class="s1">.png&#39;</span> <span class="o">%</span> <span class="n">suffix</span><span class="p">)</span>
+    <span class="c1">#py.savefig(&#39;plotNumStars%s.eps&#39; % suffix)</span>
+
+    <span class="c1"># Find the peak of the distribution</span>
+    <span class="n">maxHist</span> <span class="o">=</span> <span class="n">n</span><span class="o">.</span><span class="n">argmax</span><span class="p">()</span>
+    <span class="n">maxBin</span> <span class="o">=</span> <span class="n">bb</span><span class="p">[</span><span class="n">maxHist</span><span class="p">]</span>
+
+
+    <span class="c1">##########</span>
+    <span class="c1"># </span>
+    <span class="c1"># Save relevant numbers to an output file.</span>
+    <span class="c1">#</span>
+    <span class="c1">##########</span>
+    <span class="c1"># Print out some summary information</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Number of detections: </span><span class="si">%4d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">mag</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Median Pos Error (mas) for K &lt; </span><span class="si">%2i</span><span class="s1">, r &lt; </span><span class="si">%4.1f</span><span class="s1"> (N=</span><span class="si">%i</span><span class="s1">):  </span><span class="si">%5.2f</span><span class="s1">&#39;</span> <span class="o">%</span> \
+          <span class="p">(</span><span class="n">magCutOff</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">numInMedian</span><span class="p">,</span> <span class="n">errMedian</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Median Mag Error (mag) for K &lt; </span><span class="si">%2i</span><span class="s1">, r &lt; </span><span class="si">%4.1f</span><span class="s1"> (N=</span><span class="si">%i</span><span class="s1">):  </span><span class="si">%5.2f</span><span class="s1">&#39;</span> <span class="o">%</span> \
+          <span class="p">(</span><span class="n">magCutOff</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">numInMedian</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">merr</span><span class="p">[</span><span class="n">idx</span><span class="p">])))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Turnover mag = </span><span class="si">%4.1f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">maxBin</span><span class="p">))</span>
+
+
+    <span class="n">out</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;plotPosError</span><span class="si">%s</span><span class="s1">.txt&#39;</span> <span class="o">%</span> <span class="n">suffix</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+    <span class="n">out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;Number of detections: </span><span class="si">%4d</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">mag</span><span class="p">))</span>
+    <span class="n">out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;Median Pos Error (mas) for K &lt; </span><span class="si">%2i</span><span class="s1">, r &lt; </span><span class="si">%4.1f</span><span class="s1"> (N=</span><span class="si">%i</span><span class="s1">):  </span><span class="si">%5.2f</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">%</span> \
+          <span class="p">(</span><span class="n">magCutOff</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">numInMedian</span><span class="p">,</span> <span class="n">errMedian</span><span class="p">))</span>
+    <span class="n">out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;Median Mag Error (mag) for K &lt; </span><span class="si">%2i</span><span class="s1">, r &lt; </span><span class="si">%4.1f</span><span class="s1"> (N=</span><span class="si">%i</span><span class="s1">:  </span><span class="si">%5.2f</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">%</span> \
+          <span class="p">(</span><span class="n">magCutOff</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">numInMedian</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">merr</span><span class="p">[</span><span class="n">idx</span><span class="p">])))</span>
+    <span class="n">out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;Turnover mag = </span><span class="si">%4.1f</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">maxBin</span><span class="p">))</span>
+    <span class="n">out</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+    
+
+
+       
+
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">KAI</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../autoapi/index.html">API Reference</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2022, J. R. Lu, A. K. Gautam, T. Do.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.2.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

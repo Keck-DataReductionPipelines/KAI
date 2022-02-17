@@ -1,0 +1,105 @@
+:py:mod:`test_drizzle`
+======================
+
+.. py:module:: test_drizzle
+
+.. autoapi-nested-parse::
+
+   
+   ..
+       !! processed by numpydoc !!
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   test_drizzle.test_drizzle_single_iraf
+   test_drizzle.test_drizzle_single_py
+
+
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   test_drizzle.nirc2
+
+
+.. py:data:: nirc2
+   
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: test_drizzle_single_iraf()
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: test_drizzle_single_py()
+
+   
+   RUN
+
+       conda activate astroconda
+
+   before using this code.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+

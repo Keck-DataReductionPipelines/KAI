@@ -1,0 +1,51 @@
+:py:mod:`kai.reduce`
+====================
+
+.. py:module:: kai.reduce
+
+.. autoapi-nested-parse::
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+Submodules
+----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+
+   align_rms/index.rst
+   analysis/index.rst
+   bfixpix/index.rst
+   calib/index.rst
+   calibrate/index.rst
+   dar/index.rst
+   data/index.rst
+   kai_util/index.rst
+   prep_analysis/index.rst
+   reduce_template/index.rst
+   reduce_template_osiris/index.rst
+   sky/index.rst
+   slalib/index.rst
+   test_dar/index.rst
+   util/index.rst
+
+

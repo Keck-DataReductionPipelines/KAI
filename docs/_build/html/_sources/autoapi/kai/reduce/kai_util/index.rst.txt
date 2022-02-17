@@ -1,0 +1,404 @@
+:py:mod:`kai.reduce.kai_util`
+=============================
+
+.. py:module:: kai.reduce.kai_util
+
+.. autoapi-nested-parse::
+
+   
+   ..
+       !! processed by numpydoc !!
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   kai.reduce.kai_util.kailog
+   kai.reduce.kai_util.makelog
+   kai.reduce.kai_util.getAotsxy
+   kai.reduce.kai_util.pix2radec
+   kai.reduce.kai_util.radec2pix
+   kai.reduce.kai_util.aotsxy2pix
+   kai.reduce.kai_util.pix2xyarcsec
+   kai.reduce.kai_util.xyarcsec2pix
+   kai.reduce.kai_util.rotate_coo
+   kai.reduce.kai_util.getScale
+   kai.reduce.kai_util.getPA
+   kai.reduce.kai_util.getCentralWavelength
+   kai.reduce.kai_util.calcOverhead
+   kai.reduce.kai_util.plotKeyword
+
+
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   kai.reduce.kai_util._nargs
+
+
+.. py:function:: kailog(directory)
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: makelog(directory, outfile='image_log.txt', instrument=instruments.default_inst)
+
+   
+   Make an electronic log for all the FITS files in the 
+   specified directory.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:data:: _nargs
+   
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: getAotsxy(hdr)
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: pix2radec()
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: radec2pix(radec, phi, scale, posRef)
+
+   
+   Determine pixel shifts from true RA and Dec positions.
+
+   @param radec: a 2-element list containing the RA and Dec in degrees.
+   @type radec: float list
+   @param phi: position angle (E of N) in degrees.
+   @type phi: float
+   @param scale: arcsec per pixel.
+   @type scale: float
+   @param posRef: 2-element list containing the ra, dec positions (in degrees)
+           of a reference object.
+   @type posRef: float list
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: aotsxy2pix(aotsxy, scale, aotsxyRef, inst_angle=0.0)
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: pix2xyarcsec(xypix, phi, scale, sgra)
+
+   
+   Determine  E and N offsets from Sgr A* (in arcsec) from 
+   pixel positions and the pixel position of Sgr A*.
+
+   xypix: 2-element list containing the RA and Dec in degrees.
+   phi: position angle (E of N) in degrees.
+   scale: arcsec per pixel.
+   sgra: 2-element list containing the pixel position of Sgr A*.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: xyarcsec2pix(xyarcsec, phi, scale)
+
+   
+   Determine pixel shifts from E and N offsets from Sgr A*.
+
+   xyarcsec: 2-element list containing the RA and Dec in degrees.
+   phi: position angle (E of N) in degrees.
+   scale: arcsec per pixel.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: rotate_coo(x, y, phi)
+
+   
+   Rotate the coordinates in the *.coo files for data sets
+   containing images at different PAs.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: getScale(hdr, instrument=instruments.default_inst)
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: getPA(hdr, instrument=instruments.default_inst)
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: getCentralWavelength(hdr, instrument=instruments.default_inst)
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: calcOverhead(tint, coadds, ndithers, nframes, reads, tread=0.181)
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: plotKeyword(keyword1, keyword2, imgList)
+
+   
+   Pass in a file containing a list of images. For each of these
+   images, read out the values of the header keywords specified.
+   Then plot each of the keywords against each other.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+

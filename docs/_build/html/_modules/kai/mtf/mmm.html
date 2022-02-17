@@ -1,0 +1,401 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>kai.mtf.mmm &#8212; KAI  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/alabaster.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for kai.mtf.mmm</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">pdb</span>
+
+<div class="viewcode-block" id="mmm"><a class="viewcode-back" href="../../../autoapi/kai/mtf/mmm/index.html#kai.mtf.mmm.mmm">[docs]</a><span class="k">def</span> <span class="nf">mmm</span><span class="p">(</span><span class="n">sky_vector</span><span class="p">,</span> <span class="n">highbad</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">readnoise</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">integer</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">debug</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">silent</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Estimate the sky background in a stellar contaminated field.</span>
+
+<span class="sd">    MMM assumes that contaminated sky pixel values overwhelmingly display </span>
+<span class="sd">    POSITIVE departures from the true value.  Adapted from DAOPHOT </span>
+<span class="sd">    routine of the same name.</span>
+<span class="sd">    </span>
+<span class="sd">     CALLING SEQUENCE:</span>
+<span class="sd">           MMM, sky, [ skymod, sigma, skew, HIGHBAD = , READNOISE=, /DEBUG, </span>
+<span class="sd">                      NSKY=, /INTEGER,/SILENT]</span>
+<span class="sd">    </span>
+<span class="sd">     INPUTS:</span>
+<span class="sd">           SKY - Array or Vector containing sky values.  This version of</span>
+<span class="sd">                   MMM does not require SKY to be sorted beforehand.  SKY</span>
+<span class="sd">                   is unaltered by this program.</span>
+<span class="sd">    </span>
+<span class="sd">     OPTIONAL OUTPUTS:</span>
+<span class="sd">           skymod - Scalar giving estimated mode of the sky values</span>
+<span class="sd">           SIGMA -  Scalar giving standard deviation of the peak in the sky</span>
+<span class="sd">                   histogram.  If for some reason it is impossible to derive</span>
+<span class="sd">                   skymod, then SIGMA = -1.0</span>
+<span class="sd">           SKEW -   Scalar giving skewness of the peak in the sky histogram</span>
+<span class="sd">    </span>
+<span class="sd">                   If no output variables are supplied or if /DEBUG is set</span>
+<span class="sd">                   then the values of skymod, SIGMA and SKEW will be printed.</span>
+<span class="sd">    </span>
+<span class="sd">     OPTIONAL KEYWORD INPUTS:</span>
+<span class="sd">           HIGHBAD - scalar value of the (lowest) &quot;bad&quot; pixel level (e.g. cosmic </span>
+<span class="sd">                    rays or saturated pixels) If not supplied, then there is </span>
+<span class="sd">                    assumed to be no high bad pixels.</span>
+<span class="sd">           READNOISE - Scalar giving the read noise (or minimum noise for any </span>
+<span class="sd">                    pixel).     Normally, MMM determines the (robust) median by </span>
+<span class="sd">                    averaging the central 20% of the sky values.     In some cases</span>
+<span class="sd">                    where the noise is low, and pixel values are quantized a</span>
+<span class="sd">                    larger fraction may be needed.    By supplying the optional</span>
+<span class="sd">                    read noise parameter, MMM is better able to adjust the</span>
+<span class="sd">                    fraction of pixels used to determine the median.                </span>
+<span class="sd">           /INTEGER - Set this keyword if the  input SKY vector only contains</span>
+<span class="sd">                    discrete integer values.    This keyword is only needed if the</span>
+<span class="sd">                    SKY vector is of type float or double precision, but contains </span>
+<span class="sd">                    only discrete integer values.     (Prior to July 2004, the</span>
+<span class="sd">                    equivalent of /INTEGER was set for all data types)</span>
+<span class="sd">           /DEBUG - If this keyword is set and non-zero, then additional </span>
+<span class="sd">                   information is displayed at the terminal.</span>
+<span class="sd">           /SILENT - If set, then error messages will be suppressed when MMM</span>
+<span class="sd">                    cannot compute a background.    Sigma will still be set to -1</span>
+<span class="sd">     OPTIONAL OUTPUT KEYWORD:</span>
+<span class="sd">          NSKY - Integer scalar giving the number of pixels actually used for the</span>
+<span class="sd">                 sky computation (after outliers have been removed).</span>
+<span class="sd">     NOTES:</span>
+<span class="sd">           (1) Program assumes that low &quot;bad&quot; pixels (e.g. bad CCD columns) have</span>
+<span class="sd">           already been deleted from the SKY vector.</span>
+<span class="sd">           (2) MMM was updated in June 2004 to better match more recent versions</span>
+<span class="sd">           of DAOPHOT.</span>
+<span class="sd">           (3) Does not work well in the limit of low Poisson integer counts</span>
+<span class="sd">           (4) MMM may fail for strongly skewed distributions.</span>
+<span class="sd">     METHOD:</span>
+<span class="sd">           The algorithm used by MMM consists of roughly two parts:</span>
+<span class="sd">           (1) The average and sigma of the sky pixels is computed.   These values</span>
+<span class="sd">           are used to eliminate outliers, i.e. values with a low probability</span>
+<span class="sd">           given a Gaussian with specified average and sigma.   The average</span>
+<span class="sd">           and sigma are then recomputed and the process repeated up to 20</span>
+<span class="sd">           iterations:</span>
+<span class="sd">           (2) The amount of contamination by stars is estimated by comparing the </span>
+<span class="sd">           mean and median of the remaining sky pixels.   If the mean is larger</span>
+<span class="sd">           than the median then the true sky value is estimated by</span>
+<span class="sd">           3*median - 2*mean</span>
+<span class="sd">             </span>
+<span class="sd">     REVISION HISTORY:</span>
+<span class="sd">           Adapted from Python to IDL -- J. R. Lu 2010-05-30</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="c1"># Set up some parameters</span>
+    <span class="n">mxiter</span> <span class="o">=</span> <span class="mi">30</span>   <span class="c1"># Maximum number of iterations allowed</span>
+    <span class="n">minsky</span> <span class="o">=</span> <span class="mi">20</span>   <span class="c1"># Minimum number of legal sky elements</span>
+    <span class="n">nsky</span> <span class="o">=</span> <span class="n">sky_vector</span><span class="o">.</span><span class="n">size</span>   <span class="c1"># Number of input sky elements</span>
+
+    <span class="k">if</span> <span class="n">nsky</span> <span class="o">&lt;</span> <span class="n">minsky</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">silent</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;ERROR Input vector must contain at least </span><span class="si">%d</span><span class="s1"> elements&#39;</span> <span class="o">%</span> \
+                <span class="n">minsky</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="n">nlast</span> <span class="o">=</span> <span class="n">nsky</span> <span class="o">-</span> <span class="mi">1</span>    <span class="c1"># Subscript of last pixel in the sky array</span>
+
+    <span class="k">if</span> <span class="n">debug</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Processing </span><span class="si">%d</span><span class="s1"> element array&#39;</span><span class="p">,</span> <span class="n">nsky</span><span class="p">)</span>
+
+    <span class="n">sz_sky</span> <span class="o">=</span> <span class="n">sky_vector</span><span class="o">.</span><span class="n">shape</span>
+    
+    <span class="c1"># Sort the sky in ascending values</span>
+    <span class="n">sky</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">sky_vector</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">sky</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+
+    <span class="c1"># Median value of all sky values</span>
+    <span class="n">skymid</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">sky</span><span class="p">[(</span><span class="n">nsky</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">sky</span><span class="p">[</span><span class="n">nsky</span><span class="o">/</span><span class="mi">2</span><span class="p">]</span>
+
+    <span class="n">cut1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">([</span><span class="n">skymid</span> <span class="o">-</span> <span class="n">sky</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">sky</span><span class="p">[</span><span class="n">nsky</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">skymid</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">highbad</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">cut1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">([</span><span class="n">cut1</span><span class="p">,</span> <span class="n">highbad</span> <span class="o">-</span> <span class="n">skymid</span><span class="p">])</span>
+    <span class="n">cut2</span> <span class="o">=</span> <span class="n">skymid</span> <span class="o">+</span> <span class="n">cut1</span>
+    <span class="n">cut1</span> <span class="o">=</span> <span class="n">skymid</span> <span class="o">-</span> <span class="n">cut1</span>
+
+    <span class="c1"># Select the pixels between cut1 and cut2</span>
+    <span class="n">good</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span> <span class="p">(</span><span class="n">sky</span> <span class="o">&lt;=</span> <span class="n">cut2</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">sky</span> <span class="o">&gt;=</span> <span class="n">cut1</span><span class="p">)</span> <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">good</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">silent</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;ERROR No sky values fall within </span><span class="si">%d</span><span class="s1"> and </span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">cut1</span><span class="p">,</span> <span class="n">cut2</span><span class="p">))</span>
+        <span class="k">return</span>
+
+    <span class="c1"># Subtract the median to improve arithmetic accuracy</span>
+    <span class="n">delta</span> <span class="o">=</span> <span class="n">sky</span><span class="p">[</span><span class="n">good</span><span class="p">]</span> <span class="o">-</span> <span class="n">skymid</span>
+    <span class="nb">sum</span> <span class="o">=</span> <span class="n">delta</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="n">sumsq</span> <span class="o">=</span> <span class="p">(</span><span class="n">delta</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+    <span class="n">maximm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">good</span><span class="p">)</span>       <span class="c1"># Highest value accepted at upper end of vector</span>
+    <span class="n">minimm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">good</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>  <span class="c1"># Highest value reject at lower end of vector</span>
+
+    <span class="c1"># Compute the mean and sigma (from the first pass)</span>
+    <span class="n">skymed</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">sky</span><span class="p">[(</span><span class="n">minimm</span><span class="o">+</span><span class="n">maximm</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">sky</span><span class="p">[(</span><span class="n">minimm</span><span class="o">+</span><span class="n">maximm</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="n">skymn</span> <span class="o">=</span> <span class="nb">sum</span> <span class="o">/</span> <span class="p">(</span><span class="n">maximm</span> <span class="o">-</span> <span class="n">minimm</span><span class="p">)</span>
+    <span class="n">sigma</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">sumsq</span> <span class="o">/</span> <span class="p">(</span><span class="n">maximm</span> <span class="o">-</span> <span class="n">minimm</span><span class="p">)</span> <span class="o">-</span> <span class="n">skymn</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">skymn</span> <span class="o">=</span> <span class="n">skymn</span> <span class="o">+</span> <span class="n">skymid</span>  <span class="c1"># add median back in</span>
+
+    <span class="c1"># If mean is less than mode, then contamination is slight, and the mean</span>
+    <span class="c1"># value is what we really want</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">skymed</span> <span class="o">&lt;</span> <span class="n">skymn</span><span class="p">):</span>
+        <span class="n">skymode</span> <span class="o">=</span> <span class="p">(</span><span class="mf">3.</span> <span class="o">*</span> <span class="n">skymed</span> <span class="o">-</span> <span class="mf">2.</span> <span class="o">*</span> <span class="n">skymn</span><span class="p">)</span>  
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">skymode</span> <span class="o">=</span> <span class="n">skymn</span>
+
+    <span class="c1"># Rejection and computation Loop</span>
+    <span class="n">niter</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">clamp</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">old</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="n">redo</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">while</span> <span class="n">redo</span><span class="p">:</span>
+        <span class="n">niter</span> <span class="o">+=</span> <span class="mi">1</span>
+        
+        <span class="k">if</span> <span class="n">niter</span> <span class="o">&gt;</span> <span class="n">mxiter</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">silent</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;ERROR Too many (</span><span class="si">%d</span><span class="s1">) iterations, unable to compute sky&#39;</span> <span class="o">%</span>\
+                    <span class="n">niter</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">maximm</span> <span class="o">-</span> <span class="n">minimm</span> <span class="o">&lt;</span> <span class="n">minsky</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">silent</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;ERROR Too few (</span><span class="si">%d</span><span class="s1">) valid sky elements, unable to compute sky&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">maximm</span> <span class="o">-</span> <span class="n">minimm</span><span class="p">))</span>
+            <span class="k">return</span>
+
+        <span class="c1"># compute Chauvenet rejection criterion</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">maximm</span> <span class="o">-</span> <span class="n">minimm</span><span class="p">))</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">([</span><span class="mf">2.</span><span class="p">,</span> <span class="p">(</span> <span class="o">-</span><span class="mf">0.1042</span><span class="o">*</span><span class="n">r</span> <span class="o">+</span> <span class="mf">1.1695</span><span class="p">)</span> <span class="o">*</span> <span class="n">r</span> <span class="o">+</span> <span class="mf">0.8895</span><span class="p">])</span>
+
+        <span class="c1"># compute rejection limits (symmetric about the current mode)</span>
+        <span class="n">cut</span> <span class="o">=</span> <span class="n">r</span> <span class="o">*</span> <span class="n">sigma</span> <span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="nb">abs</span><span class="p">(</span><span class="n">skymn</span> <span class="o">-</span> <span class="n">skymode</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">integer</span><span class="p">:</span> 
+            <span class="n">cut</span> <span class="o">=</span> <span class="n">cut</span> <span class="k">if</span> <span class="n">cut</span> <span class="o">&gt;</span> <span class="mf">1.5</span> <span class="k">else</span> <span class="mf">1.5</span>
+        <span class="n">cut1</span> <span class="o">=</span> <span class="n">skymode</span> <span class="o">-</span> <span class="n">cut</span>
+        <span class="n">cut2</span> <span class="o">=</span> <span class="n">skymode</span> <span class="o">+</span> <span class="n">cut</span>
+
+        <span class="c1"># Recompute mean and sigma by adding and/or subtracting sky values</span>
+        <span class="c1"># at both ends of the intervale of acceptable values.</span>
+        <span class="n">redo</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">newmin</span> <span class="o">=</span> <span class="n">minimm</span>
+        
+        <span class="c1"># Is minimm+1 above current cut?</span>
+        <span class="n">tst_min</span> <span class="o">=</span> <span class="n">sky</span><span class="p">[</span><span class="n">newmin</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">cut1</span>
+
+        <span class="c1"># Are we at first pixel of sky</span>
+        <span class="n">done</span> <span class="o">=</span> <span class="p">(</span><span class="n">newmin</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="ow">and</span> <span class="n">tst_min</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">done</span><span class="p">:</span>
+            <span class="n">done</span> <span class="o">=</span> <span class="p">(</span><span class="n">sky</span><span class="p">[</span><span class="n">newmin</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">cut1</span><span class="p">)</span> <span class="ow">and</span> <span class="n">tst_min</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">done</span><span class="p">:</span>
+            <span class="n">istep</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="nb">int</span><span class="p">(</span><span class="n">tst_min</span><span class="p">)</span>
+            <span class="k">while</span> <span class="ow">not</span> <span class="n">done</span><span class="p">:</span>
+                <span class="n">newmin</span> <span class="o">=</span> <span class="n">newmin</span> <span class="o">+</span> <span class="n">istep</span>
+                <span class="n">done</span> <span class="o">=</span> <span class="p">(</span><span class="n">newmin</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">newmin</span> <span class="o">==</span> <span class="n">nlast</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">done</span><span class="p">:</span>
+                    <span class="n">done</span> <span class="o">=</span> <span class="p">(</span><span class="n">sky</span><span class="p">[</span><span class="n">newmin</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">cut1</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">sky</span><span class="p">[</span><span class="n">newmin</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">cut1</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">tst_min</span><span class="p">:</span>
+                <span class="n">delta</span> <span class="o">=</span> <span class="n">sky</span><span class="p">[</span><span class="n">newmin</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span><span class="n">minimm</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">skymid</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">delta</span> <span class="o">=</span> <span class="n">sky</span><span class="p">[</span><span class="n">minimm</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span><span class="n">newmin</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">skymid</span>
+    
+            <span class="nb">sum</span> <span class="o">-=</span> <span class="n">istep</span> <span class="o">*</span> <span class="n">delta</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+            <span class="n">sumsq</span> <span class="o">-=</span> <span class="n">istep</span> <span class="o">*</span> <span class="p">(</span><span class="n">delta</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+            <span class="n">redo</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">minimm</span> <span class="o">=</span> <span class="n">newmin</span>
+
+        <span class="n">newmax</span> <span class="o">=</span> <span class="n">maximm</span>
+        
+        <span class="c1"># is current maximum below upper cut?</span>
+        <span class="n">tst_max</span> <span class="o">=</span> <span class="n">sky</span><span class="p">[</span><span class="n">maximm</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">cut2</span>
+        <span class="c1"># are we at the last pixel of sky array?</span>
+        <span class="n">done</span> <span class="o">=</span> <span class="p">(</span><span class="n">maximm</span> <span class="o">==</span> <span class="n">nlast</span><span class="p">)</span> <span class="ow">and</span> <span class="n">tst_max</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">done</span><span class="p">:</span>
+            <span class="n">done</span> <span class="o">=</span> <span class="p">(</span><span class="n">tst_max</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">sky</span><span class="p">[</span><span class="nb">min</span><span class="p">((</span><span class="n">maximm</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span> <span class="n">nlast</span><span class="p">)]</span> <span class="o">&gt;</span> <span class="n">cut2</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">done</span><span class="p">:</span>
+            <span class="n">istep</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="nb">int</span><span class="p">(</span><span class="n">tst_max</span><span class="p">)</span>
+
+            <span class="k">while</span> <span class="ow">not</span> <span class="n">done</span><span class="p">:</span>
+                <span class="n">newmax</span> <span class="o">=</span> <span class="n">newmax</span> <span class="o">+</span> <span class="n">istep</span>
+                <span class="n">done</span> <span class="o">=</span> <span class="p">(</span><span class="n">newmax</span> <span class="o">==</span> <span class="n">nlast</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">newmax</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">done</span><span class="p">:</span>
+                    <span class="n">done</span> <span class="o">=</span> <span class="p">(</span><span class="n">sky</span><span class="p">[</span><span class="n">newmax</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">cut2</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">sky</span><span class="p">[</span><span class="n">newmax</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">cut2</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">tst_max</span><span class="p">:</span>
+                <span class="n">delta</span> <span class="o">=</span> <span class="n">sky</span><span class="p">[</span><span class="n">maximm</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span><span class="n">newmax</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">skymid</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">delta</span> <span class="o">=</span> <span class="n">sky</span><span class="p">[</span><span class="n">newmax</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span><span class="n">maximm</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">skymid</span>
+
+            <span class="nb">sum</span> <span class="o">+=</span> <span class="n">istep</span> <span class="o">*</span> <span class="n">delta</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+            <span class="n">sumsq</span> <span class="o">+=</span> <span class="n">istep</span> <span class="o">*</span> <span class="p">(</span><span class="n">delta</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+            <span class="n">redo</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">maximm</span> <span class="o">=</span> <span class="n">newmax</span>
+
+        <span class="c1"># Compute mean and sigma (from this pass)</span>
+        <span class="n">nsky</span> <span class="o">=</span> <span class="n">maximm</span> <span class="o">-</span> <span class="n">minimm</span>
+        <span class="k">if</span> <span class="n">nsky</span> <span class="o">&lt;</span> <span class="n">minsky</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">silent</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;ERROR Outlier rejection left too few sky elements.&#39;</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="n">skymn</span> <span class="o">=</span> <span class="nb">sum</span> <span class="o">/</span> <span class="n">nsky</span>
+        <span class="n">tmp</span> <span class="o">=</span> <span class="n">sumsq</span><span class="o">/</span><span class="n">nsky</span> <span class="o">-</span> <span class="n">skymn</span><span class="o">**</span><span class="mi">2</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">tmp</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="n">sigma</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span> <span class="n">tmp</span> <span class="p">)</span> <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">sigma</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">skymn</span> <span class="o">+=</span> <span class="n">skymid</span>
+
+        <span class="c1"># Determine a more robust median by averaging the central 20% of</span>
+        <span class="c1"># pixels. Estimate the median using the mean of the central 20 percent</span>
+        <span class="c1"># of sky values. Be careful to include a perfectly symmetric sample</span>
+        <span class="c1"># of pixels about the median, whether the total number is even or</span>
+        <span class="c1"># odd within the acceptance interval.</span>
+        <span class="n">center</span> <span class="o">=</span> <span class="p">(</span><span class="n">minimm</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">maximm</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>
+        <span class="n">side</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="mf">0.2</span> <span class="o">*</span> <span class="p">(</span><span class="n">maximm</span> <span class="o">-</span> <span class="n">minimm</span><span class="p">)))</span> <span class="o">/</span> <span class="mf">2.0</span> <span class="o">+</span> <span class="mf">0.25</span>
+        <span class="n">J</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">center</span> <span class="o">-</span> <span class="n">side</span><span class="p">))</span>
+        <span class="n">K</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">center</span> <span class="o">+</span> <span class="n">side</span><span class="p">))</span>
+
+        <span class="c1"># In case the data has a large number of the same (quantized)</span>
+        <span class="c1"># intensity, expand the range until both limiting values differ </span>
+        <span class="c1"># frm the central value by at least 0.25 times the read noise.</span>
+        <span class="k">if</span> <span class="n">readnoise</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">L</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">center</span> <span class="o">-</span> <span class="mf">0.25</span><span class="p">))</span>
+            <span class="n">M</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">center</span> <span class="o">+</span> <span class="mf">0.25</span><span class="p">))</span>
+            <span class="n">R</span> <span class="o">=</span> <span class="mf">0.25</span> <span class="o">*</span> <span class="n">readnoise</span>
+
+            <span class="k">while</span> <span class="p">((</span><span class="n">J</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">K</span> <span class="o">&lt;</span> <span class="n">nsky</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">and</span>
+                   <span class="p">(</span> <span class="p">((</span><span class="n">sky</span><span class="p">[</span><span class="n">L</span><span class="p">]</span> <span class="o">-</span> <span class="n">sky</span><span class="p">[</span><span class="n">J</span><span class="p">])</span> <span class="o">&lt;</span> <span class="n">R</span><span class="p">)</span> <span class="ow">or</span> <span class="p">((</span><span class="n">sky</span><span class="p">[</span><span class="n">K</span><span class="p">]</span> <span class="o">-</span> <span class="n">sky</span><span class="p">[</span><span class="n">M</span><span class="p">])</span> <span class="o">&lt;</span> <span class="n">R</span><span class="p">))):</span>
+                
+                <span class="n">J</span> <span class="o">=</span> <span class="n">J</span> <span class="o">-</span> <span class="mi">1</span>
+                <span class="n">K</span> <span class="o">=</span> <span class="n">K</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">skymed</span> <span class="o">=</span> <span class="n">sky</span><span class="p">[</span><span class="n">J</span><span class="p">:</span><span class="n">K</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="p">(</span><span class="n">K</span> <span class="o">-</span> <span class="n">J</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># If the mean is less than the median, then the problem of contamination</span>
+        <span class="c1"># is slight, and the mean is what we really want.</span>
+        <span class="k">if</span> <span class="n">skymed</span> <span class="o">&lt;</span> <span class="n">skymn</span><span class="p">:</span>
+            <span class="n">dmod</span> <span class="o">=</span> <span class="p">(</span><span class="mf">3.0</span> <span class="o">*</span> <span class="n">skymed</span> <span class="o">-</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">skymn</span> <span class="o">-</span> <span class="n">skymode</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dmod</span> <span class="o">=</span> <span class="n">skymn</span> <span class="o">-</span> <span class="n">skymode</span>
+
+        <span class="c1"># prevent oscillations by clamping down if the sky adjustments are</span>
+        <span class="c1"># changing sign</span>
+        <span class="k">if</span> <span class="n">dmod</span> <span class="o">*</span> <span class="n">old</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span> <span class="n">clamp</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">clamp</span>
+        <span class="n">skymode</span> <span class="o">+=</span> <span class="n">clamp</span> <span class="o">*</span> <span class="n">dmod</span>
+        <span class="n">old</span> <span class="o">=</span> <span class="n">dmod</span>
+
+    <span class="n">skew</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span> <span class="p">(</span><span class="n">skymn</span> <span class="o">-</span> <span class="n">skymode</span><span class="p">)</span> <span class="o">/</span> <span class="nb">max</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">sigma</span><span class="p">])</span> <span class="p">)</span>
+    <span class="n">nsky</span> <span class="o">=</span> <span class="n">maximm</span> <span class="o">-</span> <span class="n">minimm</span>
+        
+    <span class="k">if</span> <span class="n">debug</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;MMM: Number of unrejected sky elements: </span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">nsky</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;MMM: Number of iterations: </span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">niter</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;MMM: Mode, Sigma, Skew of sky vector: &#39;</span><span class="p">,</span> <span class="n">skymode</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">skew</span><span class="p">)</span>
+        
+    <span class="c1"># outputs:</span>
+    <span class="c1"># sky, skymod, sigma, skew, Nsky</span>
+
+    <span class="c1"># Make our output object</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">output</span><span class="p">[</span><span class="s1">&#39;mode&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">skymode</span>
+    <span class="n">output</span><span class="p">[</span><span class="s1">&#39;sigma&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sigma</span>
+    <span class="n">output</span><span class="p">[</span><span class="s1">&#39;skew&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">skew</span>
+    <span class="n">output</span><span class="p">[</span><span class="s1">&#39;n&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">nsky</span>
+
+    <span class="k">return</span> <span class="n">output</span></div>
+    
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">KAI</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../autoapi/index.html">API Reference</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2022, J. R. Lu, A. K. Gautam, T. Do.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.2.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

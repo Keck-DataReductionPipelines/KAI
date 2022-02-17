@@ -1,0 +1,61 @@
+:py:mod:`kai._astropy_init`
+===========================
+
+.. py:module:: kai._astropy_init
+
+.. autoapi-nested-parse::
+
+   
+   ..
+       !! processed by numpydoc !!
+
+
+Module Contents
+---------------
+
+.. py:data:: __version__
+   :annotation: = 
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:data:: __githash__
+   :annotation: = 
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+

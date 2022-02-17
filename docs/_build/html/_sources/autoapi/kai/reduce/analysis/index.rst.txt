@@ -1,0 +1,332 @@
+:py:mod:`kai.reduce.analysis`
+=============================
+
+.. py:module:: kai.reduce.analysis
+
+.. autoapi-nested-parse::
+
+   
+   ..
+       !! processed by numpydoc !!
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   kai.reduce.analysis.Analysis
+
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   kai.reduce.analysis.plotPosError
+
+
+
+.. py:class:: Analysis(epoch, rootDir='/g/lu/data/orion/', filt='kp', clean_dir=None, combo_dir=None, combo_stf_dir=None, epochDirSuffix=None, imgSuffix=None, stfDir=None, useDistorted=False, cleanList='c.lis', airopa_mode='single', stf_version=None, instrument=instruments.default_inst)
+
+   Bases: :py:obj:`object`
+
+   
+   Object that will perform our standard post-data-reduction analysis.
+   This includes running starfinder, calibrating, and extracting positional
+   and photometric errors via align_rms. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:method:: prepStarfinder(self, targetName, targetCoords, psfStars, filterName)
+
+      
+      Creates a _psf.list file and saves it in the source_list/ directory.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: analyzeCombo(self)
+
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: analyzeClean(self)
+
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: analyzeComboClean()
+
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: starfinderCombo(self, oldPsf=False)
+
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: starfinderClean(self)
+
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: starfinderCleanLoop(self)
+
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: calibrateCombo(self)
+
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: calibrateClean(self)
+
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: alignCombo(self)
+
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: alignClean(self)
+
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+
+.. py:function:: plotPosError(starlist, raw=False, suffix='', radius=4, magCutOff=15.0, title=True)
+
+   
+   Make three standard figures that show the data quality 
+   from  a *_rms.lis file. 
+
+   1. astrometric error as a function of magnitude.
+   2. photometric error as a function of magnitude.
+   3. histogram of number of stars vs. magnitude.
+
+   Use raw=True to plot the individual stars in plots 1 and 2.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
