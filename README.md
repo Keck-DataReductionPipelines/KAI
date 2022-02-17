@@ -35,7 +35,7 @@ The Keck AO Imaging (KAI) data reduction pipeline is a tool to reduce imaging ob
    from kai.reduce import data
    ```
 
-After installation, try running the [reduction tutorial](kai/reduce/TheReductionGuide.ipynb) to get up to speed with KAI.
+After installation, try running the [reduction tutorial](kai/TheReductionGuide.ipynb) to get up to speed with KAI.
 
 ## Example Dataset
 
