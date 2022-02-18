@@ -1,18 +1,18 @@
 # KAI
 
-The Keck AO Imaging (KAI) data reduction pipeline is a tool to reduce imaging observations taken with the [NIRC2](https://github.com/Keck-DataReductionPipelines/KAI/blob/dev/kai/reduce/TheReductionGuide.ipynb) and [OSIRIS](https://www2.keck.hawaii.edu/inst/osiris/) near-infrared imagers at the W. M. Keck Observatory.
+The Keck AO Imaging (KAI) data reduction pipeline is a tool to reduce imaging observations taken with the [NIRC2](https://www2.keck.hawaii.edu/inst/nirc2/) and [OSIRIS](https://www2.keck.hawaii.edu/inst/osiris/) near-infrared imagers at the W. M. Keck Observatory.
 
 [![Powered by Astropy Badge](http://img.shields.io/badge/powered%20by-AstroPy-orange.svg?style=flat)](http://www.astropy.org)
 
 ## Installation
 
-1. Create a separate [conda](https://docs.conda.io/en/latest/miniconda.html) environment to run KAI. The pipeline uses IRAF/PyRAF, and we recommend using the [`environment_iraf27.yml`](environment_iraf27.yml) file in this repository to [create a conda environment](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#creating-an-environment-from-an-environment-yml-file) with the dependencies correctly installed. The environment file will create a new conda environment called `iraf27`, and must be activated before running KAI using
+1. Create a separate [conda](https://docs.conda.io/en/latest/miniconda.html) environment to run KAI. The pipeline uses IRAF/PyRAF, and we recommend using the [`environment_iraf27.yml`](environment_iraf27.yml) file in this repository to [create a conda environment](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#creating-an-environment-from-an-environment-yml-file) with the necessary dependencies correctly installed. The environment file will create a new conda environment called `iraf27`, and must be activated before running KAI using
 
    ```bash
    conda activate iraf27
    ```
 
-   **Note**: The IRAF / PyRAF dependency currently requires Python 2.7 and operating systems that support 32-bit software.
+   **Note**: KAI's IRAF / PyRAF dependency currently requires Python 2.7 and operating systems that support 32-bit software.
 
 2. Clone this git repository. For example:
 

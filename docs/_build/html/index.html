@@ -35,17 +35,7 @@
             
   <section id="the-keck-ao-imaging-kai-data-reduction-pipeline">
 <h1>The Keck AO Imaging (KAI) data reduction pipeline<a class="headerlink" href="#the-keck-ao-imaging-kai-data-reduction-pipeline" title="Permalink to this headline">¶</a></h1>
-<p>The Keck AO Imaging (KAI) data reduction pipeline is a tool to reduce imaging observations taken with the <a class="reference external" href="https://github.com/Keck-DataReductionPipelines/KAI/blob/dev/kai/reduce/TheReductionGuide.ipynb">NIRC2</a> and <a class="reference external" href="https://www2.keck.hawaii.edu/inst/osiris/">OSIRIS</a> near-infrared imagers at the W. M. Keck Observatory.</p>
-<div class="toctree-wrapper compound">
-<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="autoapi/index.html">API Reference</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="autoapi/kai/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="autoapi/test_drizzle/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">test_drizzle</span></code></a></li>
-</ul>
-</li>
-</ul>
-</div>
+<p>The Keck AO Imaging (KAI) data reduction pipeline is a tool to reduce imaging observations taken with the <a class="reference external" href="https://www2.keck.hawaii.edu/inst/nirc2/">NIRC2</a> and <a class="reference external" href="https://www2.keck.hawaii.edu/inst/osiris/">OSIRIS</a> near-infrared imagers at the W. M. Keck Observatory.</p>
 <section id="download">
 <h2>Download<a class="headerlink" href="#download" title="Permalink to this headline">¶</a></h2>
 <p>The latest release can be downloaded from the github repository <a class="reference external" href="https://github.com/Keck-DataReductionPipelines/KAI">here</a>.</p>
@@ -53,13 +43,13 @@
 <section id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
 <ol class="arabic">
-<li><p>Create a separate <a class="reference external" href="https://docs.conda.io/en/latest/miniconda.html">conda</a> environment to run KAI. The pipeline uses IRAF/PyRAF, and we recommend using the <code class="docutils literal notranslate"><span class="pre">`environment_iraf27.yml</span></code> &lt;environment_iraf27.yml&gt;`_ file in this repository to <a class="reference external" href="https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#creating-an-environment-from-an-environment-yml-file">create a conda environment</a> with the dependencies correctly installed. The environment file will create a new conda environment called <code class="docutils literal notranslate"><span class="pre">iraf27</span></code>, and must be activated before running KAI using:</p>
+<li><p>Create a separate <a class="reference external" href="https://docs.conda.io/en/latest/miniconda.html">conda</a> environment to run KAI. The pipeline uses IRAF/PyRAF, and we recommend using the <code class="docutils literal notranslate"><span class="pre">environment_iraf27.yml</span></code> file in this repository (available <a class="reference external" href="https://github.com/Keck-DataReductionPipelines/KAI/blob/dev/environment_iraf27.yml">here</a>) to <a class="reference external" href="https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#creating-an-environment-from-an-environment-yml-file">create a conda environment</a> with the necessary dependencies correctly installed. The environment file will create a new conda environment called <code class="docutils literal notranslate"><span class="pre">iraf27</span></code>, and must be activated before running KAI using:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">conda</span> <span class="n">activate</span> <span class="n">iraf27</span>
 </pre></div>
 </div>
 </li>
 </ol>
-<p><strong>Note</strong>: The IRAF / PyRAF dependency currently requires Python 2.7 and operating systems that support 32-bit software.</p>
+<p><strong>Note</strong>: KAI’s IRAF / PyRAF dependency currently requires Python 2.7 and operating systems that support 32-bit software.</p>
 <ol class="arabic" start="2">
 <li><p>Clone this git repository. For example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="o">~/</span><span class="n">software</span><span class="o">/</span><span class="n">KAI</span>
@@ -80,10 +70,16 @@
 </div>
 </li>
 </ol>
-<p>After installation, try running the <a class="reference external" href="kai/TheReductionGuide.ipynb">reduction tutorial</a> to get up to speed with KAI.</p>
+<p>After installation, try running the <a class="reference external" href="https://github.com/Keck-DataReductionPipelines/KAI/blob/dev/kai/TheReductionGuide.ipynb">reduction tutorial</a> to get up to speed with KAI.</p>
 </section>
-<section id="indices-and-tables">
-<h2>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h2>
+<section id="index">
+<h2>Index<a class="headerlink" href="#index" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="autoapi/index.html">API Reference</a></li>
+</ul>
+</div>
 <ul class="simple">
 <li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
 <li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>

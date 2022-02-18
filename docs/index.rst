@@ -6,13 +6,7 @@
 The Keck AO Imaging (KAI) data reduction pipeline
 =================================================
 
-The Keck AO Imaging (KAI) data reduction pipeline is a tool to reduce imaging observations taken with the `NIRC2 <https://github.com/Keck-DataReductionPipelines/KAI/blob/dev/kai/reduce/TheReductionGuide.ipynb>`_ and `OSIRIS <https://www2.keck.hawaii.edu/inst/osiris/>`_ near-infrared imagers at the W. M. Keck Observatory.
-
-.. toctree::
-   :maxdepth: 2
-   :caption: Contents:
-   
-   autoapi/index
+The Keck AO Imaging (KAI) data reduction pipeline is a tool to reduce imaging observations taken with the `NIRC2 <https://www2.keck.hawaii.edu/inst/nirc2/>`_ and `OSIRIS <https://www2.keck.hawaii.edu/inst/osiris/>`_ near-infrared imagers at the W. M. Keck Observatory.
 
 Download
 --------
@@ -23,11 +17,11 @@ The latest release can be downloaded from the github repository `here
 Installation
 ------------
 
-1. Create a separate `conda <https://docs.conda.io/en/latest/miniconda.html>`_ environment to run KAI. The pipeline uses IRAF/PyRAF, and we recommend using the ```environment_iraf27.yml`` <environment_iraf27.yml>`_ file in this repository to `create a conda environment <https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#creating-an-environment-from-an-environment-yml-file>`_ with the dependencies correctly installed. The environment file will create a new conda environment called ``iraf27``, and must be activated before running KAI using::
+1. Create a separate `conda <https://docs.conda.io/en/latest/miniconda.html>`_ environment to run KAI. The pipeline uses IRAF/PyRAF, and we recommend using the ``environment_iraf27.yml`` file in this repository (available `here <https://github.com/Keck-DataReductionPipelines/KAI/blob/dev/environment_iraf27.yml>`_) to `create a conda environment <https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#creating-an-environment-from-an-environment-yml-file>`_ with the necessary dependencies correctly installed. The environment file will create a new conda environment called ``iraf27``, and must be activated before running KAI using::
 
     conda activate iraf27
    
-**Note**: The IRAF / PyRAF dependency currently requires Python 2.7 and operating systems that support 32-bit software.
+**Note**: KAI's IRAF / PyRAF dependency currently requires Python 2.7 and operating systems that support 32-bit software.
 
 2. Clone this git repository. For example::
 
@@ -45,11 +39,18 @@ Installation
 
     from kai.reduce import data
 
-After installation, try running the `reduction tutorial <kai/TheReductionGuide.ipynb>`_ to get up to speed with KAI.
+After installation, try running the `reduction tutorial <https://github.com/Keck-DataReductionPipelines/KAI/blob/dev/kai/TheReductionGuide.ipynb>`_ to get up to speed with KAI.
 
 
-Indices and tables
-------------------
+Index
+-----
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Contents:
+
+   autoapi/index
+
 
 * :ref:`genindex`
 * :ref:`modindex`
