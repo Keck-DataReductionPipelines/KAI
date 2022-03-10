@@ -1,0 +1,231 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>kai.reduce.sky &#8212; KAI  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/alabaster.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css" />
+    <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+    <script src="../../../../_static/jquery.js"></script>
+    <script src="../../../../_static/underscore.js"></script>
+    <script src="../../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="kai.reduce.slalib" href="../slalib/index.html" />
+    <link rel="prev" title="kai.reduce.reduce_template_osiris" href="../reduce_template_osiris/index.html" />
+   
+  <link rel="stylesheet" href="../../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="module-kai.reduce.sky">
+<span id="kai-reduce-sky"></span><h1><a class="reference internal" href="#module-kai.reduce.sky" title="kai.reduce.sky"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.reduce.sky</span></code></a><a class="headerlink" href="#module-kai.reduce.sky" title="Permalink to this headline">¶</a></h1>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h2>
+<section id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h3>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.sky.makesky" title="kai.reduce.sky.makesky"><code class="xref py py-obj docutils literal notranslate"><span class="pre">makesky</span></code></a>(files, nite, wave, skyscale=True, raw_dir=None, instrument=instruments.default_inst)</p></td>
+<td><p>Make short wavelength (not L-band or longer) skies.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.sky.makesky_lp" title="kai.reduce.sky.makesky_lp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">makesky_lp</span></code></a>(files, nite, wave, number=3, rejectHsigma=None, raw_dir=None, instrument=instruments.default_inst)</p></td>
+<td><p>Make L' skies by carefully treating the ROTPPOSN angle</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.sky.makesky_lp2" title="kai.reduce.sky.makesky_lp2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">makesky_lp2</span></code></a>(files, nite, wave)</p></td>
+<td><p>Make L' skies by carefully treating the ROTPPOSN angle</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.sky.makesky_fromsci" title="kai.reduce.sky.makesky_fromsci"><code class="xref py py-obj docutils literal notranslate"><span class="pre">makesky_fromsci</span></code></a>(files, nite, wave)</p></td>
+<td><p>Make short wavelength (not L-band or longer) skies.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.sky.makesky_lp_fromsci" title="kai.reduce.sky.makesky_lp_fromsci"><code class="xref py py-obj docutils literal notranslate"><span class="pre">makesky_lp_fromsci</span></code></a>(files, nite, wave, number=3, rejectHsigma=None)</p></td>
+<td><p>Make L' skies by carefully treating the ROTPPOSN angle</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.sky.read_sky_rot_file" title="kai.reduce.sky.read_sky_rot_file"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_sky_rot_file</span></code></a>(sky_rot_file)</p></td>
+<td><p>Read in the list of files and rotation angles.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.reduce.sky.makesky">
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.sky.</span></span><span class="sig-name descname"><span class="pre">makesky</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">files</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nite</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wave</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skyscale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raw_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instrument</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">instruments.default_inst</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/sky.html#makesky"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.sky.makesky" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make short wavelength (not L-band or longer) skies.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>files</strong><span class="classifier">list of int</span></dt><dd><p>Integer list of the files. Does not require padded zeros.</p>
+</dd>
+<dt><strong>nite</strong><span class="classifier">str</span></dt><dd><p>Name for night of observation (e.g.: “nite1”), used as suffix
+inside the reduce sub-directories.</p>
+</dd>
+<dt><strong>wave</strong><span class="classifier">str</span></dt><dd><p>Name for the observation passband (e.g.: “kp”)</p>
+</dd>
+<dt><strong>skyscale</strong><span class="classifier">bool, default=True</span></dt><dd><p>Whether or not to scale the sky files to the common median.
+Turn on for scaling skies before subtraction.</p>
+</dd>
+<dt><strong>raw_dir</strong><span class="classifier">str, optional</span></dt><dd><p>Directory where raw files are stored. By default,
+assumes that raw files are stored in ‘../raw’</p>
+</dd>
+<dt><strong>instrument</strong><span class="classifier">instruments object, optional</span></dt><dd><p>Instrument of data. Default is <cite>instruments.default_inst</cite></p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.reduce.sky.makesky_lp">
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.sky.</span></span><span class="sig-name descname"><span class="pre">makesky_lp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">files</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nite</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wave</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">number</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rejectHsigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raw_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instrument</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">instruments.default_inst</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/sky.html#makesky_lp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.sky.makesky_lp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make L’ skies by carefully treating the ROTPPOSN angle
+of the K-mirror. Uses 3 skies combined (set by number keyword).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>files</strong><span class="classifier">list of int</span></dt><dd><p>Integer list of the files. Does not require padded zeros.</p>
+</dd>
+<dt><strong>nite</strong><span class="classifier">str</span></dt><dd><p>Name for night of observation (e.g.: “nite1”), used as suffix
+inside the reduce sub-directories.</p>
+</dd>
+<dt><strong>wave</strong><span class="classifier">str</span></dt><dd><p>Name for the observation passband (e.g.: “lp”)</p>
+</dd>
+<dt><strong>number</strong><span class="classifier">int, default=3</span></dt><dd><p>Number of skies to be combined</p>
+</dd>
+<dt><strong>rejectHsigma</strong><span class="classifier">int, default:None</span></dt><dd><p>Flag to pass for rejectHsigma for IRAF imcombine
+By default, no flags are passed</p>
+</dd>
+<dt><strong>raw_dir</strong><span class="classifier">str, optional</span></dt><dd><p>Directory where raw files are stored. By default,
+assumes that raw files are stored in ‘../raw’</p>
+</dd>
+<dt><strong>instrument</strong><span class="classifier">instruments object, optional</span></dt><dd><p>Instrument of data. Default is <cite>instruments.default_inst</cite></p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.reduce.sky.makesky_lp2">
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.sky.</span></span><span class="sig-name descname"><span class="pre">makesky_lp2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">files</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nite</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wave</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/sky.html#makesky_lp2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.sky.makesky_lp2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make L’ skies by carefully treating the ROTPPOSN angle
+of the K-mirror. Uses only 2 skies combined.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.reduce.sky.makesky_fromsci">
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.sky.</span></span><span class="sig-name descname"><span class="pre">makesky_fromsci</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">files</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nite</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wave</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/sky.html#makesky_fromsci"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.sky.makesky_fromsci" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make short wavelength (not L-band or longer) skies.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.reduce.sky.makesky_lp_fromsci">
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.sky.</span></span><span class="sig-name descname"><span class="pre">makesky_lp_fromsci</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">files</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nite</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wave</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">number</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rejectHsigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/sky.html#makesky_lp_fromsci"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.sky.makesky_lp_fromsci" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make L’ skies by carefully treating the ROTPPOSN angle
+of the K-mirror. Uses 3 skies combined (set by number keyword).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.reduce.sky.read_sky_rot_file">
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.sky.</span></span><span class="sig-name descname"><span class="pre">read_sky_rot_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sky_rot_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/sky.html#read_sky_rot_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.sky.read_sky_rot_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read in the list of files and rotation angles.</p>
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../../index.html">KAI</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">API Reference</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../../index.html">API Reference</a><ul>
+  <li><a href="../../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai</span></code></a><ul>
+  <li><a href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.reduce</span></code></a><ul>
+      <li>Previous: <a href="../reduce_template_osiris/index.html" title="previous chapter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.reduce.reduce_template_osiris</span></code></a></li>
+      <li>Next: <a href="../slalib/index.html" title="next chapter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.reduce.slalib</span></code></a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2022, J. R. Lu, A. K. Gautam, T. Do.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.2.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../../../../_sources/autoapi/kai/reduce/sky/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

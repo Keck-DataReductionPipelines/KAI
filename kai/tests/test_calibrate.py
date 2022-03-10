@@ -13,8 +13,8 @@ def test_star_names():
     calibrate.main(argv=args.split())
 
     # Read in the original and the new starlist and make sure they are the same.
-    tnew = Table.read(starlist.replace('stf.lis', 'stf_cal.lis', format='ascii')
-    tgood = Table.read(starlist.replace('stf.lis', 'stf_cal.lis.good', format='ascii')
+    tnew = Table.read(starlist.replace('stf.lis', 'stf_cal.lis', format='ascii'))
+    tgood = Table.read(starlist.replace('stf.lis', 'stf_cal.lis.good', format='ascii'))
 
     assert tnew['name'][0] == tgood['name'][0]
 

@@ -1,73 +1,70 @@
-********************************************
-Python NIRC2 Reduction Pipeline (``nirc2``)
-********************************************
+.. KAI documentation master file, created by
+   sphinx-quickstart on Thu Feb 17 12:07:34 2022.
+   You can adapt this file completely to your liking, but it should at least
+   contain the root `toctree` directive.
 
-.. _numpy: http://www.numpy.org
+The Keck AO Imaging (KAI) data reduction pipeline
+=================================================
 
-Introduction
-============
-
-This Astropy-affiliated package provides a reduction pipeline for images
-taken with the NIRC2 instrument at the W. M. Keck Observatory. 
+The Keck AO Imaging (KAI) data reduction pipeline is a tool to reduce imaging observations taken with the `NIRC2 <https://www2.keck.hawaii.edu/inst/nirc2/>`_ and `OSIRIS <https://www2.keck.hawaii.edu/inst/osiris/>`_ near-infrared imagers at the W. M. Keck Observatory.
 
 Download
-========
+--------
 
 The latest release can be downloaded from the github repository `here
-<https://github.com/jluastro/nirc2>`_.
+<https://github.com/Keck-DataReductionPipelines/KAI>`_.
 
 Installation
-============
+------------
 
-This pacakge depends on pyraf and astropy functionality and has been 
-tested on top of `Ureka <http://ssb.stsci.edu/ureka/>`_ python/pyraf installation.
-The respository can be cloned from github and by installing with
+1. Create a separate `conda <https://docs.conda.io/en/latest/miniconda.html>`_ environment to run KAI. The pipeline uses IRAF/PyRAF, and we recommend using the ``environment_iraf27.yml`` file in this repository (available `here <https://github.com/Keck-DataReductionPipelines/KAI/blob/dev/environment_iraf27.yml>`_) to `create a conda environment <https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#creating-an-environment-from-an-environment-yml-file>`_ with the necessary dependencies correctly installed. The environment file will create a new conda environment called ``iraf27``, and must be activated before running KAI using::
 
-python setup.py build
-python setup.py install
+    conda activate iraf27
+   
+**Note**: KAI's IRAF / PyRAF dependency currently requires Python 2.7 and operating systems that support 32-bit software.
 
+2. Clone this git repository. For example::
 
-Using `nirc2`
-=============
+    cd ~/software/KAI
+    git clone git@github.com:Keck-DataReductionPipelines/KAI.git
+   
 
-The NIRC2 module is imported using::
+3. Install KAI by going to your cloned repository and running the `setup.py` script. For example::
 
-  >>> import nirc2
+    conda activate iraf27
+    cd ~/software/KAI/
+    python setup.py install
 
-Within a top-level directory for a NIRC2 run (i.e. ``2012jun``), create
-the following directories::
+4. Test your installation by importing KAI in python. For example::
 
-  mkdir reduce
-  mkdir clean
-  mkdir combo
-  mkdir raw
+    from kai.reduce import data
 
-All ``n*.fits`` files should be located within raw (not in sub-directorities). 
-If processing several consecutive nights worth of data, and file names are not
-unique, then see the helper utility `~nirc2.reduce.util.cp_change_prefix` for 
-renaming files. We recommend files from night 1 be named with `n0*.fits`, 
-files from night 2 be named with `n1*.fits`, etc.
+After installation, try running the `reduction tutorial <https://github.com/Keck-DataReductionPipelines/KAI/blob/dev/kai/TheReductionGuide.ipynb>`_ to get up to speed with KAI.
 
-Copy the reduction template script `~nirc2.reduce.reduce_template.py`
-to `reduce/reduce.py`. Modify the reduction script to point to the appropriate
-FITS file numbers for calibration frames, sky frames, and science frames.
-See `Reduction Template`_ for a more complete description of the template 
-and example reductions.
+Example Reduction Template Scripts
+----------------------------------
 
-A NIRC2 reduction can be run from the `reduce/` directory in the following 
-manner::
+The reduction template scripts included in this repository provide a complete run-through of the reduction procedure for imaging data: creating darks and flats, reducing skies, cleaning science images, and combining multiple clean science images into a combo science image.
 
-  >>> import reduce
-  >>> reduce.makelog()
-  >>> reduce.go()
+* `Reduction template script for NIRC2 imaging data <https://github.com/Keck-DataReductionPipelines/KAI/blob/dev/kai/reduce/reduce_template.py>`_
+* `Reduction template script for OSIRIS imaging data <https://github.com/Keck-DataReductionPipelines/KAI/blob/dev/kai/reduce/reduce_template_osiris.py>`_
 
-Output files from the reduction are described in `Output Files from Reduction`_.
+Example Dataset
+---------------
+
+An example dataset with scripts can be found at this `Google Drive link <https://drive.google.com/drive/folders/1FpTN3wiG4U826H328JIJcPLbScNCTRQW?usp=sharing>`_. This is a great place to start to test the pipeline.
 
 
-Reduction Template
-==================
+Index
+-----
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Contents:
+
+   autoapi/index
 
 
-Output Files from Reduction
-===========================
-
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`

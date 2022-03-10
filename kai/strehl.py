@@ -1,5 +1,5 @@
 import numpy as np
-import pylab as plt
+import matplotlib.pyplot as plt
 from astropy.io import fits
 from astropy.nddata import Cutout2D
 from astropy.modeling import models, fitting
@@ -123,14 +123,21 @@ def calc_strehl_single(img_file, radius, dl_peak_flux_ratio, instrument=instrume
     img, hdr = fits.getdata(img_file, header=True)
     wavelength = instrument.get_central_wavelength(hdr) # microns
     scale = instrument.get_plate_scale(hdr)
-
+    
     # Read in the coordinate file to get the position of the Strehl source. 
     coo_file = img_file.replace('.fits', '.coo')
     _coo = open(coo_file, 'r')
     coo_tmp = _coo.readline().split()
     coords = np.array([float(coo_tmp[0]), float(coo_tmp[1])])
     coords -= 1  # Coordinate were 1 based; but python is 0 based.
-
+    
+    # Use Strehl source coordinates in the header, if available and recorded
+    if 'XSTREHL' in hdr:
+        coords = np.array([float(hdr['XSTREHL']),
+                           float(hdr['YSTREHL'])])
+        coords -= 1     # Coordinate were 1 based; but python is 0 based.
+    
+    
     # Calculate the FWHM using a 2D gaussian fit. We will just average the two.
     # To make this fit more robust, we will change our boxsize around, slowly
     # shrinking it until we get a reasonable value.
@@ -148,7 +155,7 @@ def calc_strehl_single(img_file, radius, dl_peak_flux_ratio, instrument=instrume
     pos_delta_max = 2*fwhm_min
     box_scale = 1.0
     iters = 0
-
+    
     # Steadily increase the boxsize until we get a reasonable FWHM estimate.
     while ((fwhm < fwhm_min) or (fwhm > fwhm_max)) and (iters < 30):
         box_scale += iters * 0.1
@@ -270,6 +277,10 @@ def fit_gaussian2d(img, coords, boxsize, plot=False,
     # Setup our model with some initial guess
     x_init = boxsize/2.0
     y_init = boxsize/2.0
+    
+    x_init = np.unravel_index(np.argmax(cutout), cutout.shape)[1]
+    y_init = np.unravel_index(np.argmax(cutout), cutout.shape)[0]
+    
     stddev_init = fwhm_to_stddev(fwhm_min)
     
     g2d_init = models.Gaussian2D(x_mean = x_init,
@@ -282,38 +293,46 @@ def fit_gaussian2d(img, coords, boxsize, plot=False,
     g2d_init.y_stddev_0.min = fwhm_to_stddev(fwhm_min)
     g2d_init.x_stddev_0.max = fwhm_to_stddev(fwhm_max)
     g2d_init.y_stddev_0.max = fwhm_to_stddev(fwhm_max)
-
+    
     g2d_init.x_mean_0.min = x_init - pos_delta_max
     g2d_init.x_mean_0.max = x_init + pos_delta_max
     g2d_init.y_mean_0.min = y_init - pos_delta_max
     g2d_init.y_mean_0.max = y_init + pos_delta_max
     
-    # print(g2d_init)
-    # pdb.set_trace()
-
     fit_g = fitting.LevMarLSQFitter()
     g2d = fit_g(g2d_init, x2d, y2d, cutout)
-
+    
+    # print(g2d_init)
+    # print(g2d)
+    # pdb.set_trace()
+    
     if plot:
         mod_img = g2d(x2d, y2d)
         plt.figure(1, figsize=(15,5))
         plt.clf()
         plt.subplots_adjust(left=0.05, wspace=0.3)
         plt.subplot(1, 3, 1)
-        plt.imshow(cutout, vmin=mod_img.min(), vmax=mod_img.max())
+        plt.imshow(cutout, vmin=mod_img.min(), vmax=mod_img.max(),
+                   origin='lower')
         plt.colorbar()
         plt.title("Original")
         
         plt.subplot(1, 3, 2)
-        plt.imshow(mod_img, vmin=mod_img.min(), vmax=mod_img.max())
+        plt.imshow(mod_img, vmin=mod_img.min(), vmax=mod_img.max(),
+                   origin='lower')
         plt.colorbar()
         plt.title("Model")
         
         plt.subplot(1, 3, 3)
-        plt.imshow(cutout - mod_img)
+        plt.imshow(cutout - mod_img, origin='lower')
         plt.colorbar()
         plt.title("Orig - Mod")
-
+        
+        plt.show()
+        
+        # plt.show(block=0)
+        # plt.savefig('strehl_fit.pdf')
+        # pdb.set_trace()
         
     # Adjust Gaussian parameters to the original coordinates.
     cutout_pos = np.array([g2d.x_mean_0.value, g2d.y_mean_0.value])

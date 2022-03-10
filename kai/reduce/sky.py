@@ -10,6 +10,7 @@ from kai import instruments
 from datetime import datetime
 import pdb
 import astropy
+from pkg_resources import parse_version
 
 def makesky(files, nite,
             wave, skyscale=True,
@@ -91,9 +92,9 @@ def makesky(files, nite,
 
         for i in range(len(skies)):
             # Get the sigma-clipped mean and stddev on the dark
-            img_sky = fits.getdata(nn[i])
-            if float(astropy.__version__) < 3.0:
-                sky_stats = stats.sigma_clipped_stats(img_dk,
+            img_sky = fits.getdata(nn[i], ignore_missing_end=True)
+            if parse_version(astropy.__version__) < parse_version('3.0'):
+                sky_stats = stats.sigma_clipped_stats(img_sky,
                                                        sigma=3,
                                                        iters=4)
             else:
@@ -429,8 +430,8 @@ def makesky_fromsci(files, nite, wave):
     sky_std = np.zeros([len(skies)], dtype=float)
 
     for ii in range(len(nn)):
-        img_sky = fits.getdata(nn[i])
-        if float(astropy.__version__) < 3.0:
+        img_sky = fits.getdata(nn[i], ignore_missing_end=True)
+        if parse_version(astropy.__version__) < parse_version('3.0'):
             sky_stats = stats.sigma_clipped_stats(img_sky,
                                                   sigma_lower=10, sigma_upper=3,
                                                   iters=10)

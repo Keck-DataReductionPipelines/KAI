@@ -75,8 +75,9 @@ class Analysis(object):
         # Keep track of the instrument these images are from.
         # We need this to get things like plate scale, etc.
         self.instrument = instrument
-
-        self.calStars = ['irs16C', 'irs16NW', 'irs16CC']
+        
+        self.calStars = ['irs16NW', 'S3-22', 'S1-17', 'S1-34', 'S4-3', 'S1-1',
+                         'S1-21', 'S3-370', 'S3-88', 'S3-36', 'S2-63']
         self.calFlags = '-f 1 -R '
         self.mapFilter2Cal = {'kp': 'Kp', 'h': 'H', 'lp': 'Lp_o1', 'ms': 'Ms_o1'}
         if 'kp' in filt:
@@ -391,7 +392,8 @@ class Analysis(object):
                 with open(cur_coo_file, 'w') as out_coo_file:
                     out_coo_file.write(coo_output)
             
-            strehl.calc_strehl(psf_file_list, 'stf_psf_strehl.txt',
+            strehl.calc_strehl(psf_file_list,
+                               'stf_psf_strehl_{0}.txt'.format(self.filt),
                                instrument=self.instrument)
             
             os.chdir(self.dirStart)

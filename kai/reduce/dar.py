@@ -1,7 +1,8 @@
-from pyraf import iraf
+# from pyraf import iraf
 import glob
 import numpy as np
 import pylab as py
+import matplotlib.pyplot as plt
 import math
 from astropy.io import fits as pyfits
 import datetime
@@ -64,11 +65,11 @@ def keckDARcoeffs(lamda, year, month, day, hour, minute):
     refA
     refB
     """
-    iraf.noao()
+    # iraf.noao()
 
     # Set up Keck observatory info
-    foo = iraf.noao.observatory(command="set", obsid="keck", Stdout=1)
-    obs = iraf.noao.observatory
+    # foo = iraf.noao.observatory(command="set", obsid="keck", Stdout=1)
+    # obs = iraf.noao.observatory
 
     ####################
     # Setup all the parameters for the atmospheric refraction
@@ -81,14 +82,16 @@ def keckDARcoeffs(lamda, year, month, day, hour, minute):
     # Precision required to terminate the iteration (radian)
     eps = 1.0e-9
     # Height above sea level (meters)
-    hm = obs.altitude
+    # hm = obs.altitude
+    hm = 4160.0                             #Keck height. Hard coded to remove iraf dependency
     # Latitude of the observer (radian)
-    phi = math.radians(obs.latitude)
+    # phi = math.radians(obs.latitude)
+    phi = math.radians(19.82833333333333)   #Keck latitude. Hard coded to remove iraf dependency
 
     # Pull from atmosphere logs.
     logDir = module_dir + '/weather/'
     logFile = logDir +'cfht-wx.'+ str(year) +'.'+ str(month).zfill(2) +'.dat'
-    
+    print(logFile)
 
     _atm = Table.read(logFile, format='ascii', header_start=None)
     atmYear = _atm['col1']
@@ -147,8 +150,8 @@ def kaidar(fitsFile, instrument=instruments.default_inst):
 
     effWave = instrument.get_central_wavelength(hdr)
     elevation = hdr[instrument.hdr_keys['elevation']]
-    airmass = hdr['AIRMASS']
-    parang = hdr['PARANG']
+    # airmass = hdr['AIRMASS']
+    # parang = hdr['PARANG']
 
     date = hdr['DATE-OBS'].split('-')
     year = int(date[0])
@@ -169,37 +172,38 @@ def kaidar(fitsFile, instrument=instruments.default_inst):
 
     tanz = math.tan(math.radians(90.0 - elevation))
     tmp = 1.0 + tanz**2
-    darCoeffL = tmp * (refA + 3.0 * refB * tanz**2)
+    darCoeffL = tmp * (refA + 3.0 * refB * tanz**2)   #unitless
     darCoeffQ = -tmp * (refA*tanz +
-                            3.0 * refB * (tanz + 2.0*tanz**3))
+                            3.0 * refB * (tanz + 2.0*tanz**3))   #units: radians^-1
 
-    # Convert DAR coefficients for use with units of NIRC2 pixels
-    scale = instrument.get_plate_scale(hdr)
+    # Convert DAR coefficients for use with arcseconds
+    # scale = instrument.get_plate_scale(hdr)
+    # darCoeffQ *= 1.0 * scale / 206265.0
     darCoeffL *= 1.0
-    darCoeffQ *= 1.0 * scale / 206265.0
-    
-    # Lets determine the zenith and horizon unit vectors for
-    # this image.
-    pos_ang = instrument.get_position_angle(hdr)
-    pa = math.radians(parang + pos_ang)
-    zenithX = -math.sin(pa)
-    zenithY = math.cos(pa)
+    darCoeffQ *= 1.0 / 206265.0             #units now arcsec^-1
+   
+    # # Lets determine the zenith and horizon unit vectors for
+    # # this image.
+    # pos_ang = instrument.get_position_angle(hdr)
+    # pa = math.radians(parang + pos_ang)
+    # zenithX = -math.sin(pa)
+    # zenithY = math.cos(pa)
 
-    # Compute the predicted differential atmospheric refraction
-    # over a 10'' seperation along the zenith direction.
-    # Remember coeffecicents are only for deltaZ in pixels
-    deltaZ = img.shape[0] * scale
-    deltaR = darCoeffL * (deltaZ/scale) + darCoeffQ * (deltaZ/scale)**2
-    deltaR *= scale # now in arcseconds
+    # # Compute the predicted differential atmospheric refraction
+    # # over a 10'' seperation along the zenith direction.
+    # # Remember coeffecicents are only for deltaZ in pixels
+    # deltaZ = img.shape[0] * scale
+    # deltaR = darCoeffL * (deltaZ/scale) + darCoeffQ * (deltaZ/scale)**2
+    # deltaR *= scale # now in arcseconds
 
-    magnification = (deltaZ + deltaR) / deltaZ
-    print(( 'DAR FITS file = %s' % (fitsFile)))
-    print(('DAR over 10": Linear dR = %f"  Quad dR = %f"' % \
-          (darCoeffL * deltaZ, darCoeffQ * deltaZ**2)))
-    print(('DAR Magnification = %f' % (magnification)))
-    print(('DAR Vertical Angle = %6.1f' % (math.degrees(pa))))
+    # magnification = (deltaZ + deltaR) / deltaZ
+    # print(( 'DAR FITS file = %s' % (fitsFile)))
+    # print(('DAR over 10": Linear dR = %f"  Quad dR = %f"' % \
+    #       (darCoeffL * deltaZ, darCoeffQ * deltaZ**2)))
+    # print(('DAR Magnification = %f' % (magnification)))
+    # print(('DAR Vertical Angle = %6.1f' % (math.degrees(pa))))
 
-    return (pa, darCoeffL, darCoeffQ)
+    return (darCoeffL, darCoeffQ)
 
 def darPlusDistortion(inputFits, outputRoot, xgeoim=None, ygeoim=None, instrument=instruments.default_inst):
     """
@@ -228,7 +232,12 @@ def darPlusDistortion(inputFits, outputRoot, xgeoim=None, ygeoim=None, instrumen
     halfY = int(round(imgsizeY / 2.0))
 
     # First get the coefficients
-    (pa, darCoeffL, darCoeffQ) = kaidar(inputFits, instrument=instrument)
+    (darCoeffL, darCoeffQ) = kaidar(inputFits, instrument=instrument)
+    # Convert DAR coefficients for use with units of NIRC2 pixels
+    scale = instrument.get_plate_scale(hdr)
+    darCoeffL *= 1.0                
+    darCoeffQ *= 1.0 * scale #/ 206265.0    
+    pa = math.radians(instrument.get_parallactic_angle(hdr) + instrument.get_position_angle(hdr))
     #(a, b) = kaidarPoly(inputFits)
 
     # Create two 1024 arrays (or read in existing ones) for the
@@ -288,9 +297,11 @@ def darPlusDistortion(inputFits, outputRoot, xgeoim=None, ygeoim=None, instrumen
     return (xout, yout)
 
 
-def applyDAR(inputFits, spaceStarlist, plot=False, instrument=instruments.default_inst):
+def applyDAR(inputFits, spaceStarlist, plot=False, instrument=instruments.default_inst, plotdir = './'):
     """
-    inputFits: (str) name if fits file associated with this starlist
+    inputFits: (str) name of fits file associated with this starlist
+
+    spaceStarlist: (astropy table) must include columns 'x0' and 'y0'.
 
     Input a starlist in x=RA (+x = west) and y=Dec (arcseconds) taken from
     space and introduce differential atmospheric refraction (DAR). The amount
@@ -300,9 +311,9 @@ def applyDAR(inputFits, spaceStarlist, plot=False, instrument=instruments.defaul
     starlight passed through the telescope. Only achromatic DAR is 
     applied in this code.
 
-    The output file has the name <fitsFile>_acs.lis and is saved to the
-    current directory.
+    returns spaceStarlist with updated 'x0' and 'y0'
     """
+
     # Get header info
     #hdr = pyfits.getheader(fits)
 
@@ -346,22 +357,26 @@ def applyDAR(inputFits, spaceStarlist, plot=False, instrument=instruments.defaul
     #pa = math.radians(parang)
 
     #MS: presumably the above code is all replacable with this call (which uses the intrument object
-    (pa, darCoeffL, darCoeffQ) = kaidar(inputFits, instrument=instrument)
-    
+    (darCoeffL, darCoeffQ) = kaidar(inputFits, instrument=instrument)
+    hdr = pyfits.getheader(inputFits)
+    pa = math.radians(instrument.get_parallactic_angle(hdr))
     ##########
     #
     # Read in the starlist
     #
     ##########
-    _list = Table.read(spaceStarlist, format='ascii')
-    cols = list(_list.columns.keys())
-    names = [_list[ss][0].strip() for ss in range(len(_list))]
-    mag = _list[cols[1]]
-    date = _list[cols[2]]
-    x = _list[cols[3]] # RA in arcsec
-    y = _list[cols[4]]
-    xe = _list[cols[5]]
-    ye = _list[cols[6]]
+    # _list = Table.read(spaceStarlist, format='ascii')
+    # cols = list(_list.columns.keys())
+    # names = [_list[ss][0].strip() for ss in range(len(_list))]
+    # mag = _list[cols[1]]
+    # date = _list[cols[2]]
+    # x = _list[cols[3]] # RA in arcsec
+    # y = _list[cols[4]]
+    # xe = _list[cols[5]]
+    # ye = _list[cols[6]]
+
+    x = spaceStarlist['x0']     #already in arcseconds, x increasing to west.
+    y = spaceStarlist['y0']
 
     # Magnify everything in the y (zenith) direction. Do it relative to
     # the first star. Even though dR depends on dzObs (ground observed dz),
@@ -394,24 +409,40 @@ def applyDAR(inputFits, spaceStarlist, plot=False, instrument=instruments.defaul
     #
     ##########
     # Save the current directory
-    newFits = fits.replace('.fits', '').split('/')[-1]
-    newList = newFits + '_acs.lis'
-    print(newList)
-    _new = open(newList, 'w')
-    for i in range(len(names)):
-        _new.write('%10s  %7.3f  %7.2f  %10.4f  %10.4f  0  0  10  1  1  8\n' % \
-              (names[i], mag[i], date[i], xnew[i], ynew[i]))
+    # newFits = fits.replace('.fits', '').split('/')[-1]
+    # newList = newFits + '_acs.lis'
+    # print(newList)
+    # _new = open(newList, 'w')
+    # for i in range(len(names)):
+    #     _new.write('%10s  %7.3f  %7.2f  %10.4f  %10.4f  0  0  10  1  1  8\n' % \
+    #           (names[i], mag[i], date[i], xnew[i], ynew[i]))
+    # _new.close()
 
-    _new.close()
-
-    if (plot==True):
-        py.clf()
-        py.quiver(x, y, xnew - x, ynew - y, scale=0.02)
-        py.quiver([0], [0], [0.001], [0], color='r', scale=0.02)
-        py.axis([-5, 5, -5, 5])
-        py.show()
+    # if (plot==True):
+    #     py.clf()
+    #     py.quiver(x, y, xnew - x, ynew - y, scale=0.02)
+    #     py.quiver([0], [0], [0.001], [0], color='r', scale=0.02)
+    #     py.axis([-5, 5, -5, 5])
+    #     py.show()
         
+    if (plot==True):
+        plt.close('all')
+        q = plt.quiver(x, y, xnew - x, ynew - y, scale=0.02)
+        plt.xlabel('RA (arcsec)')
+        plt.ylabel('DEC (arcsec)')
+        plt.xlabel(r'$\Delta$ RA * cos(DEC) (arcsec)')
+        plt.ylabel(r'$\Delta$ DEC (arcsec)')
+        plt.figtext(0.15,0.85,'q =' + str(round(math.degrees(pa))))
+        quiv_label = '1 mas'
+        quiv_label_val = 0.001
+        plt.quiverkey(q, 0.80, 0.85, quiv_label_val, quiv_label, coordinates='figure', labelpos='E', color='green')     
+        plt.savefig(plotdir+ inputFits[-26:-5] + '.jpg', bbox_inches='tight')
+        # plt.show()
 
+    spaceStarlist['x0'] = xnew
+    spaceStarlist['y0'] = ynew 
+
+    return spaceStarlist
 
 def splitAtmosphereCFHT(year):
     """

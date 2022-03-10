@@ -1,0 +1,157 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>kai.plot &#8212; KAI  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/alabaster.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="kai.strehl" href="../strehl/index.html" />
+    <link rel="prev" title="kai.photometry" href="../photometry/index.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="module-kai.plot">
+<span id="kai-plot"></span><h1><a class="reference internal" href="#module-kai.plot" title="kai.plot"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.plot</span></code></a><a class="headerlink" href="#module-kai.plot" title="Permalink to this headline">¶</a></h1>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h2>
+<section id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h3>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.plot.plotpsf" title="kai.plot.plotpsf"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plotpsf</span></code></a>(epoch, target, user_root, coo_star='psf_000', scale=0.00995, filt='kp', outdir='./')</p></td>
+<td><p>Plot the psfs of your star list over the combo image and saves the figure.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.plot.plotpsf">
+<span class="sig-prename descclassname"><span class="pre">kai.plot.</span></span><span class="sig-name descname"><span class="pre">plotpsf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">epoch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_root</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coo_star</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'psf_000'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.00995</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'kp'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outdir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'./'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/plot.html#plotpsf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.plot.plotpsf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot the psfs of your star list over the combo image and saves the figure.</p>
+<dl class="simple">
+<dt>Designed for path structure ‘&lt;user_root&gt;source_list/target_psf.list’</dt><dd><p>‘&lt;user_root&gt;&lt;epoch&gt;/combo/’, etc.</p>
+</dd>
+</dl>
+<p>user_root should include ‘/’ at the end.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="simple">
+<dt>epoch (str): Observing epoch, in the format YYmmmDD, where YY is the</dt><dd><p>last two digits of the year, mmm the first three letters of the
+month, and DD the digits of the day.</p>
+</dd>
+</dl>
+<p>target (str): Target object.</p>
+</dd>
+<dt>Returns:</dt><dd><p>outex (str): The path to the .png file of the plot.
+coo_coords (astropy.table.table.Table): Table of the coo star’s</p>
+<blockquote>
+<div><p>coordinates.</p>
+</div></blockquote>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">KAI</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">API Reference</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">API Reference</a><ul>
+  <li><a href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai</span></code></a><ul>
+      <li>Previous: <a href="../photometry/index.html" title="previous chapter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.photometry</span></code></a></li>
+      <li>Next: <a href="../strehl/index.html" title="next chapter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.strehl</span></code></a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2022, J. R. Lu, A. K. Gautam, T. Do.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.2.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../../../_sources/autoapi/kai/plot/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

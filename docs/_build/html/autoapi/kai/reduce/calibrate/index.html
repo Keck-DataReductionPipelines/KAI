@@ -1,0 +1,281 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>kai.reduce.calibrate &#8212; KAI  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/alabaster.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css" />
+    <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+    <script src="../../../../_static/jquery.js"></script>
+    <script src="../../../../_static/underscore.js"></script>
+    <script src="../../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="kai.reduce.dar" href="../dar/index.html" />
+    <link rel="prev" title="kai.reduce.calib" href="../calib/index.html" />
+   
+  <link rel="stylesheet" href="../../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="module-kai.reduce.calibrate">
+<span id="kai-reduce-calibrate"></span><h1><a class="reference internal" href="#module-kai.reduce.calibrate" title="kai.reduce.calibrate"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.reduce.calibrate</span></code></a><a class="headerlink" href="#module-kai.reduce.calibrate" title="Permalink to this headline">¶</a></h1>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h2>
+<section id="classes">
+<h3>Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h3>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.calibrate.IndentedHelpFormatterWithNL" title="kai.reduce.calibrate.IndentedHelpFormatterWithNL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">IndentedHelpFormatterWithNL</span></code></a></p></td>
+<td><p>Format help with indented section bodies.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.calibrate.Starlist" title="kai.reduce.calibrate.Starlist"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Starlist</span></code></a></p></td>
+<td><p>Use this to keep all the lists associated with</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h3>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.calibrate.main" title="kai.reduce.calibrate.main"><code class="xref py py-obj docutils literal notranslate"><span class="pre">main</span></code></a>(argv=None)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.calibrate.read_command_line" title="kai.reduce.calibrate.read_command_line"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_command_line</span></code></a>(argv)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.calibrate.read_photo_calib_file" title="kai.reduce.calibrate.read_photo_calib_file"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_photo_calib_file</span></code></a>(options, verbose=False)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.calibrate.input_data" title="kai.reduce.calibrate.input_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">input_data</span></code></a>(options)</p></td>
+<td><p>Read in a starlist and return a starlist object</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.calibrate.find_cal_stars" title="kai.reduce.calibrate.find_cal_stars"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_cal_stars</span></code></a>(calibs, stars, options)</p></td>
+<td><p>Returns an array of indices which holds the index of the</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.calibrate.calc_zeropt" title="kai.reduce.calibrate.calc_zeropt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calc_zeropt</span></code></a>(calibs, stars, options)</p></td>
+<td><p>Calculate the average zeropoints from all the</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.calibrate.output_new" title="kai.reduce.calibrate.output_new"><code class="xref py py-obj docutils literal notranslate"><span class="pre">output_new</span></code></a>(zeropt, zeropt_err, calibs, stars, options)</p></td>
+<td><p>Write out a calibrated starlist and a <a href="#id1"><span class="problematic" id="id2">*</span></a>.zer file with</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.calibrate.get_camera_type" title="kai.reduce.calibrate.get_camera_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_camera_type</span></code></a>(fitsfile)</p></td>
+<td><p>Helper class to get the calibrate camera type from the</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="attributes">
+<h3>Attributes<a class="headerlink" href="#attributes" title="Permalink to this headline">¶</a></h3>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.calibrate.all_scales" title="kai.reduce.calibrate.all_scales"><code class="xref py py-obj docutils literal notranslate"><span class="pre">all_scales</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py data">
+<dt class="sig sig-object py" id="kai.reduce.calibrate.all_scales">
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.calibrate.</span></span><span class="sig-name descname"><span class="pre">all_scales</span></span><em class="property"> <span class="pre">=</span> <span class="pre">[[1.0,</span> <span class="pre">'No</span> <span class="pre">scaling'],</span> <span class="pre">[0.0102,</span> <span class="pre">'Speckle'],</span> <span class="pre">[0.0087,</span> <span class="pre">'KCAM-AO'],</span> <span class="pre">[0.0085,</span> <span class="pre">'SCAM-AO'],</span> <span class="pre">[0.00993,...</span></em><a class="reference internal" href="../../../../_modules/kai/reduce/calibrate.html#all_scales"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.calibrate.all_scales" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="kai.reduce.calibrate.IndentedHelpFormatterWithNL">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">kai.reduce.calibrate.</span></span><span class="sig-name descname"><span class="pre">IndentedHelpFormatterWithNL</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">indent_increment</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_help_position</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">24</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">short_first</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/calibrate.html#IndentedHelpFormatterWithNL"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.calibrate.IndentedHelpFormatterWithNL" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">optparse.IndentedHelpFormatter</span></code></p>
+<p>Format help with indented section bodies.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="kai.reduce.calibrate.IndentedHelpFormatterWithNL.format_description">
+<span class="sig-name descname"><span class="pre">format_description</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/calibrate.html#IndentedHelpFormatterWithNL.format_description"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.calibrate.IndentedHelpFormatterWithNL.format_description" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kai.reduce.calibrate.IndentedHelpFormatterWithNL.format_option">
+<span class="sig-name descname"><span class="pre">format_option</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">option</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/calibrate.html#IndentedHelpFormatterWithNL.format_option"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.calibrate.IndentedHelpFormatterWithNL.format_option" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.reduce.calibrate.main">
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.calibrate.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">argv</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/calibrate.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.calibrate.main" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.reduce.calibrate.read_command_line">
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.calibrate.</span></span><span class="sig-name descname"><span class="pre">read_command_line</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">argv</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/calibrate.html#read_command_line"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.calibrate.read_command_line" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.reduce.calibrate.read_photo_calib_file">
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.calibrate.</span></span><span class="sig-name descname"><span class="pre">read_photo_calib_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">options</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/calibrate.html#read_photo_calib_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.calibrate.read_photo_calib_file" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.reduce.calibrate.input_data">
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.calibrate.</span></span><span class="sig-name descname"><span class="pre">input_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/calibrate.html#input_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.calibrate.input_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read in a starlist and return a starlist object
+with the following hanging off:</p>
+<blockquote>
+<div><p>name
+mag
+epoch
+x
+y
+xerr (none for starfinder starlists)
+yerr (none for starfinder starlists)
+snr
+corr
+nframes
+fwhm</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.reduce.calibrate.find_cal_stars">
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.calibrate.</span></span><span class="sig-name descname"><span class="pre">find_cal_stars</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">calibs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stars</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/calibrate.html#find_cal_stars"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.calibrate.find_cal_stars" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an array of indices which holds the index of the
+matching star in the starlist. Non-matches have an index of -1.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.reduce.calibrate.calc_zeropt">
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.calibrate.</span></span><span class="sig-name descname"><span class="pre">calc_zeropt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">calibs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stars</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/calibrate.html#calc_zeropt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.calibrate.calc_zeropt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the average zeropoints from all the
+calibrator stars specified by the user (or defaults).
+Recall that not all calibrators in our list will
+be used for the calibration… only those with
+both include = True and found in the starlist.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.reduce.calibrate.output_new">
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.calibrate.</span></span><span class="sig-name descname"><span class="pre">output_new</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">zeropt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zeropt_err</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">calibs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stars</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/calibrate.html#output_new"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.calibrate.output_new" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write out a calibrated starlist and a <a href="#id3"><span class="problematic" id="id4">*</span></a>.zer file with
+the calculated zeropoints.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.reduce.calibrate.get_camera_type">
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.calibrate.</span></span><span class="sig-name descname"><span class="pre">get_camera_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fitsfile</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/calibrate.html#get_camera_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.calibrate.get_camera_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Helper class to get the calibrate camera type from the
+FITS header.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="kai.reduce.calibrate.Starlist">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">kai.reduce.calibrate.</span></span><span class="sig-name descname"><span class="pre">Starlist</span></span><a class="reference internal" href="../../../../_modules/kai/reduce/calibrate.html#Starlist"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.calibrate.Starlist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Use this to keep all the lists associated with
+our input starlist.</p>
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../../index.html">KAI</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">API Reference</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../../index.html">API Reference</a><ul>
+  <li><a href="../../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai</span></code></a><ul>
+  <li><a href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.reduce</span></code></a><ul>
+      <li>Previous: <a href="../calib/index.html" title="previous chapter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.reduce.calib</span></code></a></li>
+      <li>Next: <a href="../dar/index.html" title="next chapter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.reduce.dar</span></code></a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2022, J. R. Lu, A. K. Gautam, T. Do.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.2.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../../../../_sources/autoapi/kai/reduce/calibrate/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

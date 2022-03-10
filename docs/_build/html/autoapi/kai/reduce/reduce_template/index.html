@@ -1,0 +1,203 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>kai.reduce.reduce_template &#8212; KAI  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/alabaster.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css" />
+    <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+    <script src="../../../../_static/jquery.js"></script>
+    <script src="../../../../_static/underscore.js"></script>
+    <script src="../../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="kai.reduce.reduce_template_osiris" href="../reduce_template_osiris/index.html" />
+    <link rel="prev" title="kai.reduce.prep_analysis" href="../prep_analysis/index.html" />
+   
+  <link rel="stylesheet" href="../../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="module-kai.reduce.reduce_template">
+<span id="kai-reduce-reduce-template"></span><h1><a class="reference internal" href="#module-kai.reduce.reduce_template" title="kai.reduce.reduce_template"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.reduce.reduce_template</span></code></a><a class="headerlink" href="#module-kai.reduce.reduce_template" title="Permalink to this headline">¶</a></h1>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h2>
+<section id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h3>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.reduce_template.makelog" title="kai.reduce.reduce_template.makelog"><code class="xref py py-obj docutils literal notranslate"><span class="pre">makelog</span></code></a>()</p></td>
+<td><p>Make an electronic log from all the files in the ../raw/ directory.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.reduce_template.analyze_darks" title="kai.reduce.reduce_template.analyze_darks"><code class="xref py py-obj docutils literal notranslate"><span class="pre">analyze_darks</span></code></a>()</p></td>
+<td><p>Analyze the dark_calib results</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.reduce_template.go" title="kai.reduce.reduce_template.go"><code class="xref py py-obj docutils literal notranslate"><span class="pre">go</span></code></a>()</p></td>
+<td><p>Do the full data reduction.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.reduce_template.jackknife" title="kai.reduce.reduce_template.jackknife"><code class="xref py py-obj docutils literal notranslate"><span class="pre">jackknife</span></code></a>()</p></td>
+<td><p>Perform the Jackknife data reduction. The methodology is as follows:</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="attributes">
+<h3>Attributes<a class="headerlink" href="#attributes" title="Permalink to this headline">¶</a></h3>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.reduce_template.epoch" title="kai.reduce.reduce_template.epoch"><code class="xref py py-obj docutils literal notranslate"><span class="pre">epoch</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.reduce_template.nirc2" title="kai.reduce.reduce_template.nirc2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nirc2</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py data">
+<dt class="sig sig-object py" id="kai.reduce.reduce_template.epoch">
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.reduce_template.</span></span><span class="sig-name descname"><span class="pre">epoch</span></span><em class="property"> <span class="pre">=</span> <span class="pre">19apr21</span></em><a class="reference internal" href="../../../../_modules/kai/reduce/reduce_template.html#epoch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.reduce_template.epoch" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="kai.reduce.reduce_template.nirc2">
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.reduce_template.</span></span><span class="sig-name descname"><span class="pre">nirc2</span></span><a class="reference internal" href="../../../../_modules/kai/reduce/reduce_template.html#nirc2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.reduce_template.nirc2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.reduce.reduce_template.makelog">
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.reduce_template.</span></span><span class="sig-name descname"><span class="pre">makelog</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/reduce_template.html#makelog"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.reduce_template.makelog" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make an electronic log from all the files in the ../raw/ directory.
+The file will be called kai.log and stored in the same directory.</p>
+<p>&#64;author Jessica Lu
+&#64;author Sylvana Yelda</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.reduce.reduce_template.analyze_darks">
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.reduce_template.</span></span><span class="sig-name descname"><span class="pre">analyze_darks</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/reduce_template.html#analyze_darks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.reduce_template.analyze_darks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Analyze the dark_calib results</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.reduce.reduce_template.go">
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.reduce_template.</span></span><span class="sig-name descname"><span class="pre">go</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/reduce_template.html#go"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.reduce_template.go" title="Permalink to this definition">¶</a></dt>
+<dd><p>Do the full data reduction.</p>
+<p>&#64;author Jessica Lu
+&#64;author Sylvana Yelda</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.reduce.reduce_template.jackknife">
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.reduce_template.</span></span><span class="sig-name descname"><span class="pre">jackknife</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/reduce_template.html#jackknife"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.reduce_template.jackknife" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform the Jackknife data reduction. The methodology is as follows:
+For N total images, there are N stacked images created by data.combine(),
+each of these combo frames consists of N-1 images. The suffix ‘_{i}’ is
+given to each jackknife combo frame (i.e. mag27maylgs_12_ks.fits would be
+the 12th jackknife combo frame created). Submaps flag has been turned off
+for this function, as it is not needed.</p>
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../../index.html">KAI</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">API Reference</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../../index.html">API Reference</a><ul>
+  <li><a href="../../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai</span></code></a><ul>
+  <li><a href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.reduce</span></code></a><ul>
+      <li>Previous: <a href="../prep_analysis/index.html" title="previous chapter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.reduce.prep_analysis</span></code></a></li>
+      <li>Next: <a href="../reduce_template_osiris/index.html" title="next chapter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.reduce.reduce_template_osiris</span></code></a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2022, J. R. Lu, A. K. Gautam, T. Do.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.2.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../../../../_sources/autoapi/kai/reduce/reduce_template/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

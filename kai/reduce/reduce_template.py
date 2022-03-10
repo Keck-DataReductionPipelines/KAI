@@ -121,8 +121,8 @@ def go():
     ##########
     # K-band reduction
     ##########
-    util.mkdir('kp')
-    os.chdir('kp')
+    #util.mkdir('kp')
+    #os.chdir('kp')
 
     # Nite 1:
     #    SCI frames (don't forget to add 1 at end): 108-237
@@ -176,8 +176,8 @@ def go():
     # Lp
     ############
 
-    util.mkdir('lp')
-    os.chdir('lp')
+    #util.mkdir('lp')
+    #os.chdir('lp')
 
     # Nite 1
     sky_files = list(range(38, 53+1))
@@ -201,3 +201,48 @@ def go():
     # data.combine(arch_files,'kp','06maylgs1',trim=1,weight='strehl'
     #                field='f1',submaps=3)
     #
+
+############
+# Jackknife
+############
+def jackknife():
+    """
+    Perform the Jackknife data reduction. The methodology is as follows:
+    For N total images, there are N stacked images created by data.combine(),
+    each of these combo frames consists of N-1 images. The suffix '_{i}' is
+    given to each jackknife combo frame (i.e. mag27maylgs_12_ks.fits would be
+    the 12th jackknife combo frame created). Submaps flag has been turned off
+    for this function, as it is not needed.
+    """
+
+    ##########
+    # Ks-band reduction
+    ##########
+
+    # Nite 1
+    sci_files1 = list(range(173, 177+1))
+    sky_files1 = list(range(206, 215+1))
+    refSrc1 = [385., 440.] #This is the target nearest to center
+
+    sky.makesky(sky_files1, 'nite1', 'ks', instrument=nirc2)
+    data.clean(sci_files1, 'nite1', 'ks', refSrc1, refSrc1, instrument=nirc2)
+
+
+    # Nite 2
+    sci_files2 = list(range(195, 203+1))
+    sky_files2 = list(range(206, 215+1))
+    refSrc2 = [387., 443.] #This is the target nearest to center
+
+    sky.makesky(sky_files2, 'nite2', 'ks', instrument=nirc2)
+    data.clean(sci_files2, 'nite2', 'ks', refSrc2, refSrc2, instrument=nirc2)
+    #-----------------
+
+    sci_files = sci_files1 + sci_files2
+
+    for i in enumerate(sci_files, start=1):
+        jack_list = sci_files[:]
+        jack_list.remove(i[1])
+        data.calcStrehl(jack_list, 'ks', instrument=nirc2)
+        data.combine(jack_list, 'ks', '27maylgs', trim=1, weight='strehl',
+                    instrument=nirc2, outSuffix='_' + str(i[0]))
+        os.chdir('reduce')

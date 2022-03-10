@@ -1,0 +1,50 @@
+:py:mod:`kai.conditions`
+========================
+
+.. py:module:: kai.conditions
+
+.. autoapi-nested-parse::
+
+   
+   ..
+       !! processed by numpydoc !!
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   kai.conditions.summarize_observing_conditions
+
+
+
+.. py:function:: summarize_observing_conditions(fitsFiles)
+
+   
+   Summarize the observing conditions for a set of fits files. Select
+   out the dates and times, range of airmasses, temperature,
+   pressure, humidity, and water vapor column.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+

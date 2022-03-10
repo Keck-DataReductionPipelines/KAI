@@ -1,0 +1,281 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>kai.reduce.calib &#8212; KAI  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/alabaster.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css" />
+    <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+    <script src="../../../../_static/jquery.js"></script>
+    <script src="../../../../_static/underscore.js"></script>
+    <script src="../../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="kai.reduce.calibrate" href="../calibrate/index.html" />
+    <link rel="prev" title="kai.reduce.bfixpix" href="../bfixpix/index.html" />
+   
+  <link rel="stylesheet" href="../../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="module-kai.reduce.calib">
+<span id="kai-reduce-calib"></span><h1><a class="reference internal" href="#module-kai.reduce.calib" title="kai.reduce.calib"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.reduce.calib</span></code></a><a class="headerlink" href="#module-kai.reduce.calib" title="Permalink to this headline">¶</a></h1>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h2>
+<section id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h3>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.calib.makedark" title="kai.reduce.calib.makedark"><code class="xref py py-obj docutils literal notranslate"><span class="pre">makedark</span></code></a>(files, output, raw_dir=None, instrument=instruments.default_inst)</p></td>
+<td><p>Make dark image for imaging data. Makes a calib/ directory</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.calib.makeflat" title="kai.reduce.calib.makeflat"><code class="xref py py-obj docutils literal notranslate"><span class="pre">makeflat</span></code></a>(onFiles, offFiles, output, normalizeFirst=False, raw_dir=None, instrument=instruments.default_inst)</p></td>
+<td><p>Make flat field image for imaging data. Makes a calib/ directory</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.calib.makemask" title="kai.reduce.calib.makemask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">makemask</span></code></a>(dark, flat, output, instrument=instruments.default_inst)</p></td>
+<td><p>Make bad pixel mask for imaging data. Makes a calib/ directory</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.calib.make_instrument_mask" title="kai.reduce.calib.make_instrument_mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_instrument_mask</span></code></a>(dark, flat, outDir, instrument=instruments.default_inst)</p></td>
+<td><p>Make the static bad pixel mask for the instrument. This only needs to be</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.calib.analyzeDarkCalib" title="kai.reduce.calib.analyzeDarkCalib"><code class="xref py py-obj docutils literal notranslate"><span class="pre">analyzeDarkCalib</span></code></a>(firstFrame, skipcombo=False)</p></td>
+<td><p>Reduce data from the dark_calib script that should be run once</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="attributes">
+<h3>Attributes<a class="headerlink" href="#attributes" title="Permalink to this headline">¶</a></h3>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.calib.module_dir" title="kai.reduce.calib.module_dir"><code class="xref py py-obj docutils literal notranslate"><span class="pre">module_dir</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py data">
+<dt class="sig sig-object py" id="kai.reduce.calib.module_dir">
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.calib.</span></span><span class="sig-name descname"><span class="pre">module_dir</span></span><a class="reference internal" href="../../../../_modules/kai/reduce/calib.html#module_dir"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.calib.module_dir" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.reduce.calib.makedark">
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.calib.</span></span><span class="sig-name descname"><span class="pre">makedark</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">files</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raw_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instrument</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">instruments.default_inst</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/calib.html#makedark"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.calib.makedark" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make dark image for imaging data. Makes a calib/ directory
+and stores all output there. All output and temporary files
+will be created in a darks/ subdirectory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>files</strong><span class="classifier">list of int</span></dt><dd><p>Integer list of the files. Does not require padded zeros.</p>
+</dd>
+<dt><strong>output</strong><span class="classifier">str</span></dt><dd><p>Output file name. Include the .fits extension.</p>
+</dd>
+<dt><strong>raw_dir</strong><span class="classifier">str, optional</span></dt><dd><p>Directory where raw files are stored. By default,
+assumes that raw files are stored in ‘../raw’</p>
+</dd>
+<dt><strong>instrument</strong><span class="classifier">instruments object, optional</span></dt><dd><p>Instrument of data. Default is <cite>instruments.default_inst</cite></p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.reduce.calib.makeflat">
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.calib.</span></span><span class="sig-name descname"><span class="pre">makeflat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">onFiles</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offFiles</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalizeFirst</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raw_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instrument</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">instruments.default_inst</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/calib.html#makeflat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.calib.makeflat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make flat field image for imaging data. Makes a calib/ directory
+and stores all output there. All output and temporary files
+will be created in a flats/ subdirectory.</p>
+<p>If only twilight flats were taken (as in 05jullgs), use these flats as
+the onFiles, and use 0,0 for offFiles. So the reduce.py file should look
+something like this: onFiles = range(22, 26+1) and offFiles = range(0,0)
+The flat will then be made by doing a median combine using just the
+twilight flats.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>onFiles</strong><span class="classifier">list of int</span></dt><dd><p>Integer list of lamps ON files. Does not require padded zeros.</p>
+</dd>
+<dt><strong>offFiles</strong><span class="classifier">list of int</span></dt><dd><p>Integer list of lamps OFF files. Does not require padded zeros.</p>
+</dd>
+<dt><strong>output</strong><span class="classifier">str</span></dt><dd><p>Output file name. Include the .fits extension.</p>
+</dd>
+<dt><strong>normalizeFirst</strong><span class="classifier">bool, default=False</span></dt><dd><p>If the individual flats should be normalized first,
+such as in the case of twilight flats.</p>
+</dd>
+<dt><strong>raw_dir</strong><span class="classifier">str, optional</span></dt><dd><p>Directory where raw files are stored. By default,
+assumes that raw files are stored in ‘../raw’</p>
+</dd>
+<dt><strong>instrument</strong><span class="classifier">instruments object, optional</span></dt><dd><p>Instrument of data. Default is <cite>instruments.default_inst</cite></p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.reduce.calib.makemask">
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.calib.</span></span><span class="sig-name descname"><span class="pre">makemask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dark</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instrument</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">instruments.default_inst</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/calib.html#makemask"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.calib.makemask" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make bad pixel mask for imaging data. Makes a calib/ directory
+and stores all output there. All output and temporary files
+will be created in a masks/ subdirectory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>dark</strong><span class="classifier">str</span></dt><dd><p>The filename of the dark file (must be in the
+calib/darks/ directory). This is used to
+construct a hot pixel mask. Use a long (t&gt;20sec) exposure dark.</p>
+</dd>
+<dt><strong>flat</strong><span class="classifier">str</span></dt><dd><p>The filename of a flat file  (must be in the
+calib/flats/ directory). This is used to
+construct a dead pixel mask. The flat should be normalized.</p>
+</dd>
+<dt><strong>output</strong><span class="classifier">str</span></dt><dd><p>The output file name. This will be created in the masks/
+subdirectory.</p>
+</dd>
+<dt><strong>instrument</strong><span class="classifier">instruments object, optional</span></dt><dd><p>Instrument of data. Default is <cite>instruments.default_inst</cite></p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.reduce.calib.make_instrument_mask">
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.calib.</span></span><span class="sig-name descname"><span class="pre">make_instrument_mask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dark</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outDir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instrument</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">instruments.default_inst</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/calib.html#make_instrument_mask"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.calib.make_instrument_mask" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make the static bad pixel mask for the instrument. This only needs to be
+run once. This creates a file called nirc2mask.fits or osiris_img_mask.fits
+which is subsequently used throughout the pipeline. The dark should be a long
+integration dark.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>dark</strong><span class="classifier">str</span></dt><dd><p>The full absolute path to a medianed dark file. This is
+used to construct a hot pixel mask (4 sigma detection thresh).</p>
+</dd>
+<dt><strong>flat</strong><span class="classifier">str</span></dt><dd><p>The full absolute path to a medianed flat file. This is
+used to construct a dead pixel mask.</p>
+</dd>
+<dt><strong>outDir</strong><span class="classifier">str</span></dt><dd><p>full path to output directory with ‘/’ at the end.</p>
+</dd>
+<dt><strong>instrument</strong><span class="classifier">instruments object, optional</span></dt><dd><p>Instrument of data. Default is <cite>instruments.default_inst</cite></p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.reduce.calib.analyzeDarkCalib">
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.calib.</span></span><span class="sig-name descname"><span class="pre">analyzeDarkCalib</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">firstFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skipcombo</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/calib.html#analyzeDarkCalib"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.calib.analyzeDarkCalib" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reduce data from the dark_calib script that should be run once
+a summer in order to test the dark current and readnoise.</p>
+<p>This should be run in the reduce/calib/ directory for a particular
+run.</p>
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../../index.html">KAI</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">API Reference</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../../index.html">API Reference</a><ul>
+  <li><a href="../../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai</span></code></a><ul>
+  <li><a href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.reduce</span></code></a><ul>
+      <li>Previous: <a href="../bfixpix/index.html" title="previous chapter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.reduce.bfixpix</span></code></a></li>
+      <li>Next: <a href="../calibrate/index.html" title="next chapter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.reduce.calibrate</span></code></a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2022, J. R. Lu, A. K. Gautam, T. Do.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.2.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../../../../_sources/autoapi/kai/reduce/calib/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

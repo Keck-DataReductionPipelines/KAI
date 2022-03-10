@@ -1,0 +1,349 @@
+:py:mod:`kai.reduce.slalib`
+===========================
+
+.. py:module:: kai.reduce.slalib
+
+.. autoapi-nested-parse::
+
+   
+   ..
+       !! processed by numpydoc !!
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   kai.reduce.slalib.refco
+   kai.reduce.slalib.refro
+   kai.reduce.slalib.atmt
+   kai.reduce.slalib.atms
+   kai.reduce.slalib.da1p
+
+
+
+.. py:function:: refco(HM, TDK, PMB, RH, WL, PHI, TLR, EPS)
+
+   
+   Determine the constants A and B in the atmospheric refraction
+   model dZ = A tan Z + B tan**3 Z.
+
+   Z is the "observed" zenith distance (i.e. affected by refraction)
+   and dZ is what to add to Z to give the "topocentric" (i.e. in vacuo)
+   zenith distance.
+
+   Given:
+     HM      d     height of the observer above sea level (metre)
+     TDK     d     ambient temperature at the observer (deg K)
+     PMB     d     pressure at the observer (millibar)
+     RH      d     relative humidity at the observer (range 0-1)
+     WL      d     effective wavelength of the source (micrometre)
+     PHI     d     latitude of the observer (radian, astronomical)
+     TLR     d     temperature lapse rate in the troposphere (degK/metre)
+     EPS     d     precision required to terminate iteration (radian)
+
+   Returned:
+     REFA    d     tan Z coefficient (radian)
+     REFB    d     tan**3 Z coefficient (radian)
+
+   Called:  refco
+
+   Notes:
+
+   1  Typical values for the TLR and EPS arguments might be 0.0065D0 and
+      1D-10 respectively.
+
+   2  The radio refraction is chosen by specifying WL > 100 micrometres.
+
+   3  The routine is a slower but more accurate alternative to the
+      slRFCQ routine.  The constants it produces give perfect
+      agreement with slRFRO at zenith distances arctan(1) (45 deg)
+      and arctan(4) (about 76 deg).  It achieves 0.5 arcsec accuracy
+      for ZD < 80 deg, 0.01 arcsec accuracy for ZD < 60 deg, and
+      0.001 arcsec accuracy for ZD < 45 deg.
+
+   P.T.Wallace   Starlink   3 June 1997
+
+   Copyright (C) 1997 Rutherford Appleton Laboratory
+   Copyright (C) 1995 Association of Universities for Research in Astronomy Inc.
+
+   Migrated from SLALIB (fortran) to python:
+   J. R. Lu -- 2015-05-13
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: refro(ZOBS, HM, TDK, PMB, RH, WL, PHI, TLR, EPS)
+
+   
+   Atmospheric refraction for radio and optical/IR wavelengths.
+
+   Given:
+     ZOBS    d  observed zenith distance of the source (radian)
+     HM      d  height of the observer above sea level (metre)
+     TDK     d  ambient temperature at the observer (deg K)
+     PMB     d  pressure at the observer (millibar)
+     RH      d  relative humidity at the observer (range 0-1)
+     WL      d  effective wavelength of the source (micrometre)
+     PHI     d  latitude of the observer (radian, astronomical)
+     TLR     d  temperature lapse rate in the troposphere (degK/metre)
+     EPS     d  precision required to terminate iteration (radian)
+
+   Returned:
+     REF     d  refraction: in vacuo ZD minus observed ZD (radian)
+
+   Notes:
+
+   1  A suggested value for the TLR argument is 0.0065.  The
+      refraction is significantly affected by TLR, and if studies
+      of the local atmosphere have been carried out a better TLR
+      value may be available.
+
+   2  A suggested value for the EPS argument is 1D-8.  The result is
+      usually at least two orders of magnitude more computationally
+      precise than the supplied EPS value.
+
+   3  The routine computes the refraction for zenith distances up
+      to and a little beyond 90 deg using the method of Hohenkerk
+      and Sinclair (NAO Technical Notes 59 and 63, subsequently adopted
+      in the Explanatory Supplement, 1992 edition - see section 3.281).
+
+   4  The code is a development of the optical/IR refraction subroutine
+      AREF of C.Hohenkerk (HMNAO, September 1984), with extensions to
+      support the radio case.  Apart from merely cosmetic changes, the
+      following modifications to the original HMNAO optical/IR refraction
+      code have been made:
+
+      .  The angle arguments have been changed to radians.
+
+      .  Any value of ZOBS is allowed (see note 6, below).
+
+      .  Other argument values have been limited to safe values.
+
+      .  Murray's values for the gas constants have been used
+         (Vectorial Astrometry, Adam Hilger, 1983).
+
+      .  The numerical integration phase has been rearranged for
+         extra clarity.
+
+      .  A better model for Ps(T) has been adopted (taken from
+         Gill, Atmosphere-Ocean Dynamics, Academic Press, 1982).
+
+      .  More accurate expressions for Pwo have been adopted
+         (again from Gill 1982).
+
+      .  Provision for radio wavelengths has been added using
+         expressions devised by A.T.Sinclair, RGO (private
+         communication 1989), based on the Essen & Froome
+         refractivity formula adopted in Resolution 1 of the
+         13th International Geodesy Association General Assembly
+         (Bulletin Geodesique 70 p390, 1963).
+
+      .  Various small changes have been made to gain speed.
+
+      None of the changes significantly affects the optical/IR results
+      with respect to the algorithm given in the 1992 Explanatory
+      Supplement.  For example, at 70 deg zenith distance the present
+      routine agrees with the ES algorithm to better than 0.05 arcsec
+      for any reasonable combination of parameters.  However, the
+      improved water-vapour expressions do make a significant difference
+      in the radio band, at 70 deg zenith distance reaching almost
+      4 arcsec for a hot, humid, low-altitude site during a period of
+      low pressure.
+
+   5  The radio refraction is chosen by specifying WL > 100 micrometres.
+      Because the algorithm takes no account of the ionosphere, the
+      accuracy deteriorates at low frequencies, below about 30 MHz.
+
+   6  Before use, the value of ZOBS is expressed in the range +/- pi.
+      If this ranged ZOBS is -ve, the result REF is computed from its
+      absolute value before being made -ve to match.  In addition, if
+      it has an absolute value greater than 93 deg, a fixed REF value
+      equal to the result for ZOBS = 93 deg is returned, appropriately
+      signed.
+
+   7  As in the original Hohenkerk and Sinclair algorithm, fixed values
+      of the water vapour polytrope exponent, the height of the
+      tropopause, and the height at which refraction is negligible are
+      used.
+
+   8  The radio refraction has been tested against work done by
+      Iain Coulson, JACH, (private communication 1995) for the
+      James Clerk Maxwell Telescope, Mauna Kea.  For typical conditions,
+      agreement at the 0.1 arcsec level is achieved for moderate ZD,
+      worsening to perhaps 0.5-1.0 arcsec at ZD 80 deg.  At hot and
+      humid sea-level sites the accuracy will not be as good.
+
+   9  It should be noted that the relative humidity RH is formally
+      defined in terms of "mixing ratio" rather than pressures or
+      densities as is often stated.  It is the mass of water per unit
+      mass of dry air divided by that for saturated air at the same
+      temperature and pressure (see Gill 1982).
+
+   Called:  slDA1P, slATMT, slATMS
+
+   P.T.Wallace   Starlink   3 June 1997
+
+   Copyright (C) 1997 Rutherford Appleton Laboratory
+   Copyright (C) 1995 Association of Universities for Research in Astronomy Inc.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: atmt(R0, T0, ALPHA, GAMM2, DELM2, C1, C2, C3, C4, C5, C6, R)
+
+   
+   Internal routine used by REFRO
+
+   Refractive index and derivative with respect to height for the
+   troposphere.
+
+   Given:
+     R0      d    height of observer from centre of the Earth (metre)
+     T0      d    temperature at the observer (deg K)
+     ALPHA   d    alpha          )
+     GAMM2   d    gamma minus 2  ) see HMNAO paper
+     DELM2   d    delta minus 2  )
+     C1      d    useful term  )
+     C2      d    useful term  )
+     C3      d    useful term  ) see source
+     C4      d    useful term  ) of slRFRO
+     C5      d    useful term  )
+     C6      d    useful term  )
+     R       d    current distance from the centre of the Earth (metre)
+
+   Returned:
+     T       d    temperature at R (deg K)
+     DN      d    refractive index at R
+     RDNDR   d    R    rate the refractive index is changing at R
+
+   Note that in the optical case C5 and C6 are zero.
+
+   P.T.Wallace   Starlink   30 May 1997
+
+   Copyright (C) 1997 Rutherford Appleton Laboratory
+   Copyright (C) 1995 Association of Universities for Research in Astronomy Inc.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: atms(RT, TT, DNT, GAMAL, R)
+
+   
+   Internal routine used by REFRO
+
+   Refractive index and derivative with respect to height for the
+   stratosphere.
+
+   Given:
+     RT      d    height of tropopause from centre of the Earth (metre)
+     TT      d    temperature at the tropopause (deg K)
+     DNT     d    refractive index at the tropopause
+     GAMAL   d    constant of the atmospheric model = G  MD/R
+     R       d    current distance from the centre of the Earth (metre)
+
+   Returned:
+     DN      d    refractive index at R
+     RDNDR   d    R    rate the refractive index is changing at R
+
+   P.T.Wallace   Starlink   14 July 1995
+
+   Copyright (C) 1995 Rutherford Appleton Laboratory
+   Copyright (C) 1995 Association of Universities for Research in Astronomy Inc.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: da1p(ANGLE)
+
+   
+   Normalize angle into range +/- pi  (double precision)
+
+   Given:
+      ANGLE     dp      the angle in radians
+
+   The result (double precision) is ANGLE expressed in the range +/- pi.
+
+   P.T.Wallace   Starlink   23 November 1995
+
+   Copyright (C) 1995 Rutherford Appleton Laboratory
+   Copyright (C) 1995 Association of Universities for Research in Astronomy Inc.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+

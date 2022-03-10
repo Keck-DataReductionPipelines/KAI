@@ -1,0 +1,894 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>kai.reduce.data &#8212; KAI  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/alabaster.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css" />
+    <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+    <script src="../../../../_static/jquery.js"></script>
+    <script src="../../../../_static/underscore.js"></script>
+    <script src="../../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="kai.reduce.kai_util" href="../kai_util/index.html" />
+    <link rel="prev" title="kai.reduce.dar" href="../dar/index.html" />
+   
+  <link rel="stylesheet" href="../../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="module-kai.reduce.data">
+<span id="kai-reduce-data"></span><h1><a class="reference internal" href="#module-kai.reduce.data" title="kai.reduce.data"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.reduce.data</span></code></a><a class="headerlink" href="#module-kai.reduce.data" title="Permalink to this headline">¶</a></h1>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h2>
+<section id="classes">
+<h3>Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h3>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.data.Sky" title="kai.reduce.data.Sky"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Sky</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h3>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.data.clean" title="kai.reduce.data.clean"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clean</span></code></a>(files, nite, wave, refSrc, strSrc, badColumns=None, field=None, skyscale=False, skyfile=None, angOff=0.0, cent_box=12, fixDAR=True, raw_dir=None, clean_dir=None, instrument=instruments.default_inst, check_ref_loc=True)</p></td>
+<td><p>Clean near infrared NIRC2 or OSIRIS images.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.data.clean_get_supermask" title="kai.reduce.data.clean_get_supermask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clean_get_supermask</span></code></a>(_statmask, _supermask, badColumns)</p></td>
+<td><p>Create temporary mask for each individual image that will contain the</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.data.clean_makemask" title="kai.reduce.data.clean_makemask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clean_makemask</span></code></a>(_mask, _mask_cosmic, _mask_static, wave, instrument=instruments.default_inst)</p></td>
+<td><p>_mask -- output name for final mask</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.data.clean_lp" title="kai.reduce.data.clean_lp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clean_lp</span></code></a>(files, nite, wave, refSrc, strSrc, angOff, skyfile)</p></td>
+<td><p>Only here for backwards compatability.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.data.combine" title="kai.reduce.data.combine"><code class="xref py py-obj docutils literal notranslate"><span class="pre">combine</span></code></a>(files, wave, outroot, field=None, outSuffix=None, trim=False, weight=None, fwhm_max=0, submaps=0, fixDAR=True, mask=True, clean_dirs=None, combo_dir=None, instrument=instruments.default_inst)</p></td>
+<td><p>Accepts a list of cleaned images and does a weighted combining after</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.data.rot_img" title="kai.reduce.data.rot_img"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rot_img</span></code></a>(root, phi, cleanDir)</p></td>
+<td><p>Rotate images to PA=0 if they have a different PA from one</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.data.gcSourceXY" title="kai.reduce.data.gcSourceXY"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gcSourceXY</span></code></a>(name, label_file='/Users/jlu/data/gc/source_list/label.dat')</p></td>
+<td><p>Queries label.dat for the xy offset from Sgr A* (in arcsec)</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.data.calcStrehl" title="kai.reduce.data.calcStrehl"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calcStrehl</span></code></a>(files, wave, clean_dir=None, field=None, instrument=instruments.default_inst)</p></td>
+<td><p>Make Strehl and FWHM table on the strehl source for all</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.data.weight_by_strehl" title="kai.reduce.data.weight_by_strehl"><code class="xref py py-obj docutils literal notranslate"><span class="pre">weight_by_strehl</span></code></a>(roots, strehls)</p></td>
+<td><p>Calculate weights based on the strehl of each image.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.data.trim_on_fwhm" title="kai.reduce.data.trim_on_fwhm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">trim_on_fwhm</span></code></a>(roots, strehls, fwhm, fwhm_max=0)</p></td>
+<td><p>Take a list of files and trim based on the FWHM. All files that have a</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.data.readWeightsFile" title="kai.reduce.data.readWeightsFile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">readWeightsFile</span></code></a>(roots, weightFile)</p></td>
+<td><p>Expects a file of the format:</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.data.loadStrehl" title="kai.reduce.data.loadStrehl"><code class="xref py py-obj docutils literal notranslate"><span class="pre">loadStrehl</span></code></a>(cleanDir, roots)</p></td>
+<td><p>Load Strehl and FWHM info. The file format will be</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.data.trim_table_by_name" title="kai.reduce.data.trim_table_by_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">trim_table_by_name</span></code></a>(outroots, tableFileName)</p></td>
+<td><p>Takes a list of values (listed in tableFileName) and trim them down based on</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.data.combine_drizzle" title="kai.reduce.data.combine_drizzle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">combine_drizzle</span></code></a>(imgsize, cleanDir, roots, outroot, weights, shifts, wave, diffPA, fixDAR=True, mask=True, instrument=instruments.default_inst)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.data.combine_submaps" title="kai.reduce.data.combine_submaps"><code class="xref py py-obj docutils literal notranslate"><span class="pre">combine_submaps</span></code></a>(imgsize, cleanDir, roots, outroot, weights, shifts, submaps, wave, diffPA, fixDAR=True, mask=True, instrument=instruments.default_inst)</p></td>
+<td><p>Assumes the list of roots are pre-sorted based on quality. Images are then</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.data.combine_rotation" title="kai.reduce.data.combine_rotation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">combine_rotation</span></code></a>(cleanDir, roots, instrument=instruments.default_inst)</p></td>
+<td><p>Determine if images are different PAs. If so, then</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.data.sort_frames" title="kai.reduce.data.sort_frames"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sort_frames</span></code></a>(roots, strehls, fwhm, weights, shiftsTab)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.data.combine_ref" title="kai.reduce.data.combine_ref"><code class="xref py py-obj docutils literal notranslate"><span class="pre">combine_ref</span></code></a>(coofile, cleanDir, roots, diffPA, refImage_index=0)</p></td>
+<td><p>Pulls reference star coordinates from image header keywords.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.data.combine_coo" title="kai.reduce.data.combine_coo"><code class="xref py py-obj docutils literal notranslate"><span class="pre">combine_coo</span></code></a>(coofile, cleanDir, roots, diffPA, refImage_index=0)</p></td>
+<td><p>Pulls reference star coordinates from <a href="#id1"><span class="problematic" id="id2">*</span></a>.coo files.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.data.combine_lis" title="kai.reduce.data.combine_lis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">combine_lis</span></code></a>(outfile, cleanDir, roots, diffPA)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.data.combine_register" title="kai.reduce.data.combine_register"><code class="xref py py-obj docutils literal notranslate"><span class="pre">combine_register</span></code></a>(outroot, refImage, diffPA)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.data.combine_log" title="kai.reduce.data.combine_log"><code class="xref py py-obj docutils literal notranslate"><span class="pre">combine_log</span></code></a>(outroot, roots, strehls, fwhm, weights)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.data.combine_size" title="kai.reduce.data.combine_size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">combine_size</span></code></a>(shiftsTable, refImage, outroot, subroot, submaps)</p></td>
+<td><p>Determine the final size of the fully combined image. Use the</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.data.setup_drizzle" title="kai.reduce.data.setup_drizzle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setup_drizzle</span></code></a>(imgsize)</p></td>
+<td><p>Setup drizzle parameters for NIRC2 data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.data.clean_drizzle" title="kai.reduce.data.clean_drizzle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clean_drizzle</span></code></a>(xgeoim, ygeoim, _bp, _cd, _wgt, _dlog, fixDAR=True, instrument=instruments.default_inst)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.data.clean_cosmicrays" title="kai.reduce.data.clean_cosmicrays"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clean_cosmicrays</span></code></a>(_ff, _mask, wave)</p></td>
+<td><p>Clean the image of cosmicrays and make a mask containing the location</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.data.clean_cosmicrays2" title="kai.reduce.data.clean_cosmicrays2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clean_cosmicrays2</span></code></a>(_ff, _ff_cr, _mask, wave, instrument=instruments.default_inst)</p></td>
+<td><p>Clean the image of cosmicrays and make a mask containing the location</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.data.clean_persistance" title="kai.reduce.data.clean_persistance"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clean_persistance</span></code></a>(_n, _pers, instrument=instruments.default_inst)</p></td>
+<td><p>Make masks of the persistance to be used in combining the images</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.data.clean_bkgsubtract" title="kai.reduce.data.clean_bkgsubtract"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clean_bkgsubtract</span></code></a>(_ff_f, _bp)</p></td>
+<td><p>Do additional background subtraction of any excess background</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.data.clean_makecoo" title="kai.reduce.data.clean_makecoo"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clean_makecoo</span></code></a>(_ce, _cc, refSrc, strSrc, aotsxyRef, radecRef, instrument=instruments.default_inst, check_loc=True, update_fits=True, cent_box=12)</p></td>
+<td><p>Make the <a href="#id3"><span class="problematic" id="id4">*</span></a>.coo file for this science image. Use the difference</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.data.mosaic_ref" title="kai.reduce.data.mosaic_ref"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mosaic_ref</span></code></a>(outFile, cleanDir, roots, diffPA, instrument=instruments.default_inst)</p></td>
+<td><p>Calculate an initial guess at the offsets between mosaic frames.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.data.mosaic" title="kai.reduce.data.mosaic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mosaic</span></code></a>(files, wave, outroot, field=None, outSuffix=None, trim=0, weight=0, fwhm_max=0, submaps=0, fixDAR=True, maskSubmap=False, instrument=instruments.default_inst)</p></td>
+<td><p>Accepts a list of cleaned images and does a weighted combining after</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.data.mosaic_register" title="kai.reduce.data.mosaic_register"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mosaic_register</span></code></a>(outroot, refImage, diffPA)</p></td>
+<td><p>Register images for a mosaic. This only calculates the exact</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.data.mosaic_size" title="kai.reduce.data.mosaic_size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mosaic_size</span></code></a>(shiftsTable, refImage, outroot, subroot, submaps)</p></td>
+<td><p>Determine the final size for the completed mosaic.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="attributes">
+<h3>Attributes<a class="headerlink" href="#attributes" title="Permalink to this headline">¶</a></h3>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.data.module_dir" title="kai.reduce.data.module_dir"><code class="xref py py-obj docutils literal notranslate"><span class="pre">module_dir</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.data.distCoef" title="kai.reduce.data.distCoef"><code class="xref py py-obj docutils literal notranslate"><span class="pre">distCoef</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.data.supermaskName" title="kai.reduce.data.supermaskName"><code class="xref py py-obj docutils literal notranslate"><span class="pre">supermaskName</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.data.outputVerify" title="kai.reduce.data.outputVerify"><code class="xref py py-obj docutils literal notranslate"><span class="pre">outputVerify</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py data">
+<dt class="sig sig-object py" id="kai.reduce.data.module_dir">
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.data.</span></span><span class="sig-name descname"><span class="pre">module_dir</span></span><a class="reference internal" href="../../../../_modules/kai/reduce/data.html#module_dir"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.data.module_dir" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="kai.reduce.data.distCoef">
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.data.</span></span><span class="sig-name descname"><span class="pre">distCoef</span></span><em class="property"> <span class="pre">=</span></em><a class="reference internal" href="../../../../_modules/kai/reduce/data.html#distCoef"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.data.distCoef" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="kai.reduce.data.supermaskName">
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.data.</span></span><span class="sig-name descname"><span class="pre">supermaskName</span></span><em class="property"> <span class="pre">=</span> <span class="pre">supermask.fits</span></em><a class="reference internal" href="../../../../_modules/kai/reduce/data.html#supermaskName"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.data.supermaskName" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="kai.reduce.data.outputVerify">
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.data.</span></span><span class="sig-name descname"><span class="pre">outputVerify</span></span><em class="property"> <span class="pre">=</span> <span class="pre">ignore</span></em><a class="reference internal" href="../../../../_modules/kai/reduce/data.html#outputVerify"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.data.outputVerify" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.reduce.data.clean">
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.data.</span></span><span class="sig-name descname"><span class="pre">clean</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">files</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nite</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wave</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">refSrc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strSrc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">badColumns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skyscale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skyfile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angOff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cent_box</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">12</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fixDAR</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raw_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clean_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instrument</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">instruments.default_inst</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_ref_loc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/data.html#clean"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.data.clean" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clean near infrared NIRC2 or OSIRIS images.</p>
+<p>This program should be run from the reduce/ directory.
+Example directory structure is:
+calib/</p>
+<blockquote>
+<div><p>flats/
+flat_kp.fits
+flat.fits (optional)
+masks/
+supermask.fits</p>
+</div></blockquote>
+<dl class="simple">
+<dt>kp/</dt><dd><p>sci_nite1/
+sky_nite1/
+sky.fits</p>
+</dd>
+</dl>
+<p>All output files will be put into clean_dir (if specified, otherwise
+../clean/) in the following structure:
+kp/</p>
+<blockquote>
+<div><p>c*.fits
+distort/
+cd*.fits
+weight/
+wgt*.fits</p>
+</div></blockquote>
+<p>The clean directory may be optionally modified to be named
+&lt;<a href="#id15"><span class="problematic" id="id16">field_</span></a>&gt;&lt;wave&gt; instead of just &lt;wave&gt;. So for instance, for Arches
+field #1 data reduction, you might call clean with: field=’arch_f1’.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>files</strong><span class="classifier">list of int</span></dt><dd><p>Integer list of the files. Does not require padded zeros.</p>
+</dd>
+<dt><strong>nite</strong><span class="classifier">str</span></dt><dd><p>Name for night of observation (e.g.: “nite1”), used as suffix
+inside the reduce sub-directories.</p>
+</dd>
+<dt><strong>wave</strong><span class="classifier">str</span></dt><dd><p>Name for the observation passband (e.g.: “kp”), used as
+a wavelength suffix</p>
+</dd>
+<dt><strong>field</strong><span class="classifier">str, default=None</span></dt><dd><p>Optional prefix for clean directory and final
+combining. All clean files will be put into &lt;<a href="#id17"><span class="problematic" id="id18">field_</span></a>&gt;&lt;wave&gt;. You
+should also pass the same into combine(). If set to None (default)
+then only wavelength is used.</p>
+</dd>
+<dt><strong>skyscale</strong><span class="classifier">bool, default=False</span></dt><dd><p>Whether or not to scale the sky files to the common median.
+Turn on for scaling skies before subtraction.</p>
+</dd>
+<dt><strong>skyfile</strong><span class="classifier">str, default=’’</span></dt><dd><p>An optional file containing image/sky matches.</p>
+</dd>
+<dt><strong>angOff</strong><span class="classifier">float, default = 0</span></dt><dd><p>An optional absolute offset in the rotator
+mirror angle for cases (wave=’lp’) when sky subtraction is done with
+skies taken at matching rotator mirror angles.</p>
+</dd>
+<dt><strong>cent_box: int (def = 12)</strong></dt><dd><p>the box to use for better centroiding the reference star</p>
+</dd>
+<dt><strong>badColumns</strong><span class="classifier">int array, default = None</span></dt><dd><p>An array specifying the bad columns (zero-based).
+Assumes a repeating pattern every 8 columns.</p>
+</dd>
+<dt><strong>raw_dir</strong><span class="classifier">str, optional</span></dt><dd><p>Directory where raw files are stored. By default,
+assumes that raw files are stored in ‘../raw’</p>
+</dd>
+<dt><strong>clean_dir</strong><span class="classifier">str, optional</span></dt><dd><p>Directory where clean files will be stored. By default,
+assumes that clean files will be stored in ‘../clean’</p>
+</dd>
+<dt><strong>instrument</strong><span class="classifier">instruments object, optional</span></dt><dd><p>Instrument of data. Default is <cite>instruments.default_inst</cite></p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.reduce.data.clean_get_supermask">
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.data.</span></span><span class="sig-name descname"><span class="pre">clean_get_supermask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_statmask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_supermask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">badColumns</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/data.html#clean_get_supermask"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.data.clean_get_supermask" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create temporary mask for each individual image that will contain the
+supermask plus the designated bad columns.</p>
+<p>_statmask – output file containing supermask + bad columns</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.reduce.data.clean_makemask">
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.data.</span></span><span class="sig-name descname"><span class="pre">clean_makemask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_mask_cosmic</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_mask_static</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wave</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instrument</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">instruments.default_inst</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/data.html#clean_makemask"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.data.clean_makemask" title="Permalink to this definition">¶</a></dt>
+<dd><p>_mask – output name for final mask
+_mask_cosmic – should contain cosmic ray mask
+_mask_static – should contain supermask + bad columns</p>
+<p>Output:
+_mask is created to be supermask + bad columns + cosmic rays
+_mask will have 0=bad and 1=good pixels (as drizzle expects)
+_mask can be directly passed into drizzle</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.reduce.data.clean_lp">
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.data.</span></span><span class="sig-name descname"><span class="pre">clean_lp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">files</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nite</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wave</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">refSrc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strSrc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angOff</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skyfile</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/data.html#clean_lp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.data.clean_lp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Only here for backwards compatability.
+You should use clean() instead.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.reduce.data.combine">
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.data.</span></span><span class="sig-name descname"><span class="pre">combine</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">files</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wave</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outroot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outSuffix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fwhm_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">submaps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fixDAR</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clean_dirs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">combo_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instrument</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">instruments.default_inst</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/data.html#combine"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.data.combine" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accepts a list of cleaned images and does a weighted combining after
+performing frame selection based on the Strehl and FWHM.</p>
+<p>Each image must have an associated <a href="#id5"><span class="problematic" id="id6">*</span></a>.coo file which gives the rough
+position of the reference source.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>files</strong><span class="classifier">list of int</span></dt><dd><p>Integer list of the files to include in combine. Does not require
+padded zeros.</p>
+</dd>
+<dt><strong>wave</strong><span class="classifier">str</span></dt><dd><p>Name for the observation passband (e.g.: “kp”, “lp”, or “h”), used as
+a wavelength suffix</p>
+</dd>
+<dt><strong>outroot</strong><span class="classifier">str</span></dt><dd><p>The output root name (e.g. ‘06jullgs’). The final combined file names
+will be &lt;outroot&gt;_&lt;field&gt;_&lt;outSuffix&gt;_&lt;wave&gt;.
+The &lt;field&gt; and &lt;outSuffix&gt; keywords are optional.</p>
+<p>Examples:
+06jullgs_kp for outroot=’06jullgs’ and wave=’kp’
+06jullgs_arch_f1_kp for adding field=’arch_f1’</p>
+</dd>
+<dt><strong>field</strong><span class="classifier">str, default=None</span></dt><dd><p>Optional field name. Used to get to clean directory and also affects
+the final output file name.</p>
+</dd>
+<dt><strong>outSuffix</strong><span class="classifier">str</span></dt><dd><p>Optional suffix used to modify final output file name.
+Can use suffix to indicate a night of observation (e.g.: “nite1”).</p>
+</dd>
+<dt><strong>trim</strong><span class="classifier">bool, default=False</span></dt><dd><p>Optional file trimming based on image quality. Default
+is False. Set to True to turn trimming on.</p>
+</dd>
+<dt><strong>weight</strong><span class="classifier">str, default=None</span></dt><dd><p>Optional weighting. Set to ‘strehl’ to weight by Strehl, as found in
+strehl_source.txt file.
+OR set to a file name with the first column being the file name
+(e.g., c0021.fits) and the second column being the weight. Weights will
+be renormalized to sum to 1.0.
+Default = None, no weighting.</p>
+</dd>
+<dt><strong>fwhm_max</strong><span class="classifier">float, default=0</span></dt><dd><p>The maximum allowed FWHM for keeping frames when trimming is turned on.</p>
+</dd>
+<dt><strong>submaps</strong><span class="classifier">int, default=0</span></dt><dd><p>Set to the number of submaps to be made (def=0).</p>
+</dd>
+<dt><strong>fixDAR</strong><span class="classifier">bool, default=True</span></dt><dd></dd>
+<dt><strong>mask</strong><span class="classifier">bool, default=True</span></dt><dd></dd>
+<dt><strong>clean_dirs</strong><span class="classifier">list of str, optional</span></dt><dd><p>List of directories where clean files are stored. Needs to be same
+length as files list. If not specified, by default assumes that
+clean files are stored in ‘../clean’.</p>
+</dd>
+<dt><strong>combo_dir</strong><span class="classifier">str, optional</span></dt><dd><p>Directory where combo files will be stored. By default,
+assumes that combo files will be stored in ‘../combo’</p>
+</dd>
+<dt><strong>instrument</strong><span class="classifier">instruments object, optional</span></dt><dd><p>Instrument of data. Default is <cite>instruments.default_inst</cite></p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.reduce.data.rot_img">
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.data.</span></span><span class="sig-name descname"><span class="pre">rot_img</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">root</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cleanDir</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/data.html#rot_img"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.data.rot_img" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rotate images to PA=0 if they have a different PA from one
+another. If the entire data set is taken at a single PA, leave
+it as is. Do this only if set includes various PAs.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.reduce.data.gcSourceXY">
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.data.</span></span><span class="sig-name descname"><span class="pre">gcSourceXY</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'/Users/jlu/data/gc/source_list/label.dat'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/data.html#gcSourceXY"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.data.gcSourceXY" title="Permalink to this definition">¶</a></dt>
+<dd><p>Queries label.dat for the xy offset from Sgr A* (in arcsec)
+for the star given as an input</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>name</strong><span class="classifier">str</span></dt><dd><p>Name of a star (e.g. ‘irs16NE’)</p>
+</dd>
+<dt><strong>label_file</strong><span class="classifier">str, default=’/Users/jlu/data/gc/source_list/label.dat’</span></dt><dd><p>Full path of label.dat file to search</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>pos</strong><span class="classifier">float list (2 elements)</span></dt><dd><p>x and y offset from Sgr A* in arcsec</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.reduce.data.calcStrehl">
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.data.</span></span><span class="sig-name descname"><span class="pre">calcStrehl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">files</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wave</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clean_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instrument</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">instruments.default_inst</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/data.html#calcStrehl"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.data.calcStrehl" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make Strehl and FWHM table on the strehl source for all
+cleaned files.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>files</strong><span class="classifier">list of int</span></dt><dd><p>Integer list of the files. Does not require padded zeros.</p>
+</dd>
+<dt><strong>wave</strong><span class="classifier">str</span></dt><dd><p>Name for the observation passband (e.g.: “kp”), used as
+a wavelength suffix</p>
+</dd>
+<dt><strong>field</strong><span class="classifier">str, default=None</span></dt><dd><p>Optional prefix for clean directory and final
+combining. All clean files will be put into &lt;<a href="#id19"><span class="problematic" id="id20">field_</span></a>&gt;&lt;wave&gt;. You
+should also pass the same into combine(). If set to None (default)
+then only wavelength is used.</p>
+</dd>
+<dt><strong>clean_dir</strong><span class="classifier">str, optional</span></dt><dd><p>Directory where clean files will be stored. By default,
+assumes that clean files will be stored in ‘../clean’</p>
+</dd>
+<dt><strong>instrument</strong><span class="classifier">instruments object, optional</span></dt><dd><p>Instrument of data. Default is <cite>instruments.default_inst</cite></p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.reduce.data.weight_by_strehl">
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.data.</span></span><span class="sig-name descname"><span class="pre">weight_by_strehl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">roots</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strehls</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/data.html#weight_by_strehl"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.data.weight_by_strehl" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate weights based on the strehl of each image.
+This does some intelligent handling for REALLY bad data quality.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.reduce.data.trim_on_fwhm">
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.data.</span></span><span class="sig-name descname"><span class="pre">trim_on_fwhm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">roots</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strehls</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fwhm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fwhm_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/data.html#trim_on_fwhm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.data.trim_on_fwhm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Take a list of files and trim based on the FWHM. All files that have a
+FWHM &lt; 1.25 * FWHM.min()
+are kept.</p>
+<p>The returned arrays contain only those files that pass the above criteria.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.reduce.data.readWeightsFile">
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.data.</span></span><span class="sig-name descname"><span class="pre">readWeightsFile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">roots</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weightFile</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/data.html#readWeightsFile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.data.readWeightsFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Expects a file of the format:
+column1 = file name (e.g. c0001.fits).
+column2 = weights.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.reduce.data.loadStrehl">
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.data.</span></span><span class="sig-name descname"><span class="pre">loadStrehl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cleanDir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">roots</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/data.html#loadStrehl"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.data.loadStrehl" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load Strehl and FWHM info. The file format will be
+column1 = name of cleaned fits file (e.g. c0001.fits).</p>
+<blockquote>
+<div><p>Expects single character before a 4 digit number.</p>
+</div></blockquote>
+<p>column2 = strehl
+column3 = RMS error (nm)
+column4 = FWHM (mas)
+column5 = MJD (UT)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.reduce.data.trim_table_by_name">
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.data.</span></span><span class="sig-name descname"><span class="pre">trim_table_by_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outroots</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tableFileName</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/data.html#trim_table_by_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.data.trim_table_by_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes a list of values (listed in tableFileName) and trim them down based on
+the desired output list of root files names (outroots).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.reduce.data.combine_drizzle">
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.data.</span></span><span class="sig-name descname"><span class="pre">combine_drizzle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">imgsize</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cleanDir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">roots</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outroot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shifts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wave</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">diffPA</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fixDAR</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instrument</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">instruments.default_inst</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/data.html#combine_drizzle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.data.combine_drizzle" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.reduce.data.combine_submaps">
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.data.</span></span><span class="sig-name descname"><span class="pre">combine_submaps</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">imgsize</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cleanDir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">roots</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outroot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shifts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">submaps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wave</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">diffPA</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fixDAR</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instrument</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">instruments.default_inst</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/data.html#combine_submaps"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.data.combine_submaps" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>Assumes the list of roots are pre-sorted based on quality. Images are then</dt><dd><p>divided up with every Nth image going into the Nth submap.</p>
+</dd>
+<dt>mask: (def=True) Set to false for maser mosaics since they have only</dt><dd><p>one image at each positions. Masking produces artifacts that
+Starfinder can’t deal with.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.reduce.data.combine_rotation">
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.data.</span></span><span class="sig-name descname"><span class="pre">combine_rotation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cleanDir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">roots</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instrument</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">instruments.default_inst</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/data.html#combine_rotation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.data.combine_rotation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determine if images are different PAs. If so, then
+temporarily rotate the images for xregister to use
+in order to get image shifts that are fed into drizzle.</p>
+<p>WARNING: If multiple PAs are found, then everything
+is rotated to PA = 0.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.reduce.data.sort_frames">
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.data.</span></span><span class="sig-name descname"><span class="pre">sort_frames</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">roots</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strehls</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fwhm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shiftsTab</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/data.html#sort_frames"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.data.sort_frames" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.reduce.data.combine_ref">
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.data.</span></span><span class="sig-name descname"><span class="pre">combine_ref</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coofile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cleanDir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">roots</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">diffPA</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">refImage_index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/data.html#combine_ref"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.data.combine_ref" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pulls reference star coordinates from image header keywords.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.reduce.data.combine_coo">
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.data.</span></span><span class="sig-name descname"><span class="pre">combine_coo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coofile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cleanDir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">roots</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">diffPA</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">refImage_index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/data.html#combine_coo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.data.combine_coo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pulls reference star coordinates from <a href="#id7"><span class="problematic" id="id8">*</span></a>.coo files.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.reduce.data.combine_lis">
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.data.</span></span><span class="sig-name descname"><span class="pre">combine_lis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outfile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cleanDir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">roots</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">diffPA</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/data.html#combine_lis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.data.combine_lis" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.reduce.data.combine_register">
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.data.</span></span><span class="sig-name descname"><span class="pre">combine_register</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outroot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">refImage</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">diffPA</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/data.html#combine_register"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.data.combine_register" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.reduce.data.combine_log">
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.data.</span></span><span class="sig-name descname"><span class="pre">combine_log</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outroot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">roots</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strehls</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fwhm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/data.html#combine_log"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.data.combine_log" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.reduce.data.combine_size">
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.data.</span></span><span class="sig-name descname"><span class="pre">combine_size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shiftsTable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">refImage</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outroot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subroot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">submaps</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/data.html#combine_size"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.data.combine_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determine the final size of the fully combined image. Use the
+shifts stored in the shiftsTable.</p>
+<p>&#64;param shiftsTable: Table with x and y shifts for each image
+&#64;type shiftsTable: ascii table
+&#64;param refImage: The reference image from which the shifts are</p>
+<blockquote>
+<div><p>calculated from.</p>
+</div></blockquote>
+<p>&#64;type refImage: string
+&#64;param outroot: The name of the file for which shift information</p>
+<blockquote>
+<div><p>will be stored. The filename will be &lt;outroot&gt;.coo.</p>
+</div></blockquote>
+<p>&#64;type outroot: string
+&#64;param subroot: Same as outroot but for submaps
+&#64;type subroot: string
+&#64;param submaps: number of submaps
+&#64;type sbumaps: int</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.reduce.data.setup_drizzle">
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.data.</span></span><span class="sig-name descname"><span class="pre">setup_drizzle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">imgsize</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/data.html#setup_drizzle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.data.setup_drizzle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Setup drizzle parameters for NIRC2 data.
+&#64;param imgsize: The size (in pixels) of the final drizzle image.
+This assumes that the image will be square.
+&#64;type imgsize: int
+&#64;param mask: The name of the mask to use during
+drizzle.
+&#64;param type: str</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.reduce.data.clean_drizzle">
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.data.</span></span><span class="sig-name descname"><span class="pre">clean_drizzle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xgeoim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ygeoim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_bp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_cd</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_wgt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_dlog</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fixDAR</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instrument</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">instruments.default_inst</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/data.html#clean_drizzle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.data.clean_drizzle" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.reduce.data.clean_cosmicrays">
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.data.</span></span><span class="sig-name descname"><span class="pre">clean_cosmicrays</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_ff</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wave</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/data.html#clean_cosmicrays"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.data.clean_cosmicrays" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clean the image of cosmicrays and make a mask containing the location
+of all the cosmicrays. The CR masks can later be used in combine() to
+keep cosmicrays from being included.</p>
+<dl class="simple">
+<dt>&#64;param _ff: Flat fielded file on which to fix cosmic rays. A new</dt><dd><p>image will be created with the _f appended to it.</p>
+</dd>
+</dl>
+<p>&#64;type _ff: string
+&#64;param _mask: The filename used for the resulting mask.
+&#64;type _mask: string
+&#64;parram wave: The filter of the observations (e.g. ‘kp’, ‘lp’). This</p>
+<blockquote>
+<div><p>is used to determine different thresholds for CR rejection.</p>
+</div></blockquote>
+<p>&#64;type wave: string</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.reduce.data.clean_cosmicrays2">
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.data.</span></span><span class="sig-name descname"><span class="pre">clean_cosmicrays2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_ff</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_ff_cr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wave</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instrument</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">instruments.default_inst</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/data.html#clean_cosmicrays2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.data.clean_cosmicrays2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clean the image of cosmicrays and make a mask containing the location
+of all the cosmicrays. The CR masks can later be used in combine() to
+keep cosmicrays from being included.</p>
+<dl class="simple">
+<dt>&#64;param _ff: Flat fielded file on which to fix cosmic rays. A new</dt><dd><p>image will be created with the _f appended to it.</p>
+</dd>
+</dl>
+<p>&#64;type _ff: string
+&#64;param _ff_cr: Output image with cosmicrays fixed.
+&#64;type _ff_cr: string
+&#64;param _mask: The filename used for the resulting mask.
+&#64;type _mask: string
+&#64;parram wave: The filter of the observations (e.g. ‘kp’, ‘lp’). This</p>
+<blockquote>
+<div><p>is used to determine different thresholds for CR rejection.</p>
+</div></blockquote>
+<p>&#64;type wave: string</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.reduce.data.clean_persistance">
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.data.</span></span><span class="sig-name descname"><span class="pre">clean_persistance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_pers</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instrument</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">instruments.default_inst</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/data.html#clean_persistance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.data.clean_persistance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make masks of the persistance to be used in combining the images
+later on.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.reduce.data.clean_bkgsubtract">
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.data.</span></span><span class="sig-name descname"><span class="pre">clean_bkgsubtract</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_ff_f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_bp</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/data.html#clean_bkgsubtract"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.data.clean_bkgsubtract" title="Permalink to this definition">¶</a></dt>
+<dd><p>Do additional background subtraction of any excess background
+flux. This isn’t strictly necessary since it just removes a constant.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.reduce.data.clean_makecoo">
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.data.</span></span><span class="sig-name descname"><span class="pre">clean_makecoo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_ce</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_cc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">refSrc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strSrc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aotsxyRef</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radecRef</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instrument</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">instruments.default_inst</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_loc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">update_fits</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cent_box</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">12</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/data.html#clean_makecoo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.data.clean_makecoo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make the <a href="#id9"><span class="problematic" id="id10">*</span></a>.coo file for this science image. Use the difference
+between the AOTSX/Y keywords from a reference image and each science
+image to tell how the positions of the two frames are related.</p>
+<p>&#64;param _ce: Name of the input cleaned file.
+&#64;type _ce: string
+&#64;param _cc: Name of the output header modified image.
+&#64;type _cc: string
+&#64;param refSrc: Array with the X/Y positions of the reference source.</p>
+<blockquote>
+<div><p>This will be put into the image header and the <a href="#id11"><span class="problematic" id="id12">*</span></a>.coo file.</p>
+</div></blockquote>
+<p>&#64;type refSrc: array of floats with length=2 [x, y]
+&#64;param strSrc: Array with the X/Y positions of the strehl source.</p>
+<blockquote>
+<div><p>This will be put into the image header.</p>
+</div></blockquote>
+<p>&#64;type strSrc: array of floats with length=2 [x, y]
+&#64;param aotsxyRef: The AOTSX/Y header values from the reference image.
+&#64;type aotsxyRef: array of floats with length=2 [x, y]
+&#64;param radecRef: The RA/DEC header values from the reference image.
+&#64;type radecRef: array of floats with length=2 [x, y]</p>
+<dl class="simple">
+<dt>check_loc (bool):  If True the reference source is recentered for this frame.</dt><dd><p>Use False if the offsets are large enough to move the reference source off of the image</p>
+</dd>
+</dl>
+<p>update_fits : update the fits files with the reference pixel values
+cent_box : box size to center the source (default: 12)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.reduce.data.mosaic_ref">
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.data.</span></span><span class="sig-name descname"><span class="pre">mosaic_ref</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outFile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cleanDir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">roots</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">diffPA</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instrument</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">instruments.default_inst</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/data.html#mosaic_ref"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.data.mosaic_ref" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate an initial guess at the offsets between mosaic frames.
+using the AOTSX/Y keywords from a reference image and each science
+image to tell how the positions of the two frames are related.</p>
+<p>&#64;param cleanDir: Name of the input cleaned file.
+&#64;type cleanDir: string
+&#64;param roots: List of root filenames
+&#64;type roots: list of strings
+&#64;param diffPA: 1 = found different PAs so use rot images.
+&#64;type difPA: int</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="kai.reduce.data.Sky">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">kai.reduce.data.</span></span><span class="sig-name descname"><span class="pre">Sky</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sciDir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skyDir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wave</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skyfile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angleOffset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instrument</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">instruments.default_inst</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/data.html#Sky"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.data.Sky" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="kai.reduce.data.Sky.__initLp__">
+<span class="sig-name descname"><span class="pre">__initLp__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/data.html#Sky.__initLp__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.data.Sky.__initLp__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kai.reduce.data.Sky.getSky">
+<span class="sig-name descname"><span class="pre">getSky</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/data.html#Sky.getSky"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.data.Sky.getSky" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kai.reduce.data.Sky.scaleSky">
+<span class="sig-name descname"><span class="pre">scaleSky</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_sky</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/data.html#Sky.scaleSky"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.data.Sky.scaleSky" title="Permalink to this definition">¶</a></dt>
+<dd><p>Scale the mean level of the sky so that it matches the
+science image.</p>
+<p>&#64;param _n: name of science frame
+&#64;type _n: string
+&#64;param _sky: name of sky frame
+&#64;type _sky: string</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kai.reduce.data.Sky.getSkyLp">
+<span class="sig-name descname"><span class="pre">getSkyLp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/data.html#Sky.getSkyLp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.data.Sky.getSkyLp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determine which sky we should use for L’. Does all the
+rotator mirror angle matching.</p>
+<p>&#64;param _n: Name of science frame.
+&#64;type _n: string
+&#64;returns sky: name of sky file to use.
+&#64;rtype sky: string</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kai.reduce.data.Sky.getNonlinearCorrection">
+<span class="sig-name descname"><span class="pre">getNonlinearCorrection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sky</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/data.html#Sky.getNonlinearCorrection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.data.Sky.getNonlinearCorrection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determine the non-linearity level. Raw data level of
+non-linearity is 12,000 but we subtracted
+off a sky which changed this level. The sky is
+scaled, so the level will be slightly different
+for every frame.</p>
+<p>&#64;param sky: File name of the sky used.
+&#64;type sky: string
+&#64;returns (sky_mean + sky_stddev) which is the value that should</p>
+<blockquote>
+<div><p>be subtracted off of the saturation count level.</p>
+</div></blockquote>
+<p>&#64;rtype float</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kai.reduce.data.Sky.close">
+<span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/data.html#Sky.close"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.data.Sky.close" title="Permalink to this definition">¶</a></dt>
+<dd><p>Close log files opened at init.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.reduce.data.mosaic">
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.data.</span></span><span class="sig-name descname"><span class="pre">mosaic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">files</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wave</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outroot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outSuffix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fwhm_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">submaps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fixDAR</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maskSubmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instrument</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">instruments.default_inst</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/data.html#mosaic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.data.mosaic" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accepts a list of cleaned images and does a weighted combining after
+performing frame selection based on the Strehl and FWHM.</p>
+<p>Each image must have an associated <a href="#id13"><span class="problematic" id="id14">*</span></a>.coo file which gives the rough
+position of the reference source.</p>
+<p>&#64;param files: List of integer file numbers to include in combine.
+&#64;type files: list of int
+&#64;param wave: Filter of observations (e.g. ‘kp’, ‘lp’, ‘h’)
+&#64;type wave: string
+&#64;param outroot: The output root name (e.g. ‘06jullgs’). The final combined</p>
+<blockquote>
+<div><p>file names will be &lt;outroot&gt;_&lt;field&gt;_&lt;wave&gt;. The &lt;field&gt; keyword
+is optional.</p>
+<p>Examples:
+06jullgs_kp for outroot=’06jullgs’ and wave=’kp’
+06jullgs_arch_f1_kp for adding field=’arch_f1’</p>
+</div></blockquote>
+<p>&#64;type outroot: string
+&#64;kwparam field: Optional field name used to get to clean directory and</p>
+<blockquote>
+<div><p>also effects the final output file name.</p>
+</div></blockquote>
+<p>&#64;type field: string
+&#64;kwparam trim: Optional file trimming based on image quality. Default</p>
+<blockquote>
+<div><p>is 0. Set to 1 to turn trimming on.</p>
+</div></blockquote>
+<p>&#64;kwparam outSuffix: Optional suffix used to modify final output file name.
+&#64;type outSuffix: string
+&#64;type trim: 0 or 1
+&#64;kwparam weight: Optional weighting based on Strehl. Set to 1 to</p>
+<blockquote>
+<div><p>to turn file weighting on (default is 0).</p>
+</div></blockquote>
+<p>&#64;type weight: 0 or 1
+&#64;kwparam fwhm_max: The maximum allowed FWHM for keeping frames when</p>
+<blockquote>
+<div><p>trimming is turned on.</p>
+</div></blockquote>
+<p>&#64;type fwhm_max: int
+&#64;kwparam submaps: Set to the number of submaps to be made (def=0).
+&#64;type submaps: int
+&#64;kwparam mask: Set to false for maser mosaics; 06maylgs1 is an exception
+&#64;type mask: Boolean</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.reduce.data.mosaic_register">
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.data.</span></span><span class="sig-name descname"><span class="pre">mosaic_register</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outroot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">refImage</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">diffPA</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/data.html#mosaic_register"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.data.mosaic_register" title="Permalink to this definition">¶</a></dt>
+<dd><p>Register images for a mosaic. This only calculates the exact
+shifts between each image… it doesn’t do the combining.</p>
+<p>&#64;param outroot: The root for the output image. The resulting
+shifts will be written into a file called &lt;outroot&gt;.shifts
+&#64;type outroot: string
+&#64;param refImage: The name of the reference image.
+&#64;type refImage: string</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.reduce.data.mosaic_size">
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.data.</span></span><span class="sig-name descname"><span class="pre">mosaic_size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shiftsTable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">refImage</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outroot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subroot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">submaps</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/data.html#mosaic_size"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.data.mosaic_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determine the final size for the completed mosaic.</p>
+<p>&#64;params shiftsTable: Table from mosaic_register containing the
+shifts for all the images.
+&#64;type shiftsTable: string
+&#64;param refImage: The first image used as  reference.
+&#64;type refImage: string
+&#64;param outroot: The root name for the resulting output file.
+&#64;type outroot: string
+&#64;param subroot:
+&#64;type subroot: string
+&#64;param submaps:
+&#64;type submaps:</p>
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../../index.html">KAI</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">API Reference</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../../index.html">API Reference</a><ul>
+  <li><a href="../../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai</span></code></a><ul>
+  <li><a href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.reduce</span></code></a><ul>
+      <li>Previous: <a href="../dar/index.html" title="previous chapter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.reduce.dar</span></code></a></li>
+      <li>Next: <a href="../kai_util/index.html" title="next chapter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.reduce.kai_util</span></code></a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2022, J. R. Lu, A. K. Gautam, T. Do.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.2.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../../../../_sources/autoapi/kai/reduce/data/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

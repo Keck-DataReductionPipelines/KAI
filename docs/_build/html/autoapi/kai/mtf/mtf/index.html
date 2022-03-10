@@ -1,0 +1,1453 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>kai.mtf.mtf &#8212; KAI  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/alabaster.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css" />
+    <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+    <script src="../../../../_static/jquery.js"></script>
+    <script src="../../../../_static/underscore.js"></script>
+    <script src="../../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="kai.reduce" href="../../reduce/index.html" />
+    <link rel="prev" title="kai.mtf.mmm" href="../mmm/index.html" />
+   
+  <link rel="stylesheet" href="../../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="module-kai.mtf.mtf">
+<span id="kai-mtf-mtf"></span><h1><a class="reference internal" href="#module-kai.mtf.mtf" title="kai.mtf.mtf"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.mtf.mtf</span></code></a><a class="headerlink" href="#module-kai.mtf.mtf" title="Permalink to this headline">¶</a></h1>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h2>
+<section id="classes">
+<h3>Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h3>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.mtf.mtf.DataHolder" title="kai.mtf.mtf.DataHolder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataHolder</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h3>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.mtf.mtf.get_mtf" title="kai.mtf.mtf.get_mtf"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_mtf</span></code></a>(image, params, sources)</p></td>
+<td><p>image - 2D numpy array containing the image. Image must be square.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.mtf.mtf.hanning" title="kai.mtf.mtf.hanning"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hanning</span></code></a>(xsize, ysize, invert=False)</p></td>
+<td><p>Make a 2D hanning kernel from the seperable 1D hanning kernels. The</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.mtf.mtf.mtffunc_keck" title="kai.mtf.mtf.mtffunc_keck"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mtffunc_keck</span></code></a>(pp, nu=None, wave=None, F=None, D=None, Apix=None, pupil=None, tperf=None, sources=None, output='system', fjac=None)</p></td>
+<td><p>NAME:</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.mtf.mtf.fitmtf_keck" title="kai.mtf.mtf.fitmtf_keck"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fitmtf_keck</span></code></a>(nu, power, error, pspec_sources, clip=None, startParams=None, relStep=0.2, quiet=False)</p></td>
+<td><p>NAME:</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.mtf.mtf.params_arr2dict" title="kai.mtf.mtf.params_arr2dict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">params_arr2dict</span></code></a>(param_array)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.mtf.mtf.params_dict2arr" title="kai.mtf.mtf.params_dict2arr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">params_dict2arr</span></code></a>(param_dict)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.mtf.mtf.t_perfect_keck" title="kai.mtf.mtf.t_perfect_keck"><code class="xref py py-obj docutils literal notranslate"><span class="pre">t_perfect_keck</span></code></a>(x, p, pupil=None)</p></td>
+<td><p>NAME:</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.mtf.mtf.autocorr2d" title="kai.mtf.mtf.autocorr2d"><code class="xref py py-obj docutils literal notranslate"><span class="pre">autocorr2d</span></code></a>(d)</p></td>
+<td><p>2D auto correlation.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.mtf.mtf.nirc2pupil" title="kai.mtf.mtf.nirc2pupil"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nirc2pupil</span></code></a>(npix=256, du=None, pmsname='largehex', pmrangl=0.0)</p></td>
+<td><p>NAME:</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.mtf.mtf.dist_circle" title="kai.mtf.mtf.dist_circle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dist_circle</span></code></a>(size, center=None)</p></td>
+<td><p><p>&quot;</p>
+</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.mtf.mtf.t_perfect" title="kai.mtf.mtf.t_perfect"><code class="xref py py-obj docutils literal notranslate"><span class="pre">t_perfect</span></code></a>(x, ee)</p></td>
+<td><p>NAME:</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.mtf.mtf.t_pix" title="kai.mtf.mtf.t_pix"><code class="xref py py-obj docutils literal notranslate"><span class="pre">t_pix</span></code></a>(x, p)</p></td>
+<td><p>NAME:</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.mtf.mtf.t_atmos_ao" title="kai.mtf.mtf.t_atmos_ao"><code class="xref py py-obj docutils literal notranslate"><span class="pre">t_atmos_ao</span></code></a>(x, p)</p></td>
+<td><p>NAME:</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.mtf.mtf.phi_atmos_ao" title="kai.mtf.mtf.phi_atmos_ao"><code class="xref py py-obj docutils literal notranslate"><span class="pre">phi_atmos_ao</span></code></a>(x, p, unmod=False, tat=False)</p></td>
+<td><p>NAME:</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.mtf.mtf.phi_atmos" title="kai.mtf.mtf.phi_atmos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">phi_atmos</span></code></a>(x, p, tat=False, unmod=False)</p></td>
+<td><p>NAME:</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.mtf.mtf.ft_infl_func" title="kai.mtf.mtf.ft_infl_func"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ft_infl_func</span></code></a>(x, p)</p></td>
+<td><p><ul class="simple">
+<li></li>
+</ul>
+</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.mtf.mtf.structure_function" title="kai.mtf.mtf.structure_function"><code class="xref py py-obj docutils literal notranslate"><span class="pre">structure_function</span></code></a>(rr, pp, phi_call=phi_atmos_ao)</p></td>
+<td><p><p>&quot;</p>
+</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.mtf.mtf.mtf2psf" title="kai.mtf.mtf.mtf2psf"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mtf2psf</span></code></a>(par, sz, perfect=False)</p></td>
+<td><p><p>&quot;</p>
+</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.mtf.mtf.mtf2ee" title="kai.mtf.mtf.mtf2ee"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mtf2ee</span></code></a>(par, pixx, perfect=False)</p></td>
+<td><p><p>&quot;</p>
+</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.mtf.mtf.strehl" title="kai.mtf.mtf.strehl"><code class="xref py py-obj docutils literal notranslate"><span class="pre">strehl</span></code></a>(par)</p></td>
+<td><p>NAME:</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="attributes">
+<h3>Attributes<a class="headerlink" href="#attributes" title="Permalink to this headline">¶</a></h3>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.mtf.mtf.Fvalues" title="kai.mtf.mtf.Fvalues"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Fvalues</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py data">
+<dt class="sig sig-object py" id="kai.mtf.mtf.Fvalues">
+<span class="sig-prename descclassname"><span class="pre">kai.mtf.mtf.</span></span><span class="sig-name descname"><span class="pre">Fvalues</span></span><a class="reference internal" href="../../../../_modules/kai/mtf/mtf.html#Fvalues"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.mtf.mtf.Fvalues" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.mtf.mtf.get_mtf">
+<span class="sig-prename descclassname"><span class="pre">kai.mtf.mtf.</span></span><span class="sig-name descname"><span class="pre">get_mtf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sources</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/mtf/mtf.html#get_mtf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.mtf.mtf.get_mtf" title="Permalink to this definition">¶</a></dt>
+<dd><p>image - 2D numpy array containing the image. Image must be square.
+params - a dictionary with the various parameters used to calculate</p>
+<blockquote>
+<div><p>the MTF.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>sources - (def=None) and optional 2D numpy array (same size as image)</dt><dd><p>that contains the distribution of stars in the image as delta
+functions.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.mtf.mtf.hanning">
+<span class="sig-prename descclassname"><span class="pre">kai.mtf.mtf.</span></span><span class="sig-name descname"><span class="pre">hanning</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xsize</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ysize</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">invert</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/mtf/mtf.html#hanning"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.mtf.mtf.hanning" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a 2D hanning kernel from the seperable 1D hanning kernels. The
+default kernel peaks at 1 at the center and falls to zero at the edges.
+Use invert=True to make an inner mask that is 0 at the center and rises
+to 1 at the edges.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.mtf.mtf.mtffunc_keck">
+<span class="sig-prename descclassname"><span class="pre">kai.mtf.mtf.</span></span><span class="sig-name descname"><span class="pre">mtffunc_keck</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wave</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">F</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">D</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Apix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pupil</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tperf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sources</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'system'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fjac</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/mtf/mtf.html#mtffunc_keck"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.mtf.mtf.mtffunc_keck" title="Permalink to this definition">¶</a></dt>
+<dd><dl>
+<dt>NAME:</dt><dd><p>MTFFUNC_KECK</p>
+</dd>
+<dt>PURPOSE:</dt><dd><p>Given the appropriate input parameters, returns the
+square of the 1-D Modulation Transfer Function (MTF)^2 of
+an optical system consisting of a
+telescope + detector + atmosphere + Adaptive Optics (AO) system.</p>
+</dd>
+<dt>CATEGORY:</dt><dd><p>How should I know?</p>
+</dd>
+<dt>CALLING SEQUENCE:</dt><dd><dl class="simple">
+<dt>RESULT=MTFFUNC_KECK(NU, PARAMS, [/PERF, /ATMOS_AO, $</dt><dd><p>SPDIST=SPDIST])</p>
+</dd>
+</dl>
+</dd>
+<dt>INPUTS:</dt><dd><p>NU:   The spatial frequencies at which the MTF will be
+computed, in normalized units (i.e. nu=1 at spatial frequency
+D/lambda for a circular aperture telescope), and need not be
+regularly gridded.</p>
+<p>PARAMS:   A structure of parameters defined as follows:</p>
+<blockquote>
+<div><dl class="simple">
+<dt>params.lambda  - wavelength in meters of the</dt><dd><p>observation</p>
+</dd>
+<dt>params.f       - effective focal length at detector</dt><dd><p>in meters</p>
+</dd>
+<dt>params.D       - telescope pupil diameter in meters,</dt><dd><p>defining the normalized spatial
+frequency NU which is in units of
+D/lambda; not necessarily 10
+meters for Keck! (see PROCEDURE
+below)</p>
+</dd>
+<dt>params.A       - width of detector pixel in meters,</dt><dd><p>27 microns for the NIRC2 narrow
+field.</p>
+</dd>
+<dt>params.pupil   - a string equal to the name of</dt><dd><p>the pupil-stop of the NIRC2
+camera (see documentation for
+T_PERFECT_KECK for a list of
+available pupil-stop names) or for
+a circular pupil, the scalar
+floating point value of the
+pupil’s central obscuration.  The
+data type of this parameter
+deterimines the form of the pupil
+MTF used (see PROCEDURE below).</p>
+</dd>
+<dt>params.L0      - the outer scale of turbluence, in</dt><dd><p>meters, for a modified Kolmogorov
+spectrum</p>
+</dd>
+<dt>params.sigma   - the width of the AO system</dt><dd><p>deformable mirror’s (DM’s)
+influence function as projected
+onto the pupil plane, in meters.</p>
+</dd>
+<dt>params.w       - scaling factor for the influence</dt><dd><p>function’s Fourier transform;
+mimics variable AO correction (see
+documentation for
+FT_INFL_FUNCTION)</p>
+</dd>
+</dl>
+<p>params.delta   - wavefront measurement error
+params.cmult   - constant scaling factor of the output</p>
+<blockquote>
+<div><p>MTF</p>
+</div></blockquote>
+<dl class="simple">
+<dt>params.N       - additive constant to output MTF</dt><dd><p>representing a noise floor</p>
+</dd>
+<dt>params.r0      - wavelength specific Fried</dt><dd><p>parameter in meters (see PROCEDURE
+below).</p>
+</dd>
+</dl>
+</div></blockquote>
+</dd>
+<dt>KEYWORD PARAMETERS:</dt><dd><dl class="simple">
+<dt>SPDIST: Set this keyword to a vector the same size as nu, the</dt><dd><p>1-D power spectrum of the source distribution power
+spectrum of an image for which you wish to fit an
+MTF.  The output (MTF)^2 is multiplied by this vector
+before output.</p>
+</dd>
+<dt>/PERF:  If this keyword is set, RESULT is the square of the</dt><dd><p>diffraction limited pupil MTF.</p>
+</dd>
+<dt>/ATMOS_AO:   If this keyword is set, RESULT is the square of</dt><dd><p>the AO filtered atmospheric MTF.</p>
+</dd>
+</dl>
+<dl class="option-list">
+<dt><kbd><span class="option">/PIX</span></kbd></dt>
+<dd><p>Returns the MTF^2 of an ideal pixel.</p>
+</dd>
+</dl>
+<dl>
+<dt>_EXTRA: Use this keyword to pass in a structure containing</dt><dd><p>constant parameters that need not be recomputed each
+time MTFFUNC_KECK is called.  This is useful for
+speeding up an iterative fitting procedure that uses
+MTFFUNC_KECK.  The structure passed in via this
+keyword must contain the following parameters/tags:</p>
+<blockquote>
+<div><dl class="simple">
+<dt>_EXTRA = {lambda:lambda, f:f, D:D, pupil:pupil, $</dt><dd><p>A:A, TPERF:TPERF, SPDIST:SPDIST}</p>
+</dd>
+</dl>
+</div></blockquote>
+<p>where lambda, f, D, A, and pupil are definted exactly
+as they are for input via PARAMS; TPERF is a vector
+of size equal to NU and is the diffraction limited
+pupil MTF (N.B., not the squared MTF) and is
+equivalent to the square root of the output of
+MTFFUNC_KECK with the /PERF keyword set; SPDIST is
+the power spectrum of and image’s source distribution
+function, identical to SPDIST.</p>
+<p>If the keyword _EXTRA is set to this structure,
+then PARAMS must not be a structure containing all of
+the parameters defined in PARAMS above, but must be a
+7 element vector defined as such:</p>
+<dl class="simple">
+<dt>PARAMS[0] = L0, PARAMS[1] = sigma, PARAMS[2] = w,</dt><dd><dl class="simple">
+<dt>PARAMS[3] = delta, PARAMS[4] = cmult, PARAMS[5]= N,</dt><dd><p>PARAMS[6] = r0.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p>Setting the keyword SPDIST
+overrides the source distribution power spectrum
+passed in via the _EXTRA keyword.  If the _EXTRA
+keyword is not set and a structure of parameters is
+passed in via PARAMS, then SPDIST is the only way to
+multiply the output of MTFFUNC_KECK by a vector
+before returning.</p>
+</dd>
+</dl>
+</dd>
+<dt>OUTPUTS:</dt><dd><p>RESULT:  The (MTF)^2, evaluated at the input spatial
+frequencies, NU.</p>
+</dd>
+<dt>RESTRICTIONS:</dt><dd><p>NU must be greater than zero.</p>
+</dd>
+<dt>PROCEDURE CALLS:</dt><dd><p>T_ATMOS_AO(), T_PIX(), T_PERFECT_KECK(), T_PERFECT()</p>
+</dd>
+<dt>PROCEDURE:</dt><dd><p>If PARAMS.pupil is a string, it must specify the pupil stop
+name of the NIRC2 camera that was in place at the time of the
+observation.  See the documentation for NIRC2PUPIL for a list
+of acceptable pupil stop names.  In this case, the pupil MTF
+is numerically calculated as the autocorrelation function of
+the Keck pupil via the procedure T_PERFECT_KECK.</p>
+<p>If PARAMS.pupil is a floating point scalar, the pupil MTF is
+calculated analytically via the procedure T_PERFECT for a
+circular pupil with central obscuration PARAMS.pupil.  (See
+the documentation for T_PERFECT.)  This functionality is not
+intended for use with Keck AO data, but is included in the
+event this software is applied to data from other AO systems,
+such as the Lick 3-meter telescope.</p>
+<p>PARAMS.delta is untested, and for the time being should be
+left set to zero.</p>
+<p>In general PARAMS.D should not be set to the familiar 10
+meters, which is the effective diameter of the Keck pupil.
+Since this parameter defines the maximum spatial frequency
+D/lambda to which the telescope is sensitive, it should be
+equal to the diameter of the circle inscribing the Keck
+pupil.  This is because the lambda/D minimum angle changes
+depending on orientation in the image plane, and in certain
+orientations the diameter appropriate for this specification
+is D = 10.99 m.</p>
+<p>r0 is the wavelength specific Fried parameter.  Generally,
+the r0 specifying seeing conditions is quoted for a
+wavelength of 500 nm.  If one has reason to believe that the
+r0 for a set of observations is 20 cm, then the wavelength
+specific r0 is given as</p>
+<blockquote>
+<div><p>r0_lambda = r0 * (lambda/500 nm)^(6/5)</p>
+</div></blockquote>
+<p>and this is the r0 that should be specified in PARAMS.RO.</p>
+<p>The effective focal length at the detector, PARAMS.F, is
+related to the platescale of the detector by</p>
+<blockquote>
+<div><p>F = Apix / platescale</p>
+</div></blockquote>
+<p>where platescale is in radians / pixel.  If the platescale
+and the pixel size is accurately known, F should be
+calculated in this manner.</p>
+</dd>
+<dt>EXAMPLE:</dt><dd><p>Generate a model MTF for an H-band NIRC2 image at the .01
+arcsec/pixel platescale at normalized spatial fequencies in
+the image plane from 0 to 1:</p>
+<dl class="simple">
+<dt>params={lambda:1.6e-6, F:557.0, D:10.99,  $</dt><dd><p>L0:30.0, sigma:0.56, w:1.5, delta:0.0, cmult:1.0, $
+N:1e-4, r0:0.65, Apix:27e-6, pupil:’largehex’}</p>
+</dd>
+</dl>
+<p>nu = findgen(100)/99.
+tsys_squared = mtffunc_keck(nu,params)</p>
+</dd>
+<dt>MODIFICATION HISTORY:</dt><dd><p>Written by:  Christopher D. Sheehy, January 2006.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.mtf.mtf.fitmtf_keck">
+<span class="sig-prename descclassname"><span class="pre">kai.mtf.mtf.</span></span><span class="sig-name descname"><span class="pre">fitmtf_keck</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nu</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">power</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pspec_sources</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">startParams</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relStep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quiet</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/mtf/mtf.html#fitmtf_keck"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.mtf.mtf.fitmtf_keck" title="Permalink to this definition">¶</a></dt>
+<dd><dl>
+<dt>NAME:</dt><dd><p>FITMTF_KECK</p>
+</dd>
+<dt>PURPOSE:</dt><dd><p>Uses MPFIT to perform a constrained Levenberg-Markwardt fit of
+a model MTF to data from a Keck adaptive optics image.  It is
+highly recommended that the user edit this procedure to suit
+his or her particular needs, i.e. changing the default initial
+guesses for the fit parameters and the step size to MPFIT.</p>
+<p>This procedure is meant as a guide to illustrate how to use
+MPFIT in conjunction with the AO MTF software.  Just because
+MPFIT returns best fit parameters does not mean that it has
+found an absolute minimum in Chi-squared.  As with most
+non-linear fit routines, some tinkering may be required to
+avoid local minima and to obtain accurate fits.  In other
+words, this procedure should not be applied blindly.</p>
+<p>In general, a good way to obtain accurate fits is to first
+perform the fits with decent starting guesses for the fit
+parameters and specifying a relatively large step size over
+which MPFIT calculates the numerical derivative of the fit
+function w.r.t. the fit parameters.  Once the best fit
+parameters are obtained from this iteration, the step
+size can be decreased and the best fit parameters from the
+first iteration should be used as the starting guesses for the
+parameters in the second iteration.</p>
+<p>A good rule of thumb that seems to work in some (many?) cases
+is specifying the step size in the first iteration to be 20% of the
+parameters’ respective values, and a step size of 2% in the
+second interation.  This can be accomplished by changing the
+values of PARINFO[*].relstep from 0.20 to 0.02 within the
+procedure or via the RELSTEP keyword defined at the main
+level. Different step sizes for different parameters can be
+specified by editing PARINFO[*].relstep within the procedure.</p>
+</dd>
+<dt>CATEGORY:</dt><dd><p>???</p>
+</dd>
+<dt>CALLING SEQUENCE:</dt><dd><dl class="simple">
+<dt>FITMTF_KECK, filename, params, perror, covar, chisq, $</dt><dd><p>[start=start, relstep=relstep, quiet=quiet]</p>
+</dd>
+</dl>
+</dd>
+<dt>INPUTS:</dt><dd><dl>
+<dt>FILENAME: A scalar string specifying the filename of an IDL</dt><dd><p>save file containing the data to which the model MTF
+is fit.  The command</p>
+<blockquote>
+<div><p>restore, FILENAME</p>
+</div></blockquote>
+<p>must restore the variables NU, POWER, ERROR, and
+SPDIST, which are vectors of equal size.  These
+variables are the outputs of the routine GETMTF.</p>
+</dd>
+</dl>
+</dd>
+<dt>KEYWORD PARAMETERS:</dt><dd><dl class="simple">
+<dt>START:   Set this keyword equal to a structure containing</dt><dd><p>starting guesses for the fit parameters as defined in
+the documentation for MTFFUNC_KECK.  If not set, they
+the default values must be defined within the
+procedure.</p>
+</dd>
+<dt>CLIP:    Set this keyword equal to a scalar value defining the</dt><dd><p>normalized spatial frequency (defined by NU) below
+which the data restored from FILENAME will be ignored.
+By default, this value is None (no clipping).
+Setting CLIP = 0.0 fits all of the data.
+However, this is generally not
+recommended because imperfect sky subtraction of the
+image from which NU and POWER were computed usually
+contaminates the power spectrum at low spatial
+frequencies. The recommended value is 0.02.</p>
+</dd>
+<dt>RELSTEP: Defines the relative step size over which MPFIT</dt><dd><p>computes the numerical derivative of Chi-sqared
+w.r.t. the fit parameters.  Sets the value
+PARINFO[*].relstep, which is an input to MPFIT (see
+the documentation for MPFIT).</p>
+</dd>
+<dt>/QUIET<span class="classifier">Set this keyword to supress the printed output of</span></dt><dd><p>MPFIT.  Generally, though, it is good practice to keep
+tabs on what MPFIT is doing as it’s proceding with the
+fit.</p>
+</dd>
+</dl>
+</dd>
+<dt>OUTPUTS:</dt><dd><dl>
+<dt>PARAMS:  A structure of the best fit parameters as determined</dt><dd><p>by MPFIT; can be used as the input parameters to
+MTFFUNC_KECK, MTF2PSF, MTF2EE, or any of
+MTFFUNC_KECK’s subsidiary routines.</p>
+<p>The parameters that are fit are L0, sigma, w,
+delta, cmult, N, and r0.  The rest are only supplied
+as information to MTFFUNC_KECK.  In addition, some of
+these fit parameters may be held constant if they are
+known or assumed (SIMGA and DELTA are held fixed by
+default when performing the fit).  Constant parameters
+are specified by setting PARINFO[i].fixed to 1 within
+the FITMTF_KECK procedure (see documentation for
+MPFIT and MPFITFUN).</p>
+</dd>
+<dt>PERROR:  A structure of formal error in the best fit</dt><dd><p>parameters, as determined by MPFIT.  Parameters that
+are not included in the fit or are held fixed during
+the fit return an error of 0.</p>
+</dd>
+<dt>COVAR:   The parameter covariance matrix, of size N x N, where</dt><dd><p>N is the number of fit parameters supplied to MPFIT,
+the values of which depend on the order of the vector
+of input parameters supplied to MPFIT.  (See
+documentation for MPFIT and order of FCNARGS as
+defined within this procedure.)</p>
+</dd>
+<dt>CHISQ:   The quantity (RESIDS/ERROR)^2, where</dt><dd><p>RESIDS = POWER - BESTFIT, and POWER and ERROR are
+the vectors restored from FILENAME (see above).
+CHISQ is calculated ignoring data at NU &lt; CLIP.</p>
+</dd>
+</dl>
+<p>NITER:   Number of iterations performed by the fitting routine.</p>
+</dd>
+<dt>PROCEDURE CALLS:</dt><dd><p>MPFITFUN, MPFIT, T_PERFECT_KECK</p>
+</dd>
+<dt>EXAMPLE:</dt><dd><p>read in a fully reduced H-band NIRC2 image
+im = READFITS(‘myimage.fits’)</p>
+<p>calculate its power spectrum
+p = {lambda:1.65e-6, D:10.99, F:557.0, APIX:27e-6}
+GETMTF, im, p, nu, power, error, spdist
+SAVE, nu, power, error, spdist, filename=’mtfdata.sav’</p>
+<p>fit an MTF to this data
+startp = {wave:1.65e-6, D:10.99, F:557.0, Apix:27e-6, $</p>
+<blockquote>
+<div><p>pupil:’largehex’, L0:30.0, sigma:0.56, $
+w:1.3, delta:0.0, cmult:1.0, N:1e-5, r0:0.5}</p>
+</div></blockquote>
+<p>FITMTF_KECK, ‘mtfdata.sav’, bestfit_params, start=startp</p>
+<p>zero in on the best fit parameters by editing FITMTF_KECK to
+perform the fit using a smaller step size to MPFIT.  Change
+PARINFO[*].relstep from 0.20 to 0.02, recomplie FITMTF_KECK,
+and perform the fit again using the previous best fit
+parameters as the new starting parameters.
+FITMTF_KECK, ‘mtfdata.sav’, bestfit_params2, start=bestfit_params</p>
+<p>calculate the encircled energy for the PSF in image
+‘myimage.fits’ at a radius of 25 pixels (at the 0.01 arcsec/pix
+NIRC2 platescale).
+MTF2EE, bestfit_params2, 25.0, EE
+print, EE</p>
+<p>compute the best fit power spectrum
+PSPEC = MTFFUNC_KECK(nu, bestfit_params2, spdist=spdist)
+plot, nu, power, /ylog, psym=4
+oplot, nu, pspec</p>
+<p>plot the best fit MTF
+T = sqrt(MTFFUNC_KECK(nu, bestfit_params2)
+plot, nu, T, /ylog</p>
+</dd>
+<dt>MODIFICATION HISTORY:</dt><dd><p>Written by Christopher D. Sheehy, January 2006.
+Added “niter” keyword, Nate McCrady, May 17, 2007.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.mtf.mtf.params_arr2dict">
+<span class="sig-prename descclassname"><span class="pre">kai.mtf.mtf.</span></span><span class="sig-name descname"><span class="pre">params_arr2dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param_array</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/mtf/mtf.html#params_arr2dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.mtf.mtf.params_arr2dict" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.mtf.mtf.params_dict2arr">
+<span class="sig-prename descclassname"><span class="pre">kai.mtf.mtf.</span></span><span class="sig-name descname"><span class="pre">params_dict2arr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param_dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/mtf/mtf.html#params_dict2arr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.mtf.mtf.params_dict2arr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.mtf.mtf.t_perfect_keck">
+<span class="sig-prename descclassname"><span class="pre">kai.mtf.mtf.</span></span><span class="sig-name descname"><span class="pre">t_perfect_keck</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pupil</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/mtf/mtf.html#t_perfect_keck"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.mtf.mtf.t_perfect_keck" title="Permalink to this definition">¶</a></dt>
+<dd><dl>
+<dt>NAME:</dt><dd><p>T_PERFECT_KECK</p>
+</dd>
+<dt>PURPOSE:</dt><dd><p>Numerically computes a 1-D approximation to the 2-D
+diffraction limited MTF of the segmented Keck pupil,
+appropriate for the NIRC2 camera.</p>
+</dd>
+<dt>CATEGORY:</dt><dd><p>???</p>
+</dd>
+<dt>CALLING SEQUENCE:</dt><dd><p>RESULT = T_PERFECT_KECK(NU, D, [PUPIL=PUPIL])</p>
+</dd>
+<dt>INPUTS:</dt><dd><dl class="simple">
+<dt>NU:  Normalized spatial frequency in the image plane, in</dt><dd><p>units of D/lambda.</p>
+</dd>
+<dt>D:   The diameter of the Keck pupil, in meters, to which the</dt><dd><p>spatial frequencies are normalized, i.e. not necessarily
+the oft-quoted effective diameter of 10 meters.
+If D is a scalar or a 1-element array, this value is
+used.  Otherwise D must be a structure with the tag “D”
+defined, as per the definition of PARAMS in
+MTFFUNC_KECK.</p>
+</dd>
+</dl>
+</dd>
+<dt>KEYWORD PARAMETERS:</dt><dd><dl>
+<dt>PUPIL:      Set this keyword to a string to select the</dt><dd><dl class="simple">
+<dt>NIRC2 pupil-stop.  Available choices are</dt><dd><p>‘OPEN’
+‘LARGEHEX’
+‘MEDIUMHEX’
+‘SMALLHEX’
+‘INCIRCLE’</p>
+</dd>
+</dl>
+<p>If this keyword is not set, the default pupil is
+‘LARGEHEX’. (See documentation for NIRC2PUPIL.)</p>
+</dd>
+</dl>
+</dd>
+<dt>OUTPUTS:</dt><dd><p>RESULT:  The diffraction limited MTF (N.B. not the square of
+the MTF).</p>
+</dd>
+<dt>PROCEDURE:</dt><dd><ol class="arabic simple">
+<li><p>Retrieves a pupil image from NIRC2PUPIL</p></li>
+<li><p>Computes the 2-D autocorrelation function of the pupil</p></li>
+<li><p>Radially bins and averages the 2-D autocorrelation
+function into a 1-D MTF.</p></li>
+<li><p>Interpoates the 1-D MTF onto the grid of normalized
+spatial frequencies, NU, defined by the user.</p></li>
+</ol>
+</dd>
+<dt>PROCEDURE CALLS:</dt><dd><p>NIRC2PUPIL(), CONVOLVE()</p>
+</dd>
+<dt>MODIFICATION HISTORY:</dt><dd><p>Written by Christopher D. Sheehy, January 2006.
+Commented by Nate McCrady, January 2008.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.mtf.mtf.autocorr2d">
+<span class="sig-prename descclassname"><span class="pre">kai.mtf.mtf.</span></span><span class="sig-name descname"><span class="pre">autocorr2d</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/mtf/mtf.html#autocorr2d"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.mtf.mtf.autocorr2d" title="Permalink to this definition">¶</a></dt>
+<dd><p>2D auto correlation.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.mtf.mtf.nirc2pupil">
+<span class="sig-prename descclassname"><span class="pre">kai.mtf.mtf.</span></span><span class="sig-name descname"><span class="pre">nirc2pupil</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">npix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">256</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">du</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pmsname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'largehex'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pmrangl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/mtf/mtf.html#nirc2pupil"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.mtf.mtf.nirc2pupil" title="Permalink to this definition">¶</a></dt>
+<dd><dl>
+<dt>NAME:</dt><dd><p>NIRC2PUPIL</p>
+</dd>
+<dt>PURPOSE:</dt><dd><p>Calculate NIRC2 pupil image</p>
+</dd>
+<dt>EXPLANATION:</dt><dd><p>Calculate pupil image for any pupil stop, pupil angle, and image
+scale, for use by NIRC2PSF in determining theoretical PSF.</p>
+</dd>
+<dt>CALLING SEQUENCE:</dt><dd><p>result = NIRC2PUPIL( [NPIX=, DU=, PMSNAME=, PMRANGL= ])</p>
+</dd>
+<dt>INPUTS:</dt><dd><p>none.</p>
+</dd>
+<dt>OUTPITS:</dt><dd><p>result = binary image of pupil</p>
+</dd>
+<dt>OPTIONAL INPUT KEYWORDS:</dt><dd><p>NPIX = size of pupil image, in pixels</p>
+<p>DU = platescale of pupil image, in m/pixel at the telescope primary</p>
+<p>PMSNAME = pupil stop name, eg. ‘largehex’ (the default).</p>
+<dl class="simple">
+<dt>PMRANGL = pupil drive’s angular position (for rotated pupil images).</dt><dd><p>NOT TESTED.  There could be an offset and/or a sign flip needed!</p>
+</dd>
+</dl>
+</dd>
+<dt>EXAMPLE:</dt><dd><p>pupil = NIRC2PUPIL(npix=512, du=0.05, PMSNAME=’open’)</p>
+</dd>
+<dt>ERROR HANDLING:</dt><dd><p>none</p>
+</dd>
+<dt>RESTRICTIONS:</dt><dd><p>none</p>
+</dd>
+<dt>NOTES:</dt><dd><dl class="simple">
+<dt>The dimentions are based on Keck KAON 253 and the NIRC2 pupil</dt><dd><p>stop drawings.</p>
+</dd>
+</dl>
+</dd>
+<dt>PROCEDURES USED:</dt><dd><p>none</p>
+</dd>
+<dt>MODIFICATION HISTORY:</dt><dd><p>Original writen May 2004, A. Bouchez, W.M. Keck Observatory</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.mtf.mtf.dist_circle">
+<span class="sig-prename descclassname"><span class="pre">kai.mtf.mtf.</span></span><span class="sig-name descname"><span class="pre">dist_circle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">center</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/mtf/mtf.html#dist_circle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.mtf.mtf.dist_circle" title="Permalink to this definition">¶</a></dt>
+<dd><p>”
+NAME:</p>
+<blockquote>
+<div><p>DIST_CIRCLE</p>
+</div></blockquote>
+<dl>
+<dt>PURPOSE:</dt><dd><p>Form a square array where each value is its distance to a given center.</p>
+</dd>
+<dt>EXPLANATION:</dt><dd><p>Returns a square array in which the value of each element is its
+distance to a specified center. Useful for circular aperture photometry.</p>
+</dd>
+<dt>CALLING SEQUENCE:</dt><dd><p>DIST_CIRCLE, IM, N, [ XCEN, YCEN,  /DOUBLE ]</p>
+</dd>
+<dt>INPUTS:</dt><dd><dl class="simple">
+<dt>N = either  a scalar specifying the size of the N x N square output</dt><dd><p>array, or a 2 element vector specifying the size of the
+N x M rectangular output array.</p>
+</dd>
+</dl>
+</dd>
+<dt>OPTIONAL INPUTS:</dt><dd><dl class="simple">
+<dt>XCEN,YCEN = Scalars designating the X,Y pixel center.  These need</dt><dd><p>not be integers, and need not be located within the
+output image.   If not supplied then the center of the output
+image is used (XCEN = YCEN = (N-1)/2.).</p>
+</dd>
+</dl>
+</dd>
+<dt>OUTPUTS:</dt><dd><dl class="simple">
+<dt>IM  - N by N (or M x N) floating array in which the value of each</dt><dd><p>pixel is equal to its distance to XCEN,YCEN</p>
+</dd>
+</dl>
+</dd>
+<dt>OPTIONAL INPUT KEYWORD:</dt><dd><dl class="simple">
+<dt>/DOUBLE - If this keyword is set and nonzero, the output array will</dt><dd><p>be of type DOUBLE rather than floating point.</p>
+</dd>
+</dl>
+</dd>
+<dt>EXAMPLE:</dt><dd><p>Total the flux in a circular aperture within 3’ of a specified RA
+and DEC on an 512 x 512 image IM, with a header H.</p>
+<blockquote>
+<div><p>IDL&gt; adxy, H, RA, DEC, x, y       Convert RA and DEC to X,Y</p>
+</div></blockquote>
+<p>IDL&gt; getrot, H, rot, cdelt        CDELT gives plate scale deg/pixel
+IDL&gt; cdelt = cdelt*3600.          Convert to arc sec/pixel
+IDL&gt; dist_circle, circle, 512, x, y  ;Create a distance circle image
+IDL&gt; circle = circle*abs(cdelt[0])   ;Distances now given in arcseconds
+IDL&gt; good = where(circle LT 180)  ;Within 3 arc minutes
+IDL&gt; print,total( IM[good] )      Total pixel values within 3’</p>
+</dd>
+<dt>RESTRICTIONS:</dt><dd><p>The speed of DIST_CIRCLE decreases and the the demands on virtual
+increase as the square of the output dimensions.   Users should
+dimension the output array as small as possible, and re-use the
+array rather than re-calling DIST_CIRCLE</p>
+</dd>
+<dt>MODIFICATION HISTORY:</dt><dd><p>Adapted from DIST    W. Landsman            March 1991
+Allow a rectangular output array   W. Landsman     June 1994
+Converted to IDL V5.0   W. Landsman   September 1997
+Add /DOUBLE keyword, make XCEN,YCEN optional  W. Landsman Jun 1998</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.mtf.mtf.t_perfect">
+<span class="sig-prename descclassname"><span class="pre">kai.mtf.mtf.</span></span><span class="sig-name descname"><span class="pre">t_perfect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ee</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/mtf/mtf.html#t_perfect"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.mtf.mtf.t_perfect" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>NAME:</dt><dd><p>T_PERFECT</p>
+</dd>
+<dt>PURPOSE:</dt><dd><p>Computes the analytic diffraction limited MTF of a
+circular pupil with a circular central obscuration.</p>
+</dd>
+<dt>CATEGORY:</dt><dd><p>What goes here?</p>
+</dd>
+<dt>CALLING SEQUENCE:</dt><dd><p>RESULT = T_PERFECT(NU, PUPIL)</p>
+</dd>
+<dt>INPUTS:</dt><dd><dl class="simple">
+<dt>NU:  Normalized spatial frequency in the image plane, in</dt><dd><p>units of D/lambda where D is the pupil diameter and
+lambda is the observing wavelength     need not be
+regularly gridded</p>
+</dd>
+<dt>PUPIL:  The pupil’s central obscuration, defined as the</dt><dd><p>ratio of the obscuration’s diameter to the pupil’s
+diameter.  If PUPIL is a scalar or a 1-element array,
+this value is used.  Otherwise PUPIL must be a structure
+with the tag “PUPIL” defined, as per the definition of
+PARAMS in MTFFUNC_KECK.</p>
+</dd>
+</dl>
+</dd>
+<dt>OPTIONAL INPUTS:</dt><dd><p>NONE</p>
+</dd>
+<dt>KEYWORD PARAMETERS:</dt><dd><p>NONE</p>
+</dd>
+<dt>OUTPUTS:</dt><dd><p>RESULT:  The diffraction limited pupil MTF (N.B. not the
+square of the MTF)</p>
+</dd>
+<dt>OPTIONAL OUTPUTS:</dt><dd><p>NONE</p>
+</dd>
+<dt>MODIFICATION HISTORY:</dt><dd><p>Written by Christopher D. Sheehy, January 2006.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.mtf.mtf.t_pix">
+<span class="sig-prename descclassname"><span class="pre">kai.mtf.mtf.</span></span><span class="sig-name descname"><span class="pre">t_pix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/mtf/mtf.html#t_pix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.mtf.mtf.t_pix" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>NAME:</dt><dd><p>T_PIX</p>
+</dd>
+<dt>PURPOSE:</dt><dd><p>Analytically computes the MTF of an ideal square pixel,
+i.e. the detector MTF.</p>
+</dd>
+<dt>CATEGORY:</dt><dd><p>???</p>
+</dd>
+<dt>CALLING SEQUENCE:</dt><dd><p>RESULT = T_PIX(NU, PARAMS)</p>
+</dd>
+<dt>INPUTS:</dt><dd><dl class="simple">
+<dt>NU:  Normalized spatial frequency in the image plane, in</dt><dd><p>units of D/lambda.</p>
+</dd>
+<dt>PARAMS:  Must be a structure containing the tags “lambda”,</dt><dd><p>“D”, “F”, and “A” as defined in the documentation for
+MTFFUNC_KECK.</p>
+</dd>
+</dl>
+</dd>
+<dt>OPTIONAL INPUTS:</dt><dd><p>NONE</p>
+</dd>
+<dt>KEYWORD PARAMETERS:</dt><dd><p>NONE</p>
+</dd>
+<dt>OUTPUTS:</dt><dd><p>The detector MTF (N.B. not the square of the MTF)</p>
+</dd>
+<dt>PROCEDURE CALLS:</dt><dd><p>SINC()</p>
+</dd>
+<dt>MODIFICATION HISTORY:</dt><dd><p>Written by Christopher Sheehy, January 2006.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.mtf.mtf.t_atmos_ao">
+<span class="sig-prename descclassname"><span class="pre">kai.mtf.mtf.</span></span><span class="sig-name descname"><span class="pre">t_atmos_ao</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/mtf/mtf.html#t_atmos_ao"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.mtf.mtf.t_atmos_ao" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>NAME:</dt><dd><p>T_ATMOS_AO</p>
+</dd>
+<dt>PURPOSE:</dt><dd><p>Computes the AO filtered atmospheric MTF assuming a modified
+Kolmogorov atmospheric phase error power spectrum with a
+finite outer scale of turbulence.</p>
+</dd>
+<dt>CATEGORY:</dt><dd></dd>
+<dt>CALLING SEQUENCE:</dt><dd><p>RESULT = T_ATMOS_AO(NU, PARAMS)</p>
+</dd>
+<dt>INPUTS:</dt><dd><dl class="simple">
+<dt>NU:  Normalized spatial frequency in the image plane, in</dt><dd><p>units of D/lambda.</p>
+</dd>
+<dt>PARAMS:  A structure of parameters, defined in the</dt><dd><p>documentation for MTFFUNC_KECK</p>
+</dd>
+</dl>
+</dd>
+<dt>OPTIONAL INPUTS:</dt><dd><p>NONE</p>
+</dd>
+<dt>KEYWORD PARAMETERS:</dt><dd><p>NONE</p>
+</dd>
+<dt>OUTPUTS:</dt><dd><p>RESULT:  The AO+atmosphere MTF     the same size as NU.</p>
+</dd>
+<dt>RESTRICTIONS:</dt><dd><p>NU must be greater than zero.</p>
+</dd>
+<dt>PROCEDURE CALLS:</dt><dd><p>STRUC_FUNC()</p>
+</dd>
+<dt>PROCEDURE:</dt><dd><p>Computes the structure function for the AO filtered
+Kolmogorov power spectrum using STRUC_FUNC and exponentiates
+to yield the atmosphere + AO MTF.</p>
+</dd>
+<dt>MODIFICATION HISTORY:</dt><dd><p>Written by Christopher D. Sheehy, January 2006.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.mtf.mtf.phi_atmos_ao">
+<span class="sig-prename descclassname"><span class="pre">kai.mtf.mtf.</span></span><span class="sig-name descname"><span class="pre">phi_atmos_ao</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unmod</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/mtf/mtf.html#phi_atmos_ao"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.mtf.mtf.phi_atmos_ao" title="Permalink to this definition">¶</a></dt>
+<dd><dl>
+<dt>NAME:</dt><dd><p>PHI_ATMOS_AO</p>
+</dd>
+<dt>PURPOSE:</dt><dd><p>Calculates the AO filtered atmospheric power spectrum for
+spatial frequencies in the pupil plane, Phi_AO = Phi*(1-H)^2
+where Phi is the unfiltered atmospheric power spectrum and H
+is the Fourier transform of the deformable mirror’s (DM’s)
+influence function.  The default behavior is to use modified
+Kolmogorov power spectrum with finite outer scale and the
+influence function for the Keck AO system’s DM.</p>
+</dd>
+<dt>CATEGORY:</dt><dd><p>???</p>
+</dd>
+<dt>CALLING SEQUENCE:</dt><dd><p>Result = PHI_ATMOS_AO(KAPPA, PARAMS, [unmod=unmod, tat=tat])</p>
+</dd>
+<dt>INPUTS:</dt><dd><dl class="simple">
+<dt>KAPPA:  A vector of spatial frequencies in the pupil plane,</dt><dd><p>in m^-1</p>
+</dd>
+<dt>PARAMS: A structure of parameters as defined in the</dt><dd><p>documentation for MTFFUNC_KECK</p>
+</dd>
+</dl>
+</dd>
+<dt>KEYWORD PARAMETERS:</dt><dd><dl class="simple">
+<dt>/UNMOD: Set this keyword to use an unmodified Kolmogorov</dt><dd><p>atmospheric power spectrum, i.e. with an infinite
+outer scale.</p>
+</dd>
+<dt>/TAT:   Set this keyword to use a modified Tatarski power</dt><dd><p>spectrum, i.e. one with both a finite outer scale
+and finite inner scale (WARNING: UNTESTED).  If this
+keyword is invoked, the PARAMS structure must contain
+an extra tag, “Inner:”, that is the inner scale of
+turbulence in meters.</p>
+</dd>
+</dl>
+</dd>
+<dt>OUTPUTS:</dt><dd><dl class="simple">
+<dt>Result: The AO filtered atmospheric power spectrum, of</dt><dd><p>evaluated at and the same size as KAPPA.</p>
+</dd>
+</dl>
+</dd>
+<dt>RESTRICTIONS:</dt><dd><p>If the /UNMOD keyword is set, an input KAPPA of zero will
+cause a divide by 0 error, and RESULT will be Infinity,
+because the power at zero spatial frequency for an infinite
+outer scale is infinity.</p>
+<p>Works for the Keck DM’s influence function.  If the user
+wishes to use a different influence function, replace the
+call to FT_INFL_FUNC within the routine with another
+function that returns the Fourier transform of the
+appropriate influence function.  This function should take as
+inputs KAPPA and PARAMS (the user may add other tags to the
+PARAMS structure as necessary) and return the FT of the
+influence function as projected onto the pupil plane,
+evaluated at the inpute KAPPA.</p>
+</dd>
+<dt>PROCEDURE CALLS:</dt><dd><p>PHI__ATMOS(), FT_INFL_FUNC()</p>
+</dd>
+<dt>MODIFICATION HISTORY:</dt><dd><p>Written by Christopher Sheehy, January 2006.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.mtf.mtf.phi_atmos">
+<span class="sig-prename descclassname"><span class="pre">kai.mtf.mtf.</span></span><span class="sig-name descname"><span class="pre">phi_atmos</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unmod</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/mtf/mtf.html#phi_atmos"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.mtf.mtf.phi_atmos" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>NAME:</dt><dd><p>PHI_ATMOS</p>
+</dd>
+<dt>PURPOSE:</dt><dd><p>Calculates a modified Kolmogorov atmospheric phase error
+power spectrum with finite outer scale of turbulence.</p>
+</dd>
+<dt>CATEGORY:</dt><dd><p>???</p>
+</dd>
+<dt>CALLING SEQUENCE:</dt><dd><p>RESULT = PHI_ATMOS(KAPPA, PARAMS, [unmod=unmod, tat=tat])</p>
+</dd>
+<dt>INPUTS:</dt><dd><dl class="simple">
+<dt>KAPPA:  A vector of spatial frequencies in the pupil plane,</dt><dd><p>in m^-1, at which the power spectrum is evaluated
+(need not be regularly gridded).</p>
+</dd>
+<dt>PARAMS:  A structure of parameters as definted in the</dt><dd><p>documentation for MTFFUNC_KECK</p>
+</dd>
+</dl>
+</dd>
+<dt>KEYWORD PARAMETERS:</dt><dd><dl class="simple">
+<dt>/UNMOD:  Set this keyword to return an unmodified Kolmogorov</dt><dd><p>power spectrum, i.e. one with an infinite outer
+scale.</p>
+</dd>
+<dt>/TAT:    Set this keyword to return a modified Tatarski power</dt><dd><p>spectrum, i.e. one with both a finite outer scale
+and finite inner scale (WARNING: UNTESTED).  If this
+keyword is invoked, the PARAMS structure must contain
+an extra tag, “Inner:”, that is the inner scale of
+turbulence in meters.</p>
+</dd>
+</dl>
+</dd>
+<dt>OUTPUTS:</dt><dd><dl class="simple">
+<dt>RESULT:  The Kolmogorov atmospheric power spectrum, of same</dt><dd><p>size as input KAPPA.</p>
+</dd>
+</dl>
+</dd>
+<dt>RESTRICTIONS:</dt><dd><p>If the /UNMOD keyword is set, an input KAPPA of zero will
+cause a divide by 0 error, and RESULT will be Infinity,
+because the power at zero spatial frequency for an infinite
+outer scale is infinity.</p>
+</dd>
+<dt>PROCEDURE:</dt><dd><ol class="arabic simple">
+<li><p>The Kolmogorov spectrum with inifinte outer scale is
+calculated.  If the /UNMOD keyword is set, this is
+immediately returned.</p></li>
+<li><p>The Kolmogorov spectrum with finite outer scale is
+calculated.  Since the power at spatial scales much less
+than the outer scale should be left unaffected, the
+spectrum is normalized to have the same power at a very
+high spatial frequency, 100 m^-1.</p></li>
+</ol>
+</dd>
+<dt>MODIFICATION HISTORY:</dt><dd><p>Written by Christopher Sheehy, January 2006</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.mtf.mtf.ft_infl_func">
+<span class="sig-prename descclassname"><span class="pre">kai.mtf.mtf.</span></span><span class="sig-name descname"><span class="pre">ft_infl_func</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/mtf/mtf.html#ft_infl_func"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.mtf.mtf.ft_infl_func" title="Permalink to this definition">¶</a></dt>
+<dd><ul>
+<li><dl>
+<dt>NAME:</dt><dd><p>FT_INFL_FUNC</p>
+</dd>
+<dt>PURPOSE:</dt><dd><p>Evaltuates the Fourier transform of the Keck AO system’s
+deformable mirror at given input spatial frequency in the
+pupil plane.  Uses the functional form for the influence
+function given by van Dam, et al., 2004, Applied Optics, 43,
+5452.</p>
+</dd>
+<dt>CATEGORY:</dt><dd><p>???</p>
+</dd>
+<dt>CALLING SEQUENCE:</dt><dd><p>Result = FT_INFL_FUNC(KAPPA, PARAMS)</p>
+</dd>
+<dt>INPUTS:</dt><dd><dl class="simple">
+<dt>KAPPA:  Spatial frequency in the pupil plane of the telescope</dt><dd><p>in m^-1.</p>
+</dd>
+<dt>PARAMS: A structure of parameters as defined in the</dt><dd><p>documentation for MTFFUNC_KECK.  Only SIGMA and W
+need be defined.</p>
+</dd>
+</dl>
+</dd>
+<dt>OUTPUTS:</dt><dd><dl class="simple">
+<dt>Result:  The FT of the influence function, evaluated at and</dt><dd><p>of the same size as KAPPA.  The output is multiplied
+by W before output.  W=2 gives perfect AO correction
+at zero spatial frequency.</p>
+</dd>
+</dl>
+</dd>
+<dt>PROCEDURE:</dt><dd><p>The FT of the influence function has a set functional form,
+the difference of two Gaussians, and depends only on the
+parameter SIGMA (as defined in PARAMS) that is on the order
+of the separation between DM actuators.</p>
+<p>The result is multiplied by a constant scaling factor w, defined in
+PARAMS, before being output.</p>
+</dd>
+<dt>MODIFICATION HISTORY:</dt><dd><p>Written by Christopher Sheehy</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.mtf.mtf.structure_function">
+<span class="sig-prename descclassname"><span class="pre">kai.mtf.mtf.</span></span><span class="sig-name descname"><span class="pre">structure_function</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phi_call</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">phi_atmos_ao</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/mtf/mtf.html#structure_function"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.mtf.mtf.structure_function" title="Permalink to this definition">¶</a></dt>
+<dd><dl>
+<dt>“</dt><dd><dl>
+<dt>NAME:</dt><dd><p>STRUC_FUNC</p>
+</dd>
+<dt>PURPOSE:</dt><dd><p>Calculates the structure function, D(r), where r is the
+distance between two points in the pupil plane of the
+telescope in meter.  Default behavior is to calculate D(r)
+for an AO corrected Kolmogorov atmospheric power spectrum
+with finite outer scale.  However, the user can define any
+arbitrary atmospheric power spectra for which to calculate
+D(r).</p>
+</dd>
+<dt>CATEGORY:</dt><dd><p>???</p>
+</dd>
+<dt>CALLING SEQUENCE:</dt><dd><p>RESULT = STRUC_FUNC(R, PARAMS, [phi_call=phi_call])</p>
+</dd>
+<dt>INPUTS:</dt><dd><p>R:  A vector of radii in the pupil plane, in meters</p>
+<p>PARAMS:  A structure of parameters as defined in the
+documentation for MTFFUNC_KECK</p>
+</dd>
+<dt>OPTIONAL INPUTS:</dt><dd><p>NONE</p>
+</dd>
+<dt>KEYWORD PARAMETERS:</dt><dd><dl>
+<dt>PHI_CALL:  The default behavior of STRUC_FUNC, i.e. not</dt><dd><p>defning PHI_CALL, is to calculate the structure
+function assuming a modified Kolmogorov power
+spectrum with a finite outer scale and corrected
+by adaptive optics.  If the user wishes to find
+D(r) for a different power spectrum, PHI_CALL
+should be a string that, as executed, calls an IDL
+function that returns the power spectrum for
+input spatial frequencies KAPPA (as defined in the
+documentation for PHI_ATMOS/PHI_ATMOS_AO).
+This function must be structured as follows:</p>
+<blockquote>
+<div><dl class="simple">
+<dt>FUNCTION MYFUNCT, KAPPA, PARAMS, KEYWORDS=…</dt><dd><dl class="simple">
+<dt>(compute the atmospheric power spectrum PHI</dt><dd><p>at given X for input parameters PARAMS)
+RETURN, PHI</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p>END</p>
+</div></blockquote>
+<p>The PARAMS input to the function is the same
+structure as the PARAMS input into STRUC_FUNC.</p>
+<p>PHI_CALL MUST HAVE ‘k’ AS THE SPATIAL FREQUENCY
+VARIABLE NAME ‘k’ AND ‘p’ AS THE PARAMETER
+STRUCTURE VARAIBLE NAME!</p>
+<p>Example: The function PHI_ATMOS returns the
+uncorrected atmospheric power spectrum, and would
+be called as such:</p>
+<blockquote>
+<div><p>IDL&gt; x=findgen(10)
+IDL&gt; phi=PHI_ATMOS(x,params)</p>
+</div></blockquote>
+<p>where params has already been defined and is a
+structure containing information for PHI_ATMOS to
+be able to calculate the power spectrum.  In the
+call to STRUC_FUNC, setting the keyword</p>
+<blockquote>
+<div><p>PHI_CALL = ‘PHI_ATMOS(k,p)’</p>
+</div></blockquote>
+<p>forces STRUC_FUNC to use this power spectrum in
+calculating D(r).</p>
+<p>PHI_ATMOS also accepts keywords     for instance</p>
+<blockquote>
+<div><p>IDL&gt; phi=PHI_ATMOS(x,params,/unmod)</p>
+</div></blockquote>
+<p>returns an uncorrected power spectrum with an
+infinite outer scale.  In this case, one would set
+the keyword</p>
+<blockquote>
+<div><p>PHI_CALL = ‘PHI_ATMOS(k,p,/unmod)’</p>
+</div></blockquote>
+<p>Leaving the keyword PHI_CALL undefined is
+equivalent to setting</p>
+<blockquote>
+<div><p>PHI_CALL = ‘PHI_ATMOS_AO(k,p)</p>
+</div></blockquote>
+</dd>
+</dl>
+</dd>
+<dt>OUTPUTS:</dt><dd><p>RESULT:  A vector of same size as R, the structure function
+evaluated at R</p>
+</dd>
+<dt>PROCEDURE CALLS:</dt><dd><p>PHI_ATMOS_AO(), D_R(), QPINT1D()</p>
+</dd>
+<dt>PROCEDURE:</dt><dd><p>Utilizes the adaptive 1-d integration routine QPINT1D,
+written by Craig Markwardt and available from
+<a class="reference external" href="http://cow.physics.wisc.edu/~craigm/idl/idl.html">http://cow.physics.wisc.edu/~craigm/idl/idl.html</a></p>
+</dd>
+<dt>MODIFICATION HISTORY:</dt><dd><p>Written by Christopher Sheehy, January 2006.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<ul class="simple">
+<li></li>
+</ul>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.mtf.mtf.mtf2psf">
+<span class="sig-prename descclassname"><span class="pre">kai.mtf.mtf.</span></span><span class="sig-name descname"><span class="pre">mtf2psf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">par</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sz</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">perfect</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/mtf/mtf.html#mtf2psf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.mtf.mtf.mtf2psf" title="Permalink to this definition">¶</a></dt>
+<dd><p>”
+NAME:</p>
+<blockquote>
+<div><p>MTF2PSF</p>
+</div></blockquote>
+<dl>
+<dt>PURPOSE:</dt><dd><p>Computes the adaptive optics PSF for the modulation
+transfer function (MTF) defined by a set of user supplied
+input parameters.  The PSF is circularly symmetric,
+i.e. azimuthally averaged.</p>
+</dd>
+<dt>CATEGORY:</dt><dd><p>???</p>
+</dd>
+<dt>CALLING SEQUENCE:</dt><dd><p>MTF2PSF, Params, Size, Psf2D, PSF1D</p>
+</dd>
+<dt>INPUTS:</dt><dd><dl>
+<dt>Params:   A structure of parameters defined as follows, and</dt><dd><p>which may contain more tags than listed here:</p>
+<p>params.lambda  - observing wavelength in meters
+params.f       - effective focal length at detector</p>
+<blockquote>
+<div><p>in meters</p>
+</div></blockquote>
+<dl class="simple">
+<dt>params.D -       telsscope pupil diameter in meters,</dt><dd><p>i.e. the D/lambda at which normalized
+spatial frequency nu=1</p>
+</dd>
+</dl>
+<p>params.Apix      - width of detector pixel in meters
+params.pupil   - a string equal to the name of</p>
+<blockquote>
+<div><p>the pupil-stop of the NIRC2
+camera (see documentation for
+T_PERFECT_KECK for a list of
+available pupil-stop names) or for
+a circular pupil, the scalar
+floating point value of the
+pupil’s central obscuration.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>params.L0      - the outer scale of turbluence, in</dt><dd><p>meters, for a modified Kolmogorov
+spectrum</p>
+</dd>
+<dt>params.sigma   - the width of the AO system</dt><dd><p>deformable mirror’s (DM’s)
+influence function as projected
+onto the pupil plane, in meters.</p>
+</dd>
+<dt>params.w       - scaling factor for the influence</dt><dd><p>function’s Fourier transform
+mimics variable AO correction</p>
+</dd>
+</dl>
+<p>params.delta   - wavefront measurement error
+params.cmult   - constant scaling factor of the output</p>
+<blockquote>
+<div><p>MTF</p>
+</div></blockquote>
+<dl class="simple">
+<dt>params.N       - additive constant to output MTF</dt><dd><p>representing a noise floor</p>
+</dd>
+<dt>params.r0      - wavelength specific Fried</dt><dd><p>parameter in meters</p>
+</dd>
+</dl>
+</dd>
+<dt>Size:     A scalar, the radius of the output PSF in</dt><dd><p>arcseconds.  For instance, is Size = 1.0 and the
+platescale at the detector is .01 arcsec/pixel, the
+output PSF is a 200 x 200 element array.</p>
+</dd>
+</dl>
+</dd>
+<dt>OPTIONAL INPUTS:</dt><dd><p>NONE</p>
+</dd>
+<dt>KEYWORD PARAMETERS:</dt><dd><dl class="simple">
+<dt>/PERF:   If this keyword is set, the PSF is calculated from</dt><dd><p>the diffraction limited pupil MTF.</p>
+</dd>
+</dl>
+</dd>
+<dt>OUTPUTS:</dt><dd><dl class="simple">
+<dt>Psf2D:   A 2-dimensional array, the azimuthally averaged AO</dt><dd><p>PSF.</p>
+</dd>
+</dl>
+</dd>
+<dt>OPTIONAL OUTPUTS:</dt><dd><dl class="simple">
+<dt>Psf1D:   A 1-dimensional array, the 1-D PSF whose value at</dt><dd><p>each element corresponds to the value of the PSF at
+the corresponding pixel.</p>
+</dd>
+</dl>
+</dd>
+<dt>PROCEDURE CALLS:</dt><dd><p>MTFFUNC_KECK(), INT_TABULATED()</p>
+</dd>
+<dt>PROCEDURE:</dt><dd><p>For the given input parameters Params, the 1-D MTF is
+computed via the procedure MTFFUNC_KECK.  The 1-D PSF is
+then given by the integral</p>
+<blockquote>
+<div><blockquote>
+<div><p>1/</p>
+</div></blockquote>
+<dl class="simple">
+<dt>PSF(w) = | MTF(nu) * nu * BesselJ_0(2*PI*w*nu)* d nu,</dt><dd><p>0/</p>
+</dd>
+</dl>
+</div></blockquote>
+<p>where w is dimensionless angular distance from the PSF center
+in units of (lambda/D), and nu is normalized spatial
+frequency in the image plane.  The 1-D PSF is computed,
+5x oversampled w.r.t. the detector platescale.  (The
+platescale is determined from the input parameters,
+Apix / f.)  From this oversampled 1-D PSF, the circularly
+symmetric 2-D PSF is constructed.</p>
+</dd>
+<dt>EXAMPLE:</dt><dd><p>Compute H-band NIRC2 PSF for r0 = 15 cm:</p>
+<p>r0 goes as (lambda)^(6/5), so the K-band r0 in meters is
+0.15 * (2.2 / 0.5)^(6./5.), since r0 = 15 cm is defined for a
+wavelength of 500 nm.</p>
+<p>Set up the input parameters:</p>
+<dl class="simple">
+<dt>p    =   {wave:2.2e-6, F:557.0, D:10.99, $</dt><dd><p>Apix:27e-6, pupil:’largehex’, L0:30.0, $
+sigma:0.56, w:1.5, delta:0.0, cmult:1.0, N:1e-5, $
+r0:0.888}</p>
+</dd>
+</dl>
+<p>sz = 1.0      return a PSF with a radius of 1 arcsecond
+MTF2PSF, p, sz, psf2, psf1
+tvscl, psf2
+plot, psf1</p>
+<p>nu = findgen(100)/99.
+T = sqrt(MTFFUNC_KECK(nu, p))     compute the PSF’s corresponding MTF
+plot, nu, T</p>
+<blockquote>
+<div><p>compute the PSF for identical seeing conditions but with no
+AO correction</p>
+</div></blockquote>
+<p>p.w = 0        no AO correction
+MTF2PSF, p, sz, psf2_noAO, psf1_noAO</p>
+<blockquote>
+<div><p>compute the diffraction limited PSF</p>
+</div></blockquote>
+<p>MTF2PSF, p, sz, psf2_perf, psf1_perf, /perf</p>
+<p>There is a subtle difference between setting the /perf
+keyword to MTF2PSF and setting r0 to some extremely large
+and unphysical value to mimic diffraction limited seeing.
+The former computes the PSF from the pupil MTF, while the
+latter uses the product of the puipl MTF, the atmospheric/AO
+MTF (which is essentially unity) and the detector MTF.  The
+detector MTF is a broad sinc function, and its resulting
+effect on the PSF is small.  In other words, setting the
+/perf keyword fails to take into account the effect of the
+detector on the PSF.</p>
+</dd>
+<dt>MODIFICATION HISTORY:</dt><dd><p>Written by Christopher Sheehy, January 2006.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.mtf.mtf.mtf2ee">
+<span class="sig-prename descclassname"><span class="pre">kai.mtf.mtf.</span></span><span class="sig-name descname"><span class="pre">mtf2ee</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">par</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pixx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">perfect</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/mtf/mtf.html#mtf2ee"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.mtf.mtf.mtf2ee" title="Permalink to this definition">¶</a></dt>
+<dd><p>”
+NAME:</p>
+<blockquote>
+<div><p>MTF2EE</p>
+</div></blockquote>
+<dl>
+<dt>PURPOSE:</dt><dd><p>Calculates the AO PSF’s encircled energy curve from the AO
+corrected modulation transfer function.</p>
+</dd>
+<dt>CATEGORY:</dt><dd><p>???</p>
+</dd>
+<dt>CALLING SEQUENCE:</dt><dd><p>MTF2EE, Params, Pix, EE</p>
+</dd>
+<dt>INPUTS:</dt><dd><dl class="simple">
+<dt>Params:  A structure of parameters, defined as in the</dt><dd><p>documentation for MTFFUNC_KECK.</p>
+</dd>
+<dt>Pix:     A vector of radii, in pixels, at which the encircled</dt><dd><p>energy curve of growth is calculated.  The pixel
+scale in pixels/arcsecond is calculated as
+(Params.APIX / Params.F)*206265.</p>
+</dd>
+</dl>
+</dd>
+<dt>OPTIONAL INPUTS:</dt><dd><p>NONE</p>
+</dd>
+<dt>KEYWORD PARAMETERS:</dt><dd><dl class="simple">
+<dt>/Perf:  If this keyword is set, the returned curve of growth</dt><dd><p>is for the diffraction limited PSF as calculated from
+the pupil MTF.</p>
+</dd>
+</dl>
+</dd>
+<dt>OUTPUTS:</dt><dd><dl class="simple">
+<dt>EE:  A vector of size equal to Pix     the curve of growth</dt><dd><p>evaluated at input Pix</p>
+</dd>
+</dl>
+</dd>
+<dt>OPTIONAL OUTPUTS:</dt><dd><p>NONE</p>
+</dd>
+<dt>PROCEDURE CALLS:</dt><dd><p>MTFFUNC_KECK(), INT_TABULATED()</p>
+</dd>
+<dt>PROCEDURE:</dt><dd><p>For the given input parameters Params, the 1-D MTF is
+computed via the procedure MTFFUNC_KECK.  The encirled energy
+curve of growth is then given by the integral</p>
+<blockquote>
+<div><blockquote>
+<div><p>1/</p>
+</div></blockquote>
+<dl class="simple">
+<dt>EE(w) = (2*Pi*w) | MTF(nu) * BesselJ_1(2*PI*w*nu)* d nu,</dt><dd><p>0/</p>
+</dd>
+</dl>
+</div></blockquote>
+<p>where w is dimensionless angular distance from the PSF center
+in units of (lambda/D), and nu is normalized spatial
+frequency in the image plane.</p>
+</dd>
+<dt>MODIFICATION HISTORY:</dt><dd><p>Written by Christopher D. Sheehy, January 2006.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.mtf.mtf.strehl">
+<span class="sig-prename descclassname"><span class="pre">kai.mtf.mtf.</span></span><span class="sig-name descname"><span class="pre">strehl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">par</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/mtf/mtf.html#strehl"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.mtf.mtf.strehl" title="Permalink to this definition">¶</a></dt>
+<dd><dl>
+<dt>NAME:</dt><dd><p>STREHL</p>
+</dd>
+<dt>PURPOSE:</dt><dd><p>Computes the Strehl ratio of an AO PSF from its corresponding
+modulation transfer function (MTF).</p>
+</dd>
+<dt>CATEGORY:</dt><dd><p>???</p>
+</dd>
+<dt>CALLING SEQUENCE:</dt><dd><p>sr = STREHL(params)</p>
+</dd>
+<dt>INPUTS:</dt><dd><dl class="simple">
+<dt>Params:  A structure of parameters used to compute the AO</dt><dd><p>MTF, as defined in the documentation for
+MTFFUNC_KECK.</p>
+</dd>
+</dl>
+</dd>
+<dt>KEYWORD PARAMETERS:</dt><dd><p>NONE</p>
+</dd>
+<dt>OUTPUTS:</dt><dd><p>The scalar strehl ratio for the given input parameters</p>
+</dd>
+<dt>PROCEDURE CALLS:</dt><dd><p>MTFFUNC_KECK(), INT_TABULATED()</p>
+</dd>
+<dt>PROCEDURE:</dt><dd><p>For the given input parameters, the MTF, T,  is calculated
+via MTFFUNC_KECK() along with the diffraction limited MTF,
+Tperf.  The strehl ratio, defined as the ratio of the height
+of the observed PSF to the diffraction limited PSF is
+calculated as (see documentation for MTF2PSF)</p>
+<blockquote>
+<div><dl>
+<dt>1/</dt><dd><div class="line-block">
+<div class="line">T(nu)*nu d nu</div>
+</div>
+</dd>
+</dl>
+<p>0/</p>
+</div></blockquote>
+<dl>
+<dt>Sr = ——————– .</dt><dd><dl>
+<dt>1/</dt><dd><div class="line-block">
+<div class="line">Tperf(nu)*nu d nu</div>
+</div>
+</dd>
+</dl>
+<p>0/</p>
+</dd>
+</dl>
+</dd>
+<dt>MODIFICATION HISTORY:</dt><dd><p>Written by Christopher D. Sheehy, January 2006.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="kai.mtf.mtf.DataHolder">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">kai.mtf.mtf.</span></span><span class="sig-name descname"><span class="pre">DataHolder</span></span><a class="reference internal" href="../../../../_modules/kai/mtf/mtf.html#DataHolder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.mtf.mtf.DataHolder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">object</span></code></p>
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../../index.html">KAI</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">API Reference</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../../index.html">API Reference</a><ul>
+  <li><a href="../../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai</span></code></a><ul>
+  <li><a href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.mtf</span></code></a><ul>
+      <li>Previous: <a href="../mmm/index.html" title="previous chapter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.mtf.mmm</span></code></a></li>
+      <li>Next: <a href="../../reduce/index.html" title="next chapter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.reduce</span></code></a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2022, J. R. Lu, A. K. Gautam, T. Do.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.2.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../../../../_sources/autoapi/kai/mtf/mtf/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

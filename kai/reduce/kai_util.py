@@ -43,36 +43,43 @@ def makelog(directory, outfile='image_log.txt', instrument=instruments.default_i
     
     
     for file in files:
-        hdr = fits.getheader(file,ignore_missing_end=True)
+        try:
+            hdr = fits.getheader(file,ignore_missing_end=True)
+        except OSError as e:
+            f.write('{0}: {1}'.format(file, e))
+            
+            # End of this line
+            f.write('\n')
+        else:
+            # First column is frame number
+            frame = (hdr[ihk['filename']].strip())[:-5]
+            f.write('%16s  ' % frame)
 
-        # First column is frame number
-        frame = (hdr[ihk['filename']].strip())[:-5]
-        f.write('%16s  ' % frame)
+            # Second column is object name
+            f.write('%-16s  ' % hdr[ihk['object_name']].replace(' ', ''))
 
-        # Second column is object name
-        f.write('%-16s  ' % hdr[ihk['object_name']].replace(' ', ''))
+            # Next is integration time, coadds, sampmode, multisam
+            f.write('%8.3f  %3d  ' % (hdr[ihk['itime']], hdr[ihk['coadds']]))
+            f.write('%1d x %2d  ' % (hdr[ihk['sampmode']], hdr[ihk['nfowler']]))
 
-        # Next is integration time, coadds, sampmode, multisam
-        f.write('%8.3f  %3d  ' % (hdr[ihk['itime']], hdr[ihk['coadds']]))
-        f.write('%1d x %2d  ' % (hdr[ihk['sampmode']], hdr[ihk['nfowler']]))
-
-        # Filter
-        filt = instrument.get_filter_name(hdr)
+            # Filter
+            filt = instrument.get_filter_name(hdr)
         
-        f.write('%-10s ' % filt)
+            f.write('%-10s ' % filt)
 
-        # Camera name
-        f.write('%-6s ' % hdr[ihk['camera']])
+            # Camera name
+            f.write('%-6s ' % hdr[ihk['camera']])
 
-        # Shutter state
-        f.write('%-6s ' % hdr[ihk['shutter']])
+            # Shutter state
+            f.write('%-6s ' % hdr[ihk['shutter']])
 
-        # TRICK dichroic (only for OSIRIS)
-        if isinstance(instrument, instruments.OSIRIS):
-            f.write('%-6s ' % hdr['OBTDNAME'])
-
-        # End of this line
-        f.write('\n')
+            # TRICK dichroic (only for OSIRIS)
+            if isinstance(instrument, instruments.OSIRIS):
+                f.write('%-6s ' % hdr['OBTDNAME'])
+            
+            # End of this line
+            f.write('\n')
+            
 
     f.close()
     
