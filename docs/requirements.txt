@@ -1,2 +1,2 @@
 sphinx-astropy
-autoapi
+sphinx-autoapi
