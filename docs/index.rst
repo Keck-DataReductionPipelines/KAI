@@ -41,6 +41,19 @@ Installation
 
 After installation, try running the `reduction tutorial <https://github.com/Keck-DataReductionPipelines/KAI/blob/dev/kai/TheReductionGuide.ipynb>`_ to get up to speed with KAI.
 
+Example Reduction Template Scripts
+----------------------------------
+
+The reduction template scripts included in this repository provide a complete run-through of the reduction procedure for imaging data: creating darks and flats, reducing skies, cleaning science images, and combining multiple clean science images into a combo science image.
+
+* `Reduction template script for NIRC2 imaging data <https://github.com/Keck-DataReductionPipelines/KAI/blob/dev/kai/reduce/reduce_template.py>`_
+* `Reduction template script for OSIRIS imaging data <https://github.com/Keck-DataReductionPipelines/KAI/blob/dev/kai/reduce/reduce_template_osiris.py>`_
+
+Example Dataset
+---------------
+
+An example dataset with scripts can be found at this `Google Drive link <https://drive.google.com/drive/folders/1FpTN3wiG4U826H328JIJcPLbScNCTRQW?usp=sharing>`_. This is a great place to start to test the pipeline.
+
 
 Index
 -----
