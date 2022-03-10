@@ -1,45 +1,98 @@
-
 <!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-
-    <title>kai.instruments &#8212; KAI  documentation</title>
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/alabaster.css" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
-    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-    <script src="../../../_static/jquery.js"></script>
-    <script src="../../../_static/underscore.js"></script>
-    <script src="../../../_static/doctools.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>kai.instruments &mdash; KAI  documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
     <link rel="next" title="kai.photometry" href="../photometry/index.html" />
-    <link rel="prev" title="kai.constants" href="../constants/index.html" />
-   
-  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
-  
-  
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+    <link rel="prev" title="kai.constants" href="../constants/index.html" /> 
+</head>
 
-  </head><body>
-  
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> KAI
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai</span></code></a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../index.html#subpackages">Subpackages</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../_astropy_init/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai._astropy_init</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../conditions/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.conditions</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../conftest/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.conftest</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../constants/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.constants</span></code></a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.instruments</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../photometry/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.photometry</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../plot/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.plot</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../strehl/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.strehl</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../test_drizzle/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">test_drizzle</span></code></a></li>
+</ul>
+</li>
+</ul>
 
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
-          
+        </div>
+      </div>
+    </nav>
 
-          <div class="body" role="main">
-            
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">KAI</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">API Reference</a> &raquo;</li>
+          <li><a href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai</span></code></a> &raquo;</li>
+      <li><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.instruments</span></code></li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/autoapi/kai/instruments/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
   <section id="module-kai.instruments">
-<span id="kai-instruments"></span><h1><a class="reference internal" href="#module-kai.instruments" title="kai.instruments"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.instruments</span></code></a><a class="headerlink" href="#module-kai.instruments" title="Permalink to this headline">¶</a></h1>
+<span id="kai-instruments"></span><h1><a class="reference internal" href="#module-kai.instruments" title="kai.instruments"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.instruments</span></code></a><a class="headerlink" href="#module-kai.instruments" title="Permalink to this headline"></a></h1>
 <section id="module-contents">
-<h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h2>
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this headline"></a></h2>
 <section id="classes">
-<h3>Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h3>
+<h3>Classes<a class="headerlink" href="#classes" title="Permalink to this headline"></a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
@@ -59,7 +112,7 @@
 </table>
 </section>
 <section id="attributes">
-<h3>Attributes<a class="headerlink" href="#attributes" title="Permalink to this headline">¶</a></h3>
+<h3>Attributes<a class="headerlink" href="#attributes" title="Permalink to this headline"></a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
@@ -76,137 +129,137 @@
 </table>
 <dl class="py data">
 <dt class="sig sig-object py" id="kai.instruments.module_dir">
-<span class="sig-prename descclassname"><span class="pre">kai.instruments.</span></span><span class="sig-name descname"><span class="pre">module_dir</span></span><a class="reference internal" href="../../../_modules/kai/instruments.html#module_dir"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.module_dir" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">kai.instruments.</span></span><span class="sig-name descname"><span class="pre">module_dir</span></span><a class="reference internal" href="../../../_modules/kai/instruments.html#module_dir"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.module_dir" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="kai.instruments.Instrument">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">kai.instruments.</span></span><span class="sig-name descname"><span class="pre">Instrument</span></span><a class="reference internal" href="../../../_modules/kai/instruments.html#Instrument"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.Instrument" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">kai.instruments.</span></span><span class="sig-name descname"><span class="pre">Instrument</span></span><a class="reference internal" href="../../../_modules/kai/instruments.html#Instrument"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.Instrument" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="kai.instruments.Instrument.get_bad_pixel_mask_name">
-<span class="sig-name descname"><span class="pre">get_bad_pixel_mask_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#Instrument.get_bad_pixel_mask_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.Instrument.get_bad_pixel_mask_name" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_bad_pixel_mask_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#Instrument.get_bad_pixel_mask_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.Instrument.get_bad_pixel_mask_name" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="kai.instruments.Instrument.get_filter_name">
-<span class="sig-name descname"><span class="pre">get_filter_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hdr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#Instrument.get_filter_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.Instrument.get_filter_name" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_filter_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hdr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#Instrument.get_filter_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.Instrument.get_filter_name" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="kai.instruments.Instrument.get_plate_scale">
-<span class="sig-name descname"><span class="pre">get_plate_scale</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hdr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#Instrument.get_plate_scale"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.Instrument.get_plate_scale" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_plate_scale</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hdr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#Instrument.get_plate_scale"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.Instrument.get_plate_scale" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="kai.instruments.Instrument.get_position_angle">
-<span class="sig-name descname"><span class="pre">get_position_angle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hdr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#Instrument.get_position_angle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.Instrument.get_position_angle" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_position_angle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hdr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#Instrument.get_position_angle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.Instrument.get_position_angle" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="kai.instruments.Instrument.get_parallactic_angle">
-<span class="sig-name descname"><span class="pre">get_parallactic_angle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hdr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#Instrument.get_parallactic_angle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.Instrument.get_parallactic_angle" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_parallactic_angle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hdr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#Instrument.get_parallactic_angle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.Instrument.get_parallactic_angle" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="kai.instruments.Instrument.get_instrument_angle">
-<span class="sig-name descname"><span class="pre">get_instrument_angle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hdr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#Instrument.get_instrument_angle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.Instrument.get_instrument_angle" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_instrument_angle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hdr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#Instrument.get_instrument_angle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.Instrument.get_instrument_angle" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="kai.instruments.Instrument.get_central_wavelength">
-<span class="sig-name descname"><span class="pre">get_central_wavelength</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hdr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#Instrument.get_central_wavelength"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.Instrument.get_central_wavelength" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_central_wavelength</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hdr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#Instrument.get_central_wavelength"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.Instrument.get_central_wavelength" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="kai.instruments.Instrument.get_gain">
-<span class="sig-name descname"><span class="pre">get_gain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hdr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#Instrument.get_gain"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.Instrument.get_gain" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_gain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hdr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#Instrument.get_gain"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.Instrument.get_gain" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="kai.instruments.Instrument.make_filenames">
-<span class="sig-name descname"><span class="pre">make_filenames</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">files</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rootDir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'n'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#Instrument.make_filenames"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.Instrument.make_filenames" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">make_filenames</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">files</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rootDir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'n'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#Instrument.make_filenames"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.Instrument.make_filenames" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="kai.instruments.Instrument.get_distortion_maps">
-<span class="sig-name descname"><span class="pre">get_distortion_maps</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#Instrument.get_distortion_maps"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.Instrument.get_distortion_maps" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_distortion_maps</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#Instrument.get_distortion_maps"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.Instrument.get_distortion_maps" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="kai.instruments.Instrument.get_align_type">
-<span class="sig-name descname"><span class="pre">get_align_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">errors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#Instrument.get_align_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.Instrument.get_align_type" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_align_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">errors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#Instrument.get_align_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.Instrument.get_align_type" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="kai.instruments.Instrument.get_saturation_level">
-<span class="sig-name descname"><span class="pre">get_saturation_level</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#Instrument.get_saturation_level"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.Instrument.get_saturation_level" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_saturation_level</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#Instrument.get_saturation_level"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.Instrument.get_saturation_level" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="kai.instruments.NIRC2">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">kai.instruments.</span></span><span class="sig-name descname"><span class="pre">NIRC2</span></span><a class="reference internal" href="../../../_modules/kai/instruments.html#NIRC2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.NIRC2" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">kai.instruments.</span></span><span class="sig-name descname"><span class="pre">NIRC2</span></span><a class="reference internal" href="../../../_modules/kai/instruments.html#NIRC2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.NIRC2" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#kai.instruments.Instrument" title="kai.instruments.Instrument"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Instrument</span></code></a></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="kai.instruments.NIRC2.get_filter_name">
-<span class="sig-name descname"><span class="pre">get_filter_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hdr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#NIRC2.get_filter_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.NIRC2.get_filter_name" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_filter_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hdr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#NIRC2.get_filter_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.NIRC2.get_filter_name" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="kai.instruments.NIRC2.get_plate_scale">
-<span class="sig-name descname"><span class="pre">get_plate_scale</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hdr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#NIRC2.get_plate_scale"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.NIRC2.get_plate_scale" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_plate_scale</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hdr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#NIRC2.get_plate_scale"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.NIRC2.get_plate_scale" title="Permalink to this definition"></a></dt>
 <dd><p>Return the plate scale in arcsec/pixel.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="kai.instruments.NIRC2.get_position_angle">
-<span class="sig-name descname"><span class="pre">get_position_angle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hdr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#NIRC2.get_position_angle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.NIRC2.get_position_angle" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_position_angle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hdr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#NIRC2.get_position_angle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.NIRC2.get_position_angle" title="Permalink to this definition"></a></dt>
 <dd><p>Get the sky PA in degrees East of North.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="kai.instruments.NIRC2.get_parallactic_angle">
-<span class="sig-name descname"><span class="pre">get_parallactic_angle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hdr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#NIRC2.get_parallactic_angle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.NIRC2.get_parallactic_angle" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_parallactic_angle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hdr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#NIRC2.get_parallactic_angle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.NIRC2.get_parallactic_angle" title="Permalink to this definition"></a></dt>
 <dd><p>Get the parallactic angle in degrees East of North</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="kai.instruments.NIRC2.get_instrument_angle">
-<span class="sig-name descname"><span class="pre">get_instrument_angle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hdr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#NIRC2.get_instrument_angle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.NIRC2.get_instrument_angle" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_instrument_angle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hdr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#NIRC2.get_instrument_angle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.NIRC2.get_instrument_angle" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="kai.instruments.NIRC2.get_central_wavelength">
-<span class="sig-name descname"><span class="pre">get_central_wavelength</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hdr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#NIRC2.get_central_wavelength"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.NIRC2.get_central_wavelength" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_central_wavelength</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hdr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#NIRC2.get_central_wavelength"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.NIRC2.get_central_wavelength" title="Permalink to this definition"></a></dt>
 <dd><p>Return the central wavelength of the filter for
 this observation in microns.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="kai.instruments.NIRC2.get_gain">
-<span class="sig-name descname"><span class="pre">get_gain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hdr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#NIRC2.get_gain"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.NIRC2.get_gain" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_gain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hdr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#NIRC2.get_gain"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.NIRC2.get_gain" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="kai.instruments.NIRC2.make_filenames">
-<span class="sig-name descname"><span class="pre">make_filenames</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">files</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rootDir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'n'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#NIRC2.make_filenames"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.NIRC2.make_filenames" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">make_filenames</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">files</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rootDir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'n'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#NIRC2.make_filenames"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.NIRC2.make_filenames" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="kai.instruments.NIRC2.get_distortion_maps">
-<span class="sig-name descname"><span class="pre">get_distortion_maps</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hdr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#NIRC2.get_distortion_maps"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.NIRC2.get_distortion_maps" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_distortion_maps</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hdr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#NIRC2.get_distortion_maps"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.NIRC2.get_distortion_maps" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="kai.instruments.NIRC2.get_align_type">
-<span class="sig-name descname"><span class="pre">get_align_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hdr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">errors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#NIRC2.get_align_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.NIRC2.get_align_type" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_align_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hdr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">errors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#NIRC2.get_align_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.NIRC2.get_align_type" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="kai.instruments.NIRC2.get_saturation_level">
-<span class="sig-name descname"><span class="pre">get_saturation_level</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#NIRC2.get_saturation_level"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.NIRC2.get_saturation_level" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_saturation_level</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#NIRC2.get_saturation_level"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.NIRC2.get_saturation_level" title="Permalink to this definition"></a></dt>
 <dd><p>Set to the 95% saturation threshold in DN.</p>
 </dd></dl>
 
@@ -214,81 +267,81 @@ this observation in microns.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="kai.instruments.OSIRIS">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">kai.instruments.</span></span><span class="sig-name descname"><span class="pre">OSIRIS</span></span><a class="reference internal" href="../../../_modules/kai/instruments.html#OSIRIS"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.OSIRIS" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">kai.instruments.</span></span><span class="sig-name descname"><span class="pre">OSIRIS</span></span><a class="reference internal" href="../../../_modules/kai/instruments.html#OSIRIS"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.OSIRIS" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#kai.instruments.Instrument" title="kai.instruments.Instrument"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Instrument</span></code></a></p>
 <p>OSIRIS Imager - after 2019</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="kai.instruments.OSIRIS.get_filter_name">
-<span class="sig-name descname"><span class="pre">get_filter_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hdr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#OSIRIS.get_filter_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.OSIRIS.get_filter_name" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_filter_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hdr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#OSIRIS.get_filter_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.OSIRIS.get_filter_name" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="kai.instruments.OSIRIS.get_plate_scale">
-<span class="sig-name descname"><span class="pre">get_plate_scale</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hdr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#OSIRIS.get_plate_scale"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.OSIRIS.get_plate_scale" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_plate_scale</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hdr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#OSIRIS.get_plate_scale"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.OSIRIS.get_plate_scale" title="Permalink to this definition"></a></dt>
 <dd><p>Return the plate scale in arcsec/pix.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="kai.instruments.OSIRIS.get_position_angle">
-<span class="sig-name descname"><span class="pre">get_position_angle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hdr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#OSIRIS.get_position_angle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.OSIRIS.get_position_angle" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_position_angle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hdr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#OSIRIS.get_position_angle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.OSIRIS.get_position_angle" title="Permalink to this definition"></a></dt>
 <dd><p>Get the sky PA in degrees East of North.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="kai.instruments.OSIRIS.get_instrument_angle">
-<span class="sig-name descname"><span class="pre">get_instrument_angle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hdr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#OSIRIS.get_instrument_angle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.OSIRIS.get_instrument_angle" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_instrument_angle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hdr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#OSIRIS.get_instrument_angle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.OSIRIS.get_instrument_angle" title="Permalink to this definition"></a></dt>
 <dd><p>Get the angle of the instrument w.r.t. to the telescope or
 AO bench in degrees.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="kai.instruments.OSIRIS.get_parallactic_angle">
-<span class="sig-name descname"><span class="pre">get_parallactic_angle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hdr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#OSIRIS.get_parallactic_angle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.OSIRIS.get_parallactic_angle" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_parallactic_angle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hdr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#OSIRIS.get_parallactic_angle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.OSIRIS.get_parallactic_angle" title="Permalink to this definition"></a></dt>
 <dd><p>Get the parallactic angle in degrees East of North</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="kai.instruments.OSIRIS.get_central_wavelength">
-<span class="sig-name descname"><span class="pre">get_central_wavelength</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hdr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#OSIRIS.get_central_wavelength"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.OSIRIS.get_central_wavelength" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_central_wavelength</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hdr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#OSIRIS.get_central_wavelength"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.OSIRIS.get_central_wavelength" title="Permalink to this definition"></a></dt>
 <dd><p>Return the central wavelength of the filter for
 this observation in microns.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="kai.instruments.OSIRIS.get_gain">
-<span class="sig-name descname"><span class="pre">get_gain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hdr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#OSIRIS.get_gain"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.OSIRIS.get_gain" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_gain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hdr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#OSIRIS.get_gain"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.OSIRIS.get_gain" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="kai.instruments.OSIRIS.make_filenames">
-<span class="sig-name descname"><span class="pre">make_filenames</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">files</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rootDir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#OSIRIS.make_filenames"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.OSIRIS.make_filenames" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">make_filenames</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">files</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rootDir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#OSIRIS.make_filenames"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.OSIRIS.make_filenames" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="kai.instruments.OSIRIS.flip_images">
-<span class="sig-name descname"><span class="pre">flip_images</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">files</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rootDir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#OSIRIS.flip_images"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.OSIRIS.flip_images" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">flip_images</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">files</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rootDir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#OSIRIS.flip_images"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.OSIRIS.flip_images" title="Permalink to this definition"></a></dt>
 <dd><p>Flip images (as they come from the detector flipped) and
 subtract reference pixels.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="kai.instruments.OSIRIS.subtract_reference_pixels">
-<span class="sig-name descname"><span class="pre">subtract_reference_pixels</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">img</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#OSIRIS.subtract_reference_pixels"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.OSIRIS.subtract_reference_pixels" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">subtract_reference_pixels</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">img</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#OSIRIS.subtract_reference_pixels"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.OSIRIS.subtract_reference_pixels" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="kai.instruments.OSIRIS.get_distortion_maps">
-<span class="sig-name descname"><span class="pre">get_distortion_maps</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hdr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#OSIRIS.get_distortion_maps"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.OSIRIS.get_distortion_maps" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_distortion_maps</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hdr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#OSIRIS.get_distortion_maps"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.OSIRIS.get_distortion_maps" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="kai.instruments.OSIRIS.get_align_type">
-<span class="sig-name descname"><span class="pre">get_align_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hdr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">errors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#OSIRIS.get_align_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.OSIRIS.get_align_type" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_align_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hdr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">errors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#OSIRIS.get_align_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.OSIRIS.get_align_type" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="kai.instruments.OSIRIS.get_saturation_level">
-<span class="sig-name descname"><span class="pre">get_saturation_level</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#OSIRIS.get_saturation_level"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.OSIRIS.get_saturation_level" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_saturation_level</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#OSIRIS.get_saturation_level"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.OSIRIS.get_saturation_level" title="Permalink to this definition"></a></dt>
 <dd><p>Set to the 95% saturation threshold in DN.</p>
 </dd></dl>
 
@@ -296,7 +349,7 @@ subtract reference pixels.</p>
 
 <dl class="py data">
 <dt class="sig sig-object py" id="kai.instruments.default_inst">
-<span class="sig-prename descclassname"><span class="pre">kai.instruments.</span></span><span class="sig-name descname"><span class="pre">default_inst</span></span><a class="reference internal" href="../../../_modules/kai/instruments.html#default_inst"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.default_inst" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">kai.instruments.</span></span><span class="sig-name descname"><span class="pre">default_inst</span></span><a class="reference internal" href="../../../_modules/kai/instruments.html#default_inst"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.default_inst" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 </section>
@@ -304,76 +357,34 @@ subtract reference pixels.</p>
 </section>
 
 
+           </div>
           </div>
-          
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../constants/index.html" class="btn btn-neutral float-left" title="kai.constants" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../photometry/index.html" class="btn btn-neutral float-right" title="kai.photometry" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, J. R. Lu, A. K. Gautam, T. Do.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-<h1 class="logo"><a href="../../../index.html">KAI</a></h1>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
 
-
-
-
-
-
-
-
-<h3>Navigation</h3>
-<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">API Reference</a></li>
-</ul>
-
-<div class="relations">
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="../../../index.html">Documentation overview</a><ul>
-  <li><a href="../../index.html">API Reference</a><ul>
-  <li><a href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai</span></code></a><ul>
-      <li>Previous: <a href="../constants/index.html" title="previous chapter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.constants</span></code></a></li>
-      <li>Next: <a href="../photometry/index.html" title="next chapter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.photometry</span></code></a></li>
-  </ul></li>
-  </ul></li>
-  </ul></li>
-</ul>
-</div>
-<div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../../../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
-      <input type="submit" value="Go" />
-    </form>
-    </div>
-</div>
-<script>$('#searchbox').show(0);</script>
-
-
-
-
-
-
-
-
-        </div>
-      </div>
-      <div class="clearer"></div>
-    </div>
-    <div class="footer">
-      &copy;2022, J. R. Lu, A. K. Gautam, T. Do.
-      
-      |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.2.0</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
-      
-      |
-      <a href="../../../_sources/autoapi/kai/instruments/index.rst.txt"
-          rel="nofollow">Page source</a>
-    </div>
-
-    
-
-    
-  </body>
+</body>
 </html>

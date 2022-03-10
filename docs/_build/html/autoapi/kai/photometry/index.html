@@ -1,45 +1,98 @@
-
 <!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-
-    <title>kai.photometry &#8212; KAI  documentation</title>
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/alabaster.css" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
-    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-    <script src="../../../_static/jquery.js"></script>
-    <script src="../../../_static/underscore.js"></script>
-    <script src="../../../_static/doctools.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>kai.photometry &mdash; KAI  documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
     <link rel="next" title="kai.plot" href="../plot/index.html" />
-    <link rel="prev" title="kai.instruments" href="../instruments/index.html" />
-   
-  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
-  
-  
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+    <link rel="prev" title="kai.instruments" href="../instruments/index.html" /> 
+</head>
 
-  </head><body>
-  
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> KAI
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai</span></code></a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../index.html#subpackages">Subpackages</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../_astropy_init/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai._astropy_init</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../conditions/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.conditions</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../conftest/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.conftest</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../constants/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.constants</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../instruments/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.instruments</span></code></a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.photometry</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../plot/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.plot</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../strehl/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.strehl</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../test_drizzle/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">test_drizzle</span></code></a></li>
+</ul>
+</li>
+</ul>
 
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
-          
+        </div>
+      </div>
+    </nav>
 
-          <div class="body" role="main">
-            
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">KAI</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">API Reference</a> &raquo;</li>
+          <li><a href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai</span></code></a> &raquo;</li>
+      <li><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.photometry</span></code></li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/autoapi/kai/photometry/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
   <section id="module-kai.photometry">
-<span id="kai-photometry"></span><h1><a class="reference internal" href="#module-kai.photometry" title="kai.photometry"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.photometry</span></code></a><a class="headerlink" href="#module-kai.photometry" title="Permalink to this headline">¶</a></h1>
+<span id="kai-photometry"></span><h1><a class="reference internal" href="#module-kai.photometry" title="kai.photometry"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.photometry</span></code></a><a class="headerlink" href="#module-kai.photometry" title="Permalink to this headline"></a></h1>
 <section id="module-contents">
-<h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h2>
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this headline"></a></h2>
 <section id="functions">
-<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h3>
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this headline"></a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
@@ -68,22 +121,22 @@
 </table>
 <dl class="py function">
 <dt class="sig sig-object py" id="kai.photometry.setup_phot">
-<span class="sig-prename descclassname"><span class="pre">kai.photometry.</span></span><span class="sig-name descname"><span class="pre">setup_phot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">imageRoot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">silent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">apertures</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[25,</span> <span class="pre">50,</span> <span class="pre">75,</span> <span class="pre">100,</span> <span class="pre">125,</span> <span class="pre">150,</span> <span class="pre">175,</span> <span class="pre">200]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sky_annulus</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">200</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sky_dannulus</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zmag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/photometry.html#setup_phot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.photometry.setup_phot" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">kai.photometry.</span></span><span class="sig-name descname"><span class="pre">setup_phot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">imageRoot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">silent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">apertures</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[25,</span> <span class="pre">50,</span> <span class="pre">75,</span> <span class="pre">100,</span> <span class="pre">125,</span> <span class="pre">150,</span> <span class="pre">175,</span> <span class="pre">200]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sky_annulus</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">200</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sky_dannulus</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zmag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/photometry.html#setup_phot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.photometry.setup_phot" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="kai.photometry.run_phot">
-<span class="sig-prename descclassname"><span class="pre">kai.photometry.</span></span><span class="sig-name descname"><span class="pre">run_phot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">imageRoot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">silent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">apertures</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[25,</span> <span class="pre">50,</span> <span class="pre">75,</span> <span class="pre">100,</span> <span class="pre">125,</span> <span class="pre">150,</span> <span class="pre">175,</span> <span class="pre">200]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sky_annulus</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">200</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sky_dannulus</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zmag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/photometry.html#run_phot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.photometry.run_phot" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">kai.photometry.</span></span><span class="sig-name descname"><span class="pre">run_phot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">imageRoot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">silent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">apertures</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[25,</span> <span class="pre">50,</span> <span class="pre">75,</span> <span class="pre">100,</span> <span class="pre">125,</span> <span class="pre">150,</span> <span class="pre">175,</span> <span class="pre">200]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sky_annulus</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">200</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sky_dannulus</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zmag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/photometry.html#run_phot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.photometry.run_phot" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="kai.photometry.get_phot_output">
-<span class="sig-prename descclassname"><span class="pre">kai.photometry.</span></span><span class="sig-name descname"><span class="pre">get_phot_output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">silent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/photometry.html#get_phot_output"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.photometry.get_phot_output" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">kai.photometry.</span></span><span class="sig-name descname"><span class="pre">get_phot_output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">silent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/photometry.html#get_phot_output"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.photometry.get_phot_output" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="kai.photometry.get_filter_profile">
-<span class="sig-prename descclassname"><span class="pre">kai.photometry.</span></span><span class="sig-name descname"><span class="pre">get_filter_profile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filter</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/photometry.html#get_filter_profile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.photometry.get_filter_profile" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">kai.photometry.</span></span><span class="sig-name descname"><span class="pre">get_filter_profile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filter</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/photometry.html#get_filter_profile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.photometry.get_filter_profile" title="Permalink to this definition"></a></dt>
 <dd><p>Returns the wavelength (in microns) and the transmission for
 the specified NIRC2 filter.</p>
 <p>Example:
@@ -96,14 +149,14 @@ py.ylabel(‘Transmission’)</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="kai.photometry.test_filter_profile_interp">
-<span class="sig-prename descclassname"><span class="pre">kai.photometry.</span></span><span class="sig-name descname"><span class="pre">test_filter_profile_interp</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/photometry.html#test_filter_profile_interp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.photometry.test_filter_profile_interp" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">kai.photometry.</span></span><span class="sig-name descname"><span class="pre">test_filter_profile_interp</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/photometry.html#test_filter_profile_interp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.photometry.test_filter_profile_interp" title="Permalink to this definition"></a></dt>
 <dd><p>Plot up the filter transmission curves and their interpolations
 for the three K-band filters (K, Kp, Ks).</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="kai.photometry.test_atmosphere_profile_interp">
-<span class="sig-prename descclassname"><span class="pre">kai.photometry.</span></span><span class="sig-name descname"><span class="pre">test_atmosphere_profile_interp</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/photometry.html#test_atmosphere_profile_interp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.photometry.test_atmosphere_profile_interp" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">kai.photometry.</span></span><span class="sig-name descname"><span class="pre">test_atmosphere_profile_interp</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/photometry.html#test_atmosphere_profile_interp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.photometry.test_atmosphere_profile_interp" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 </section>
@@ -111,76 +164,34 @@ for the three K-band filters (K, Kp, Ks).</p>
 </section>
 
 
+           </div>
           </div>
-          
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../instruments/index.html" class="btn btn-neutral float-left" title="kai.instruments" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../plot/index.html" class="btn btn-neutral float-right" title="kai.plot" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, J. R. Lu, A. K. Gautam, T. Do.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-<h1 class="logo"><a href="../../../index.html">KAI</a></h1>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
 
-
-
-
-
-
-
-
-<h3>Navigation</h3>
-<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">API Reference</a></li>
-</ul>
-
-<div class="relations">
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="../../../index.html">Documentation overview</a><ul>
-  <li><a href="../../index.html">API Reference</a><ul>
-  <li><a href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai</span></code></a><ul>
-      <li>Previous: <a href="../instruments/index.html" title="previous chapter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.instruments</span></code></a></li>
-      <li>Next: <a href="../plot/index.html" title="next chapter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.plot</span></code></a></li>
-  </ul></li>
-  </ul></li>
-  </ul></li>
-</ul>
-</div>
-<div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../../../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
-      <input type="submit" value="Go" />
-    </form>
-    </div>
-</div>
-<script>$('#searchbox').show(0);</script>
-
-
-
-
-
-
-
-
-        </div>
-      </div>
-      <div class="clearer"></div>
-    </div>
-    <div class="footer">
-      &copy;2022, J. R. Lu, A. K. Gautam, T. Do.
-      
-      |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.2.0</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
-      
-      |
-      <a href="../../../_sources/autoapi/kai/photometry/index.rst.txt"
-          rel="nofollow">Page source</a>
-    </div>
-
-    
-
-    
-  </body>
+</body>
 </html>
