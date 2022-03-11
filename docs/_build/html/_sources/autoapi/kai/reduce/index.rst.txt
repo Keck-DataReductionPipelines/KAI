@@ -37,6 +37,7 @@ Submodules
    bfixpix/index.rst
    calib/index.rst
    calibrate/index.rst
+   correct_ipc/index.rst
    dar/index.rst
    data/index.rst
    kai_util/index.rst

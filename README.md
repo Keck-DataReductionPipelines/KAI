@@ -8,7 +8,13 @@ Installation instructions are below, while more detailed API documentation is av
 
 ## Installation
 
-1. Create a separate [conda](https://docs.conda.io/en/latest/miniconda.html) environment to run KAI. The pipeline uses IRAF/PyRAF, and we recommend using the [`environment_iraf27.yml`](environment_iraf27.yml) file in this repository to [create a conda environment](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#creating-an-environment-from-an-environment-yml-file) with the necessary dependencies correctly installed. The environment file will create a new conda environment called `iraf27`, and must be activated before running KAI using
+1. Create a separate [conda](https://docs.conda.io/en/latest/miniconda.html) environment to run KAI. The pipeline uses IRAF/PyRAF, and we recommend using the [`environment_iraf27.yml`](environment_iraf27.yml) file in this repository to [create a conda environment](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#creating-an-environment-from-an-environment-yml-file) with the necessary dependencies correctly installed:
+
+   ```bash
+   conda env create -f environment_iraf27.yml
+   ```
+
+   The environment file will create a new conda environment called `iraf27`, and must be activated before running KAI using
 
    ```bash
    conda activate iraf27
@@ -48,8 +54,6 @@ The reduction template scripts included in this repository provide a complete ru
 ## Example Dataset
 
 An example dataset with scripts can be found at this [Google Drive link](https://drive.google.com/drive/folders/1FpTN3wiG4U826H328JIJcPLbScNCTRQW?usp=sharing). This is a great place to start to test the pipeline.
-
-
 
 Contributing
 ------------

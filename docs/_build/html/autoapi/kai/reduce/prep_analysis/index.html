@@ -1,45 +1,96 @@
-
 <!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-
-    <title>kai.reduce.prep_analysis &#8212; KAI  documentation</title>
-    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/alabaster.css" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css" />
-    <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
-    <script src="../../../../_static/jquery.js"></script>
-    <script src="../../../../_static/underscore.js"></script>
-    <script src="../../../../_static/doctools.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>kai.reduce.prep_analysis &mdash; KAI  documentation</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" />
     <link rel="next" title="kai.reduce.reduce_template" href="../reduce_template/index.html" />
-    <link rel="prev" title="kai.reduce.kai_util" href="../kai_util/index.html" />
-   
-  <link rel="stylesheet" href="../../../../_static/custom.css" type="text/css" />
-  
-  
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+    <link rel="prev" title="kai.reduce.kai_util" href="../kai_util/index.html" /> 
+</head>
 
-  </head><body>
-  
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../index.html" class="icon icon-home"> KAI
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai</span></code></a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../../index.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../../extern/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.extern</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../mtf/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.mtf</span></code></a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.reduce</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../tests/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.tests</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../utils/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.utils</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../index.html#submodules">Submodules</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../test_drizzle/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">test_drizzle</span></code></a></li>
+</ul>
+</li>
+</ul>
 
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
-          
+        </div>
+      </div>
+    </nav>
 
-          <div class="body" role="main">
-            
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">KAI</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../index.html">API Reference</a> &raquo;</li>
+          <li><a href="../../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai</span></code></a> &raquo;</li>
+          <li><a href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.reduce</span></code></a> &raquo;</li>
+      <li><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.reduce.prep_analysis</span></code></li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/autoapi/kai/reduce/prep_analysis/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
   <section id="module-kai.reduce.prep_analysis">
-<span id="kai-reduce-prep-analysis"></span><h1><a class="reference internal" href="#module-kai.reduce.prep_analysis" title="kai.reduce.prep_analysis"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.reduce.prep_analysis</span></code></a><a class="headerlink" href="#module-kai.reduce.prep_analysis" title="Permalink to this headline">¶</a></h1>
+<span id="kai-reduce-prep-analysis"></span><h1><a class="reference internal" href="#module-kai.reduce.prep_analysis" title="kai.reduce.prep_analysis"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.reduce.prep_analysis</span></code></a><a class="headerlink" href="#module-kai.reduce.prep_analysis" title="Permalink to this headline"></a></h1>
 <section id="module-contents">
-<h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h2>
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this headline"></a></h2>
 <section id="functions">
-<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h3>
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this headline"></a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
@@ -101,55 +152,55 @@
 </table>
 <dl class="py function">
 <dt class="sig sig-object py" id="kai.reduce.prep_analysis.euclidean">
-<span class="sig-prename descclassname"><span class="pre">kai.reduce.prep_analysis.</span></span><span class="sig-name descname"><span class="pre">euclidean</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/prep_analysis.html#euclidean"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.prep_analysis.euclidean" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.prep_analysis.</span></span><span class="sig-name descname"><span class="pre">euclidean</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/prep_analysis.html#euclidean"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.prep_analysis.euclidean" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="kai.reduce.prep_analysis.removeEdges">
-<span class="sig-prename descclassname"><span class="pre">kai.reduce.prep_analysis.</span></span><span class="sig-name descname"><span class="pre">removeEdges</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">imgArr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">finalTable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'xcentroid'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ycentroid'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.009942</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/prep_analysis.html#removeEdges"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.prep_analysis.removeEdges" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.prep_analysis.</span></span><span class="sig-name descname"><span class="pre">removeEdges</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">imgArr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">finalTable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'xcentroid'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ycentroid'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.009942</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/prep_analysis.html#removeEdges"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.prep_analysis.removeEdges" title="Permalink to this definition"></a></dt>
 <dd><p>Ignores stars close to the edge, i.e., within 100 * scale pixels by default.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="kai.reduce.prep_analysis.psfRadius">
-<span class="sig-prename descclassname"><span class="pre">kai.reduce.prep_analysis.</span></span><span class="sig-name descname"><span class="pre">psfRadius</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">starPeak</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">imagePeak</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.009942</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/prep_analysis.html#psfRadius"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.prep_analysis.psfRadius" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.prep_analysis.</span></span><span class="sig-name descname"><span class="pre">psfRadius</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">starPeak</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">imagePeak</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.009942</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/prep_analysis.html#psfRadius"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.prep_analysis.psfRadius" title="Permalink to this definition"></a></dt>
 <dd><p>Arbitrary function that ties the predicted radius of the star to the peak brightness in the image.
 returns a radius: 10 &lt; (Ratio of “magnitudes” cubed * 80) &lt; 60 and scaled acc. to plate scale in arcsec</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="kai.reduce.prep_analysis.isBrightSpeckleStar">
-<span class="sig-prename descclassname"><span class="pre">kai.reduce.prep_analysis.</span></span><span class="sig-name descname"><span class="pre">isBrightSpeckleStar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">starPeak</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">imagePeak</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/prep_analysis.html#isBrightSpeckleStar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.prep_analysis.isBrightSpeckleStar" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.prep_analysis.</span></span><span class="sig-name descname"><span class="pre">isBrightSpeckleStar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">starPeak</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">imagePeak</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/prep_analysis.html#isBrightSpeckleStar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.prep_analysis.isBrightSpeckleStar" title="Permalink to this definition"></a></dt>
 <dd><p>Can this star have halo speckles? If it’s half the peak brightness, it is assumed yes.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="kai.reduce.prep_analysis.isNearBrightStar">
-<span class="sig-prename descclassname"><span class="pre">kai.reduce.prep_analysis.</span></span><span class="sig-name descname"><span class="pre">isNearBrightStar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nearStarPeak</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mainPeak</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/prep_analysis.html#isNearBrightStar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.prep_analysis.isNearBrightStar" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.prep_analysis.</span></span><span class="sig-name descname"><span class="pre">isNearBrightStar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nearStarPeak</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mainPeak</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/prep_analysis.html#isNearBrightStar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.prep_analysis.isNearBrightStar" title="Permalink to this definition"></a></dt>
 <dd><p>Is the main star near another bright star?</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="kai.reduce.prep_analysis.isInPSFRadius">
-<span class="sig-prename descclassname"><span class="pre">kai.reduce.prep_analysis.</span></span><span class="sig-name descname"><span class="pre">isInPSFRadius</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">starCoo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mainCoo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">psfr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/prep_analysis.html#isInPSFRadius"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.prep_analysis.isInPSFRadius" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.prep_analysis.</span></span><span class="sig-name descname"><span class="pre">isInPSFRadius</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">starCoo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mainCoo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">psfr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/prep_analysis.html#isInPSFRadius"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.prep_analysis.isInPSFRadius" title="Permalink to this definition"></a></dt>
 <dd><p>Is star within the psf radius from earlier?</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="kai.reduce.prep_analysis.isInSecondaryRadius">
-<span class="sig-prename descclassname"><span class="pre">kai.reduce.prep_analysis.</span></span><span class="sig-name descname"><span class="pre">isInSecondaryRadius</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">starCoo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mainCoo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">psfr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/prep_analysis.html#isInSecondaryRadius"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.prep_analysis.isInSecondaryRadius" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.prep_analysis.</span></span><span class="sig-name descname"><span class="pre">isInSecondaryRadius</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">starCoo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mainCoo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">psfr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/prep_analysis.html#isInSecondaryRadius"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.prep_analysis.isInSecondaryRadius" title="Permalink to this definition"></a></dt>
 <dd><p>Is star within the secondary radius, defined as 1.35x the psf radius? (arbitrarily)</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="kai.reduce.prep_analysis.getTableIndex">
-<span class="sig-prename descclassname"><span class="pre">kai.reduce.prep_analysis.</span></span><span class="sig-name descname"><span class="pre">getTableIndex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mainIndex</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">starIndex</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/prep_analysis.html#getTableIndex"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.prep_analysis.getTableIndex" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.prep_analysis.</span></span><span class="sig-name descname"><span class="pre">getTableIndex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mainIndex</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">starIndex</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/prep_analysis.html#getTableIndex"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.prep_analysis.getTableIndex" title="Permalink to this definition"></a></dt>
 <dd><p>Helper function to get star being considered in removeCloseStars.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="kai.reduce.prep_analysis.removeCloseStars">
-<span class="sig-prename descclassname"><span class="pre">kai.reduce.prep_analysis.</span></span><span class="sig-name descname"><span class="pre">removeCloseStars</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">imgArr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">newTable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pixelDist</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'xcentroid'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ycentroid'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.009942</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/prep_analysis.html#removeCloseStars"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.prep_analysis.removeCloseStars" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.prep_analysis.</span></span><span class="sig-name descname"><span class="pre">removeCloseStars</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">imgArr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">newTable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pixelDist</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'xcentroid'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ycentroid'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.009942</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/prep_analysis.html#removeCloseStars"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.prep_analysis.removeCloseStars" title="Permalink to this definition"></a></dt>
 <dd><p>In order of brightest stars in table, checks if it’s a valid star, and tracks secondaries near it.
 Removes all invalid stars from table, i.e, those that are likely halo speckles, or too close for valid psf generation.
 Edge stars are already removed from table using the removeEdges() method.</p>
@@ -203,26 +254,26 @@ return table</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="kai.reduce.prep_analysis.getStats">
-<span class="sig-prename descclassname"><span class="pre">kai.reduce.prep_analysis.</span></span><span class="sig-name descname"><span class="pre">getStats</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">imgArr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/prep_analysis.html#getStats"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.prep_analysis.getStats" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.prep_analysis.</span></span><span class="sig-name descname"><span class="pre">getStats</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">imgArr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/prep_analysis.html#getStats"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.prep_analysis.getStats" title="Permalink to this definition"></a></dt>
 <dd><p>Returns mean median and mode of pixel values in image array.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="kai.reduce.prep_analysis.getNStarsHelper">
-<span class="sig-prename descclassname"><span class="pre">kai.reduce.prep_analysis.</span></span><span class="sig-name descname"><span class="pre">getNStarsHelper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">imgArr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expStars</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">counter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">starsFound</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fwhm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.009942</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/prep_analysis.html#getNStarsHelper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.prep_analysis.getNStarsHelper" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.prep_analysis.</span></span><span class="sig-name descname"><span class="pre">getNStarsHelper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">imgArr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expStars</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">counter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">starsFound</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fwhm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.009942</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/prep_analysis.html#getNStarsHelper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.prep_analysis.getNStarsHelper" title="Permalink to this definition"></a></dt>
 <dd><p>Attempts to get N stars. If stars aren’t found, returns what it can and presents the error.
 If so, starfinding may have to be done manually.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="kai.reduce.prep_analysis.getNStars">
-<span class="sig-prename descclassname"><span class="pre">kai.reduce.prep_analysis.</span></span><span class="sig-name descname"><span class="pre">getNStars</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">imgArr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numStars</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fwhm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.009942</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/prep_analysis.html#getNStars"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.prep_analysis.getNStars" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.prep_analysis.</span></span><span class="sig-name descname"><span class="pre">getNStars</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">imgArr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numStars</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fwhm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.009942</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/prep_analysis.html#getNStars"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.prep_analysis.getNStars" title="Permalink to this definition"></a></dt>
 <dd><p>Reformats table of chosen psf stars and adds the relevant secondaries to it.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="kai.reduce.prep_analysis.generate_list">
-<span class="sig-prename descclassname"><span class="pre">kai.reduce.prep_analysis.</span></span><span class="sig-name descname"><span class="pre">generate_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">imgPath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numPSFStars</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">7</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fwhm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.009942</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">targName</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/prep_analysis.html#generate_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.prep_analysis.generate_list" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.prep_analysis.</span></span><span class="sig-name descname"><span class="pre">generate_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">imgPath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numPSFStars</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">7</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fwhm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.009942</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">targName</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/prep_analysis.html#generate_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.prep_analysis.generate_list" title="Permalink to this definition"></a></dt>
 <dd><p>Plots the table generated by PSFListGen, and prints the list of stars in a format that can be used.
 &#64;params
 imgPath - path to .fits image, Eg. /g/lu/data/microlens/18jun22/combo/mag18jun22_ob040361_kp.fits
@@ -234,7 +285,7 @@ fwhm - full-width half maximum variable for finicky images</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="kai.reduce.prep_analysis.plot_starlist_on_image_arcsec">
-<span class="sig-prename descclassname"><span class="pre">kai.reduce.prep_analysis.</span></span><span class="sig-name descname"><span class="pre">plot_starlist_on_image_arcsec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">starList</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">imagePath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">refCoo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9.942</span> <span class="pre">/</span> <span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">magCut</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">23</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/prep_analysis.html#plot_starlist_on_image_arcsec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.prep_analysis.plot_starlist_on_image_arcsec" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.prep_analysis.</span></span><span class="sig-name descname"><span class="pre">plot_starlist_on_image_arcsec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">starList</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">imagePath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">refCoo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9.942</span> <span class="pre">/</span> <span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">magCut</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">23</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/prep_analysis.html#plot_starlist_on_image_arcsec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.prep_analysis.plot_starlist_on_image_arcsec" title="Permalink to this definition"></a></dt>
 <dd><p>Plot a NIRC2 image and overlay a starlist. Input in relative arcsec coordinates.
 &#64;params
 starList - any astropy Table with a “name” (including target),</p>
@@ -257,7 +308,7 @@ In order to flip image, set flip = True.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="kai.reduce.prep_analysis.plot_starlist_on_image_pixel">
-<span class="sig-prename descclassname"><span class="pre">kai.reduce.prep_analysis.</span></span><span class="sig-name descname"><span class="pre">plot_starlist_on_image_pixel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">starList</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">imagePath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">refStar</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9.942</span> <span class="pre">/</span> <span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">magCut</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">23</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'pixel'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/prep_analysis.html#plot_starlist_on_image_pixel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.prep_analysis.plot_starlist_on_image_pixel" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.prep_analysis.</span></span><span class="sig-name descname"><span class="pre">plot_starlist_on_image_pixel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">starList</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">imagePath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">refStar</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9.942</span> <span class="pre">/</span> <span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">magCut</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">23</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'pixel'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/prep_analysis.html#plot_starlist_on_image_pixel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.prep_analysis.plot_starlist_on_image_pixel" title="Permalink to this definition"></a></dt>
 <dd><p>Plot a NIRC2 image and overlay a starlist. Input in pixel coordinates.
 &#64;params
 starList - any astropy Table with a “name” (including target),</p>
@@ -281,7 +332,7 @@ In order to flip image, set flip = True.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="kai.reduce.prep_analysis.modded_plot_starlist_on_image_pixel">
-<span class="sig-prename descclassname"><span class="pre">kai.reduce.prep_analysis.</span></span><span class="sig-name descname"><span class="pre">modded_plot_starlist_on_image_pixel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">starList</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">imagePath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">refStar</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9.942</span> <span class="pre">/</span> <span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">magCut</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">23</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'pixel'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/prep_analysis.html#modded_plot_starlist_on_image_pixel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.prep_analysis.modded_plot_starlist_on_image_pixel" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.prep_analysis.</span></span><span class="sig-name descname"><span class="pre">modded_plot_starlist_on_image_pixel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">starList</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">imagePath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">refStar</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9.942</span> <span class="pre">/</span> <span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">magCut</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">23</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'pixel'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/prep_analysis.html#modded_plot_starlist_on_image_pixel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.prep_analysis.modded_plot_starlist_on_image_pixel" title="Permalink to this definition"></a></dt>
 <dd><p>Plot a NIRC2 image and overlay a starlist. Input in pixel coordinates.
 &#64;params
 starList - any astropy Table with a “name” (including target),</p>
@@ -305,7 +356,7 @@ In order to flip image, set flip = True.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="kai.reduce.prep_analysis.prepStarfinder">
-<span class="sig-prename descclassname"><span class="pre">kai.reduce.prep_analysis.</span></span><span class="sig-name descname"><span class="pre">prepStarfinder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dirName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">targetName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">targetCoords</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">psfStars</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filterName</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/prep_analysis.html#prepStarfinder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.prep_analysis.prepStarfinder" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.prep_analysis.</span></span><span class="sig-name descname"><span class="pre">prepStarfinder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dirName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">targetName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">targetCoords</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">psfStars</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filterName</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/prep_analysis.html#prepStarfinder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.prep_analysis.prepStarfinder" title="Permalink to this definition"></a></dt>
 <dd><p>Creates a _psf.list file and saves it in the source_list/ directory.</p>
 </dd></dl>
 
@@ -314,78 +365,34 @@ In order to flip image, set flip = True.</p>
 </section>
 
 
+           </div>
           </div>
-          
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../kai_util/index.html" class="btn btn-neutral float-left" title="kai.reduce.kai_util" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../reduce_template/index.html" class="btn btn-neutral float-right" title="kai.reduce.reduce_template" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, J. R. Lu, A. K. Gautam, T. Do.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-<h1 class="logo"><a href="../../../../index.html">KAI</a></h1>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
 
-
-
-
-
-
-
-
-<h3>Navigation</h3>
-<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">API Reference</a></li>
-</ul>
-
-<div class="relations">
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="../../../../index.html">Documentation overview</a><ul>
-  <li><a href="../../../index.html">API Reference</a><ul>
-  <li><a href="../../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai</span></code></a><ul>
-  <li><a href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.reduce</span></code></a><ul>
-      <li>Previous: <a href="../kai_util/index.html" title="previous chapter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.reduce.kai_util</span></code></a></li>
-      <li>Next: <a href="../reduce_template/index.html" title="next chapter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.reduce.reduce_template</span></code></a></li>
-  </ul></li>
-  </ul></li>
-  </ul></li>
-  </ul></li>
-</ul>
-</div>
-<div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../../../../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
-      <input type="submit" value="Go" />
-    </form>
-    </div>
-</div>
-<script>$('#searchbox').show(0);</script>
-
-
-
-
-
-
-
-
-        </div>
-      </div>
-      <div class="clearer"></div>
-    </div>
-    <div class="footer">
-      &copy;2022, J. R. Lu, A. K. Gautam, T. Do.
-      
-      |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.2.0</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
-      
-      |
-      <a href="../../../../_sources/autoapi/kai/reduce/prep_analysis/index.rst.txt"
-          rel="nofollow">Page source</a>
-    </div>
-
-    
-
-    
-  </body>
+</body>
 </html>

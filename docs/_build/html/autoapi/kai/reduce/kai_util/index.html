@@ -1,45 +1,96 @@
-
 <!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-
-    <title>kai.reduce.kai_util &#8212; KAI  documentation</title>
-    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/alabaster.css" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css" />
-    <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
-    <script src="../../../../_static/jquery.js"></script>
-    <script src="../../../../_static/underscore.js"></script>
-    <script src="../../../../_static/doctools.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>kai.reduce.kai_util &mdash; KAI  documentation</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" />
     <link rel="next" title="kai.reduce.prep_analysis" href="../prep_analysis/index.html" />
-    <link rel="prev" title="kai.reduce.data" href="../data/index.html" />
-   
-  <link rel="stylesheet" href="../../../../_static/custom.css" type="text/css" />
-  
-  
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+    <link rel="prev" title="kai.reduce.data" href="../data/index.html" /> 
+</head>
 
-  </head><body>
-  
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../index.html" class="icon icon-home"> KAI
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai</span></code></a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../../index.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../../extern/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.extern</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../mtf/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.mtf</span></code></a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.reduce</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../tests/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.tests</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../utils/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.utils</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../index.html#submodules">Submodules</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../test_drizzle/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">test_drizzle</span></code></a></li>
+</ul>
+</li>
+</ul>
 
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
-          
+        </div>
+      </div>
+    </nav>
 
-          <div class="body" role="main">
-            
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">KAI</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../index.html">API Reference</a> &raquo;</li>
+          <li><a href="../../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai</span></code></a> &raquo;</li>
+          <li><a href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.reduce</span></code></a> &raquo;</li>
+      <li><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.reduce.kai_util</span></code></li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/autoapi/kai/reduce/kai_util/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
   <section id="module-kai.reduce.kai_util">
-<span id="kai-reduce-kai-util"></span><h1><a class="reference internal" href="#module-kai.reduce.kai_util" title="kai.reduce.kai_util"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.reduce.kai_util</span></code></a><a class="headerlink" href="#module-kai.reduce.kai_util" title="Permalink to this headline">¶</a></h1>
+<span id="kai-reduce-kai-util"></span><h1><a class="reference internal" href="#module-kai.reduce.kai_util" title="kai.reduce.kai_util"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.reduce.kai_util</span></code></a><a class="headerlink" href="#module-kai.reduce.kai_util" title="Permalink to this headline"></a></h1>
 <section id="module-contents">
-<h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h2>
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this headline"></a></h2>
 <section id="functions">
-<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h3>
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this headline"></a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
@@ -92,7 +143,7 @@
 </table>
 </section>
 <section id="attributes">
-<h3>Attributes<a class="headerlink" href="#attributes" title="Permalink to this headline">¶</a></h3>
+<h3>Attributes<a class="headerlink" href="#attributes" title="Permalink to this headline"></a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
@@ -106,34 +157,34 @@
 </table>
 <dl class="py function">
 <dt class="sig sig-object py" id="kai.reduce.kai_util.kailog">
-<span class="sig-prename descclassname"><span class="pre">kai.reduce.kai_util.</span></span><span class="sig-name descname"><span class="pre">kailog</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">directory</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/kai_util.html#kailog"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.kai_util.kailog" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.kai_util.</span></span><span class="sig-name descname"><span class="pre">kailog</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">directory</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/kai_util.html#kailog"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.kai_util.kailog" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="kai.reduce.kai_util.makelog">
-<span class="sig-prename descclassname"><span class="pre">kai.reduce.kai_util.</span></span><span class="sig-name descname"><span class="pre">makelog</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">directory</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outfile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'image_log.txt'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instrument</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">instruments.default_inst</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/kai_util.html#makelog"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.kai_util.makelog" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.kai_util.</span></span><span class="sig-name descname"><span class="pre">makelog</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">directory</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outfile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'image_log.txt'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instrument</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">instruments.default_inst</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/kai_util.html#makelog"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.kai_util.makelog" title="Permalink to this definition"></a></dt>
 <dd><p>Make an electronic log for all the FITS files in the
 specified directory.</p>
 </dd></dl>
 
 <dl class="py data">
 <dt class="sig sig-object py" id="kai.reduce.kai_util._nargs">
-<span class="sig-prename descclassname"><span class="pre">kai.reduce.kai_util.</span></span><span class="sig-name descname"><span class="pre">_nargs</span></span><a class="reference internal" href="../../../../_modules/kai/reduce/kai_util.html#_nargs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.kai_util._nargs" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.kai_util.</span></span><span class="sig-name descname"><span class="pre">_nargs</span></span><a class="reference internal" href="../../../../_modules/kai/reduce/kai_util.html#_nargs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.kai_util._nargs" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="kai.reduce.kai_util.getAotsxy">
-<span class="sig-prename descclassname"><span class="pre">kai.reduce.kai_util.</span></span><span class="sig-name descname"><span class="pre">getAotsxy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hdr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/kai_util.html#getAotsxy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.kai_util.getAotsxy" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.kai_util.</span></span><span class="sig-name descname"><span class="pre">getAotsxy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hdr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/kai_util.html#getAotsxy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.kai_util.getAotsxy" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="kai.reduce.kai_util.pix2radec">
-<span class="sig-prename descclassname"><span class="pre">kai.reduce.kai_util.</span></span><span class="sig-name descname"><span class="pre">pix2radec</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/kai_util.html#pix2radec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.kai_util.pix2radec" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.kai_util.</span></span><span class="sig-name descname"><span class="pre">pix2radec</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/kai_util.html#pix2radec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.kai_util.pix2radec" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="kai.reduce.kai_util.radec2pix">
-<span class="sig-prename descclassname"><span class="pre">kai.reduce.kai_util.</span></span><span class="sig-name descname"><span class="pre">radec2pix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">radec</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">posRef</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/kai_util.html#radec2pix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.kai_util.radec2pix" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.kai_util.</span></span><span class="sig-name descname"><span class="pre">radec2pix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">radec</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">posRef</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/kai_util.html#radec2pix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.kai_util.radec2pix" title="Permalink to this definition"></a></dt>
 <dd><p>Determine pixel shifts from true RA and Dec positions.</p>
 <p>&#64;param radec: a 2-element list containing the RA and Dec in degrees.
 &#64;type radec: float list
@@ -150,12 +201,12 @@ specified directory.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="kai.reduce.kai_util.aotsxy2pix">
-<span class="sig-prename descclassname"><span class="pre">kai.reduce.kai_util.</span></span><span class="sig-name descname"><span class="pre">aotsxy2pix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">aotsxy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aotsxyRef</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inst_angle</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/kai_util.html#aotsxy2pix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.kai_util.aotsxy2pix" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.kai_util.</span></span><span class="sig-name descname"><span class="pre">aotsxy2pix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">aotsxy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aotsxyRef</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inst_angle</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/kai_util.html#aotsxy2pix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.kai_util.aotsxy2pix" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="kai.reduce.kai_util.pix2xyarcsec">
-<span class="sig-prename descclassname"><span class="pre">kai.reduce.kai_util.</span></span><span class="sig-name descname"><span class="pre">pix2xyarcsec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xypix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sgra</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/kai_util.html#pix2xyarcsec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.kai_util.pix2xyarcsec" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.kai_util.</span></span><span class="sig-name descname"><span class="pre">pix2xyarcsec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xypix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sgra</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/kai_util.html#pix2xyarcsec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.kai_util.pix2xyarcsec" title="Permalink to this definition"></a></dt>
 <dd><p>Determine  E and N offsets from Sgr A* (in arcsec) from
 pixel positions and the pixel position of Sgr A*.</p>
 <p>xypix: 2-element list containing the RA and Dec in degrees.
@@ -166,7 +217,7 @@ sgra: 2-element list containing the pixel position of Sgr A*.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="kai.reduce.kai_util.xyarcsec2pix">
-<span class="sig-prename descclassname"><span class="pre">kai.reduce.kai_util.</span></span><span class="sig-name descname"><span class="pre">xyarcsec2pix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xyarcsec</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/kai_util.html#xyarcsec2pix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.kai_util.xyarcsec2pix" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.kai_util.</span></span><span class="sig-name descname"><span class="pre">xyarcsec2pix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xyarcsec</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/kai_util.html#xyarcsec2pix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.kai_util.xyarcsec2pix" title="Permalink to this definition"></a></dt>
 <dd><p>Determine pixel shifts from E and N offsets from Sgr A*.</p>
 <p>xyarcsec: 2-element list containing the RA and Dec in degrees.
 phi: position angle (E of N) in degrees.
@@ -175,34 +226,34 @@ scale: arcsec per pixel.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="kai.reduce.kai_util.rotate_coo">
-<span class="sig-prename descclassname"><span class="pre">kai.reduce.kai_util.</span></span><span class="sig-name descname"><span class="pre">rotate_coo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phi</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/kai_util.html#rotate_coo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.kai_util.rotate_coo" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.kai_util.</span></span><span class="sig-name descname"><span class="pre">rotate_coo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phi</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/kai_util.html#rotate_coo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.kai_util.rotate_coo" title="Permalink to this definition"></a></dt>
 <dd><p>Rotate the coordinates in the <a href="#id3"><span class="problematic" id="id4">*</span></a>.coo files for data sets
 containing images at different PAs.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="kai.reduce.kai_util.getScale">
-<span class="sig-prename descclassname"><span class="pre">kai.reduce.kai_util.</span></span><span class="sig-name descname"><span class="pre">getScale</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hdr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instrument</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">instruments.default_inst</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/kai_util.html#getScale"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.kai_util.getScale" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.kai_util.</span></span><span class="sig-name descname"><span class="pre">getScale</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hdr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instrument</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">instruments.default_inst</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/kai_util.html#getScale"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.kai_util.getScale" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="kai.reduce.kai_util.getPA">
-<span class="sig-prename descclassname"><span class="pre">kai.reduce.kai_util.</span></span><span class="sig-name descname"><span class="pre">getPA</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hdr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instrument</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">instruments.default_inst</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/kai_util.html#getPA"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.kai_util.getPA" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.kai_util.</span></span><span class="sig-name descname"><span class="pre">getPA</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hdr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instrument</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">instruments.default_inst</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/kai_util.html#getPA"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.kai_util.getPA" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="kai.reduce.kai_util.getCentralWavelength">
-<span class="sig-prename descclassname"><span class="pre">kai.reduce.kai_util.</span></span><span class="sig-name descname"><span class="pre">getCentralWavelength</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hdr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instrument</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">instruments.default_inst</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/kai_util.html#getCentralWavelength"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.kai_util.getCentralWavelength" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.kai_util.</span></span><span class="sig-name descname"><span class="pre">getCentralWavelength</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hdr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instrument</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">instruments.default_inst</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/kai_util.html#getCentralWavelength"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.kai_util.getCentralWavelength" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="kai.reduce.kai_util.calcOverhead">
-<span class="sig-prename descclassname"><span class="pre">kai.reduce.kai_util.</span></span><span class="sig-name descname"><span class="pre">calcOverhead</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tint</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coadds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ndithers</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nframes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reads</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tread</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.181</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/kai_util.html#calcOverhead"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.kai_util.calcOverhead" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.kai_util.</span></span><span class="sig-name descname"><span class="pre">calcOverhead</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tint</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coadds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ndithers</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nframes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reads</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tread</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.181</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/kai_util.html#calcOverhead"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.kai_util.calcOverhead" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="kai.reduce.kai_util.plotKeyword">
-<span class="sig-prename descclassname"><span class="pre">kai.reduce.kai_util.</span></span><span class="sig-name descname"><span class="pre">plotKeyword</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">keyword1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keyword2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">imgList</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/kai_util.html#plotKeyword"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.kai_util.plotKeyword" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.kai_util.</span></span><span class="sig-name descname"><span class="pre">plotKeyword</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">keyword1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keyword2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">imgList</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/kai_util.html#plotKeyword"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.kai_util.plotKeyword" title="Permalink to this definition"></a></dt>
 <dd><p>Pass in a file containing a list of images. For each of these
 images, read out the values of the header keywords specified.
 Then plot each of the keywords against each other.</p>
@@ -213,78 +264,34 @@ Then plot each of the keywords against each other.</p>
 </section>
 
 
+           </div>
           </div>
-          
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../data/index.html" class="btn btn-neutral float-left" title="kai.reduce.data" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../prep_analysis/index.html" class="btn btn-neutral float-right" title="kai.reduce.prep_analysis" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, J. R. Lu, A. K. Gautam, T. Do.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-<h1 class="logo"><a href="../../../../index.html">KAI</a></h1>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
 
-
-
-
-
-
-
-
-<h3>Navigation</h3>
-<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">API Reference</a></li>
-</ul>
-
-<div class="relations">
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="../../../../index.html">Documentation overview</a><ul>
-  <li><a href="../../../index.html">API Reference</a><ul>
-  <li><a href="../../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai</span></code></a><ul>
-  <li><a href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.reduce</span></code></a><ul>
-      <li>Previous: <a href="../data/index.html" title="previous chapter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.reduce.data</span></code></a></li>
-      <li>Next: <a href="../prep_analysis/index.html" title="next chapter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.reduce.prep_analysis</span></code></a></li>
-  </ul></li>
-  </ul></li>
-  </ul></li>
-  </ul></li>
-</ul>
-</div>
-<div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../../../../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
-      <input type="submit" value="Go" />
-    </form>
-    </div>
-</div>
-<script>$('#searchbox').show(0);</script>
-
-
-
-
-
-
-
-
-        </div>
-      </div>
-      <div class="clearer"></div>
-    </div>
-    <div class="footer">
-      &copy;2022, J. R. Lu, A. K. Gautam, T. Do.
-      
-      |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.2.0</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
-      
-      |
-      <a href="../../../../_sources/autoapi/kai/reduce/kai_util/index.rst.txt"
-          rel="nofollow">Page source</a>
-    </div>
-
-    
-
-    
-  </body>
+</body>
 </html>

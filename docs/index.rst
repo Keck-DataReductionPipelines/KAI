@@ -17,7 +17,12 @@ The latest release can be downloaded from the github repository `here
 Installation
 ------------
 
-1. Create a separate `conda <https://docs.conda.io/en/latest/miniconda.html>`_ environment to run KAI. The pipeline uses IRAF/PyRAF, and we recommend using the ``environment_iraf27.yml`` file in this repository (available `here <https://github.com/Keck-DataReductionPipelines/KAI/blob/dev/environment_iraf27.yml>`_) to `create a conda environment <https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#creating-an-environment-from-an-environment-yml-file>`_ with the necessary dependencies correctly installed. The environment file will create a new conda environment called ``iraf27``, and must be activated before running KAI using::
+1. Create a separate `conda <https://docs.conda.io/en/latest/miniconda.html>`_ environment to run KAI. The pipeline uses IRAF/PyRAF, and we recommend using the ``environment_iraf27.yml`` file in this repository (available `here <https://github.com/Keck-DataReductionPipelines/KAI/blob/dev/environment_iraf27.yml>`_) to `create a conda environment <https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#creating-an-environment-from-an-environment-yml-file>`_ with the necessary dependencies correctly installed::
+    
+    conda env create -f environment_iraf27.yml
+
+
+The environment file will create a new conda environment called ``iraf27``, and must be activated before running KAI using::
 
     conda activate iraf27
    
