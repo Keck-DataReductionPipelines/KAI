@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>kai.reduce.dar &mdash; KAI  documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> KAI
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../autoapi/index.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">KAI</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      <li>kai.reduce.dar</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for kai.reduce.dar</h1><div class="highlight"><pre>
+<span></span><span class="c1"># from pyraf import iraf</span>
+<span class="kn">import</span> <span class="nn">glob</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pylab</span> <span class="k">as</span> <span class="nn">py</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">from</span> <span class="nn">astropy.io</span> <span class="kn">import</span> <span class="n">fits</span> <span class="k">as</span> <span class="n">pyfits</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">urllib.request</span><span class="o">,</span> <span class="nn">urllib.parse</span><span class="o">,</span> <span class="nn">urllib.error</span>
+<div class="viewcode-block" id="p2"><a class="viewcode-back" href="../../../autoapi/kai/reduce/dar/index.html#kai.reduce.dar.p2">[docs]</a>    <span class="n">p2</span> <span class="o">=</span> <span class="kc">False</span></div>
+<span class="k">except</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">urllib</span>
+    <span class="n">p2</span> <span class="o">=</span> <span class="kc">True</span> <span class="c1"># Python 2 is running, so the urllib command is different</span>
+<span class="kn">import</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">kai.reduce</span> <span class="kn">import</span> <span class="n">kai_util</span>
+<span class="kn">from</span> <span class="nn">kai.reduce</span> <span class="kn">import</span> <span class="n">util</span>
+<span class="kn">from</span> <span class="nn">kai.reduce</span> <span class="kn">import</span> <span class="n">slalib</span>
+<span class="kn">from</span> <span class="nn">kai</span> <span class="kn">import</span> <span class="n">instruments</span>
+<span class="kn">from</span> <span class="nn">astropy.table</span> <span class="kn">import</span> <span class="n">Table</span>
+
+<div class="viewcode-block" id="module_dir"><a class="viewcode-back" href="../../../autoapi/kai/reduce/dar/index.html#kai.reduce.dar.module_dir">[docs]</a><span class="n">module_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="get_atm_conditions"><a class="viewcode-back" href="../../../autoapi/kai/reduce/dar/index.html#kai.reduce.dar.get_atm_conditions">[docs]</a><span class="k">def</span> <span class="nf">get_atm_conditions</span><span class="p">(</span><span class="n">year</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Retrieve atmospheric conditions from CFHT archive website,</span>
+<span class="sd">    then calls dar.splitAtmosphereCFHT() to separate the data</span>
+<span class="sd">    by months.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">yearStr</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">year</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">p2</span><span class="p">:</span> <span class="c1"># Python 2 command, necessary for IRAF</span>
+        <span class="n">_atm</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="s2">&quot;http://mkwc.ifa.hawaii.edu/archive/wx/cfht/cfht-wx.</span><span class="si">%s</span><span class="s2">.dat&quot;</span> <span class="o">%</span> <span class="n">yearStr</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">_atm</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="s2">&quot;http://mkwc.ifa.hawaii.edu/archive/wx/cfht/cfht-wx.</span><span class="si">%s</span><span class="s2">.dat&quot;</span> <span class="o">%</span> <span class="n">yearStr</span><span class="p">)</span>
+    <span class="n">atm</span> <span class="o">=</span> <span class="n">_atm</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="n">_atm</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    
+    <span class="n">root</span> <span class="o">=</span> <span class="n">module_dir</span> <span class="o">+</span> <span class="s1">&#39;/weather/&#39;</span>
+
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">atm</span><span class="p">)</span> <span class="o">==</span> <span class="nb">bytes</span><span class="p">:</span>
+        <span class="c1"># this is for python 3</span>
+        <span class="n">atmfile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">root</span> <span class="o">+</span> <span class="s1">&#39;cfht-wx.&#39;</span> <span class="o">+</span> <span class="n">yearStr</span> <span class="o">+</span> <span class="s1">&#39;.dat&#39;</span><span class="p">,</span><span class="s1">&#39;wb&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">atmfile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">root</span> <span class="o">+</span> <span class="s1">&#39;cfht-wx.&#39;</span> <span class="o">+</span> <span class="n">yearStr</span> <span class="o">+</span> <span class="s1">&#39;.dat&#39;</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">)</span>
+
+
+    <span class="n">atmfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">atm</span><span class="p">)</span>
+    <span class="n">atmfile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="n">splitAtmosphereCFHT</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">year</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="keckDARcoeffs"><a class="viewcode-back" href="../../../autoapi/kai/reduce/dar/index.html#kai.reduce.dar.keckDARcoeffs">[docs]</a><span class="k">def</span> <span class="nf">keckDARcoeffs</span><span class="p">(</span><span class="n">lamda</span><span class="p">,</span> <span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">,</span> <span class="n">day</span><span class="p">,</span> <span class="n">hour</span><span class="p">,</span> <span class="n">minute</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate the differential atmospheric refraction</span>
+<span class="sd">    for two objects observed at Keck.</span>
+
+<span class="sd">    Input:</span>
+<span class="sd">    lamda -- Effective wavelength (microns) assumed to be the same for both</span>
+<span class="sd">    year, month, day, hour, minute of observation (HST)</span>
+
+<span class="sd">    Output:</span>
+<span class="sd">    refA</span>
+<span class="sd">    refB</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># iraf.noao()</span>
+
+    <span class="c1"># Set up Keck observatory info</span>
+    <span class="c1"># foo = iraf.noao.observatory(command=&quot;set&quot;, obsid=&quot;keck&quot;, Stdout=1)</span>
+    <span class="c1"># obs = iraf.noao.observatory</span>
+
+    <span class="c1">####################</span>
+    <span class="c1"># Setup all the parameters for the atmospheric refraction</span>
+    <span class="c1"># calculations. Typical values obtained from the Mauna Kea</span>
+    <span class="c1"># weather pages and from the web.</span>
+    <span class="c1">####################</span>
+    <span class="c1"># </span>
+    <span class="c1"># Temperature Lapse Rate (Kelvin/meter)</span>
+    <span class="n">tlr</span> <span class="o">=</span> <span class="mf">0.0065</span>
+    <span class="c1"># Precision required to terminate the iteration (radian)</span>
+    <span class="n">eps</span> <span class="o">=</span> <span class="mf">1.0e-9</span>
+    <span class="c1"># Height above sea level (meters)</span>
+    <span class="c1"># hm = obs.altitude</span>
+    <span class="n">hm</span> <span class="o">=</span> <span class="mf">4160.0</span>                             <span class="c1">#Keck height. Hard coded to remove iraf dependency</span>
+    <span class="c1"># Latitude of the observer (radian)</span>
+    <span class="c1"># phi = math.radians(obs.latitude)</span>
+    <span class="n">phi</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mf">19.82833333333333</span><span class="p">)</span>   <span class="c1">#Keck latitude. Hard coded to remove iraf dependency</span>
+
+    <span class="c1"># Pull from atmosphere logs.</span>
+    <span class="n">logDir</span> <span class="o">=</span> <span class="n">module_dir</span> <span class="o">+</span> <span class="s1">&#39;/weather/&#39;</span>
+    <span class="n">logFile</span> <span class="o">=</span> <span class="n">logDir</span> <span class="o">+</span><span class="s1">&#39;cfht-wx.&#39;</span><span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">year</span><span class="p">)</span> <span class="o">+</span><span class="s1">&#39;.&#39;</span><span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">month</span><span class="p">)</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span><span class="s1">&#39;.dat&#39;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">logFile</span><span class="p">)</span>
+
+    <span class="n">_atm</span> <span class="o">=</span> <span class="n">Table</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">logFile</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;ascii&#39;</span><span class="p">,</span> <span class="n">header_start</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">atmYear</span> <span class="o">=</span> <span class="n">_atm</span><span class="p">[</span><span class="s1">&#39;col1&#39;</span><span class="p">]</span>
+    <span class="n">atmMonth</span> <span class="o">=</span> <span class="n">_atm</span><span class="p">[</span><span class="s1">&#39;col2&#39;</span><span class="p">]</span>
+    <span class="n">atmDay</span> <span class="o">=</span> <span class="n">_atm</span><span class="p">[</span><span class="s1">&#39;col3&#39;</span><span class="p">]</span>
+    <span class="n">atmHour</span> <span class="o">=</span> <span class="n">_atm</span><span class="p">[</span><span class="s1">&#39;col4&#39;</span><span class="p">]</span>
+    <span class="n">atmMin</span> <span class="o">=</span> <span class="n">_atm</span><span class="p">[</span><span class="s1">&#39;col5&#39;</span><span class="p">]</span>       <span class="c1"># HST times</span>
+    <span class="n">atmTemp</span> <span class="o">=</span> <span class="n">_atm</span><span class="p">[</span><span class="s1">&#39;col8&#39;</span><span class="p">]</span>      <span class="c1"># Celsius</span>
+    <span class="n">atmHumidity</span> <span class="o">=</span> <span class="n">_atm</span><span class="p">[</span><span class="s1">&#39;col9&#39;</span><span class="p">]</span>  <span class="c1"># percent</span>
+    <span class="n">atmPressure</span> <span class="o">=</span> <span class="n">_atm</span><span class="p">[</span><span class="s1">&#39;col10&#39;</span><span class="p">]</span> <span class="c1"># mb pressure</span>
+
+    <span class="c1"># Find the exact time match for year, month, day, hour</span>
+    <span class="n">idx</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">atmYear</span> <span class="o">==</span> <span class="n">year</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">atmMonth</span> <span class="o">==</span> <span class="n">month</span><span class="p">)</span> <span class="o">&amp;</span>
+                    <span class="p">(</span><span class="n">atmDay</span> <span class="o">==</span> <span class="n">day</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">atmHour</span> <span class="o">==</span> <span class="n">hour</span><span class="p">)))[</span><span class="mi">0</span><span class="p">]</span>
+    
+    <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">((</span> <span class="s1">&#39;Could not find DAR data for </span><span class="si">%4d</span><span class="s1">-</span><span class="si">%2d</span><span class="s1">-</span><span class="si">%2d</span><span class="s1"> </span><span class="si">%2d</span><span class="s1">:</span><span class="si">%2d</span><span class="s1"> in </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> \
+            <span class="p">(</span><span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">,</span> <span class="n">day</span><span class="p">,</span> <span class="n">hour</span><span class="p">,</span> <span class="n">minute</span><span class="p">,</span> <span class="n">logFile</span><span class="p">)))</span>
+
+    <span class="n">atmMin</span> <span class="o">=</span> <span class="n">atmMin</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+    <span class="n">atmTemp</span> <span class="o">=</span> <span class="n">atmTemp</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+    <span class="n">atmHumidity</span> <span class="o">=</span> <span class="n">atmHumidity</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+    <span class="n">atmPressure</span> <span class="o">=</span> <span class="n">atmPressure</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+
+    <span class="c1"># Find the closest minute</span>
+    <span class="n">minDiff</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">atmMin</span> <span class="o">-</span> <span class="n">minute</span><span class="p">)</span>
+    <span class="n">sdx</span> <span class="o">=</span> <span class="n">minDiff</span><span class="o">.</span><span class="n">argsort</span><span class="p">()</span>
+
+    <span class="c1"># Select out the closest in time.</span>
+    <span class="c1"># Ambient Temperature (Kelvin)</span>
+    <span class="c1"># Should be around 274.0 Kelvin</span>
+    <span class="n">tdk</span> <span class="o">=</span> <span class="n">atmTemp</span><span class="p">[</span><span class="n">sdx</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">+</span> <span class="mf">272.15</span>
+    <span class="c1"># Pressure at the observer (millibar)</span>
+    <span class="c1"># Should be around 760.0 millibars</span>
+    <span class="n">pmb</span> <span class="o">=</span> <span class="n">atmPressure</span><span class="p">[</span><span class="n">sdx</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+    <span class="c1"># Relative humidity (%)</span>
+    <span class="c1"># Should be around 0.1 %</span>
+    <span class="n">rh</span> <span class="o">=</span> <span class="n">atmHumidity</span><span class="p">[</span><span class="n">sdx</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">/</span> <span class="mf">100.0</span> <span class="c1">#relative humidity should be between 0 and 1</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">hm</span><span class="p">,</span> <span class="n">tdk</span><span class="p">,</span> <span class="n">pmb</span><span class="p">,</span> <span class="n">rh</span><span class="p">,</span> <span class="n">lamda</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">tlr</span><span class="p">,</span> <span class="n">eps</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">slalib</span><span class="o">.</span><span class="n">refco</span><span class="p">(</span><span class="n">hm</span><span class="p">,</span> <span class="n">tdk</span><span class="p">,</span> <span class="n">pmb</span><span class="p">,</span> <span class="n">rh</span><span class="p">,</span> <span class="n">lamda</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">tlr</span><span class="p">,</span> <span class="n">eps</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="kaidar"><a class="viewcode-back" href="../../../autoapi/kai/reduce/dar/index.html#kai.reduce.dar.kaidar">[docs]</a><span class="k">def</span> <span class="nf">kaidar</span><span class="p">(</span><span class="n">fitsFile</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Use the FITS header to extract date, time, wavelength,</span>
+<span class="sd">    elevation, and image orientation information. This is everything</span>
+<span class="sd">    that is necessary to calculate the differential atmospheric</span>
+<span class="sd">    refraction. The differential atmospheric refraction </span>
+<span class="sd">    is applicable only along the zenith direction of an image.</span>
+<span class="sd">    This code calculates the predicted DAR using archived CFHT</span>
+<span class="sd">    atmospheric data and the elevation and wavelength of the observations.</span>
+<span class="sd">    Then the DAR correction is transformed into image coefficients that</span>
+<span class="sd">    can be applied in image coordinates. </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Get header info</span>
+    <span class="n">img</span><span class="p">,</span> <span class="n">hdr</span> <span class="o">=</span> <span class="n">pyfits</span><span class="o">.</span><span class="n">getdata</span><span class="p">(</span><span class="n">fitsFile</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">effWave</span> <span class="o">=</span> <span class="n">instrument</span><span class="o">.</span><span class="n">get_central_wavelength</span><span class="p">(</span><span class="n">hdr</span><span class="p">)</span>
+    <span class="n">elevation</span> <span class="o">=</span> <span class="n">hdr</span><span class="p">[</span><span class="n">instrument</span><span class="o">.</span><span class="n">hdr_keys</span><span class="p">[</span><span class="s1">&#39;elevation&#39;</span><span class="p">]]</span>
+    <span class="c1"># airmass = hdr[&#39;AIRMASS&#39;]</span>
+    <span class="c1"># parang = hdr[&#39;PARANG&#39;]</span>
+
+    <span class="n">date</span> <span class="o">=</span> <span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;DATE-OBS&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">)</span>
+    <span class="n">year</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">date</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">month</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">date</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">day</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">date</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+
+    <span class="n">utc</span> <span class="o">=</span> <span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;UTC&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)</span>
+    <span class="n">hour</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">utc</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">minute</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">utc</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">second</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">utc</span><span class="p">[</span><span class="mi">2</span><span class="p">])))</span>
+
+    <span class="n">utc</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">,</span> <span class="n">day</span><span class="p">,</span> <span class="n">hour</span><span class="p">,</span> <span class="n">minute</span><span class="p">,</span> <span class="n">second</span><span class="p">)</span>
+    <span class="n">utc2hst</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=-</span><span class="mi">10</span><span class="p">)</span>
+    <span class="n">hst</span> <span class="o">=</span> <span class="n">utc</span> <span class="o">+</span> <span class="n">utc2hst</span>
+
+    <span class="p">(</span><span class="n">refA</span><span class="p">,</span> <span class="n">refB</span><span class="p">)</span> <span class="o">=</span> <span class="n">keckDARcoeffs</span><span class="p">(</span><span class="n">effWave</span><span class="p">,</span> <span class="n">hst</span><span class="o">.</span><span class="n">year</span><span class="p">,</span> <span class="n">hst</span><span class="o">.</span><span class="n">month</span><span class="p">,</span> <span class="n">hst</span><span class="o">.</span><span class="n">day</span><span class="p">,</span>
+                                 <span class="n">hst</span><span class="o">.</span><span class="n">hour</span><span class="p">,</span> <span class="n">hst</span><span class="o">.</span><span class="n">minute</span><span class="p">)</span>
+
+    <span class="n">tanz</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mf">90.0</span> <span class="o">-</span> <span class="n">elevation</span><span class="p">))</span>
+    <span class="n">tmp</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">+</span> <span class="n">tanz</span><span class="o">**</span><span class="mi">2</span>
+    <span class="n">darCoeffL</span> <span class="o">=</span> <span class="n">tmp</span> <span class="o">*</span> <span class="p">(</span><span class="n">refA</span> <span class="o">+</span> <span class="mf">3.0</span> <span class="o">*</span> <span class="n">refB</span> <span class="o">*</span> <span class="n">tanz</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>   <span class="c1">#unitless</span>
+    <span class="n">darCoeffQ</span> <span class="o">=</span> <span class="o">-</span><span class="n">tmp</span> <span class="o">*</span> <span class="p">(</span><span class="n">refA</span><span class="o">*</span><span class="n">tanz</span> <span class="o">+</span>
+                            <span class="mf">3.0</span> <span class="o">*</span> <span class="n">refB</span> <span class="o">*</span> <span class="p">(</span><span class="n">tanz</span> <span class="o">+</span> <span class="mf">2.0</span><span class="o">*</span><span class="n">tanz</span><span class="o">**</span><span class="mi">3</span><span class="p">))</span>   <span class="c1">#units: radians^-1</span>
+
+    <span class="c1"># Convert DAR coefficients for use with arcseconds</span>
+    <span class="c1"># scale = instrument.get_plate_scale(hdr)</span>
+    <span class="c1"># darCoeffQ *= 1.0 * scale / 206265.0</span>
+    <span class="n">darCoeffL</span> <span class="o">*=</span> <span class="mf">1.0</span>
+    <span class="n">darCoeffQ</span> <span class="o">*=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="mf">206265.0</span>             <span class="c1">#units now arcsec^-1</span>
+   
+    <span class="c1"># # Lets determine the zenith and horizon unit vectors for</span>
+    <span class="c1"># # this image.</span>
+    <span class="c1"># pos_ang = instrument.get_position_angle(hdr)</span>
+    <span class="c1"># pa = math.radians(parang + pos_ang)</span>
+    <span class="c1"># zenithX = -math.sin(pa)</span>
+    <span class="c1"># zenithY = math.cos(pa)</span>
+
+    <span class="c1"># # Compute the predicted differential atmospheric refraction</span>
+    <span class="c1"># # over a 10&#39;&#39; seperation along the zenith direction.</span>
+    <span class="c1"># # Remember coeffecicents are only for deltaZ in pixels</span>
+    <span class="c1"># deltaZ = img.shape[0] * scale</span>
+    <span class="c1"># deltaR = darCoeffL * (deltaZ/scale) + darCoeffQ * (deltaZ/scale)**2</span>
+    <span class="c1"># deltaR *= scale # now in arcseconds</span>
+
+    <span class="c1"># magnification = (deltaZ + deltaR) / deltaZ</span>
+    <span class="c1"># print(( &#39;DAR FITS file = %s&#39; % (fitsFile)))</span>
+    <span class="c1"># print((&#39;DAR over 10&quot;: Linear dR = %f&quot;  Quad dR = %f&quot;&#39; % \</span>
+    <span class="c1">#       (darCoeffL * deltaZ, darCoeffQ * deltaZ**2)))</span>
+    <span class="c1"># print((&#39;DAR Magnification = %f&#39; % (magnification)))</span>
+    <span class="c1"># print((&#39;DAR Vertical Angle = %6.1f&#39; % (math.degrees(pa))))</span>
+
+    <span class="k">return</span> <span class="p">(</span><span class="n">darCoeffL</span><span class="p">,</span> <span class="n">darCoeffQ</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="darPlusDistortion"><a class="viewcode-back" href="../../../autoapi/kai/reduce/dar/index.html#kai.reduce.dar.darPlusDistortion">[docs]</a><span class="k">def</span> <span class="nf">darPlusDistortion</span><span class="p">(</span><span class="n">inputFits</span><span class="p">,</span> <span class="n">outputRoot</span><span class="p">,</span> <span class="n">xgeoim</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ygeoim</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create lookup tables (stored as FITS files) that can be used</span>
+<span class="sd">    to correct DAR. Optionally, the shifts due to DAR can be added</span>
+<span class="sd">    to existing NIRC2 distortion lookup tables if the xgeoim/ygeoim</span>
+<span class="sd">    input parameters are set.</span>
+
+<span class="sd">    Inputs:</span>
+<span class="sd">    inputFits - a NIRC2 image for which to determine the DAR correction</span>
+<span class="sd">    outputRoot - the root name for the output. This will be used as the</span>
+<span class="sd">        root name of two new images with names, &lt;outputRoot&gt;_x.fits and </span>
+<span class="sd">        &lt;outputRoot&gt;_y.fits.</span>
+
+<span class="sd">    Optional Inputs:</span>
+<span class="sd">    xgeoim/ygeoim - FITS images used in Drizzle distortion correction</span>
+<span class="sd">        (lookup tables) will be modified to incorporate the DAR correction.</span>
+<span class="sd">        The order of the correction is 1. distortion, 2. DAR.</span>
+<span class="sd">        </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Get the size of the image and the half-points</span>
+    <span class="n">hdr</span> <span class="o">=</span> <span class="n">pyfits</span><span class="o">.</span><span class="n">getheader</span><span class="p">(</span><span class="n">inputFits</span><span class="p">)</span>
+    <span class="n">imgsizeX</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;NAXIS1&#39;</span><span class="p">])</span>
+    <span class="n">imgsizeY</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;NAXIS2&#39;</span><span class="p">])</span>
+    <span class="n">halfX</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">imgsizeX</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">))</span>
+    <span class="n">halfY</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">imgsizeY</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">))</span>
+
+    <span class="c1"># First get the coefficients</span>
+    <span class="p">(</span><span class="n">darCoeffL</span><span class="p">,</span> <span class="n">darCoeffQ</span><span class="p">)</span> <span class="o">=</span> <span class="n">kaidar</span><span class="p">(</span><span class="n">inputFits</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">instrument</span><span class="p">)</span>
+    <span class="c1"># Convert DAR coefficients for use with units of NIRC2 pixels</span>
+    <span class="n">scale</span> <span class="o">=</span> <span class="n">instrument</span><span class="o">.</span><span class="n">get_plate_scale</span><span class="p">(</span><span class="n">hdr</span><span class="p">)</span>
+    <span class="n">darCoeffL</span> <span class="o">*=</span> <span class="mf">1.0</span>                
+    <span class="n">darCoeffQ</span> <span class="o">*=</span> <span class="mf">1.0</span> <span class="o">*</span> <span class="n">scale</span> <span class="c1">#/ 206265.0    </span>
+    <span class="n">pa</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">instrument</span><span class="o">.</span><span class="n">get_parallactic_angle</span><span class="p">(</span><span class="n">hdr</span><span class="p">)</span> <span class="o">+</span> <span class="n">instrument</span><span class="o">.</span><span class="n">get_position_angle</span><span class="p">(</span><span class="n">hdr</span><span class="p">))</span>
+    <span class="c1">#(a, b) = kaidarPoly(inputFits)</span>
+
+    <span class="c1"># Create two 1024 arrays (or read in existing ones) for the</span>
+    <span class="c1"># X and Y lookup tables</span>
+    <span class="k">if</span> <span class="p">((</span><span class="n">xgeoim</span> <span class="o">==</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">xgeoim</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">)):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">imgsizeY</span><span class="p">,</span> <span class="n">imgsizeX</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">pyfits</span><span class="o">.</span><span class="n">getdata</span><span class="p">(</span><span class="n">xgeoim</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="p">((</span><span class="n">ygeoim</span> <span class="o">==</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">ygeoim</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">)):</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">imgsizeY</span><span class="p">,</span> <span class="n">imgsizeX</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">pyfits</span><span class="o">.</span><span class="n">getdata</span><span class="p">(</span><span class="n">ygeoim</span><span class="p">)</span>
+
+    <span class="c1"># Get proper header info.</span>
+    <span class="n">fits</span> <span class="o">=</span> <span class="n">pyfits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">inputFits</span><span class="p">)</span>
+
+    <span class="n">axisX</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">imgsizeX</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span> <span class="o">-</span> <span class="n">halfX</span>
+    <span class="n">axisY</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">imgsizeY</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span> <span class="o">-</span> <span class="n">halfY</span>
+    <span class="n">xcoo2d</span><span class="p">,</span> <span class="n">ycoo2d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">axisX</span><span class="p">,</span> <span class="n">axisY</span><span class="p">)</span>
+
+    <span class="n">xnew1</span> <span class="o">=</span> <span class="n">xcoo2d</span> <span class="o">+</span> <span class="n">x</span>
+    <span class="n">ynew1</span> <span class="o">=</span> <span class="n">ycoo2d</span> <span class="o">+</span> <span class="n">y</span>
+
+    <span class="c1"># Rotate coordinates clockwise by PA so that zenith is along +ynew2</span>
+    <span class="c1"># PA = parallactic angle (angle from +y to zenith going CCW)</span>
+    <span class="n">sina</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">pa</span><span class="p">)</span>
+    <span class="n">cosa</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">pa</span><span class="p">)</span>
+
+    <span class="n">xnew2</span> <span class="o">=</span> <span class="n">xnew1</span> <span class="o">*</span> <span class="n">cosa</span> <span class="o">+</span> <span class="n">ynew1</span> <span class="o">*</span> <span class="n">sina</span>
+    <span class="n">ynew2</span> <span class="o">=</span> <span class="o">-</span><span class="n">xnew1</span> <span class="o">*</span> <span class="n">sina</span> <span class="o">+</span> <span class="n">ynew1</span> <span class="o">*</span> <span class="n">cosa</span>
+
+    <span class="c1"># Apply DAR correction along the y axis</span>
+    <span class="n">xnew3</span> <span class="o">=</span> <span class="n">xnew2</span>
+    <span class="n">ynew3</span> <span class="o">=</span> <span class="n">ynew2</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">darCoeffL</span><span class="p">)</span> <span class="o">+</span> <span class="n">ynew2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">ynew2</span><span class="p">)</span><span class="o">*</span><span class="n">darCoeffQ</span>
+
+    <span class="c1"># Rotate coordinates counter-clockwise by PA back to original</span>
+    <span class="n">xnew4</span> <span class="o">=</span> <span class="n">xnew3</span> <span class="o">*</span> <span class="n">cosa</span> <span class="o">-</span> <span class="n">ynew3</span> <span class="o">*</span> <span class="n">sina</span>
+    <span class="n">ynew4</span> <span class="o">=</span> <span class="n">xnew3</span> <span class="o">*</span> <span class="n">sina</span> <span class="o">+</span> <span class="n">ynew3</span> <span class="o">*</span> <span class="n">cosa</span>
+
+    <span class="c1">#xnew2 = a[0] + a[1]*xnew1 + a[2]*ynew1 + \</span>
+    <span class="c1">#        a[3]*xnew1**2 + a[4]*xnew1*ynew1 + a[5]*ynew1**2</span>
+    <span class="c1">#ynew2 = b[0] + b[1]*xnew1 + b[2]*ynew1 + \</span>
+    <span class="c1">#        b[3]*xnew1**2 + b[4]*xnew1*ynew1 + b[5]*ynew1**2</span>
+
+    <span class="n">x</span> <span class="o">=</span> <span class="n">xnew4</span> <span class="o">-</span> <span class="n">xcoo2d</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">ynew4</span> <span class="o">-</span> <span class="n">ycoo2d</span>
+
+    <span class="n">xout</span> <span class="o">=</span> <span class="n">outputRoot</span> <span class="o">+</span> <span class="s1">&#39;_x.fits&#39;</span>
+    <span class="n">yout</span> <span class="o">=</span> <span class="n">outputRoot</span> <span class="o">+</span> <span class="s1">&#39;_y.fits&#39;</span>
+    <span class="n">util</span><span class="o">.</span><span class="n">rmall</span><span class="p">([</span><span class="n">xout</span><span class="p">,</span> <span class="n">yout</span><span class="p">])</span>
+    <span class="n">fits</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">x</span>
+    <span class="n">fits</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">writeto</span><span class="p">(</span><span class="n">xout</span><span class="p">,</span> <span class="n">output_verify</span><span class="o">=</span><span class="s1">&#39;silentfix&#39;</span><span class="p">)</span>
+    <span class="n">fits</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">y</span>
+    <span class="n">fits</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">writeto</span><span class="p">(</span><span class="n">yout</span><span class="p">,</span> <span class="n">output_verify</span><span class="o">=</span><span class="s1">&#39;silentfix&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">(</span><span class="n">xout</span><span class="p">,</span> <span class="n">yout</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="applyDAR"><a class="viewcode-back" href="../../../autoapi/kai/reduce/dar/index.html#kai.reduce.dar.applyDAR">[docs]</a><span class="k">def</span> <span class="nf">applyDAR</span><span class="p">(</span><span class="n">inputFits</span><span class="p">,</span> <span class="n">spaceStarlist</span><span class="p">,</span> <span class="n">plot</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">,</span> <span class="n">plotdir</span> <span class="o">=</span> <span class="s1">&#39;./&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    inputFits: (str) name of fits file associated with this starlist</span>
+
+<span class="sd">    spaceStarlist: (astropy table) must include columns &#39;x0&#39; and &#39;y0&#39;.</span>
+
+<span class="sd">    Input a starlist in x=RA (+x = west) and y=Dec (arcseconds) taken from</span>
+<span class="sd">    space and introduce differential atmospheric refraction (DAR). The amount</span>
+<span class="sd">    of DAR that is applied depends on the header information in the input fits</span>
+<span class="sd">    file. The resulting output starlist should contain what was observed</span>
+<span class="sd">    after the starlight passed through the atmosphere, but before the</span>
+<span class="sd">    starlight passed through the telescope. Only achromatic DAR is </span>
+<span class="sd">    applied in this code.</span>
+
+<span class="sd">    returns spaceStarlist with updated &#39;x0&#39; and &#39;y0&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Get header info</span>
+    <span class="c1">#hdr = pyfits.getheader(fits)</span>
+
+    <span class="c1">#effWave = hdr[&#39;EFFWAVE&#39;]</span>
+    <span class="c1">#elevation = hdr[&#39;EL&#39;]</span>
+    <span class="c1">#lamda = hdr[&#39;CENWAVE&#39;]</span>
+    <span class="c1">#airmass = hdr[&#39;AIRMASS&#39;]</span>
+    <span class="c1">#parang = hdr[&#39;PARANG&#39;]</span>
+    <span class="c1">#</span>
+    <span class="c1">#date = hdr[&#39;DATE-OBS&#39;].split(&#39;-&#39;)</span>
+    <span class="c1">#year = int(date[0])</span>
+    <span class="c1">#month = int(date[1])</span>
+    <span class="c1">#day = int(date[2])</span>
+
+    <span class="c1">#utc = hdr[&#39;UTC&#39;].split(&#39;:&#39;)</span>
+    <span class="c1">#hour = int(utc[0])</span>
+    <span class="c1">#minute = int(utc[1])</span>
+    <span class="c1">#second = int(math.floor(float(utc[2])))</span>
+
+    <span class="c1">#utc = datetime.datetime(year, month, day, hour, minute, second)</span>
+    <span class="c1">#utc2hst = datetime.timedelta(hours=-10)</span>
+    <span class="c1">#hst = utc + utc2hst</span>
+
+
+    <span class="c1">#(refA, refB) = keckDARcoeffs(effWave, hst.year, hst.month, hst.day,</span>
+    <span class="c1">#                             hst.hour, hst.minute)</span>
+
+    <span class="c1">#tanz = math.tan(math.radians(90.0 - elevation))</span>
+    <span class="c1">#tmp = 1.0 + tanz**2</span>
+    <span class="c1">#darCoeffL = tmp * (refA + 3.0 * refB * tanz**2)</span>
+    <span class="c1">#darCoeffQ = -tmp * (refA*tanz +</span>
+    <span class="c1">#                        3.0 * refB * (tanz + 2.0*tanz**3))</span>
+
+    <span class="c1"># Convert DAR coefficients for use with arcseconds</span>
+    <span class="c1">#darCoeffL *= 1.0</span>
+    <span class="c1">#darCoeffQ *= 1.0 / 206265.0</span>
+    
+    <span class="c1"># Lets determine the zenith and horizon unit vectors for</span>
+    <span class="c1"># this image. The angle we need is simply the parallactic</span>
+    <span class="c1"># (or vertical) angle since ACS images are North Up already.</span>
+    <span class="c1">#pa = math.radians(parang)</span>
+
+    <span class="c1">#MS: presumably the above code is all replacable with this call (which uses the intrument object</span>
+    <span class="p">(</span><span class="n">darCoeffL</span><span class="p">,</span> <span class="n">darCoeffQ</span><span class="p">)</span> <span class="o">=</span> <span class="n">kaidar</span><span class="p">(</span><span class="n">inputFits</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">instrument</span><span class="p">)</span>
+    <span class="n">hdr</span> <span class="o">=</span> <span class="n">pyfits</span><span class="o">.</span><span class="n">getheader</span><span class="p">(</span><span class="n">inputFits</span><span class="p">)</span>
+    <span class="n">pa</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">instrument</span><span class="o">.</span><span class="n">get_parallactic_angle</span><span class="p">(</span><span class="n">hdr</span><span class="p">))</span>
+    <span class="c1">##########</span>
+    <span class="c1">#</span>
+    <span class="c1"># Read in the starlist</span>
+    <span class="c1">#</span>
+    <span class="c1">##########</span>
+    <span class="c1"># _list = Table.read(spaceStarlist, format=&#39;ascii&#39;)</span>
+    <span class="c1"># cols = list(_list.columns.keys())</span>
+    <span class="c1"># names = [_list[ss][0].strip() for ss in range(len(_list))]</span>
+    <span class="c1"># mag = _list[cols[1]]</span>
+    <span class="c1"># date = _list[cols[2]]</span>
+    <span class="c1"># x = _list[cols[3]] # RA in arcsec</span>
+    <span class="c1"># y = _list[cols[4]]</span>
+    <span class="c1"># xe = _list[cols[5]]</span>
+    <span class="c1"># ye = _list[cols[6]]</span>
+
+    <span class="n">x</span> <span class="o">=</span> <span class="n">spaceStarlist</span><span class="p">[</span><span class="s1">&#39;x0&#39;</span><span class="p">]</span>     <span class="c1">#already in arcseconds, x increasing to west.</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">spaceStarlist</span><span class="p">[</span><span class="s1">&#39;y0&#39;</span><span class="p">]</span>
+
+    <span class="c1"># Magnify everything in the y (zenith) direction. Do it relative to</span>
+    <span class="c1"># the first star. Even though dR depends on dzObs (ground observed dz),</span>
+    <span class="c1"># it is a small mistake and results in less than a 10 micro-arcsec</span>
+    <span class="c1"># change in dR.</span>
+    <span class="n">dx</span> <span class="o">=</span> <span class="n">x</span> <span class="o">-</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">dy</span> <span class="o">=</span> <span class="n">y</span> <span class="o">-</span> <span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="c1"># Rotate coordinates CW so that the zenith angle is at +ynew</span>
+    <span class="n">sina</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">pa</span><span class="p">)</span>
+    <span class="n">cosa</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">pa</span><span class="p">)</span>
+    <span class="n">xnew1</span> <span class="o">=</span> <span class="n">dx</span> <span class="o">*</span> <span class="n">cosa</span> <span class="o">+</span> <span class="n">dy</span> <span class="o">*</span> <span class="n">sina</span>
+    <span class="n">ynew1</span> <span class="o">=</span> <span class="o">-</span><span class="n">dx</span> <span class="o">*</span> <span class="n">sina</span> <span class="o">+</span> <span class="n">dy</span> <span class="o">*</span> <span class="n">cosa</span>
+
+    <span class="c1"># Apply DAR</span>
+    <span class="n">xnew2</span> <span class="o">=</span> <span class="n">xnew1</span>
+    <span class="n">ynew2</span> <span class="o">=</span> <span class="n">ynew1</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">darCoeffL</span><span class="p">)</span> <span class="o">-</span> <span class="n">ynew1</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">ynew1</span><span class="p">)</span> <span class="o">*</span> <span class="n">darCoeffQ</span>
+
+    <span class="c1"># Rotate coordinates CCW back to original angle</span>
+    <span class="n">xnew3</span> <span class="o">=</span> <span class="n">xnew2</span> <span class="o">*</span> <span class="n">cosa</span> <span class="o">-</span> <span class="n">ynew2</span> <span class="o">*</span> <span class="n">sina</span>
+    <span class="n">ynew3</span> <span class="o">=</span> <span class="n">xnew2</span> <span class="o">*</span> <span class="n">sina</span> <span class="o">+</span> <span class="n">ynew2</span> <span class="o">*</span> <span class="n">cosa</span>
+
+    <span class="n">xnew</span> <span class="o">=</span> <span class="n">xnew3</span> <span class="o">+</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">ynew</span> <span class="o">=</span> <span class="n">ynew3</span> <span class="o">+</span> <span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+
+    <span class="c1">##########</span>
+    <span class="c1">#</span>
+    <span class="c1"># Write out the starlist</span>
+    <span class="c1">#</span>
+    <span class="c1">##########</span>
+    <span class="c1"># Save the current directory</span>
+    <span class="c1"># newFits = fits.replace(&#39;.fits&#39;, &#39;&#39;).split(&#39;/&#39;)[-1]</span>
+    <span class="c1"># newList = newFits + &#39;_acs.lis&#39;</span>
+    <span class="c1"># print(newList)</span>
+    <span class="c1"># _new = open(newList, &#39;w&#39;)</span>
+    <span class="c1"># for i in range(len(names)):</span>
+    <span class="c1">#     _new.write(&#39;%10s  %7.3f  %7.2f  %10.4f  %10.4f  0  0  10  1  1  8\n&#39; % \</span>
+    <span class="c1">#           (names[i], mag[i], date[i], xnew[i], ynew[i]))</span>
+    <span class="c1"># _new.close()</span>
+
+    <span class="c1"># if (plot==True):</span>
+    <span class="c1">#     py.clf()</span>
+    <span class="c1">#     py.quiver(x, y, xnew - x, ynew - y, scale=0.02)</span>
+    <span class="c1">#     py.quiver([0], [0], [0.001], [0], color=&#39;r&#39;, scale=0.02)</span>
+    <span class="c1">#     py.axis([-5, 5, -5, 5])</span>
+    <span class="c1">#     py.show()</span>
+        
+    <span class="k">if</span> <span class="p">(</span><span class="n">plot</span><span class="o">==</span><span class="kc">True</span><span class="p">):</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s1">&#39;all&#39;</span><span class="p">)</span>
+        <span class="n">q</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">quiver</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">xnew</span> <span class="o">-</span> <span class="n">x</span><span class="p">,</span> <span class="n">ynew</span> <span class="o">-</span> <span class="n">y</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">0.02</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;RA (arcsec)&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;DEC (arcsec)&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$\Delta$ RA * cos(DEC) (arcsec)&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$\Delta$ DEC (arcsec)&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">figtext</span><span class="p">(</span><span class="mf">0.15</span><span class="p">,</span><span class="mf">0.85</span><span class="p">,</span><span class="s1">&#39;q =&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">pa</span><span class="p">))))</span>
+        <span class="n">quiv_label</span> <span class="o">=</span> <span class="s1">&#39;1 mas&#39;</span>
+        <span class="n">quiv_label_val</span> <span class="o">=</span> <span class="mf">0.001</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">quiverkey</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="mf">0.80</span><span class="p">,</span> <span class="mf">0.85</span><span class="p">,</span> <span class="n">quiv_label_val</span><span class="p">,</span> <span class="n">quiv_label</span><span class="p">,</span> <span class="n">coordinates</span><span class="o">=</span><span class="s1">&#39;figure&#39;</span><span class="p">,</span> <span class="n">labelpos</span><span class="o">=</span><span class="s1">&#39;E&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;green&#39;</span><span class="p">)</span>     
+        <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">plotdir</span><span class="o">+</span> <span class="n">inputFits</span><span class="p">[</span><span class="o">-</span><span class="mi">26</span><span class="p">:</span><span class="o">-</span><span class="mi">5</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.jpg&#39;</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">)</span>
+        <span class="c1"># plt.show()</span>
+
+    <span class="n">spaceStarlist</span><span class="p">[</span><span class="s1">&#39;x0&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">xnew</span>
+    <span class="n">spaceStarlist</span><span class="p">[</span><span class="s1">&#39;y0&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ynew</span> 
+
+    <span class="k">return</span> <span class="n">spaceStarlist</span></div>
+
+<div class="viewcode-block" id="splitAtmosphereCFHT"><a class="viewcode-back" href="../../../autoapi/kai/reduce/dar/index.html#kai.reduce.dar.splitAtmosphereCFHT">[docs]</a><span class="k">def</span> <span class="nf">splitAtmosphereCFHT</span><span class="p">(</span><span class="n">year</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Take an original archive file containing atmospheric parameters and</span>
+<span class="sd">    split it up into seperate files for individual months. This makes</span>
+<span class="sd">    later calls to calculate DAR parameters MUCH faster.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">yearStr</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">year</span><span class="p">)</span>
+    <span class="n">logDir</span> <span class="o">=</span> <span class="n">module_dir</span> <span class="o">+</span> <span class="s1">&#39;/weather/&#39;</span>
+    <span class="n">logFile</span> <span class="o">=</span> <span class="n">logDir</span> <span class="o">+</span> <span class="s1">&#39;/cfht-wx.&#39;</span> <span class="o">+</span> <span class="n">yearStr</span> <span class="o">+</span> <span class="s1">&#39;.dat&#39;</span>
+
+    <span class="n">_infile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">logFile</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
+
+    <span class="n">outfiles</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">12</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+        <span class="n">monthStr</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">ii</span><span class="p">)</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">_month</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">logDir</span> <span class="o">+</span> <span class="s1">&#39;/cfht-wx.&#39;</span> <span class="o">+</span><span class="n">yearStr</span><span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span><span class="n">monthStr</span><span class="o">+</span> <span class="s1">&#39;.dat&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+        <span class="n">outfiles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="n">_month</span> <span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">_infile</span><span class="p">:</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+
+        <span class="n">month</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">fields</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        
+        <span class="c1"># Check for wrong month number</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">month</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">month</span> <span class="o">&lt;=</span> <span class="mi">12</span><span class="p">):</span>
+            <span class="k">continue</span>
+        
+        <span class="n">_outfile</span> <span class="o">=</span> <span class="n">outfiles</span><span class="p">[</span><span class="n">month</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">_outfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">_month</span> <span class="ow">in</span> <span class="n">outfiles</span><span class="p">:</span>
+        <span class="n">_month</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+        
+        
+    
+<div class="viewcode-block" id="test_darPlusDistortion"><a class="viewcode-back" href="../../../autoapi/kai/reduce/dar/index.html#kai.reduce.dar.test_darPlusDistortion">[docs]</a><span class="k">def</span> <span class="nf">test_darPlusDistortion</span><span class="p">():</span>
+    <span class="n">data_dir</span> <span class="o">=</span> <span class="n">module_dir</span> <span class="o">+</span> <span class="s1">&#39;/distortion/&#39;</span>
+    <span class="n">file_geox_darunfix</span> <span class="o">=</span> <span class="n">data_dir</span> <span class="o">+</span> <span class="s1">&#39;nirc2dist_xgeoim.fits&#39;</span>
+    <span class="n">file_geoy_darunfix</span> <span class="o">=</span> <span class="n">data_dir</span> <span class="o">+</span> <span class="s1">&#39;nirc2dist_ygeoim.fits&#39;</span>
+
+    <span class="n">data_dir</span> <span class="o">=</span> <span class="s1">&#39;/u/ghezgroup/data/m92_test/08jul_new_on/&#39;</span>
+    <span class="n">file_geox_darfix</span> <span class="o">=</span> <span class="n">data_dir</span> <span class="o">+</span> <span class="s1">&#39;reduce/kp/gc_f1/ce0249geo_x.fits&#39;</span>
+    <span class="n">file_geoy_darfix</span> <span class="o">=</span> <span class="n">data_dir</span> <span class="o">+</span> <span class="s1">&#39;reduce/kp/gc_f1/ce0249geo_y.fits&#39;</span>
+
+    <span class="n">xon</span> <span class="o">=</span> <span class="n">pyfits</span><span class="o">.</span><span class="n">getdata</span><span class="p">(</span><span class="n">file_geox_darfix</span><span class="p">)</span>
+    <span class="n">yon</span> <span class="o">=</span> <span class="n">pyfits</span><span class="o">.</span><span class="n">getdata</span><span class="p">(</span><span class="n">file_geoy_darfix</span><span class="p">)</span>
+    <span class="n">xoff</span> <span class="o">=</span> <span class="n">pyfits</span><span class="o">.</span><span class="n">getdata</span><span class="p">(</span><span class="n">file_geox_darunfix</span><span class="p">)</span>
+    <span class="n">yoff</span> <span class="o">=</span> <span class="n">pyfits</span><span class="o">.</span><span class="n">getdata</span><span class="p">(</span><span class="n">file_geoy_darunfix</span><span class="p">)</span>
+
+    <span class="c1"># Make arrays with the coordinates for each </span>
+    <span class="n">imgsize</span> <span class="o">=</span> <span class="mi">1024</span>
+    <span class="n">axisX</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">imgsize</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">axisY</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">imgsize</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">xcoo2d</span><span class="p">,</span> <span class="n">ycoo2d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">axisX</span><span class="p">,</span> <span class="n">axisY</span><span class="p">)</span>
+
+    <span class="c1"># Lets trim so that we only keep every 20th pixel</span>
+    <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">25</span><span class="p">,</span> <span class="n">imgsize</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>
+    <span class="n">xon</span> <span class="o">=</span> <span class="n">xon</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">yon</span> <span class="o">=</span> <span class="n">yon</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">xoff</span> <span class="o">=</span> <span class="n">xoff</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">yoff</span> <span class="o">=</span> <span class="n">yoff</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">xcoo2d</span> <span class="o">=</span> <span class="n">xcoo2d</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">ycoo2d</span> <span class="o">=</span> <span class="n">ycoo2d</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># Calculate differences</span>
+    <span class="n">xdiff</span> <span class="o">=</span> <span class="n">xon</span> <span class="o">-</span> <span class="n">xoff</span>
+    <span class="n">ydiff</span> <span class="o">=</span> <span class="n">yon</span> <span class="o">-</span> <span class="n">yoff</span>
+
+    <span class="c1"># Make vector plots</span>
+    <span class="n">py</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+    <span class="n">qvr</span> <span class="o">=</span> <span class="n">py</span><span class="o">.</span><span class="n">quiver2</span><span class="p">([</span><span class="n">xcoo2d</span><span class="p">],</span> <span class="p">[</span><span class="n">ycoo2d</span><span class="p">],</span> <span class="p">[</span><span class="n">xdiff</span><span class="p">],</span> <span class="p">[</span><span class="n">ydiff</span><span class="p">],</span>
+                     <span class="n">units</span><span class="o">=</span><span class="s1">&#39;width&#39;</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> 
+                     <span class="n">width</span><span class="o">=</span><span class="mf">0.005</span><span class="p">,</span> <span class="n">headwidth</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">headlength</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> 
+                     <span class="n">headaxislength</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">py</span><span class="o">.</span><span class="n">quiverkey</span><span class="p">(</span><span class="n">qvr</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">1120</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="s1">&#39;1 pixel&#39;</span><span class="p">,</span> <span class="n">coordinates</span><span class="o">=</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">)</span>
+    <span class="n">py</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;NIRC2 X (pixel)&#39;</span><span class="p">)</span>
+    <span class="n">py</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;NIRC2 Y (pixel)&#39;</span><span class="p">)</span>
+    <span class="n">py</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Arrows point to DAR Fix&#39;</span><span class="p">)</span>
+    <span class="c1">#py.savefig(&#39;plots/vector_daroffon.png&#39;)</span>
+    <span class="n">py</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, J. R. Lu, A. K. Gautam, T. Do.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

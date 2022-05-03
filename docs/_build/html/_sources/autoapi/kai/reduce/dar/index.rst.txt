@@ -1,0 +1,290 @@
+:py:mod:`kai.reduce.dar`
+========================
+
+.. py:module:: kai.reduce.dar
+
+.. autoapi-nested-parse::
+
+   
+   ..
+       !! processed by numpydoc !!
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   kai.reduce.dar.get_atm_conditions
+   kai.reduce.dar.keckDARcoeffs
+   kai.reduce.dar.kaidar
+   kai.reduce.dar.darPlusDistortion
+   kai.reduce.dar.applyDAR
+   kai.reduce.dar.splitAtmosphereCFHT
+   kai.reduce.dar.test_darPlusDistortion
+
+
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   kai.reduce.dar.p2
+   kai.reduce.dar.module_dir
+
+
+.. py:data:: p2
+   :annotation: = False
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:data:: module_dir
+   
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: get_atm_conditions(year)
+
+   
+   Retrieve atmospheric conditions from CFHT archive website,
+   then calls dar.splitAtmosphereCFHT() to separate the data
+   by months.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: keckDARcoeffs(lamda, year, month, day, hour, minute)
+
+   
+   Calculate the differential atmospheric refraction
+   for two objects observed at Keck.
+
+   Input:
+   lamda -- Effective wavelength (microns) assumed to be the same for both
+   year, month, day, hour, minute of observation (HST)
+
+   Output:
+   refA
+   refB
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: kaidar(fitsFile, instrument=instruments.default_inst)
+
+   
+   Use the FITS header to extract date, time, wavelength,
+   elevation, and image orientation information. This is everything
+   that is necessary to calculate the differential atmospheric
+   refraction. The differential atmospheric refraction 
+   is applicable only along the zenith direction of an image.
+   This code calculates the predicted DAR using archived CFHT
+   atmospheric data and the elevation and wavelength of the observations.
+   Then the DAR correction is transformed into image coefficients that
+   can be applied in image coordinates. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: darPlusDistortion(inputFits, outputRoot, xgeoim=None, ygeoim=None, instrument=instruments.default_inst)
+
+   
+   Create lookup tables (stored as FITS files) that can be used
+   to correct DAR. Optionally, the shifts due to DAR can be added
+   to existing NIRC2 distortion lookup tables if the xgeoim/ygeoim
+   input parameters are set.
+
+   Inputs:
+   inputFits - a NIRC2 image for which to determine the DAR correction
+   outputRoot - the root name for the output. This will be used as the
+       root name of two new images with names, <outputRoot>_x.fits and 
+       <outputRoot>_y.fits.
+
+   Optional Inputs:
+   xgeoim/ygeoim - FITS images used in Drizzle distortion correction
+       (lookup tables) will be modified to incorporate the DAR correction.
+       The order of the correction is 1. distortion, 2. DAR.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: applyDAR(inputFits, spaceStarlist, plot=False, instrument=instruments.default_inst, plotdir='./')
+
+   
+   inputFits: (str) name of fits file associated with this starlist
+
+   spaceStarlist: (astropy table) must include columns 'x0' and 'y0'.
+
+   Input a starlist in x=RA (+x = west) and y=Dec (arcseconds) taken from
+   space and introduce differential atmospheric refraction (DAR). The amount
+   of DAR that is applied depends on the header information in the input fits
+   file. The resulting output starlist should contain what was observed
+   after the starlight passed through the atmosphere, but before the
+   starlight passed through the telescope. Only achromatic DAR is 
+   applied in this code.
+
+   returns spaceStarlist with updated 'x0' and 'y0'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: splitAtmosphereCFHT(year)
+
+   
+   Take an original archive file containing atmospheric parameters and
+   split it up into seperate files for individual months. This makes
+   later calls to calculate DAR parameters MUCH faster.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: test_darPlusDistortion()
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+

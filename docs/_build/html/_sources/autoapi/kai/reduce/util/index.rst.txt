@@ -1,0 +1,275 @@
+:py:mod:`kai.reduce.util`
+=========================
+
+.. py:module:: kai.reduce.util
+
+.. autoapi-nested-parse::
+
+   
+   ..
+       !! processed by numpydoc !!
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   kai.reduce.util.rmall
+   kai.reduce.util.mkdir
+   kai.reduce.util.getcwd
+   kai.reduce.util.trimdir
+   kai.reduce.util.cp_change_prefix
+   kai.reduce.util.cp_change_suffix
+   kai.reduce.util.update_header_coords
+
+
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   kai.reduce.util.module_dir
+   kai.reduce.util.dir_alias_file
+   kai.reduce.util.dir_alias
+
+
+.. py:data:: module_dir
+   
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:data:: dir_alias_file
+   
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:data:: dir_alias
+   
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: rmall(files)
+
+   
+   Remove list of files without confirmation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: mkdir(dir)
+
+   
+   Make directory if it doesn't already exist.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: getcwd()
+
+   
+   IRAF doesn't like long file names. This reduces them.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: trimdir(olddir)
+
+   
+   IRAF doesn't like long file names. This reduces them.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: cp_change_prefix(arg1, arg2)
+
+   
+   Takes files beginning with arg1 and replaces them with arg2
+   Must be in the directory where files live
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: cp_change_suffix(arg1, arg2)
+
+   
+   Takes files ending with arg1 and replaces them with arg2
+   Must be in the directory where files live
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: update_header_coords(fileList)
+
+   
+   Updates coordinates in the header for XREF, YREF
+   and XSTREHL, and YSTREHL.
+
+   fileList : list of files to update
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+

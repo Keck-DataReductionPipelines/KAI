@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>kai.reduce.bfixpix &mdash; KAI  documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> KAI
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../autoapi/index.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">KAI</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      <li>kai.reduce.bfixpix</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for kai.reduce.bfixpix</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">pyraf</span> <span class="kn">import</span> <span class="n">iraf</span> <span class="k">as</span> <span class="n">ir</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">ndimage</span>
+<span class="kn">from</span> <span class="nn">astropy.io</span> <span class="kn">import</span> <span class="n">fits</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">util</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd"># bfixpix - to fix pixels using medians of surrounding pixels</span>
+<span class="sd"># originally by Ben Sugerman, ben@astro.columbia.edu</span>
+<span class="sd"># re-written in python by Jessica Lu, jlu@ifa.hawaii.edu</span>
+<span class="sd">#</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="bfixpix"><a class="viewcode-back" href="../../../autoapi/kai/reduce/bfixpix/index.html#kai.reduce.bfixpix.bfixpix">[docs]</a><span class="k">def</span> <span class="nf">bfixpix</span><span class="p">(</span><span class="n">image_file</span><span class="p">,</span> <span class="n">mask_file</span><span class="p">,</span> <span class="n">outsuffix</span><span class="o">=</span><span class="s1">&#39;_f&#39;</span><span class="p">,</span> <span class="n">msksuffix</span><span class="o">=</span><span class="s1">&#39;_s&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Inputs</span>
+<span class="sd">    ---------</span>
+<span class="sd">    image_file : string</span>
+<span class="sd">        input image file to fix bad pixels on</span>
+
+<span class="sd">    mask_file : string</span>
+<span class="sd">        mask file (0 == good pixels, &gt;0 == bad pixels</span>
+
+<span class="sd">    outsuffix : string</span>
+<span class="sd">        suffix for fixed image. default = &#39;_f&#39;</span>
+
+<span class="sd">    msksuffix : string</span>
+<span class="sd">        suffix for bad pixels significance mask. default = &#39;_s&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">outf</span> <span class="o">=</span> <span class="n">image_file</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.fits&#39;</span><span class="p">,</span> <span class="n">outsuffix</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">)</span>
+    <span class="n">outm</span> <span class="o">=</span> <span class="n">image_file</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.fits&#39;</span><span class="p">,</span> <span class="n">msksuffix</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">)</span>
+    
+    <span class="n">util</span><span class="o">.</span><span class="n">rmall</span><span class="p">([</span><span class="n">outf</span><span class="p">,</span> <span class="n">outm</span><span class="p">])</span>
+    <span class="nb">print</span><span class="p">((</span><span class="s2">&quot;bfixpix: </span><span class="si">{0}</span><span class="s2"> -&gt; </span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">image_file</span><span class="p">,</span> <span class="n">outf</span><span class="p">)))</span>
+
+    <span class="c1"># fetch the image, fetch the mask</span>
+    <span class="n">img</span><span class="p">,</span> <span class="n">hdr</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getdata</span><span class="p">(</span><span class="n">image_file</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">msk</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getdata</span><span class="p">(</span><span class="n">mask_file</span><span class="p">)</span>
+
+    <span class="c1"># median the image</span>
+    <span class="n">medimg</span> <span class="o">=</span> <span class="n">ndimage</span><span class="o">.</span><span class="n">median_filter</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;nearest&#39;</span><span class="p">)</span>
+
+    <span class="c1"># generate the pixel files</span>
+    <span class="n">outf_img</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">msk</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">medimg</span><span class="p">)</span>
+    <span class="n">outm_img</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">msk</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="n">img</span> <span class="o">-</span> <span class="n">medimg</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">fits</span><span class="o">.</span><span class="n">writeto</span><span class="p">(</span><span class="n">outf</span><span class="p">,</span> <span class="n">outf_img</span><span class="p">,</span> <span class="n">hdr</span><span class="p">)</span>
+    <span class="n">fits</span><span class="o">.</span><span class="n">writeto</span><span class="p">(</span><span class="n">outm</span><span class="p">,</span> <span class="n">outm_img</span><span class="p">,</span> <span class="n">hdr</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, J. R. Lu, A. K. Gautam, T. Do.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

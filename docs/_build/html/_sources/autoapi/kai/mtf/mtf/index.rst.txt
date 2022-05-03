@@ -1,0 +1,1647 @@
+:py:mod:`kai.mtf.mtf`
+=====================
+
+.. py:module:: kai.mtf.mtf
+
+.. autoapi-nested-parse::
+
+   
+   ..
+       !! processed by numpydoc !!
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   kai.mtf.mtf.DataHolder
+
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   kai.mtf.mtf.get_mtf
+   kai.mtf.mtf.hanning
+   kai.mtf.mtf.mtffunc_keck
+   kai.mtf.mtf.fitmtf_keck
+   kai.mtf.mtf.params_arr2dict
+   kai.mtf.mtf.params_dict2arr
+   kai.mtf.mtf.t_perfect_keck
+   kai.mtf.mtf.autocorr2d
+   kai.mtf.mtf.nirc2pupil
+   kai.mtf.mtf.dist_circle
+   kai.mtf.mtf.t_perfect
+   kai.mtf.mtf.t_pix
+   kai.mtf.mtf.t_atmos_ao
+   kai.mtf.mtf.phi_atmos_ao
+   kai.mtf.mtf.phi_atmos
+   kai.mtf.mtf.ft_infl_func
+   kai.mtf.mtf.structure_function
+   kai.mtf.mtf.mtf2psf
+   kai.mtf.mtf.mtf2ee
+   kai.mtf.mtf.strehl
+
+
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   kai.mtf.mtf.Fvalues
+
+
+.. py:data:: Fvalues
+   
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: get_mtf(image, params, sources)
+
+   
+   image - 2D numpy array containing the image. Image must be square.
+   params - a dictionary with the various parameters used to calculate
+            the MTF.
+   sources - (def=None) and optional 2D numpy array (same size as image)
+             that contains the distribution of stars in the image as delta
+             functions.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: hanning(xsize, ysize, invert=False)
+
+   
+   Make a 2D hanning kernel from the seperable 1D hanning kernels. The
+   default kernel peaks at 1 at the center and falls to zero at the edges.
+   Use invert=True to make an inner mask that is 0 at the center and rises
+   to 1 at the edges.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: mtffunc_keck(pp, nu=None, wave=None, F=None, D=None, Apix=None, pupil=None, tperf=None, sources=None, output='system', fjac=None)
+
+   
+   NAME:
+          MTFFUNC_KECK
+
+   PURPOSE:
+          Given the appropriate input parameters, returns the
+          square of the 1-D Modulation Transfer Function (MTF)^2 of
+          an optical system consisting of a 
+          telescope + detector + atmosphere + Adaptive Optics (AO) system.
+
+   CATEGORY:
+          How should I know?
+
+   CALLING SEQUENCE:
+          RESULT=MTFFUNC_KECK(NU, PARAMS, [/PERF, /ATMOS_AO, $
+                              SPDIST=SPDIST])
+
+   INPUTS:
+          NU:   The spatial frequencies at which the MTF will be
+          computed, in normalized units (i.e. nu=1 at spatial frequency
+          D/lambda for a circular aperture telescope), and need not be
+          regularly gridded.
+
+          PARAMS:   A structure of parameters defined as follows:
+
+                    params.lambda  - wavelength in meters of the
+                                     observation 
+                    params.f       - effective focal length at detector
+                                     in meters
+                    params.D       - telescope pupil diameter in meters,
+                                     defining the normalized spatial
+                                     frequency NU which is in units of
+                                     D/lambda; not necessarily 10
+                                     meters for Keck! (see PROCEDURE
+                                     below)   
+                    params.A       - width of detector pixel in meters,
+                                     27 microns for the NIRC2 narrow
+                                     field.
+                    params.pupil   - a string equal to the name of
+                                     the pupil-stop of the NIRC2
+                                     camera (see documentation for
+                                     T_PERFECT_KECK for a list of
+                                     available pupil-stop names) or for
+                                     a circular pupil, the scalar
+                                     floating point value of the
+                                     pupil's central obscuration.  The
+                                     data type of this parameter
+                                     deterimines the form of the pupil
+                                     MTF used (see PROCEDURE below).
+                    params.L0      - the outer scale of turbluence, in
+                                     meters, for a modified Kolmogorov
+                                     spectrum
+                    params.sigma   - the width of the AO system
+                                     deformable mirror's (DM's)
+                                     influence function as projected
+                                     onto the pupil plane, in meters.
+                    params.w       - scaling factor for the influence
+                                     function's Fourier transform;
+                                     mimics variable AO correction (see
+                                     documentation for
+                                     FT_INFL_FUNCTION) 
+                    params.delta   - wavefront measurement error
+                    params.cmult   - constant scaling factor of the output
+                                     MTF
+                    params.N       - additive constant to output MTF
+                                     representing a noise floor
+                    params.r0      - wavelength specific Fried
+                                     parameter in meters (see PROCEDURE
+                                     below). 
+
+   KEYWORD PARAMETERS:
+          SPDIST: Set this keyword to a vector the same size as nu, the
+                  1-D power spectrum of the source distribution power
+                  spectrum of an image for which you wish to fit an
+                  MTF.  The output (MTF)^2 is multiplied by this vector
+                  before output.
+          /PERF:  If this keyword is set, RESULT is the square of the
+                  diffraction limited pupil MTF. 
+          /ATMOS_AO:   If this keyword is set, RESULT is the square of
+                  the AO filtered atmospheric MTF.
+          /PIX    Returns the MTF^2 of an ideal pixel.
+          _EXTRA: Use this keyword to pass in a structure containing
+                  constant parameters that need not be recomputed each
+                  time MTFFUNC_KECK is called.  This is useful for
+                  speeding up an iterative fitting procedure that uses
+                  MTFFUNC_KECK.  The structure passed in via this
+                  keyword must contain the following parameters/tags:
+
+                   _EXTRA = {lambda:lambda, f:f, D:D, pupil:pupil, $
+                             A:A, TPERF:TPERF, SPDIST:SPDIST}
+
+                  where lambda, f, D, A, and pupil are definted exactly
+                  as they are for input via PARAMS; TPERF is a vector
+                  of size equal to NU and is the diffraction limited
+                  pupil MTF (N.B., not the squared MTF) and is
+                  equivalent to the square root of the output of
+                  MTFFUNC_KECK with the /PERF keyword set; SPDIST is
+                  the power spectrum of and image's source distribution
+                  function, identical to SPDIST.  
+
+                  If the keyword _EXTRA is set to this structure,
+                  then PARAMS must not be a structure containing all of
+                  the parameters defined in PARAMS above, but must be a
+                  7 element vector defined as such:
+
+                  PARAMS[0] = L0, PARAMS[1] = sigma, PARAMS[2] = w,
+                   PARAMS[3] = delta, PARAMS[4] = cmult, PARAMS[5]= N,
+                    PARAMS[6] = r0.
+
+                  Setting the keyword SPDIST
+                  overrides the source distribution power spectrum
+                  passed in via the _EXTRA keyword.  If the _EXTRA
+                  keyword is not set and a structure of parameters is
+                  passed in via PARAMS, then SPDIST is the only way to
+                  multiply the output of MTFFUNC_KECK by a vector
+                  before returning.
+
+   OUTPUTS:
+          RESULT:  The (MTF)^2, evaluated at the input spatial
+          frequencies, NU.
+
+   RESTRICTIONS:
+          NU must be greater than zero.  
+
+   PROCEDURE CALLS:
+          T_ATMOS_AO(), T_PIX(), T_PERFECT_KECK(), T_PERFECT()
+
+   PROCEDURE:
+          If PARAMS.pupil is a string, it must specify the pupil stop
+          name of the NIRC2 camera that was in place at the time of the
+          observation.  See the documentation for NIRC2PUPIL for a list
+          of acceptable pupil stop names.  In this case, the pupil MTF
+          is numerically calculated as the autocorrelation function of
+          the Keck pupil via the procedure T_PERFECT_KECK.
+
+          If PARAMS.pupil is a floating point scalar, the pupil MTF is
+          calculated analytically via the procedure T_PERFECT for a
+          circular pupil with central obscuration PARAMS.pupil.  (See
+          the documentation for T_PERFECT.)  This functionality is not
+          intended for use with Keck AO data, but is included in the
+          event this software is applied to data from other AO systems,
+          such as the Lick 3-meter telescope.
+
+          PARAMS.delta is untested, and for the time being should be
+          left set to zero.
+
+          In general PARAMS.D should not be set to the familiar 10
+          meters, which is the effective diameter of the Keck pupil.
+          Since this parameter defines the maximum spatial frequency
+          D/lambda to which the telescope is sensitive, it should be
+          equal to the diameter of the circle inscribing the Keck
+          pupil.  This is because the lambda/D minimum angle changes
+          depending on orientation in the image plane, and in certain
+          orientations the diameter appropriate for this specification
+          is D = 10.99 m.
+
+          r0 is the wavelength specific Fried parameter.  Generally,
+          the r0 specifying seeing conditions is quoted for a
+          wavelength of 500 nm.  If one has reason to believe that the
+          r0 for a set of observations is 20 cm, then the wavelength
+          specific r0 is given as
+              r0_lambda = r0 * (lambda/500 nm)^(6/5)
+          and this is the r0 that should be specified in PARAMS.RO.
+
+          The effective focal length at the detector, PARAMS.F, is
+          related to the platescale of the detector by
+              F = Apix / platescale
+          where platescale is in radians / pixel.  If the platescale
+          and the pixel size is accurately known, F should be
+          calculated in this manner.
+
+   EXAMPLE:
+          Generate a model MTF for an H-band NIRC2 image at the .01
+          arcsec/pixel platescale at normalized spatial fequencies in
+          the image plane from 0 to 1:
+
+          params={lambda:1.6e-6, F:557.0, D:10.99,  $
+                  L0:30.0, sigma:0.56, w:1.5, delta:0.0, cmult:1.0, $
+                  N:1e-4, r0:0.65, Apix:27e-6, pupil:'largehex'}
+          nu = findgen(100)/99.
+          tsys_squared = mtffunc_keck(nu,params) 
+
+   MODIFICATION HISTORY:
+          Written by:  Christopher D. Sheehy, January 2006.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: fitmtf_keck(nu, power, error, pspec_sources, clip=None, startParams=None, relStep=0.2, quiet=False)
+
+   
+   NAME:
+        FITMTF_KECK
+
+   PURPOSE:
+        Uses MPFIT to perform a constrained Levenberg-Markwardt fit of
+        a model MTF to data from a Keck adaptive optics image.  It is
+        highly recommended that the user edit this procedure to suit
+        his or her particular needs, i.e. changing the default initial
+        guesses for the fit parameters and the step size to MPFIT.
+
+        This procedure is meant as a guide to illustrate how to use
+        MPFIT in conjunction with the AO MTF software.  Just because
+        MPFIT returns best fit parameters does not mean that it has
+        found an absolute minimum in Chi-squared.  As with most
+        non-linear fit routines, some tinkering may be required to
+        avoid local minima and to obtain accurate fits.  In other
+        words, this procedure should not be applied blindly.
+
+        In general, a good way to obtain accurate fits is to first
+        perform the fits with decent starting guesses for the fit
+        parameters and specifying a relatively large step size over
+        which MPFIT calculates the numerical derivative of the fit
+        function w.r.t. the fit parameters.  Once the best fit
+        parameters are obtained from this iteration, the step
+        size can be decreased and the best fit parameters from the
+        first iteration should be used as the starting guesses for the
+        parameters in the second iteration.  
+
+        A good rule of thumb that seems to work in some (many?) cases
+        is specifying the step size in the first iteration to be 20% of the
+        parameters' respective values, and a step size of 2% in the
+        second interation.  This can be accomplished by changing the
+        values of PARINFO[*].relstep from 0.20 to 0.02 within the
+        procedure or via the RELSTEP keyword defined at the main
+        level. Different step sizes for different parameters can be
+        specified by editing PARINFO[*].relstep within the procedure.
+
+   CATEGORY:
+        ???
+
+   CALLING SEQUENCE:
+        FITMTF_KECK, filename, params, perror, covar, chisq, $
+                     [start=start, relstep=relstep, quiet=quiet]
+
+   INPUTS:
+        FILENAME: A scalar string specifying the filename of an IDL
+                  save file containing the data to which the model MTF
+                  is fit.  The command
+                        restore, FILENAME
+                  must restore the variables NU, POWER, ERROR, and
+                  SPDIST, which are vectors of equal size.  These
+                  variables are the outputs of the routine GETMTF.
+
+   KEYWORD PARAMETERS:
+        START:   Set this keyword equal to a structure containing
+                 starting guesses for the fit parameters as defined in
+                 the documentation for MTFFUNC_KECK.  If not set, they
+                 the default values must be defined within the
+                 procedure.  
+
+        CLIP:    Set this keyword equal to a scalar value defining the
+                 normalized spatial frequency (defined by NU) below
+                 which the data restored from FILENAME will be ignored.
+                 By default, this value is None (no clipping).  
+                 Setting CLIP = 0.0 fits all of the data.  
+                 However, this is generally not
+                 recommended because imperfect sky subtraction of the
+                 image from which NU and POWER were computed usually
+                 contaminates the power spectrum at low spatial
+                 frequencies. The recommended value is 0.02.
+
+        RELSTEP: Defines the relative step size over which MPFIT
+                 computes the numerical derivative of Chi-sqared
+                 w.r.t. the fit parameters.  Sets the value
+                 PARINFO[*].relstep, which is an input to MPFIT (see
+                 the documentation for MPFIT).
+
+        /QUIET : Set this keyword to supress the printed output of
+                 MPFIT.  Generally, though, it is good practice to keep
+                 tabs on what MPFIT is doing as it's proceding with the
+                 fit.  
+
+   OUTPUTS:
+        PARAMS:  A structure of the best fit parameters as determined
+                 by MPFIT; can be used as the input parameters to
+                 MTFFUNC_KECK, MTF2PSF, MTF2EE, or any of
+                 MTFFUNC_KECK's subsidiary routines.  
+
+                 The parameters that are fit are L0, sigma, w,
+                 delta, cmult, N, and r0.  The rest are only supplied
+                 as information to MTFFUNC_KECK.  In addition, some of
+                 these fit parameters may be held constant if they are
+                 known or assumed (SIMGA and DELTA are held fixed by 
+                 default when performing the fit).  Constant parameters
+                 are specified by setting PARINFO[i].fixed to 1 within
+                 the FITMTF_KECK procedure (see documentation for
+                 MPFIT and MPFITFUN).
+
+        PERROR:  A structure of formal error in the best fit
+                 parameters, as determined by MPFIT.  Parameters that
+                 are not included in the fit or are held fixed during
+                 the fit return an error of 0.
+
+        COVAR:   The parameter covariance matrix, of size N x N, where
+                 N is the number of fit parameters supplied to MPFIT,
+                 the values of which depend on the order of the vector
+                 of input parameters supplied to MPFIT.  (See
+                 documentation for MPFIT and order of FCNARGS as
+                 defined within this procedure.)
+
+        CHISQ:   The quantity (RESIDS/ERROR)^2, where 
+                 RESIDS = POWER - BESTFIT, and POWER and ERROR are
+                 the vectors restored from FILENAME (see above).
+                 CHISQ is calculated ignoring data at NU < CLIP. 
+
+        NITER:   Number of iterations performed by the fitting routine.
+
+   PROCEDURE CALLS:
+        MPFITFUN, MPFIT, T_PERFECT_KECK
+
+   EXAMPLE:
+        read in a fully reduced H-band NIRC2 image
+        im = READFITS('myimage.fits')  
+
+        calculate its power spectrum
+        p = {lambda:1.65e-6, D:10.99, F:557.0, APIX:27e-6}
+        GETMTF, im, p, nu, power, error, spdist
+        SAVE, nu, power, error, spdist, filename='mtfdata.sav'
+
+        fit an MTF to this data
+        startp = {wave:1.65e-6, D:10.99, F:557.0, Apix:27e-6, $
+                  pupil:'largehex', L0:30.0, sigma:0.56, $
+                  w:1.3, delta:0.0, cmult:1.0, N:1e-5, r0:0.5}
+        FITMTF_KECK, 'mtfdata.sav', bestfit_params, start=startp
+
+        zero in on the best fit parameters by editing FITMTF_KECK to
+        perform the fit using a smaller step size to MPFIT.  Change
+        PARINFO[*].relstep from 0.20 to 0.02, recomplie FITMTF_KECK,
+        and perform the fit again using the previous best fit
+        parameters as the new starting parameters.
+        FITMTF_KECK, 'mtfdata.sav', bestfit_params2, start=bestfit_params
+
+        calculate the encircled energy for the PSF in image
+        'myimage.fits' at a radius of 25 pixels (at the 0.01 arcsec/pix
+        NIRC2 platescale). 
+        MTF2EE, bestfit_params2, 25.0, EE
+        print, EE
+
+        compute the best fit power spectrum
+        PSPEC = MTFFUNC_KECK(nu, bestfit_params2, spdist=spdist)
+        plot, nu, power, /ylog, psym=4
+        oplot, nu, pspec
+
+        plot the best fit MTF
+        T = sqrt(MTFFUNC_KECK(nu, bestfit_params2)
+        plot, nu, T, /ylog
+
+   MODIFICATION HISTORY:
+        Written by Christopher D. Sheehy, January 2006.
+        Added "niter" keyword, Nate McCrady, May 17, 2007.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: params_arr2dict(param_array)
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: params_dict2arr(param_dict)
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: t_perfect_keck(x, p, pupil=None)
+
+   
+   NAME:
+          T_PERFECT_KECK
+
+   PURPOSE:
+          Numerically computes a 1-D approximation to the 2-D
+          diffraction limited MTF of the segmented Keck pupil,
+          appropriate for the NIRC2 camera. 
+
+   CATEGORY:
+          ???
+
+   CALLING SEQUENCE:
+          RESULT = T_PERFECT_KECK(NU, D, [PUPIL=PUPIL])
+
+   INPUTS:
+          NU:  Normalized spatial frequency in the image plane, in
+               units of D/lambda.
+
+          D:   The diameter of the Keck pupil, in meters, to which the
+               spatial frequencies are normalized, i.e. not necessarily
+               the oft-quoted effective diameter of 10 meters.  
+               If D is a scalar or a 1-element array, this value is
+               used.  Otherwise D must be a structure with the tag "D"
+               defined, as per the definition of PARAMS in
+               MTFFUNC_KECK. 
+
+   KEYWORD PARAMETERS:
+          PUPIL:      Set this keyword to a string to select the
+                      NIRC2 pupil-stop.  Available choices are
+                         'OPEN'
+                         'LARGEHEX'
+                         'MEDIUMHEX'
+                         'SMALLHEX'
+                         'INCIRCLE'
+                      If this keyword is not set, the default pupil is
+                      'LARGEHEX'. (See documentation for NIRC2PUPIL.)
+
+   OUTPUTS:
+          RESULT:  The diffraction limited MTF (N.B. not the square of
+          the MTF).
+
+   PROCEDURE:
+          1) Retrieves a pupil image from NIRC2PUPIL
+          2) Computes the 2-D autocorrelation function of the pupil
+          3) Radially bins and averages the 2-D autocorrelation
+             function into a 1-D MTF.
+          4) Interpoates the 1-D MTF onto the grid of normalized
+             spatial frequencies, NU, defined by the user.
+
+   PROCEDURE CALLS:
+          NIRC2PUPIL(), CONVOLVE()
+
+   MODIFICATION HISTORY:
+          Written by Christopher D. Sheehy, January 2006.
+          Commented by Nate McCrady, January 2008.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: autocorr2d(d)
+
+   
+   2D auto correlation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: nirc2pupil(npix=256, du=None, pmsname='largehex', pmrangl=0.0)
+
+   
+   NAME:
+       NIRC2PUPIL
+
+   PURPOSE:
+       Calculate NIRC2 pupil image
+
+   EXPLANATION:
+       Calculate pupil image for any pupil stop, pupil angle, and image
+       scale, for use by NIRC2PSF in determining theoretical PSF.
+
+   CALLING SEQUENCE:
+       result = NIRC2PUPIL( [NPIX=, DU=, PMSNAME=, PMRANGL= ])
+
+   INPUTS:
+       none.
+
+   OUTPITS:
+       result = binary image of pupil
+
+   OPTIONAL INPUT KEYWORDS:
+       NPIX = size of pupil image, in pixels
+
+       DU = platescale of pupil image, in m/pixel at the telescope primary
+
+       PMSNAME = pupil stop name, eg. 'largehex' (the default).
+
+       PMRANGL = pupil drive's angular position (for rotated pupil images).
+         NOT TESTED.  There could be an offset and/or a sign flip needed!
+
+   EXAMPLE:
+       pupil = NIRC2PUPIL(npix=512, du=0.05, PMSNAME='open')
+
+   ERROR HANDLING:
+       none
+
+   RESTRICTIONS:
+       none
+
+   NOTES:
+       The dimentions are based on Keck KAON 253 and the NIRC2 pupil
+         stop drawings.
+
+   PROCEDURES USED:
+       none
+
+   MODIFICATION HISTORY:
+       Original writen May 2004, A. Bouchez, W.M. Keck Observatory
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: dist_circle(size, center=None)
+
+   
+   "
+   NAME: 
+        DIST_CIRCLE
+   PURPOSE:      
+        Form a square array where each value is its distance to a given center.
+   EXPLANATION:
+        Returns a square array in which the value of each element is its 
+        distance to a specified center. Useful for circular aperture photometry.
+
+   CALLING SEQUENCE:
+        DIST_CIRCLE, IM, N, [ XCEN, YCEN,  /DOUBLE ]
+
+   INPUTS:
+        N = either  a scalar specifying the size of the N x N square output
+                 array, or a 2 element vector specifying the size of the
+                 N x M rectangular output array.
+
+   OPTIONAL INPUTS:
+        XCEN,YCEN = Scalars designating the X,Y pixel center.  These need
+                 not be integers, and need not be located within the
+                 output image.   If not supplied then the center of the output
+                 image is used (XCEN = YCEN = (N-1)/2.).
+
+   OUTPUTS:
+         IM  - N by N (or M x N) floating array in which the value of each 
+                 pixel is equal to its distance to XCEN,YCEN
+
+   OPTIONAL INPUT KEYWORD:
+         /DOUBLE - If this keyword is set and nonzero, the output array will
+                 be of type DOUBLE rather than floating point.
+
+   EXAMPLE:
+         Total the flux in a circular aperture within 3' of a specified RA
+         and DEC on an 512 x 512 image IM, with a header H.
+
+                 IDL> adxy, H, RA, DEC, x, y       Convert RA and DEC to X,Y
+         IDL> getrot, H, rot, cdelt        CDELT gives plate scale deg/pixel
+         IDL> cdelt = cdelt*3600.          Convert to arc sec/pixel
+         IDL> dist_circle, circle, 512, x, y  ;Create a distance circle image
+         IDL> circle = circle*abs(cdelt[0])   ;Distances now given in arcseconds
+         IDL> good = where(circle LT 180)  ;Within 3 arc minutes
+         IDL> print,total( IM[good] )      Total pixel values within 3'
+
+   RESTRICTIONS:
+         The speed of DIST_CIRCLE decreases and the the demands on virtual
+         increase as the square of the output dimensions.   Users should
+         dimension the output array as small as possible, and re-use the
+         array rather than re-calling DIST_CIRCLE
+
+   MODIFICATION HISTORY:
+         Adapted from DIST    W. Landsman            March 1991
+         Allow a rectangular output array   W. Landsman     June 1994
+         Converted to IDL V5.0   W. Landsman   September 1997
+         Add /DOUBLE keyword, make XCEN,YCEN optional  W. Landsman Jun 1998
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: t_perfect(x, ee)
+
+   
+   NAME:
+          T_PERFECT
+
+   PURPOSE:
+          Computes the analytic diffraction limited MTF of a
+          circular pupil with a circular central obscuration.
+
+   CATEGORY:
+          What goes here?
+
+   CALLING SEQUENCE:
+          RESULT = T_PERFECT(NU, PUPIL)
+
+   INPUTS:
+          NU:  Normalized spatial frequency in the image plane, in
+               units of D/lambda where D is the pupil diameter and
+               lambda is the observing wavelength     need not be
+               regularly gridded
+
+          PUPIL:  The pupil's central obscuration, defined as the
+               ratio of the obscuration's diameter to the pupil's
+               diameter.  If PUPIL is a scalar or a 1-element array,
+               this value is used.  Otherwise PUPIL must be a structure
+               with the tag "PUPIL" defined, as per the definition of
+               PARAMS in MTFFUNC_KECK. 
+
+   OPTIONAL INPUTS:
+          NONE
+
+   KEYWORD PARAMETERS:
+          NONE
+
+   OUTPUTS:
+          RESULT:  The diffraction limited pupil MTF (N.B. not the
+          square of the MTF)
+
+   OPTIONAL OUTPUTS:
+          NONE
+
+   MODIFICATION HISTORY:
+          Written by Christopher D. Sheehy, January 2006.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: t_pix(x, p)
+
+   
+   NAME:
+          T_PIX
+
+   PURPOSE:
+          Analytically computes the MTF of an ideal square pixel,
+          i.e. the detector MTF.
+
+   CATEGORY:
+          ???
+
+   CALLING SEQUENCE:
+          RESULT = T_PIX(NU, PARAMS)
+
+   INPUTS:
+          NU:  Normalized spatial frequency in the image plane, in
+               units of D/lambda.
+
+          PARAMS:  Must be a structure containing the tags "lambda",
+               "D", "F", and "A" as defined in the documentation for
+               MTFFUNC_KECK.
+
+   OPTIONAL INPUTS:
+          NONE
+
+   KEYWORD PARAMETERS:
+          NONE
+
+   OUTPUTS:
+          The detector MTF (N.B. not the square of the MTF)
+
+   PROCEDURE CALLS:
+          SINC()
+
+   MODIFICATION HISTORY:
+          Written by Christopher Sheehy, January 2006.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: t_atmos_ao(x, p)
+
+   
+   NAME:
+          T_ATMOS_AO
+
+   PURPOSE:
+          Computes the AO filtered atmospheric MTF assuming a modified
+          Kolmogorov atmospheric phase error power spectrum with a
+          finite outer scale of turbulence.
+
+   CATEGORY:
+          ????
+
+   CALLING SEQUENCE:
+          RESULT = T_ATMOS_AO(NU, PARAMS)
+
+   INPUTS:
+          NU:  Normalized spatial frequency in the image plane, in
+               units of D/lambda.
+          PARAMS:  A structure of parameters, defined in the
+               documentation for MTFFUNC_KECK
+
+   OPTIONAL INPUTS:
+          NONE
+
+   KEYWORD PARAMETERS:
+          NONE
+
+   OUTPUTS:
+          RESULT:  The AO+atmosphere MTF     the same size as NU.
+
+   RESTRICTIONS:
+          NU must be greater than zero.
+
+   PROCEDURE CALLS:
+          STRUC_FUNC()
+
+   PROCEDURE:
+          Computes the structure function for the AO filtered
+          Kolmogorov power spectrum using STRUC_FUNC and exponentiates
+          to yield the atmosphere + AO MTF.
+
+   MODIFICATION HISTORY:
+          Written by Christopher D. Sheehy, January 2006.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: phi_atmos_ao(x, p, unmod=False, tat=False)
+
+   
+   NAME:
+          PHI_ATMOS_AO
+
+   PURPOSE:
+          Calculates the AO filtered atmospheric power spectrum for
+          spatial frequencies in the pupil plane, Phi_AO = Phi*(1-H)^2
+          where Phi is the unfiltered atmospheric power spectrum and H
+          is the Fourier transform of the deformable mirror's (DM's)
+          influence function.  The default behavior is to use modified
+          Kolmogorov power spectrum with finite outer scale and the
+          influence function for the Keck AO system's DM.
+
+   CATEGORY:
+          ???
+
+   CALLING SEQUENCE:
+          Result = PHI_ATMOS_AO(KAPPA, PARAMS, [unmod=unmod, tat=tat])
+
+   INPUTS:
+          KAPPA:  A vector of spatial frequencies in the pupil plane,
+                  in m^-1
+          PARAMS: A structure of parameters as defined in the
+                  documentation for MTFFUNC_KECK 
+
+   KEYWORD PARAMETERS:
+          /UNMOD: Set this keyword to use an unmodified Kolmogorov
+                  atmospheric power spectrum, i.e. with an infinite
+                  outer scale.
+          /TAT:   Set this keyword to use a modified Tatarski power
+                  spectrum, i.e. one with both a finite outer scale
+                  and finite inner scale (WARNING: UNTESTED).  If this
+                  keyword is invoked, the PARAMS structure must contain
+                  an extra tag, "Inner:", that is the inner scale of
+                  turbulence in meters.
+
+   OUTPUTS:
+          Result: The AO filtered atmospheric power spectrum, of
+                  evaluated at and the same size as KAPPA.
+
+   RESTRICTIONS:
+          If the /UNMOD keyword is set, an input KAPPA of zero will
+          cause a divide by 0 error, and RESULT will be Infinity,
+          because the power at zero spatial frequency for an infinite
+          outer scale is infinity.
+
+          Works for the Keck DM's influence function.  If the user
+          wishes to use a different influence function, replace the
+          call to FT_INFL_FUNC within the routine with another
+          function that returns the Fourier transform of the
+          appropriate influence function.  This function should take as
+          inputs KAPPA and PARAMS (the user may add other tags to the
+          PARAMS structure as necessary) and return the FT of the
+          influence function as projected onto the pupil plane,
+          evaluated at the inpute KAPPA.
+
+   PROCEDURE CALLS:
+          PHI__ATMOS(), FT_INFL_FUNC()
+
+   MODIFICATION HISTORY:
+          Written by Christopher Sheehy, January 2006.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: phi_atmos(x, p, tat=False, unmod=False)
+
+   
+   NAME:
+          PHI_ATMOS
+
+   PURPOSE:
+          Calculates a modified Kolmogorov atmospheric phase error
+          power spectrum with finite outer scale of turbulence.
+
+   CATEGORY:
+          ???
+
+   CALLING SEQUENCE:
+          RESULT = PHI_ATMOS(KAPPA, PARAMS, [unmod=unmod, tat=tat])
+
+   INPUTS:
+          KAPPA:  A vector of spatial frequencies in the pupil plane,
+                  in m^-1, at which the power spectrum is evaluated
+                  (need not be regularly gridded).
+          PARAMS:  A structure of parameters as definted in the
+                  documentation for MTFFUNC_KECK
+
+   KEYWORD PARAMETERS:
+          /UNMOD:  Set this keyword to return an unmodified Kolmogorov
+                   power spectrum, i.e. one with an infinite outer
+                   scale. 
+          /TAT:    Set this keyword to return a modified Tatarski power
+                   spectrum, i.e. one with both a finite outer scale
+                   and finite inner scale (WARNING: UNTESTED).  If this
+                   keyword is invoked, the PARAMS structure must contain
+                   an extra tag, "Inner:", that is the inner scale of
+                   turbulence in meters.
+
+   OUTPUTS:
+          RESULT:  The Kolmogorov atmospheric power spectrum, of same
+                   size as input KAPPA.
+
+   RESTRICTIONS:
+          If the /UNMOD keyword is set, an input KAPPA of zero will
+          cause a divide by 0 error, and RESULT will be Infinity,
+          because the power at zero spatial frequency for an infinite
+          outer scale is infinity.
+
+   PROCEDURE:
+          1) The Kolmogorov spectrum with inifinte outer scale is
+             calculated.  If the /UNMOD keyword is set, this is
+             immediately returned.
+          2) The Kolmogorov spectrum with finite outer scale is
+             calculated.  Since the power at spatial scales much less
+             than the outer scale should be left unaffected, the
+             spectrum is normalized to have the same power at a very
+             high spatial frequency, 100 m^-1.
+
+   MODIFICATION HISTORY:
+          Written by Christopher Sheehy, January 2006
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: ft_infl_func(x, p)
+
+   
+   +
+    NAME:
+           FT_INFL_FUNC
+
+    PURPOSE:
+           Evaltuates the Fourier transform of the Keck AO system's
+           deformable mirror at given input spatial frequency in the
+           pupil plane.  Uses the functional form for the influence
+           function given by van Dam, et al., 2004, Applied Optics, 43,
+           5452.
+
+    CATEGORY:
+           ???
+
+    CALLING SEQUENCE:
+           Result = FT_INFL_FUNC(KAPPA, PARAMS)
+
+    INPUTS:
+           KAPPA:  Spatial frequency in the pupil plane of the telescope
+                   in m^-1.
+           PARAMS: A structure of parameters as defined in the
+                   documentation for MTFFUNC_KECK.  Only SIGMA and W
+                   need be defined. 
+
+    OUTPUTS:
+           Result:  The FT of the influence function, evaluated at and
+                    of the same size as KAPPA.  The output is multiplied
+                    by W before output.  W=2 gives perfect AO correction
+                    at zero spatial frequency.
+
+    PROCEDURE:
+           The FT of the influence function has a set functional form,
+           the difference of two Gaussians, and depends only on the
+           parameter SIGMA (as defined in PARAMS) that is on the order
+           of the separation between DM actuators.
+
+           The result is multiplied by a constant scaling factor w, defined in
+           PARAMS, before being output.
+
+    MODIFICATION HISTORY:
+           Written by Christopher Sheehy
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: structure_function(rr, pp, phi_call=phi_atmos_ao)
+
+   
+   "
+    NAME:
+           STRUC_FUNC
+
+    PURPOSE:
+           Calculates the structure function, D(r), where r is the
+           distance between two points in the pupil plane of the
+           telescope in meter.  Default behavior is to calculate D(r)
+           for an AO corrected Kolmogorov atmospheric power spectrum
+           with finite outer scale.  However, the user can define any
+           arbitrary atmospheric power spectra for which to calculate
+           D(r).
+
+    CATEGORY:
+           ???
+
+    CALLING SEQUENCE:
+           RESULT = STRUC_FUNC(R, PARAMS, [phi_call=phi_call])
+
+    INPUTS:
+           R:  A vector of radii in the pupil plane, in meters
+
+           PARAMS:  A structure of parameters as defined in the
+           documentation for MTFFUNC_KECK
+
+    OPTIONAL INPUTS:
+           NONE
+
+    KEYWORD PARAMETERS:
+           PHI_CALL:  The default behavior of STRUC_FUNC, i.e. not
+                      defning PHI_CALL, is to calculate the structure 
+                      function assuming a modified Kolmogorov power
+                      spectrum with a finite outer scale and corrected
+                      by adaptive optics.  If the user wishes to find
+                      D(r) for a different power spectrum, PHI_CALL
+                      should be a string that, as executed, calls an IDL
+                      function that returns the power spectrum for 
+                      input spatial frequencies KAPPA (as defined in the
+                      documentation for PHI_ATMOS/PHI_ATMOS_AO).
+                      This function must be structured as follows:
+
+                          FUNCTION MYFUNCT, KAPPA, PARAMS, KEYWORDS=...
+                            (compute the atmospheric power spectrum PHI
+                             at given X for input parameters PARAMS)
+                             RETURN, PHI
+                          END
+
+                      The PARAMS input to the function is the same
+                      structure as the PARAMS input into STRUC_FUNC.
+
+                      PHI_CALL MUST HAVE 'k' AS THE SPATIAL FREQUENCY
+                      VARIABLE NAME 'k' AND 'p' AS THE PARAMETER
+                      STRUCTURE VARAIBLE NAME!
+
+                      Example: The function PHI_ATMOS returns the
+                      uncorrected atmospheric power spectrum, and would
+                      be called as such:
+
+                          IDL> x=findgen(10)
+                          IDL> phi=PHI_ATMOS(x,params)
+
+                      where params has already been defined and is a
+                      structure containing information for PHI_ATMOS to
+                      be able to calculate the power spectrum.  In the
+                      call to STRUC_FUNC, setting the keyword
+
+                          PHI_CALL = 'PHI_ATMOS(k,p)'
+
+                      forces STRUC_FUNC to use this power spectrum in
+                      calculating D(r).  
+
+                      PHI_ATMOS also accepts keywords     for instance
+
+                          IDL> phi=PHI_ATMOS(x,params,/unmod)
+
+                      returns an uncorrected power spectrum with an
+                      infinite outer scale.  In this case, one would set
+                      the keyword
+
+                          PHI_CALL = 'PHI_ATMOS(k,p,/unmod)'
+
+                      Leaving the keyword PHI_CALL undefined is
+                      equivalent to setting
+
+                          PHI_CALL = 'PHI_ATMOS_AO(k,p)
+
+    OUTPUTS:
+           RESULT:  A vector of same size as R, the structure function
+           evaluated at R
+
+    PROCEDURE CALLS:
+           PHI_ATMOS_AO(), D_R(), QPINT1D()
+
+    PROCEDURE:
+           Utilizes the adaptive 1-d integration routine QPINT1D,
+           written by Craig Markwardt and available from
+           http://cow.physics.wisc.edu/~craigm/idl/idl.html
+
+    MODIFICATION HISTORY:
+           Written by Christopher Sheehy, January 2006.
+   -
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: mtf2psf(par, sz, perfect=False)
+
+   
+   "
+   NAME:
+          MTF2PSF
+
+   PURPOSE:
+          Computes the adaptive optics PSF for the modulation
+          transfer function (MTF) defined by a set of user supplied
+          input parameters.  The PSF is circularly symmetric,
+          i.e. azimuthally averaged.
+
+   CATEGORY:
+          ???
+
+   CALLING SEQUENCE:
+          MTF2PSF, Params, Size, Psf2D, PSF1D
+
+   INPUTS:
+          Params:   A structure of parameters defined as follows, and
+                    which may contain more tags than listed here:
+
+                    params.lambda  - observing wavelength in meters
+                    params.f       - effective focal length at detector
+                                     in meters
+                    params.D -       telsscope pupil diameter in meters,
+                                     i.e. the D/lambda at which normalized
+                                     spatial frequency nu=1
+                    params.Apix      - width of detector pixel in meters
+                    params.pupil   - a string equal to the name of
+                                     the pupil-stop of the NIRC2
+                                     camera (see documentation for
+                                     T_PERFECT_KECK for a list of
+                                     available pupil-stop names) or for
+                                     a circular pupil, the scalar
+                                     floating point value of the
+                                     pupil's central obscuration.
+                    params.L0      - the outer scale of turbluence, in
+                                     meters, for a modified Kolmogorov
+                                     spectrum
+                    params.sigma   - the width of the AO system
+                                     deformable mirror's (DM's)
+                                     influence function as projected
+                                     onto the pupil plane, in meters.
+                    params.w       - scaling factor for the influence
+                                     function's Fourier transform    
+                                     mimics variable AO correction
+                    params.delta   - wavefront measurement error
+                    params.cmult   - constant scaling factor of the output
+                                     MTF
+                    params.N       - additive constant to output MTF
+                                     representing a noise floor
+                    params.r0      - wavelength specific Fried
+                                     parameter in meters
+
+          Size:     A scalar, the radius of the output PSF in
+                    arcseconds.  For instance, is Size = 1.0 and the
+                    platescale at the detector is .01 arcsec/pixel, the
+                    output PSF is a 200 x 200 element array.
+
+   OPTIONAL INPUTS:
+          NONE
+
+   KEYWORD PARAMETERS:
+          /PERF:   If this keyword is set, the PSF is calculated from
+                   the diffraction limited pupil MTF.
+
+   OUTPUTS:
+          Psf2D:   A 2-dimensional array, the azimuthally averaged AO
+                   PSF. 
+
+   OPTIONAL OUTPUTS:
+          Psf1D:   A 1-dimensional array, the 1-D PSF whose value at
+                   each element corresponds to the value of the PSF at
+                   the corresponding pixel.
+
+   PROCEDURE CALLS:
+          MTFFUNC_KECK(), INT_TABULATED()
+
+   PROCEDURE:
+          For the given input parameters Params, the 1-D MTF is
+          computed via the procedure MTFFUNC_KECK.  The 1-D PSF is 
+          then given by the integral
+                    1/
+            PSF(w) = | MTF(nu) * nu * BesselJ_0(2*PI*w*nu)* d nu,
+                    0/
+          where w is dimensionless angular distance from the PSF center
+          in units of (lambda/D), and nu is normalized spatial
+          frequency in the image plane.  The 1-D PSF is computed,
+          5x oversampled w.r.t. the detector platescale.  (The
+          platescale is determined from the input parameters, 
+          Apix / f.)  From this oversampled 1-D PSF, the circularly
+          symmetric 2-D PSF is constructed.
+
+   EXAMPLE:
+          Compute H-band NIRC2 PSF for r0 = 15 cm:
+
+          r0 goes as (lambda)^(6/5), so the K-band r0 in meters is
+          0.15 * (2.2 / 0.5)^(6./5.), since r0 = 15 cm is defined for a
+          wavelength of 500 nm.
+
+          Set up the input parameters:
+
+          p    =   {wave:2.2e-6, F:557.0, D:10.99, $
+                    Apix:27e-6, pupil:'largehex', L0:30.0, $
+                    sigma:0.56, w:1.5, delta:0.0, cmult:1.0, N:1e-5, $
+                    r0:0.888}        
+          sz = 1.0      return a PSF with a radius of 1 arcsecond
+          MTF2PSF, p, sz, psf2, psf1
+          tvscl, psf2
+          plot, psf1
+
+          nu = findgen(100)/99.
+          T = sqrt(MTFFUNC_KECK(nu, p))     compute the PSF's corresponding MTF
+          plot, nu, T
+
+              compute the PSF for identical seeing conditions but with no
+              AO correction
+          p.w = 0        no AO correction 
+          MTF2PSF, p, sz, psf2_noAO, psf1_noAO  
+
+              compute the diffraction limited PSF
+          MTF2PSF, p, sz, psf2_perf, psf1_perf, /perf
+
+          There is a subtle difference between setting the /perf
+          keyword to MTF2PSF and setting r0 to some extremely large
+          and unphysical value to mimic diffraction limited seeing.
+          The former computes the PSF from the pupil MTF, while the
+          latter uses the product of the puipl MTF, the atmospheric/AO
+          MTF (which is essentially unity) and the detector MTF.  The
+          detector MTF is a broad sinc function, and its resulting
+          effect on the PSF is small.  In other words, setting the
+          /perf keyword fails to take into account the effect of the
+          detector on the PSF.       
+
+   MODIFICATION HISTORY:
+          Written by Christopher Sheehy, January 2006.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: mtf2ee(par, pixx, perfect=False)
+
+   
+   "
+   NAME:
+          MTF2EE
+
+   PURPOSE:
+          Calculates the AO PSF's encircled energy curve from the AO
+          corrected modulation transfer function.
+
+   CATEGORY:
+          ???
+
+   CALLING SEQUENCE:
+          MTF2EE, Params, Pix, EE
+
+   INPUTS:
+          Params:  A structure of parameters, defined as in the
+                   documentation for MTFFUNC_KECK.
+          Pix:     A vector of radii, in pixels, at which the encircled
+                   energy curve of growth is calculated.  The pixel
+                   scale in pixels/arcsecond is calculated as
+                   (Params.APIX / Params.F)*206265.
+
+   OPTIONAL INPUTS:
+          NONE
+
+   KEYWORD PARAMETERS:
+          /Perf:  If this keyword is set, the returned curve of growth
+                  is for the diffraction limited PSF as calculated from
+                  the pupil MTF.
+
+   OUTPUTS:
+          EE:  A vector of size equal to Pix     the curve of growth
+               evaluated at input Pix
+
+   OPTIONAL OUTPUTS:
+          NONE
+
+   PROCEDURE CALLS:
+          MTFFUNC_KECK(), INT_TABULATED()
+
+   PROCEDURE:
+          For the given input parameters Params, the 1-D MTF is
+          computed via the procedure MTFFUNC_KECK.  The encirled energy
+          curve of growth is then given by the integral
+                            1/
+            EE(w) = (2*Pi*w) | MTF(nu) * BesselJ_1(2*PI*w*nu)* d nu,
+                            0/
+          where w is dimensionless angular distance from the PSF center
+          in units of (lambda/D), and nu is normalized spatial
+          frequency in the image plane.  
+
+   MODIFICATION HISTORY:
+          Written by Christopher D. Sheehy, January 2006.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: strehl(par)
+
+   
+   NAME:
+          STREHL
+
+   PURPOSE:
+          Computes the Strehl ratio of an AO PSF from its corresponding
+          modulation transfer function (MTF).
+
+   CATEGORY:
+          ???
+
+   CALLING SEQUENCE:
+          sr = STREHL(params)
+
+   INPUTS:
+          Params:  A structure of parameters used to compute the AO
+                   MTF, as defined in the documentation for
+                   MTFFUNC_KECK. 
+
+   KEYWORD PARAMETERS:
+          NONE
+
+   OUTPUTS:
+          The scalar strehl ratio for the given input parameters
+
+   PROCEDURE CALLS:
+          MTFFUNC_KECK(), INT_TABULATED()
+
+   PROCEDURE:
+          For the given input parameters, the MTF, T,  is calculated
+          via MTFFUNC_KECK() along with the diffraction limited MTF,
+          Tperf.  The strehl ratio, defined as the ratio of the height
+          of the observed PSF to the diffraction limited PSF is
+          calculated as (see documentation for MTF2PSF)
+
+                 1/
+                  | T(nu)*nu d nu
+                 0/
+          Sr = -------------------- .
+               1/
+                | Tperf(nu)*nu d nu
+               0/
+
+   MODIFICATION HISTORY:
+          Written by Christopher D. Sheehy, January 2006.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:class:: DataHolder
+
+   Bases: :py:obj:`object`
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+

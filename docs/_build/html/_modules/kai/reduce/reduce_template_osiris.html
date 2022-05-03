@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>kai.reduce.reduce_template_osiris &mdash; KAI  documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> KAI
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../autoapi/index.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">KAI</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      <li>kai.reduce.reduce_template_osiris</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for kai.reduce.reduce_template_osiris</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copied from /u/jlu/data/microlens/20aug22os/reduce/reduce.py</span>
+
+<span class="c1">##################################################</span>
+<span class="c1">#</span>
+<span class="c1"># General Notes:</span>
+<span class="c1"># -- python uses spaces to figure out the beginnings</span>
+<span class="c1">#    and ends of functions/loops/etc. So make sure</span>
+<span class="c1">#    to preserve spacings properly (indent). This</span>
+<span class="c1">#    is easy to do if you use emacs with python mode</span>
+<span class="c1">#    and color coding.</span>
+<span class="c1"># -- You will probably need to edit almost every</span>
+<span class="c1">#    single line of the go() function.</span>
+<span class="c1"># -- If you need help on the individual function calls,</span>
+<span class="c1">#    then in the pyraf prompt, import the module and</span>
+<span class="c1">#    then print the documentation for that function:</span>
+<span class="c1">#    --&gt; print kai.kailog.__doc__</span>
+<span class="c1">#    --&gt; print range.__doc__</span>
+<span class="c1">#</span>
+<span class="c1">##################################################</span>
+
+<span class="c1"># Import python and iraf modules</span>
+<span class="kn">from</span> <span class="nn">pyraf</span> <span class="kn">import</span> <span class="n">iraf</span> <span class="k">as</span> <span class="n">ir</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">glob</span>
+
+<span class="c1"># Import our own custom modules</span>
+<span class="kn">from</span> <span class="nn">kai.reduce</span> <span class="kn">import</span> <span class="n">calib</span>
+<span class="kn">from</span> <span class="nn">kai.reduce</span> <span class="kn">import</span> <span class="n">sky</span>
+<span class="kn">from</span> <span class="nn">kai.reduce</span> <span class="kn">import</span> <span class="n">data</span>
+<span class="kn">from</span> <span class="nn">kai.reduce</span> <span class="kn">import</span> <span class="n">util</span>
+<span class="kn">from</span> <span class="nn">kai.reduce</span> <span class="kn">import</span> <span class="n">dar</span>
+<span class="kn">from</span> <span class="nn">kai.reduce</span> <span class="kn">import</span> <span class="n">kai_util</span>
+<span class="kn">from</span> <span class="nn">kai</span> <span class="kn">import</span> <span class="n">instruments</span>
+
+
+<span class="c1">##########</span>
+<span class="c1"># Change the epoch, instrument, and distortion solution.</span>
+<span class="c1">##########</span>
+<div class="viewcode-block" id="epoch"><a class="viewcode-back" href="../../../autoapi/kai/reduce/reduce_template_osiris/index.html#kai.reduce.reduce_template_osiris.epoch">[docs]</a><span class="n">epoch</span> <span class="o">=</span> <span class="s1">&#39;20aug22os&#39;</span></div>
+<div class="viewcode-block" id="osiris"><a class="viewcode-back" href="../../../autoapi/kai/reduce/reduce_template_osiris/index.html#kai.reduce.reduce_template_osiris.osiris">[docs]</a><span class="n">osiris</span> <span class="o">=</span> <span class="n">instruments</span><span class="o">.</span><span class="n">OSIRIS</span><span class="p">()</span></div>
+
+<span class="c1">##########</span>
+<span class="c1"># Make electronic logs</span>
+<span class="c1">#    - run this first thing for a new observing run.</span>
+<span class="c1">##########</span>
+<div class="viewcode-block" id="makelog_and_prep_images"><a class="viewcode-back" href="../../../autoapi/kai/reduce/reduce_template_osiris/index.html#kai.reduce.reduce_template_osiris.makelog_and_prep_images">[docs]</a><span class="k">def</span> <span class="nf">makelog_and_prep_images</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Make an electronic log from all the files in the ../raw/ directory.</span>
+<span class="sd">    The file will be called kai.log and stored in the same directory.</span>
+
+<span class="sd">    @author Jessica Lu</span>
+<span class="sd">    @author Sylvana Yelda</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">kai_util</span><span class="o">.</span><span class="n">makelog</span><span class="p">(</span><span class="s1">&#39;../raw&#39;</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">osiris</span><span class="p">)</span>
+
+    <span class="c1"># If you are reducing OSIRIS, you need to flip the images first. </span>
+    <span class="n">raw_files</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s1">&#39;../raw/i*.fits&#39;</span><span class="p">)</span>
+    <span class="n">osiris</span><span class="o">.</span><span class="n">flip_images</span><span class="p">(</span><span class="n">raw_files</span><span class="p">)</span>
+
+    <span class="c1"># Download weather data we will need.</span>
+    <span class="n">dar</span><span class="o">.</span><span class="n">get_atm_conditions</span><span class="p">(</span><span class="s1">&#39;2020&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span></div>
+    
+
+<span class="c1">###############</span>
+<span class="c1"># Analyze darks</span>
+<span class="c1">###############</span>
+<span class="c1"># def analyze_darks():</span>
+<span class="c1">#     &quot;&quot;&quot;Analyze the dark_calib results</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     util.mkdir(&#39;calib&#39;)</span>
+<span class="c1">#     os.chdir(&#39;calib&#39;)</span>
+<span class="c1"># </span>
+<span class="c1">#     first_dark = 16</span>
+<span class="c1">#     calib.analyzeDarkCalib(first_dark)  # Doesn&#39;t support OSIRIS yet</span>
+<span class="c1"># </span>
+<span class="c1">#     os.chdir(&#39;../&#39;)</span>
+
+<span class="c1">##########</span>
+<span class="c1"># Reduce</span>
+<span class="c1">##########</span>
+<div class="viewcode-block" id="go_calib"><a class="viewcode-back" href="../../../autoapi/kai/reduce/reduce_template_osiris/index.html#kai.reduce.reduce_template_osiris.go_calib">[docs]</a><span class="k">def</span> <span class="nf">go_calib</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Do the calibration reduction.</span>
+
+<span class="sd">    @author Jessica Lu</span>
+<span class="sd">    @author Sylvana Yelda</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1">####################</span>
+    <span class="c1">#</span>
+    <span class="c1"># Calibration files:</span>
+    <span class="c1">#     everything created under calib/</span>
+    <span class="c1">#</span>
+    <span class="c1">####################</span>
+    <span class="c1"># Darks - created in subdir darks/</span>
+    <span class="c1">#  - darks needed to make bad pixel mask</span>
+    <span class="c1">#  - store the resulting dark in the file name that indicates the</span>
+    <span class="c1">#    integration time (2.8s) and the coadds (10ca).</span>
+    <span class="c1">#    -- If you use the OSIRIS image, you must include the full filename in the list. </span>
+    <span class="n">darkFiles</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;i200822_s003</span><span class="si">{0:03d}</span><span class="s1">_flip&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ii</span><span class="p">)</span> <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">23</span><span class="p">,</span> <span class="mi">27</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span>
+    <span class="n">calib</span><span class="o">.</span><span class="n">makedark</span><span class="p">(</span><span class="n">darkFiles</span><span class="p">,</span> <span class="s1">&#39;dark_39.832s_1ca_6rd.fits&#39;</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">osiris</span><span class="p">)</span>
+
+    <span class="n">darkFiles</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;i200822_s003</span><span class="si">{0:03d}</span><span class="s1">_flip&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ii</span><span class="p">)</span> <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">28</span><span class="p">,</span> <span class="mi">32</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span>
+    <span class="n">calib</span><span class="o">.</span><span class="n">makedark</span><span class="p">(</span><span class="n">darkFiles</span><span class="p">,</span> <span class="s1">&#39;dark_5.901s_1ca_4rd.fits&#39;</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">osiris</span><span class="p">)</span>
+
+    <span class="n">darkFiles</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;i200822_s020</span><span class="si">{0:03d}</span><span class="s1">_flip&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ii</span><span class="p">)</span> <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">10</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span>
+    <span class="n">calib</span><span class="o">.</span><span class="n">makedark</span><span class="p">(</span><span class="n">darkFiles</span><span class="p">,</span> <span class="s1">&#39;dark_11.802s_4ca_4rd.fits&#39;</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">osiris</span><span class="p">)</span>
+
+    <span class="n">darkFiles</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;i200822_s021</span><span class="si">{0:03d}</span><span class="s1">_flip&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ii</span><span class="p">)</span> <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">10</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span>
+    <span class="n">calib</span><span class="o">.</span><span class="n">makedark</span><span class="p">(</span><span class="n">darkFiles</span><span class="p">,</span> <span class="s1">&#39;dark_5.901s_8ca_1rd.fits&#39;</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">osiris</span><span class="p">)</span>
+
+    <span class="c1"># Flats - created in subdir flats/</span>
+    <span class="n">offFiles</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;i200822_s003</span><span class="si">{0:03d}</span><span class="s1">_flip&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ii</span><span class="p">)</span> <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">21</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)]</span>
+    <span class="n">onFiles</span>  <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;i200822_s003</span><span class="si">{0:03d}</span><span class="s1">_flip&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ii</span><span class="p">)</span> <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">22</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)]</span>
+    <span class="n">calib</span><span class="o">.</span><span class="n">makeflat</span><span class="p">(</span><span class="n">onFiles</span><span class="p">,</span> <span class="n">offFiles</span><span class="p">,</span> <span class="s1">&#39;flat_kp_tdOpen.fits&#39;</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">osiris</span><span class="p">)</span>
+
+    <span class="c1"># Masks (assumes files were created under calib/darks/ and calib/flats/)</span>
+    <span class="n">calib</span><span class="o">.</span><span class="n">makemask</span><span class="p">(</span><span class="s1">&#39;dark_39.832s_1ca_6rd.fits&#39;</span><span class="p">,</span> <span class="s1">&#39;flat_kp_tdOpen.fits&#39;</span><span class="p">,</span>
+                   <span class="s1">&#39;supermask.fits&#39;</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">osiris</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="go"><a class="viewcode-back" href="../../../autoapi/kai/reduce/reduce_template_osiris/index.html#kai.reduce.reduce_template_osiris.go">[docs]</a><span class="k">def</span> <span class="nf">go</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Do the full data reduction.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1">##########</span>
+    <span class="c1">#</span>
+    <span class="c1"># MB19284</span>
+    <span class="c1">#</span>
+    <span class="c1">##########</span>
+
+    <span class="c1">##########</span>
+    <span class="c1"># Kp-band reduction</span>
+    <span class="c1">##########</span>
+
+    <span class="n">target</span> <span class="o">=</span> <span class="s1">&#39;mb19284&#39;</span>
+    <span class="n">sci_files</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;i200822_a011</span><span class="si">{0:03d}</span><span class="s1">_flip&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ii</span><span class="p">)</span> <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span>
+    <span class="n">sci_files</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;i200822_a012</span><span class="si">{0:03d}</span><span class="s1">_flip&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ii</span><span class="p">)</span> <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">25</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span>
+    <span class="n">sky_files</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;i200822_a018</span><span class="si">{0:03d}</span><span class="s1">_flip&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ii</span><span class="p">)</span> <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">6</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span>
+    <span class="n">refSrc</span> <span class="o">=</span> <span class="p">[</span><span class="mf">917.75</span><span class="p">,</span> <span class="mf">1033.5</span><span class="p">]</span> <span class="c1"># This is the target</span>
+    <span class="c1"># Alternative star to try (bright star to bottom of target): [1015, 581.9]</span>
+    
+    <span class="n">sky</span><span class="o">.</span><span class="n">makesky</span><span class="p">(</span><span class="n">sky_files</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="s1">&#39;kp_tdOpen&#39;</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">osiris</span><span class="p">)</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">clean</span><span class="p">(</span><span class="n">sci_files</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="s1">&#39;kp_tdOpen&#39;</span><span class="p">,</span> <span class="n">refSrc</span><span class="p">,</span> <span class="n">refSrc</span><span class="p">,</span> <span class="n">field</span><span class="o">=</span><span class="n">target</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">osiris</span><span class="p">)</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">calcStrehl</span><span class="p">(</span><span class="n">sci_files</span><span class="p">,</span> <span class="s1">&#39;kp_tdOpen&#39;</span><span class="p">,</span> <span class="n">field</span><span class="o">=</span><span class="n">target</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">osiris</span><span class="p">)</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">combine</span><span class="p">(</span><span class="n">sci_files</span><span class="p">,</span> <span class="s1">&#39;kp_tdOpen&#39;</span><span class="p">,</span> <span class="n">epoch</span><span class="p">,</span> <span class="n">field</span><span class="o">=</span><span class="n">target</span><span class="p">,</span>
+                     <span class="n">trim</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="s1">&#39;strehl&#39;</span><span class="p">,</span> <span class="n">submaps</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">osiris</span><span class="p">)</span>
+
+    <span class="c1">##########</span>
+    <span class="c1">#</span>
+    <span class="c1"># KB200101</span>
+    <span class="c1">#</span>
+    <span class="c1">##########</span>
+
+    <span class="c1">##########</span>
+    <span class="c1"># Kp-band reduction</span>
+    <span class="c1">##########</span>
+
+    <span class="c1">#    -- If you have more than one position angle, make sure to</span>
+    <span class="c1">#       clean them seperatly.</span>
+    <span class="c1">#    -- Strehl and Ref src should be the pixel coordinates of a bright</span>
+    <span class="c1">#       (but non saturated) source in the first exposure of sci_files.</span>
+    <span class="c1">#    -- If you use the OSIRIS image, you must include the full filename in the list. </span>
+    <span class="n">target</span> <span class="o">=</span> <span class="s1">&#39;kb200101&#39;</span>
+    <span class="n">sci_files</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;i200822_a014</span><span class="si">{0:03d}</span><span class="s1">_flip&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ii</span><span class="p">)</span> <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">28</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span>
+    <span class="n">sci_files</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;i200822_a015</span><span class="si">{0:03d}</span><span class="s1">_flip&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ii</span><span class="p">)</span> <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span>
+    <span class="n">sci_files</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;i200822_a016</span><span class="si">{0:03d}</span><span class="s1">_flip&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ii</span><span class="p">)</span> <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span>
+    <span class="n">sky_files</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;i200822_a017</span><span class="si">{0:03d}</span><span class="s1">_flip&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ii</span><span class="p">)</span> <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">6</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span>
+    <span class="n">refSrc</span> <span class="o">=</span> <span class="p">[</span><span class="mi">975</span><span class="p">,</span> <span class="mi">1006</span><span class="p">]</span> <span class="c1"># This is the target</span>
+    <span class="c1"># Alternative star to try (bright star to right of target): [1158, 994]</span>
+    
+    <span class="n">sky</span><span class="o">.</span><span class="n">makesky</span><span class="p">(</span><span class="n">sky_files</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="s1">&#39;kp_tdOpen&#39;</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">osiris</span><span class="p">)</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">clean</span><span class="p">(</span><span class="n">sci_files</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="s1">&#39;kp_tdOpen&#39;</span><span class="p">,</span> <span class="n">refSrc</span><span class="p">,</span> <span class="n">refSrc</span><span class="p">,</span> <span class="n">field</span><span class="o">=</span><span class="n">target</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">osiris</span><span class="p">)</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">calcStrehl</span><span class="p">(</span><span class="n">sci_files</span><span class="p">,</span> <span class="s1">&#39;kp_tdOpen&#39;</span><span class="p">,</span> <span class="n">field</span><span class="o">=</span><span class="n">target</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">osiris</span><span class="p">)</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">combine</span><span class="p">(</span><span class="n">sci_files</span><span class="p">,</span> <span class="s1">&#39;kp_tdOpen&#39;</span><span class="p">,</span> <span class="n">epoch</span><span class="p">,</span> <span class="n">field</span><span class="o">=</span><span class="n">target</span><span class="p">,</span>
+                     <span class="n">trim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="s1">&#39;strehl&#39;</span><span class="p">,</span> <span class="n">submaps</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">osiris</span><span class="p">)</span></div>
+
+<span class="c1">############</span>
+<span class="c1"># Jackknife</span>
+<span class="c1">############</span>
+<div class="viewcode-block" id="jackknife"><a class="viewcode-back" href="../../../autoapi/kai/reduce/reduce_template_osiris/index.html#kai.reduce.reduce_template_osiris.jackknife">[docs]</a><span class="k">def</span> <span class="nf">jackknife</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Perform the Jackknife data reduction. The methodology is as follows:</span>
+<span class="sd">    For N total images, there are N stacked images created by data.combine(),</span>
+<span class="sd">    each of these combo frames consists of N-1 images. The suffix &#39;_{i}&#39; is</span>
+<span class="sd">    given to each jackknife combo frame (i.e. mag_OB06284_17_kp_tdOpen.fits </span>
+<span class="sd">    would be 17th jackknife combo frame created). Submaps flag has been turned</span>
+<span class="sd">    off for this function, as it is not needed.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1">##########</span>
+    <span class="c1">#</span>
+    <span class="c1"># OSIRIS Format</span>
+    <span class="c1">#</span>
+    <span class="c1">##########</span>
+
+    <span class="c1">##########</span>
+    <span class="c1"># Kp-band reduction</span>
+    <span class="c1">##########</span>
+
+    <span class="c1"># Nite 1</span>
+    <span class="n">target</span> <span class="o">=</span> <span class="s1">&#39;OB06284&#39;</span>
+    <span class="n">sci_files1</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;i200810_a004</span><span class="si">{0:03d}</span><span class="s1">_flip&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ii</span><span class="p">)</span> <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">26</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span>
+    <span class="n">sky_files1</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;i200810_a007</span><span class="si">{0:03d}</span><span class="s1">_flip&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ii</span><span class="p">)</span> <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">6</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span>
+    <span class="n">refSrc1</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1071.</span><span class="p">,</span> <span class="mf">854.</span><span class="p">]</span> <span class="c1"># This is the target</span>
+
+    <span class="n">sky</span><span class="o">.</span><span class="n">makesky</span><span class="p">(</span><span class="n">sky_files1</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="s1">&#39;kp_tdOpen&#39;</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">osiris</span><span class="p">)</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">clean</span><span class="p">(</span><span class="n">sci_files1</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="s1">&#39;kp_tdOpen&#39;</span><span class="p">,</span> <span class="n">refSrc</span><span class="p">,</span> <span class="n">refSrc1</span><span class="p">,</span> <span class="n">field</span><span class="o">=</span><span class="n">target</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">osiris</span><span class="p">)</span>
+
+    <span class="c1"># Nite 2</span>
+    <span class="n">sci_files2</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;i200810_a004</span><span class="si">{0:03d}</span><span class="s1">_flip&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ii</span><span class="p">)</span> <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">26</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span>
+    <span class="n">sky_files2</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;i200810_a007</span><span class="si">{0:03d}</span><span class="s1">_flip&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ii</span><span class="p">)</span> <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">6</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span>
+    <span class="n">refSrc2</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1071.</span><span class="p">,</span> <span class="mf">854.</span><span class="p">]</span> <span class="c1"># This is the target</span>
+
+    <span class="n">sky</span><span class="o">.</span><span class="n">makesky</span><span class="p">(</span><span class="n">sky_files2</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="s1">&#39;kp_tdOpen&#39;</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">osiris</span><span class="p">)</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">clean</span><span class="p">(</span><span class="n">sci_files2</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="s1">&#39;kp_tdOpen&#39;</span><span class="p">,</span> <span class="n">refSrc</span><span class="p">,</span> <span class="n">refSrc2</span><span class="p">,</span> <span class="n">field</span><span class="o">=</span><span class="n">target</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">osiris</span><span class="p">)</span>
+    <span class="c1">#-----------------</span>
+
+    <span class="n">sci_files</span> <span class="o">=</span> <span class="n">sci_files1</span> <span class="o">+</span> <span class="n">sci_files2</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sci_files</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="n">jack_list</span> <span class="o">=</span> <span class="n">sci_files</span><span class="p">[:]</span>
+        <span class="n">jack_list</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">calcStrehl</span><span class="p">(</span><span class="n">jack_list</span><span class="p">,</span> <span class="s1">&#39;kp_tdOpen&#39;</span><span class="p">,</span> <span class="n">field</span><span class="o">=</span><span class="n">target</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">osiris</span><span class="p">)</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">combine</span><span class="p">(</span><span class="n">jack_list</span><span class="p">,</span> <span class="s1">&#39;kp_tdOpen&#39;</span><span class="p">,</span> <span class="n">epoch</span><span class="p">,</span> <span class="n">field</span><span class="o">=</span><span class="n">target</span><span class="p">,</span>
+                     <span class="n">trim</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="s1">&#39;strehl&#39;</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">osiris</span><span class="p">,</span> <span class="n">outSuffix</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="s1">&#39;reduce&#39;</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, J. R. Lu, A. K. Gautam, T. Do.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

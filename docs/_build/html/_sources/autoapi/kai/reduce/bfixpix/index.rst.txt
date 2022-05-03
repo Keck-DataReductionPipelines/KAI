@@ -1,0 +1,48 @@
+:py:mod:`kai.reduce.bfixpix`
+============================
+
+.. py:module:: kai.reduce.bfixpix
+
+.. autoapi-nested-parse::
+
+   
+   ..
+       !! processed by numpydoc !!
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   kai.reduce.bfixpix.bfixpix
+
+
+
+.. py:function:: bfixpix(image_file, mask_file, outsuffix='_f', msksuffix='_s')
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+

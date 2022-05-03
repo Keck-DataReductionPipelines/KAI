@@ -1,0 +1,533 @@
+:py:mod:`kai.reduce.prep_analysis`
+==================================
+
+.. py:module:: kai.reduce.prep_analysis
+
+.. autoapi-nested-parse::
+
+   
+   ..
+       !! processed by numpydoc !!
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   kai.reduce.prep_analysis.euclidean
+   kai.reduce.prep_analysis.removeEdges
+   kai.reduce.prep_analysis.psfRadius
+   kai.reduce.prep_analysis.isBrightSpeckleStar
+   kai.reduce.prep_analysis.isNearBrightStar
+   kai.reduce.prep_analysis.isInPSFRadius
+   kai.reduce.prep_analysis.isInSecondaryRadius
+   kai.reduce.prep_analysis.getTableIndex
+   kai.reduce.prep_analysis.removeCloseStars
+   kai.reduce.prep_analysis.getStats
+   kai.reduce.prep_analysis.getNStarsHelper
+   kai.reduce.prep_analysis.getNStars
+   kai.reduce.prep_analysis.generate_list
+   kai.reduce.prep_analysis.plot_starlist_on_image_arcsec
+   kai.reduce.prep_analysis.plot_starlist_on_image_pixel
+   kai.reduce.prep_analysis.modded_plot_starlist_on_image_pixel
+   kai.reduce.prep_analysis.prepStarfinder
+
+
+
+.. py:function:: euclidean(x1, y1, x2, y2)
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: removeEdges(imgArr, finalTable, cutoff=100, x='xcentroid', y='ycentroid', scale=0.009942)
+
+   
+   Ignores stars close to the edge, i.e., within 100 * scale pixels by default.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: psfRadius(starPeak, imagePeak, scale=0.009942)
+
+   
+   Arbitrary function that ties the predicted radius of the star to the peak brightness in the image.
+   returns a radius: 10 < (Ratio of "magnitudes" cubed * 80) < 60 and scaled acc. to plate scale in arcsec
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: isBrightSpeckleStar(starPeak, imagePeak)
+
+   
+   Can this star have halo speckles? If it's half the peak brightness, it is assumed yes. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: isNearBrightStar(nearStarPeak, mainPeak)
+
+   
+   Is the main star near another bright star? 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: isInPSFRadius(starCoo, mainCoo, psfr)
+
+   
+   Is star within the psf radius from earlier? 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: isInSecondaryRadius(starCoo, mainCoo, psfr)
+
+   
+   Is star within the secondary radius, defined as 1.35x the psf radius? (arbitrarily) 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: getTableIndex(mainIndex, starIndex)
+
+   
+   Helper function to get star being considered in removeCloseStars. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: removeCloseStars(imgArr, newTable, pixelDist=10, x='xcentroid', y='ycentroid', verbose=False, scale=0.009942)
+
+   
+   In order of brightest stars in table, checks if it's a valid star, and tracks secondaries near it.
+   Removes all invalid stars from table, i.e, those that are likely halo speckles, or too close for valid psf generation.   
+   Edge stars are already removed from table using the removeEdges() method.
+
+   Terminology?
+   main - Star that is being considered for psf-ness. 
+   star - Star that is being checked for nearness to main
+   psf radius - Radius (arbitrary function tied to brightness) that is checked for halo speckles/close bright stars
+   secondary radius - Radius in which, if star found, mark as secondary
+
+   Pseudocode:
+
+   Sort the table by brightest
+   imagePeak = brightest star peak value in image
+   invalidStarIndices = indices of stars to be removed from table
+
+   for each star in table, that is not marked invalid yet:
+       set this star to the main star
+       find the psf radius of this star
+
+       for all star-lookalikes less bright than main star:
+
+           if star-lookalike is within psf radius (arbitrary function tied to brightness):
+
+               if main star can have halo speckles (arbitrary brightness limit tied to imagePeak):
+
+                   if lookalike is too bright to be a halo speckle (arbitrary brightness limit tied to mainPeak):
+                       add main star to invalidIndices (another bright star is too near it!)
+                       add bright star to invalidIndices (too close to main star)
+
+                   else lookalike is probably halo speckle:
+                       add lookalike to invalidIndices (too close to main star, not actually a star)
+                       keep the main star!!
+
+               else main star cannot have halo speckles:
+
+                   if there is a BRIGHT star-lookalike nearby:
+                       its definitely a star and not halo speckle AND star is too close!
+                       add main star to invalidIndices (another bright star is too near it!)
+                       add bright star to invalidIndices (too close to main star)
+
+           else if star-lookalike is within secondary radius (arbitrary function tied to brightness):
+               set the "psf?" value of this star in table to 0 (secondary)
+
+   from the table, remove all the invalid stars!
+   return table
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: getStats(imgArr)
+
+   
+   Returns mean median and mode of pixel values in image array. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: getNStarsHelper(imgArr, expStars=10, counter=0, starsFound=0, fwhm=4.5, scale=0.009942)
+
+   
+   Attempts to get N stars. If stars aren't found, returns what it can and presents the error. 
+   If so, starfinding may have to be done manually.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: getNStars(imgArr, numStars=10, fwhm=4.5, scale=0.009942)
+
+   
+   Reformats table of chosen psf stars and adds the relevant secondaries to it.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: generate_list(imgPath, numPSFStars=7, fwhm=4.5, scale=0.009942, targName='')
+
+   
+   Plots the table generated by PSFListGen, and prints the list of stars in a format that can be used.
+   @params
+   imgPath - path to .fits image, Eg. /g/lu/data/microlens/18jun22/combo/mag18jun22_ob040361_kp.fits
+   numPSFStars - number of stars to be found
+   scale - defaults to nirc2 scale. Enter in arcsec/pixel.
+   targName - name of target (can be anything, not important)
+   fwhm - full-width half maximum variable for finicky images
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: plot_starlist_on_image_arcsec(starList, imagePath, refCoo, scale=9.942 / 1000, magCut=23, label=True, verbose=True, flip=False)
+
+   
+   Plot a NIRC2 image and overlay a starlist. Input in relative arcsec coordinates.
+   @params
+   starList - any astropy Table with a "name" (including target),
+                                       "m", 
+                                       "x" (relative arcsec coordinates), and 
+                                       "y" (relative arcsec coordinates) column. 
+   imagePath - path to image from root.
+   refCoo - reference pixel coordinates of a star in image file.
+   scale - plate scale. Defaults to NIRC2 plate scale.
+   magCut - highest magnitude of star allowed to be plotted.
+   label - if True, adds labels. Defaults to true.
+   verbose - if True, prints the astropy table inputted. Defaults to true.
+   flip - if True, flips image in x (helps in case image is backwards).
+
+   Ensure that the image passed in is at a Position Angle of 0.
+
+   The image is NOT Flipped on plotting by default. 
+   In order to flip image, set flip = True.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: plot_starlist_on_image_pixel(starList, imagePath, refStar, scale=9.942 / 1000, magCut=23, label=True, verbose=True, flip=False, axes='pixel')
+
+   
+   Plot a NIRC2 image and overlay a starlist. Input in pixel coordinates.
+   @params
+   starList - any astropy Table with a "name" (including target),
+                                       "m", 
+                                       "x" (pixel coordinates), and 
+                                       "y" (pixel coordinates) column. 
+   imagePath - path to image from root.
+   refStar - name of reference star in astropy table, generally the target.
+   scale - plate scale. Defaults to NIRC2 plate scale.
+   magCut - highest magnitude of star allowed to be plotted.
+   label - if True, adds labels. Defaults to true.
+   verbose - if True, prints the astropy table inputted. Defaults to true.
+   flip - if True, flips image in x (helps in case image is backwards).
+   axes - determines units on the axes of plot (pixel or arcsec). Defaults to pixel.
+
+   Ensure that the image passed in is at a Position Angle of 0.
+
+   The image is NOT Flipped on plotting by default. 
+   In order to flip image, set flip = True.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: modded_plot_starlist_on_image_pixel(starList, imagePath, refStar, scale=9.942 / 1000, magCut=23, label=True, verbose=True, flip=False, axes='pixel')
+
+   
+   Plot a NIRC2 image and overlay a starlist. Input in pixel coordinates.
+   @params
+   starList - any astropy Table with a "name" (including target),
+                                       "m", 
+                                       "x" (pixel coordinates), and 
+                                       "y" (pixel coordinates) column. 
+   imagePath - path to image from root.
+   refStar - name of reference star in astropy table, generally the target.
+   scale - plate scale. Defaults to NIRC2 plate scale.
+   magCut - highest magnitude of star allowed to be plotted.
+   label - if True, adds labels. Defaults to true.
+   verbose - if True, prints the astropy table inputted. Defaults to true.
+   flip - if True, flips image in x (helps in case image is backwards).
+   axes - determines units on the axes of plot (pixel or arcsec). Defaults to pixel.
+
+   Ensure that the image passed in is at a Position Angle of 0.
+
+   The image is NOT Flipped on plotting by default. 
+   In order to flip image, set flip = True.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: prepStarfinder(dirName, targetName, targetCoords, psfStars, filterName)
+
+   
+   Creates a _psf.list file and saves it in the source_list/ directory.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+

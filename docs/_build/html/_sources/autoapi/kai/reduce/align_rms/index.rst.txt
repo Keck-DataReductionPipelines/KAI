@@ -1,0 +1,140 @@
+:py:mod:`kai.reduce.align_rms`
+==============================
+
+.. py:module:: kai.reduce.align_rms
+
+.. autoapi-nested-parse::
+
+   
+   ..
+       !! processed by numpydoc !!
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   kai.reduce.align_rms.main
+   kai.reduce.align_rms.run
+   kai.reduce.align_rms.trim_stars
+   kai.reduce.align_rms.calc_error
+   kai.reduce.align_rms.parse_options
+
+
+
+.. py:function:: main(argv=None)
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: run(args=None)
+
+   
+   align_rms main routine.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: trim_stars(s, options)
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: calc_error(v_msk, v_avg, cnt, options)
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: parse_options(args)
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+

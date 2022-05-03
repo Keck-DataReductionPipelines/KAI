@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>kai.plot &mdash; KAI  documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="kai.strehl" href="../strehl/index.html" />
+    <link rel="prev" title="kai.photometry" href="../photometry/index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> KAI
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai</span></code></a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../index.html#subpackages">Subpackages</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../_astropy_init/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai._astropy_init</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../conditions/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.conditions</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../conftest/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.conftest</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../constants/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.constants</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../instruments/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.instruments</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../photometry/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.photometry</span></code></a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.plot</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../strehl/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.strehl</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../test_drizzle/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">test_drizzle</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">KAI</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">API Reference</a> &raquo;</li>
+          <li><a href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai</span></code></a> &raquo;</li>
+      <li><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.plot</span></code></li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/autoapi/kai/plot/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-kai.plot">
+<span id="kai-plot"></span><h1><a class="reference internal" href="#module-kai.plot" title="kai.plot"><code class="xref py py-mod docutils literal notranslate"><span class="pre">kai.plot</span></code></a><a class="headerlink" href="#module-kai.plot" title="Permalink to this headline"></a></h1>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this headline"></a></h2>
+<section id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this headline"></a></h3>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.plot.plotpsf" title="kai.plot.plotpsf"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plotpsf</span></code></a>(epoch, target, user_root, coo_star='psf_000', scale=0.00995, filt='kp', outdir='./')</p></td>
+<td><p>Plot the psfs of your star list over the combo image and saves the figure.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.plot.plotpsf">
+<span class="sig-prename descclassname"><span class="pre">kai.plot.</span></span><span class="sig-name descname"><span class="pre">plotpsf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">epoch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_root</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coo_star</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'psf_000'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.00995</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'kp'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outdir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'./'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/plot.html#plotpsf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.plot.plotpsf" title="Permalink to this definition"></a></dt>
+<dd><p>Plot the psfs of your star list over the combo image and saves the figure.</p>
+<dl class="simple">
+<dt>Designed for path structure ‘&lt;user_root&gt;source_list/target_psf.list’</dt><dd><p>‘&lt;user_root&gt;&lt;epoch&gt;/combo/’, etc.</p>
+</dd>
+</dl>
+<p>user_root should include ‘/’ at the end.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="simple">
+<dt>epoch (str): Observing epoch, in the format YYmmmDD, where YY is the</dt><dd><p>last two digits of the year, mmm the first three letters of the
+month, and DD the digits of the day.</p>
+</dd>
+</dl>
+<p>target (str): Target object.</p>
+</dd>
+<dt>Returns:</dt><dd><p>outex (str): The path to the .png file of the plot.
+coo_coords (astropy.table.table.Table): Table of the coo star’s</p>
+<blockquote>
+<div><p>coordinates.</p>
+</div></blockquote>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../photometry/index.html" class="btn btn-neutral float-left" title="kai.photometry" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../strehl/index.html" class="btn btn-neutral float-right" title="kai.strehl" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, J. R. Lu, A. K. Gautam, T. Do.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

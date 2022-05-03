@@ -59,37 +59,37 @@ def summarize_observing_conditions(fitsFiles):
         weather.cfht_weather_data(year, month, day, hour, minute)
 
     # Print out a nicely formatted table
-    print '%-20s %4s %2s %2s %2s %2s   %4s %4s %5s %5s %4s %4s %4s' % \
+    print('%-20s %4s %2s %2s %2s %2s   %4s %4s %5s %5s %4s %4s %4s' % \
         ('Filename', 'Year', 'M', 'D', 'h', 'm', 'AirM', 'H2O', 'Temp', 
-         'Press', 'Humi', 'Wind', 'Dir')
-    print '%-20s %4s %2s %2s %2s %2s   %4s %4s %5s %5s %4s %4s %4s' % \
-        ('HST', '', '', '', '', '', '', 'mm', 'C', 'mbar', '%', 'km/h', 'deg')
-    print '%-20s %4s %2s %2s %2s %2s   %4s %4s %5s %5s %4s %4s %4s' % \
+         'Press', 'Humi', 'Wind', 'Dir'))
+    print('%-20s %4s %2s %2s %2s %2s   %4s %4s %5s %5s %4s %4s %4s' % \
+        ('HST', '', '', '', '', '', '', 'mm', 'C', 'mbar', '%', 'km/h', 'deg'))
+    print('%-20s %4s %2s %2s %2s %2s   %4s %4s %5s %5s %4s %4s %4s' % \
         ('--------', '----', '--', '--', '--', '--', '----', '----', '-----', 
-         '-----', '----', '----', '----')
+         '-----', '----', '----', '----'))
 
     for ii in range(len(fitsFiles)):
-        print '%-20s %4d %2d %2d %2d %2d  ' % \
-            (fitsFiles[ii], year[ii], month[ii], day[ii], hour[ii], minute[ii]),
-        print '%4.2f %4.2f %5.1f %5.1f %4.1f %4.1f %4d' % \
+        print('%-20s %4d %2d %2d %2d %2d  ' % \
+            (fitsFiles[ii], year[ii], month[ii], day[ii], hour[ii], minute[ii]),)
+        print('%4.2f %4.2f %5.1f %5.1f %4.1f %4.1f %4d' % \
             (airmass[ii], water_column[ii], temperature[ii], pressure[ii],
-             humidity[ii], wind_speed[ii], wind_dir[ii])
+             humidity[ii], wind_speed[ii], wind_dir[ii]))
 
     # Print out the average values
-    print '%-20s %4s %2s %2s %2s %2s   %4s %4s %5s %5s %4s %4s %4s' % \
+    print('%-20s %4s %2s %2s %2s %2s   %4s %4s %5s %5s %4s %4s %4s' % \
         ('--------', '----', '--', '--', '--', '--', '----', '----', '-----', 
-         '-----', '----', '----', '----')
-    print '%-20s %4d %2d %2d %2d %2d  ' % \
+         '-----', '----', '----', '----'))
+    print('%-20s %4d %2d %2d %2d %2d  ' % \
         ('Average', year.mean(), month.mean(), day.mean(), hour.mean(), 
-         minute.mean()),
-    print '%4.2f %4.2f %5.1f %5.1f %4.1f %4.1f %4d' % \
+         minute.mean()),)
+    print('%4.2f %4.2f %5.1f %5.1f %4.1f %4.1f %4d' % \
         (airmass.mean(), water_column.mean(), temperature.mean(), 
-         pressure.mean(), humidity.mean(), wind_speed.mean(), wind_dir.mean())
-    print '%-20s %4d %2d %2d %2d %2d  ' % \
+         pressure.mean(), humidity.mean(), wind_speed.mean(), wind_dir.mean()))
+    print('%-20s %4d %2d %2d %2d %2d  ' % \
         ('Std. Dev.', year.std(), month.std(), day.std(), hour.std(), 
-         minute.std()),
-    print '%4.2f %4.2f %5.1f %5.1f %4.1f %4.1f %4d' % \
+         minute.std()),)
+    print('%4.2f %4.2f %5.1f %5.1f %4.1f %4.1f %4d' % \
         (airmass.std(), water_column.std(), temperature.std(), 
-         pressure.std(), humidity.std(), wind_speed.std(), wind_dir.std())
+         pressure.std(), humidity.std(), wind_speed.std(), wind_dir.std()))
 
         

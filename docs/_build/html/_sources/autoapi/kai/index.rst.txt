@@ -1,0 +1,58 @@
+:py:mod:`kai`
+=============
+
+.. py:module:: kai
+
+.. autoapi-nested-parse::
+
+   
+   This is an Astropy affiliated package to reduce and analyze Keck NIRC2 and OSIRIS imaging data.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+Subpackages
+-----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 3
+
+   extern/index.rst
+   mtf/index.rst
+   reduce/index.rst
+   tests/index.rst
+   utils/index.rst
+
+
+Submodules
+----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+
+   _astropy_init/index.rst
+   conditions/index.rst
+   conftest/index.rst
+   constants/index.rst
+   instruments/index.rst
+   photometry/index.rst
+   plot/index.rst
+   strehl/index.rst
+
+

@@ -91,7 +91,7 @@ def keckDARcoeffs(lamda, year, month, day, hour, minute):
     # Pull from atmosphere logs.
     logDir = module_dir + '/weather/'
     logFile = logDir +'cfht-wx.'+ str(year) +'.'+ str(month).zfill(2) +'.dat'
-    
+    print(logFile)
 
     _atm = Table.read(logFile, format='ascii', header_start=None)
     atmYear = _atm['col1']

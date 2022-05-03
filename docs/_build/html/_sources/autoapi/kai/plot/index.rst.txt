@@ -1,0 +1,62 @@
+:py:mod:`kai.plot`
+==================
+
+.. py:module:: kai.plot
+
+.. autoapi-nested-parse::
+
+   
+   ..
+       !! processed by numpydoc !!
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   kai.plot.plotpsf
+
+
+
+.. py:function:: plotpsf(epoch, target, user_root, coo_star='psf_000', scale=0.00995, filt='kp', outdir='./')
+
+   
+   Plot the psfs of your star list over the combo image and saves the figure.
+
+   Designed for path structure '<user_root>source_list/target_psf.list'
+                               '<user_root><epoch>/combo/', etc.
+   user_root should include '/' at the end.
+
+   Args:
+       epoch (str): Observing epoch, in the format YYmmmDD, where YY is the
+           last two digits of the year, mmm the first three letters of the
+           month, and DD the digits of the day.
+       target (str): Target object.
+
+   Returns:
+       outex (str): The path to the .png file of the plot.
+       coo_coords (astropy.table.table.Table): Table of the coo star's
+           coordinates.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+

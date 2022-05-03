@@ -1,0 +1,1451 @@
+:py:mod:`kai.reduce.data`
+=========================
+
+.. py:module:: kai.reduce.data
+
+.. autoapi-nested-parse::
+
+   
+   ..
+       !! processed by numpydoc !!
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   kai.reduce.data.Sky
+
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   kai.reduce.data.clean
+   kai.reduce.data.clean_get_supermask
+   kai.reduce.data.clean_makemask
+   kai.reduce.data.clean_lp
+   kai.reduce.data.combine
+   kai.reduce.data.rot_img
+   kai.reduce.data.gcSourceXY
+   kai.reduce.data.calcStrehl
+   kai.reduce.data.weight_by_strehl
+   kai.reduce.data.trim_on_fwhm
+   kai.reduce.data.readWeightsFile
+   kai.reduce.data.loadStrehl
+   kai.reduce.data.trim_table_by_name
+   kai.reduce.data.combine_drizzle
+   kai.reduce.data.combine_submaps
+   kai.reduce.data.combine_rotation
+   kai.reduce.data.sort_frames
+   kai.reduce.data.combine_ref
+   kai.reduce.data.combine_coo
+   kai.reduce.data.combine_lis
+   kai.reduce.data.combine_register
+   kai.reduce.data.combine_log
+   kai.reduce.data.combine_size
+   kai.reduce.data.setup_drizzle
+   kai.reduce.data.clean_drizzle
+   kai.reduce.data.clean_cosmicrays
+   kai.reduce.data.clean_cosmicrays2
+   kai.reduce.data.clean_persistance
+   kai.reduce.data.clean_bkgsubtract
+   kai.reduce.data.clean_makecoo
+   kai.reduce.data.mosaic_ref
+   kai.reduce.data.mosaic
+   kai.reduce.data.mosaic_register
+   kai.reduce.data.mosaic_size
+
+
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   kai.reduce.data.module_dir
+   kai.reduce.data.distCoef
+   kai.reduce.data.supermaskName
+   kai.reduce.data.outputVerify
+
+
+.. py:data:: module_dir
+   
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:data:: distCoef
+   :annotation: = 
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:data:: supermaskName
+   :annotation: = supermask.fits
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:data:: outputVerify
+   :annotation: = ignore
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: clean(files, nite, wave, refSrc, strSrc, badColumns=None, field=None, skyscale=False, skyfile=None, angOff=0.0, cent_box=12, fixDAR=True, raw_dir=None, clean_dir=None, instrument=instruments.default_inst, check_ref_loc=True)
+
+   
+   Clean near infrared NIRC2 or OSIRIS images.
+
+   This program should be run from the reduce/ directory.
+   Example directory structure is:
+   calib/
+       flats/
+       flat_kp.fits
+       flat.fits (optional)
+       masks/
+       supermask.fits
+   kp/
+       sci_nite1/
+       sky_nite1/
+       sky.fits
+
+   All output files will be put into clean_dir (if specified, otherwise
+   ../clean/) in the following structure:
+   kp/
+       c*.fits
+       distort/
+       cd*.fits
+       weight/
+       wgt*.fits
+
+   The clean directory may be optionally modified to be named
+   <field_><wave> instead of just <wave>. So for instance, for Arches
+   field #1 data reduction, you might call clean with: field='arch_f1'.
+
+   :Parameters:
+
+       **files** : list of int
+           Integer list of the files. Does not require padded zeros.
+
+       **nite** : str
+           Name for night of observation (e.g.: "nite1"), used as suffix
+           inside the reduce sub-directories.
+
+       **wave** : str
+           Name for the observation passband (e.g.: "kp"), used as
+           a wavelength suffix
+
+       **field** : str, default=None
+           Optional prefix for clean directory and final
+           combining. All clean files will be put into <field_><wave>. You
+           should also pass the same into combine(). If set to None (default)
+           then only wavelength is used.
+
+       **skyscale** : bool, default=False
+           Whether or not to scale the sky files to the common median.
+           Turn on for scaling skies before subtraction.
+
+       **skyfile** : str, default=''
+           An optional file containing image/sky matches.
+
+       **angOff** : float, default = 0
+           An optional absolute offset in the rotator
+           mirror angle for cases (wave='lp') when sky subtraction is done with
+           skies taken at matching rotator mirror angles.
+
+       **cent_box: int (def = 12)**
+           the box to use for better centroiding the reference star
+
+       **badColumns** : int array, default = None
+           An array specifying the bad columns (zero-based).
+           Assumes a repeating pattern every 8 columns.
+
+       **raw_dir** : str, optional
+           Directory where raw files are stored. By default,
+           assumes that raw files are stored in '../raw'
+
+       **clean_dir** : str, optional
+           Directory where clean files will be stored. By default,
+           assumes that clean files will be stored in '../clean'
+
+       **instrument** : instruments object, optional
+           Instrument of data. Default is `instruments.default_inst`
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: clean_get_supermask(_statmask, _supermask, badColumns)
+
+   
+   Create temporary mask for each individual image that will contain the
+   supermask plus the designated bad columns.
+
+   _statmask -- output file containing supermask + bad columns
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: clean_makemask(_mask, _mask_cosmic, _mask_static, wave, instrument=instruments.default_inst)
+
+   
+   _mask -- output name for final mask
+   _mask_cosmic -- should contain cosmic ray mask
+   _mask_static -- should contain supermask + bad columns
+
+   Output:
+   _mask is created to be supermask + bad columns + cosmic rays
+   _mask will have 0=bad and 1=good pixels (as drizzle expects)
+   _mask can be directly passed into drizzle
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: clean_lp(files, nite, wave, refSrc, strSrc, angOff, skyfile)
+
+   
+   Only here for backwards compatability.
+   You should use clean() instead.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: combine(files, wave, outroot, field=None, outSuffix=None, trim=False, weight=None, fwhm_max=0, submaps=0, fixDAR=True, mask=True, clean_dirs=None, combo_dir=None, instrument=instruments.default_inst)
+
+   
+   Accepts a list of cleaned images and does a weighted combining after
+   performing frame selection based on the Strehl and FWHM.
+
+   Each image must have an associated *.coo file which gives the rough
+   position of the reference source.
+
+   :Parameters:
+
+       **files** : list of int
+           Integer list of the files to include in combine. Does not require
+           padded zeros.
+
+       **wave** : str
+           Name for the observation passband (e.g.: "kp", "lp", or "h"), used as
+           a wavelength suffix
+
+       **outroot** : str
+           The output root name (e.g. '06jullgs'). The final combined file names
+           will be <outroot>_<field>_<outSuffix>_<wave>.
+           The <field> and <outSuffix> keywords are optional.
+           
+           Examples:
+           06jullgs_kp for outroot='06jullgs' and wave='kp'
+           06jullgs_arch_f1_kp for adding field='arch_f1'
+
+       **field** : str, default=None
+           Optional field name. Used to get to clean directory and also affects
+           the final output file name.
+
+       **outSuffix** : str
+           Optional suffix used to modify final output file name.
+           Can use suffix to indicate a night of observation (e.g.: "nite1").
+
+       **trim** : bool, default=False
+           Optional file trimming based on image quality. Default
+           is False. Set to True to turn trimming on.
+
+       **weight** : str, default=None
+           Optional weighting. Set to 'strehl' to weight by Strehl, as found in
+           strehl_source.txt file.
+           OR set to a file name with the first column being the file name
+           (e.g., c0021.fits) and the second column being the weight. Weights will
+           be renormalized to sum to 1.0.
+           Default = None, no weighting.
+
+       **fwhm_max** : float, default=0
+           The maximum allowed FWHM for keeping frames when trimming is turned on.
+
+       **submaps** : int, default=0
+           Set to the number of submaps to be made (def=0).
+
+       **fixDAR** : bool, default=True
+           ..
+
+       **mask** : bool, default=True
+           ..
+
+       **clean_dirs** : list of str, optional
+           List of directories where clean files are stored. Needs to be same
+           length as files list. If not specified, by default assumes that
+           clean files are stored in '../clean'.
+
+       **combo_dir** : str, optional
+           Directory where combo files will be stored. By default,
+           assumes that combo files will be stored in '../combo'
+
+       **instrument** : instruments object, optional
+           Instrument of data. Default is `instruments.default_inst`
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: rot_img(root, phi, cleanDir)
+
+   
+   Rotate images to PA=0 if they have a different PA from one
+   another. If the entire data set is taken at a single PA, leave
+   it as is. Do this only if set includes various PAs.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: gcSourceXY(name, label_file='/Users/jlu/data/gc/source_list/label.dat')
+
+   
+   Queries label.dat for the xy offset from Sgr A* (in arcsec)
+   for the star given as an input
+
+
+   :Parameters:
+
+       **name** : str
+           Name of a star (e.g. 'irs16NE')
+
+       **label_file** : str, default='/Users/jlu/data/gc/source_list/label.dat'
+           Full path of label.dat file to search
+
+   :Returns:
+
+       **pos** : float list (2 elements)
+           x and y offset from Sgr A* in arcsec
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: calcStrehl(files, wave, clean_dir=None, field=None, instrument=instruments.default_inst)
+
+   
+   Make Strehl and FWHM table on the strehl source for all
+   cleaned files.
+
+
+   :Parameters:
+
+       **files** : list of int
+           Integer list of the files. Does not require padded zeros.
+
+       **wave** : str
+           Name for the observation passband (e.g.: "kp"), used as
+           a wavelength suffix
+
+       **field** : str, default=None
+           Optional prefix for clean directory and final
+           combining. All clean files will be put into <field_><wave>. You
+           should also pass the same into combine(). If set to None (default)
+           then only wavelength is used.
+
+       **clean_dir** : str, optional
+           Directory where clean files will be stored. By default,
+           assumes that clean files will be stored in '../clean'
+
+       **instrument** : instruments object, optional
+           Instrument of data. Default is `instruments.default_inst`
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: weight_by_strehl(roots, strehls)
+
+   
+   Calculate weights based on the strehl of each image.
+   This does some intelligent handling for REALLY bad data quality.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: trim_on_fwhm(roots, strehls, fwhm, fwhm_max=0)
+
+   
+   Take a list of files and trim based on the FWHM. All files that have a
+   FWHM < 1.25 * FWHM.min()
+   are kept.
+
+   The returned arrays contain only those files that pass the above criteria.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: readWeightsFile(roots, weightFile)
+
+   
+   Expects a file of the format:
+   column1 = file name (e.g. c0001.fits).
+   column2 = weights.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: loadStrehl(cleanDir, roots)
+
+   
+   Load Strehl and FWHM info. The file format will be
+   column1 = name of cleaned fits file (e.g. c0001.fits).
+             Expects single character before a 4 digit number.
+   column2 = strehl
+   column3 = RMS error (nm)
+   column4 = FWHM (mas)
+   column5 = MJD (UT)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: trim_table_by_name(outroots, tableFileName)
+
+   
+   Takes a list of values (listed in tableFileName) and trim them down based on
+   the desired output list of root files names (outroots).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: combine_drizzle(imgsize, cleanDir, roots, outroot, weights, shifts, wave, diffPA, fixDAR=True, mask=True, instrument=instruments.default_inst)
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: combine_submaps(imgsize, cleanDir, roots, outroot, weights, shifts, submaps, wave, diffPA, fixDAR=True, mask=True, instrument=instruments.default_inst)
+
+   
+   Assumes the list of roots are pre-sorted based on quality. Images are then
+         divided up with every Nth image going into the Nth submap.
+
+   mask: (def=True) Set to false for maser mosaics since they have only
+         one image at each positions. Masking produces artifacts that
+         Starfinder can't deal with.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: combine_rotation(cleanDir, roots, instrument=instruments.default_inst)
+
+   
+   Determine if images are different PAs. If so, then
+   temporarily rotate the images for xregister to use
+   in order to get image shifts that are fed into drizzle.
+
+   WARNING: If multiple PAs are found, then everything
+   is rotated to PA = 0.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: sort_frames(roots, strehls, fwhm, weights, shiftsTab)
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: combine_ref(coofile, cleanDir, roots, diffPA, refImage_index=0)
+
+   
+   Pulls reference star coordinates from image header keywords.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: combine_coo(coofile, cleanDir, roots, diffPA, refImage_index=0)
+
+   
+   Pulls reference star coordinates from *.coo files.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: combine_lis(outfile, cleanDir, roots, diffPA)
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: combine_register(outroot, refImage, diffPA)
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: combine_log(outroot, roots, strehls, fwhm, weights)
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: combine_size(shiftsTable, refImage, outroot, subroot, submaps)
+
+   
+   Determine the final size of the fully combined image. Use the
+   shifts stored in the shiftsTable.
+
+   @param shiftsTable: Table with x and y shifts for each image
+   @type shiftsTable: ascii table
+   @param refImage: The reference image from which the shifts are
+       calculated from.
+   @type refImage: string
+   @param outroot: The name of the file for which shift information
+       will be stored. The filename will be <outroot>.coo.
+   @type outroot: string
+   @param subroot: Same as outroot but for submaps
+   @type subroot: string
+   @param submaps: number of submaps
+   @type sbumaps: int
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: setup_drizzle(imgsize)
+
+   
+   Setup drizzle parameters for NIRC2 data.
+   @param imgsize: The size (in pixels) of the final drizzle image.
+   This assumes that the image will be square.
+   @type imgsize: int
+   @param mask: The name of the mask to use during
+   drizzle.
+   @param type: str
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: clean_drizzle(xgeoim, ygeoim, _bp, _cd, _wgt, _dlog, fixDAR=True, instrument=instruments.default_inst)
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: clean_cosmicrays(_ff, _mask, wave)
+
+   
+   Clean the image of cosmicrays and make a mask containing the location
+   of all the cosmicrays. The CR masks can later be used in combine() to
+   keep cosmicrays from being included.
+
+   @param _ff: Flat fielded file on which to fix cosmic rays. A new
+       image will be created with the _f appended to it.
+   @type _ff: string
+   @param _mask: The filename used for the resulting mask.
+   @type _mask: string
+   @parram wave: The filter of the observations (e.g. 'kp', 'lp'). This
+       is used to determine different thresholds for CR rejection.
+   @type wave: string
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: clean_cosmicrays2(_ff, _ff_cr, _mask, wave, instrument=instruments.default_inst)
+
+   
+   Clean the image of cosmicrays and make a mask containing the location
+   of all the cosmicrays. The CR masks can later be used in combine() to
+   keep cosmicrays from being included.
+
+   @param _ff: Flat fielded file on which to fix cosmic rays. A new
+       image will be created with the _f appended to it.
+   @type _ff: string
+   @param _ff_cr: Output image with cosmicrays fixed.
+   @type _ff_cr: string
+   @param _mask: The filename used for the resulting mask.
+   @type _mask: string
+   @parram wave: The filter of the observations (e.g. 'kp', 'lp'). This
+       is used to determine different thresholds for CR rejection.
+   @type wave: string
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: clean_persistance(_n, _pers, instrument=instruments.default_inst)
+
+   
+   Make masks of the persistance to be used in combining the images
+   later on.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: clean_bkgsubtract(_ff_f, _bp)
+
+   
+   Do additional background subtraction of any excess background
+   flux. This isn't strictly necessary since it just removes a constant.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: clean_makecoo(_ce, _cc, refSrc, strSrc, aotsxyRef, radecRef, instrument=instruments.default_inst, check_loc=True, update_fits=True, cent_box=12)
+
+   
+   Make the *.coo file for this science image. Use the difference
+   between the AOTSX/Y keywords from a reference image and each science
+   image to tell how the positions of the two frames are related.
+
+   @param _ce: Name of the input cleaned file.
+   @type _ce: string
+   @param _cc: Name of the output header modified image.
+   @type _cc: string
+   @param refSrc: Array with the X/Y positions of the reference source.
+       This will be put into the image header and the *.coo file.
+   @type refSrc: array of floats with length=2 [x, y]
+   @param strSrc: Array with the X/Y positions of the strehl source.
+       This will be put into the image header.
+   @type strSrc: array of floats with length=2 [x, y]
+   @param aotsxyRef: The AOTSX/Y header values from the reference image.
+   @type aotsxyRef: array of floats with length=2 [x, y]
+   @param radecRef: The RA/DEC header values from the reference image.
+   @type radecRef: array of floats with length=2 [x, y]
+
+   check_loc (bool):  If True the reference source is recentered for this frame.
+                    Use False if the offsets are large enough to move the reference source off of the image
+   update_fits : update the fits files with the reference pixel values
+   cent_box : box size to center the source (default: 12)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: mosaic_ref(outFile, cleanDir, roots, diffPA, instrument=instruments.default_inst)
+
+   
+   Calculate an initial guess at the offsets between mosaic frames.
+   using the AOTSX/Y keywords from a reference image and each science
+   image to tell how the positions of the two frames are related.
+
+   @param cleanDir: Name of the input cleaned file.
+   @type cleanDir: string
+   @param roots: List of root filenames
+   @type roots: list of strings
+   @param diffPA: 1 = found different PAs so use rot images.
+   @type difPA: int
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:class:: Sky(sciDir, skyDir, wave, scale=1, skyfile='', angleOffset=0.0, instrument=instruments.default_inst)
+
+   Bases: :py:obj:`object`
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:method:: __initLp__(self)
+
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: getSky(self, _n)
+
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: scaleSky(self, _n, _sky)
+
+      
+      Scale the mean level of the sky so that it matches the
+      science image.
+
+      @param _n: name of science frame
+      @type _n: string
+      @param _sky: name of sky frame
+      @type _sky: string
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: getSkyLp(self, _n)
+
+      
+      Determine which sky we should use for L'. Does all the
+      rotator mirror angle matching.
+
+      @param _n: Name of science frame.
+      @type _n: string
+      @returns sky: name of sky file to use.
+      @rtype sky: string
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: getNonlinearCorrection(self, sky)
+
+      
+      Determine the non-linearity level. Raw data level of
+      non-linearity is 12,000 but we subtracted
+      off a sky which changed this level. The sky is
+      scaled, so the level will be slightly different
+      for every frame.
+
+      @param sky: File name of the sky used.
+      @type sky: string
+      @returns (sky_mean + sky_stddev) which is the value that should
+          be subtracted off of the saturation count level.
+      @rtype float
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: close(self)
+
+      
+      Close log files opened at init.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+
+.. py:function:: mosaic(files, wave, outroot, field=None, outSuffix=None, trim=0, weight=0, fwhm_max=0, submaps=0, fixDAR=True, maskSubmap=False, instrument=instruments.default_inst)
+
+   
+   Accepts a list of cleaned images and does a weighted combining after
+   performing frame selection based on the Strehl and FWHM.
+
+   Each image must have an associated *.coo file which gives the rough
+   position of the reference source.
+
+   @param files: List of integer file numbers to include in combine.
+   @type files: list of int
+   @param wave: Filter of observations (e.g. 'kp', 'lp', 'h')
+   @type wave: string
+   @param outroot: The output root name (e.g. '06jullgs'). The final combined
+       file names will be <outroot>_<field>_<wave>. The <field> keyword
+       is optional.
+
+       Examples:
+       06jullgs_kp for outroot='06jullgs' and wave='kp'
+       06jullgs_arch_f1_kp for adding field='arch_f1'
+   @type outroot: string
+   @kwparam field: Optional field name used to get to clean directory and
+       also effects the final output file name.
+   @type field: string
+   @kwparam trim: Optional file trimming based on image quality. Default
+       is 0. Set to 1 to turn trimming on.
+   @kwparam outSuffix: Optional suffix used to modify final output file name.
+   @type outSuffix: string
+   @type trim: 0 or 1
+   @kwparam weight: Optional weighting based on Strehl. Set to 1 to
+       to turn file weighting on (default is 0).
+   @type weight: 0 or 1
+   @kwparam fwhm_max: The maximum allowed FWHM for keeping frames when
+       trimming is turned on.
+   @type fwhm_max: int
+   @kwparam submaps: Set to the number of submaps to be made (def=0).
+   @type submaps: int
+   @kwparam mask: Set to false for maser mosaics; 06maylgs1 is an exception
+   @type mask: Boolean
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: mosaic_register(outroot, refImage, diffPA)
+
+   
+   Register images for a mosaic. This only calculates the exact
+   shifts between each image... it doesn't do the combining.
+
+   @param outroot: The root for the output image. The resulting
+   shifts will be written into a file called <outroot>.shifts
+   @type outroot: string
+   @param refImage: The name of the reference image.
+   @type refImage: string
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: mosaic_size(shiftsTable, refImage, outroot, subroot, submaps)
+
+   
+   Determine the final size for the completed mosaic.
+
+   @params shiftsTable: Table from mosaic_register containing the
+   shifts for all the images.
+   @type shiftsTable: string
+   @param refImage: The first image used as  reference.
+   @type refImage: string
+   @param outroot: The root name for the resulting output file.
+   @type outroot: string
+   @param subroot:
+   @type subroot: string
+   @param submaps:
+   @type submaps:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
