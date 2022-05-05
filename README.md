@@ -55,6 +55,11 @@ The reduction template scripts included in this repository provide a complete ru
 
 An example dataset with scripts can be found at this [Google Drive link](https://drive.google.com/drive/folders/1FpTN3wiG4U826H328JIJcPLbScNCTRQW?usp=sharing). This is a great place to start to test the pipeline.
 
+Citation
+--------
+If you use the KAI pipeline, please cite Lu et al. 2022, DOI: 10.5281/zenodo.6522913 (or see the CITATION.cff file).
+
+
 Contributing
 ------------
 
