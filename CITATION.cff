@@ -1,27 +1,28 @@
 cff-version: 1.1.0
 message: "If you use this software, please cite it as below."
 authors:
-  - family-names: "Lu"
-    given-names: "Jessica R."
-    orcid: "https://orcid.org/0000-0001-9611-0009"
-    affiliation: "University of California, Berkeley"
-    email: jlu.astro@berkeley.edu
-  - family-names: "Gautam"
-    given-names: "Abhimat K."
-    orcid: "https://orcid.org/0000-0002-2836-117X"
-    affiliation: "University of California, Los Angeles"
-  - family-names: "Chu"
-    given-names: "Devin"
-    orcid: "https://orcid.org/0000-0003-3765-8001"
-    affiliation: "University of California, Los Angeles"
-  - family-names: "Terry"
-    given-names: "Sean K."
-    orcid: "https://orcid.org/0000-0002-5029-3257"
-    affiliation: University of California, Berkeley
-  - family-names: "Do"
-    given-names: "Tuan"
-    orcid: "https://orcid.org/0000-0001-9554-6062"
-    affiliation: "University of California, Los Angeles"
-title: Keck-DataReductionPipelines/KAI: v1.0.0 Release of KAI
+- family-names: "Lu"
+  given-names: "Jessica R."
+  orcid: "https://orcid.org/0000-0001-9611-0009"
+  affiliation: "University of California, Berkeley"
+  email: jlu.astro@berkeley.edu
+- family-names: "Gautam"
+  given-names: "Abhimat K."
+  orcid: "https://orcid.org/0000-0002-2836-117X"
+  affiliation: "University of California, Los Angeles"
+- family-names: "Chu"
+  given-names: "Devin"
+  orcid: "https://orcid.org/0000-0003-3765-8001"
+  affiliation: "University of California, Los Angeles"
+- family-names: "Terry"
+  given-names: "Sean K."
+  orcid: "https://orcid.org/0000-0002-5029-3257"
+  affiliation: University of California, Berkeley
+- family-names: "Do"
+  given-names: "Tuan"
+  orcid: "https://orcid.org/0000-0001-9554-6062"
+  affiliation: "University of California, Los Angeles"
+title: "Keck-DataReductionPipelines/KAI: v1.0.0 Release of KAI"
 version: v1.0.0
+DOI: 10.5281/zenodo.6522913
 date-released: 2021-03-10
