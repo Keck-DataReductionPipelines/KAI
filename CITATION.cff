@@ -2,12 +2,12 @@ cff-version: 1.1.0
 message: "If you use this software, please cite it as below."
 authors:
   - family-names: Lu
-    given-names: Jessica R
+    given-names: "Jessica R."
     orcid: 0000-0001-9611-0009
     affiliation: University of California, Berkeley
     email: jlu.astro@berkeley.edu
   - family-names: Gautam
-    given-names: Abhimat K.
+    given-names: "Abhimat K."
     orcid: 0000-0002-2836-117X
     affiliation: University of California, Los Angeles
   - family-names: Chu
@@ -15,7 +15,7 @@ authors:
     orcid: 0000-0003-3765-8001
     affiliation: University of California, Los Angeles
   - family-names: Terry
-    given-names: Sean K.
+    given-names: "Sean K."
     orcid: 0000-0002-5029-3257
     affiliation: University of California, Berkeley
   - family-names: Do
