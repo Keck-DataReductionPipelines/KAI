@@ -5,6 +5,7 @@ The Keck AO Imaging (KAI) data reduction pipeline is a tool to reduce imaging ob
 Installation instructions are below, while more detailed API documentation is available [here](https://keck-datareductionpipelines.github.io/KAI/).
 
 [![Powered by Astropy Badge](http://img.shields.io/badge/powered%20by-AstroPy-orange.svg?style=flat)](http://www.astropy.org)
+[![DOI](https://zenodo.org/badge/335811025.svg)](https://zenodo.org/badge/latestdoi/335811025)
 
 ## Installation
 
@@ -54,6 +55,11 @@ The reduction template scripts included in this repository provide a complete ru
 ## Example Dataset
 
 An example dataset with scripts can be found at this [Google Drive link](https://drive.google.com/drive/folders/1FpTN3wiG4U826H328JIJcPLbScNCTRQW?usp=sharing). This is a great place to start to test the pipeline.
+
+Citation
+--------
+If you use the KAI pipeline, please cite Lu et al. 2022, DOI: 10.5281/zenodo.6522913 (or see the CITATION.cff file).
+
 
 Contributing
 ------------
