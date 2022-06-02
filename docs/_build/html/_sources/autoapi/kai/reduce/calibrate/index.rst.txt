@@ -1,0 +1,367 @@
+:py:mod:`kai.reduce.calibrate`
+==============================
+
+.. py:module:: kai.reduce.calibrate
+
+.. autoapi-nested-parse::
+
+   
+   ..
+       !! processed by numpydoc !!
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   kai.reduce.calibrate.IndentedHelpFormatterWithNL
+   kai.reduce.calibrate.Starlist
+
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   kai.reduce.calibrate.main
+   kai.reduce.calibrate.read_command_line
+   kai.reduce.calibrate.read_photo_calib_file
+   kai.reduce.calibrate.input_data
+   kai.reduce.calibrate.find_cal_stars
+   kai.reduce.calibrate.calc_zeropt
+   kai.reduce.calibrate.output_new
+   kai.reduce.calibrate.get_camera_type
+
+
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   kai.reduce.calibrate.all_scales
+
+
+.. py:data:: all_scales
+   :annotation: = [[1.0, 'No scaling'], [0.0102, 'Speckle'], [0.0087, 'KCAM-AO'], [0.0085, 'SCAM-AO'], [0.00993,...
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:class:: IndentedHelpFormatterWithNL(indent_increment=2, max_help_position=24, width=None, short_first=1)
+
+   Bases: :py:obj:`optparse.IndentedHelpFormatter`
+
+   
+   Format help with indented section bodies.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:method:: format_description(self, description)
+
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: format_option(self, option)
+
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+
+.. py:function:: main(argv=None)
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: read_command_line(argv)
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: read_photo_calib_file(options, verbose=False)
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: input_data(options)
+
+   
+   Read in a starlist and return a starlist object
+   with the following hanging off:
+     name
+     mag
+     epoch
+     x
+     y
+     xerr (none for starfinder starlists)
+     yerr (none for starfinder starlists)
+     snr
+     corr
+     nframes
+     fwhm
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: find_cal_stars(calibs, stars, options)
+
+   
+   Returns an array of indices which holds the index of the 
+   matching star in the starlist. Non-matches have an index of -1. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: calc_zeropt(calibs, stars, options)
+
+   
+   Calculate the average zeropoints from all the
+   calibrator stars specified by the user (or defaults).
+   Recall that not all calibrators in our list will
+   be used for the calibration... only those with
+   both include = True and found in the starlist.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: output_new(zeropt, zeropt_err, calibs, stars, options)
+
+   
+   Write out a calibrated starlist and a *.zer file with 
+   the calculated zeropoints.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: get_camera_type(fitsfile)
+
+   
+   Helper class to get the calibrate camera type from the
+   FITS header.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:class:: Starlist
+
+   Bases: :py:obj:`object`
+
+   
+   Use this to keep all the lists associated with
+   our input starlist.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+

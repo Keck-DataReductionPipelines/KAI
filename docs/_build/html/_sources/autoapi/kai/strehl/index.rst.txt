@@ -1,0 +1,209 @@
+:py:mod:`kai.strehl`
+====================
+
+.. py:module:: kai.strehl
+
+.. autoapi-nested-parse::
+
+   
+   ..
+       !! processed by numpydoc !!
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   kai.strehl.calc_strehl
+   kai.strehl.calc_strehl_single
+   kai.strehl.calc_peak_flux_ratio
+   kai.strehl.fit_gaussian2d
+   kai.strehl.fwhm_to_stddev
+   kai.strehl.stddev_to_fwhm
+
+
+
+.. py:function:: calc_strehl(file_list, out_file, apersize=0.3, instrument=instruments.default_inst)
+
+   
+   Calculate the Strehl, FWHM, and RMS WFE for each image in a 
+   list of files. The output is stored into the specified <out_file>
+   text file. The FWHM (and Strehl) is calculated over the specified 
+   aperture size using a 2D gaussian fit. The Strehl is estimated by
+   using the star specified in the *.coo (one for each *.fits file) 
+   file and taking the max pixel flux / wide-aperture flux and normalizing
+   by the same on a diffraction-limited image. Note that the diffraction
+   limited image comes from an external file. 
+
+   The format of the *.coo file should be:
+   xpix  ypix   # everything else
+
+   The diffraction limited images come with the pipeline. For Keck, they are
+   all obtained empirically using the NIRC2 camera and filters and they
+   are sampled at 0.009952 arcsec / pixel. We will resample them as necessary.
+   We will play fast and loose with them and use them for both NIRC2 and OSIRIS. 
+   They will be resampled as needed.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: calc_strehl_single(img_file, radius, dl_peak_flux_ratio, instrument=instruments.default_inst)
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: calc_peak_flux_ratio(img, coords, radius, skysub=True)
+
+   
+   img : 2D numpy array
+       The image on which to calculate the flux ratio of the peak to a 
+       wide-aperture.
+
+   coords : list or numpy array, length = 2
+       The x and y position of the source.
+
+   radius : int
+       The radius, in pixels, of the wide-aperture. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: fit_gaussian2d(img, coords, boxsize, plot=False, fwhm_min=1.7, fwhm_max=30, pos_delta_max=1.7)
+
+   
+   Calculate the FWHM of an objected located at the pixel
+   coordinates in the image. The FWHM will be estimated 
+   from a cutout with the specified boxsize.
+
+
+   :Parameters:
+
+       **img** : ndarray, 2D
+           The image where a star is located for calculating a FWHM.
+
+       **coords** : len=2 ndarray
+           The [x, y] pixel position of the star in the image. 
+
+       **boxsize** : int
+           The size of the box (on the side), in pixels.
+
+       **fwhm_min** : float, optional
+           The minimum allowed FWHM for constraining the fit (pixels).
+
+       **fwhm_max** : float, optional
+           The maximum allowed FWHM for constraining the fit (pixels).
+
+       **pos_delta_max** : float, optional
+           The maximum allowed positional offset for constraining the fit (pixels).
+           This ensures that the fitter doesn't wonder off to a bad pixel.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: fwhm_to_stddev(fwhm)
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: stddev_to_fwhm(stddev)
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+

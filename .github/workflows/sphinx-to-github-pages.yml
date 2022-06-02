@@ -1,0 +1,30 @@
+name: Build Sphinx documentation and deploy to GitHub pages
+
+on:
+  push:
+    branches:
+    - dev
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/setup-python@v2
+      - uses: actions/checkout@master
+        with:
+          fetch-depth: 0
+      
+      - name: Build documentation and commit
+        uses: sphinx-notes/pages@v2
+        with:
+          documentation_path: ./docs
+          target_branch: gh-pages
+          requirements_path: ./docs/requirements.txt
+          
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: gh-pages
+      

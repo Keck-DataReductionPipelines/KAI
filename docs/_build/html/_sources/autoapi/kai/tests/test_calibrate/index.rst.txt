@@ -1,0 +1,47 @@
+:py:mod:`kai.tests.test_calibrate`
+==================================
+
+.. py:module:: kai.tests.test_calibrate
+
+.. autoapi-nested-parse::
+
+   
+   ..
+       !! processed by numpydoc !!
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   kai.tests.test_calibrate.test_star_names
+
+
+
+.. py:function:: test_star_names()
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+

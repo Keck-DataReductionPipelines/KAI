@@ -25,15 +25,15 @@ def get_mtf(image, params, sources):
     """
     # Some image testing to catch unexpected inputs
     if len(image.shape) != 2:
-        print 'Input image must be 2-dimensional'
+        print('Input image must be 2-dimensional')
         return
     if image.shape[0] != image.shape[1]:
-        print 'Input image must be square'
+        print('Input image must be square')
         return
 
     if (sources != None):
         if (len(sources.shape) != 2) or (sources.shape[0] != sources.shape[1]):
-            print 'Input sources must be of the same size as image'
+            print('Input sources must be of the same size as image')
             return
 
     # Pull out the necessary paramters
@@ -307,7 +307,7 @@ def mtffunc_keck(pp, nu=None, wave=None, F=None, D=None, Apix=None,
     
     """
     if nu.min() < 0:
-        print 'Input NU cannot be less than zero.'
+        print('Input NU cannot be less than zero.')
 
     if wave != None:
         p = {'wave': wave, 'F': F, 'D': D, 'Apix': Apix, 'pupil': pupil}
@@ -527,7 +527,7 @@ def fitmtf_keck(nu, power, error, pspec_sources,
     if startParams == None:
         wave = 1.65e-6       # wavelength in meters
         F = 557.0            # effective focal length in meters
-        print 'Using effective focal length for the narrow camera.', F
+        print('Using effective focal length for the narrow camera.', F)
         D = 10.99            # primary mirror diamter in meters
         pupil = 'largehex'   # NIRC2 pupil-stop
         Apix = 27e-6         # width of detector's pixel in meters
@@ -646,10 +646,10 @@ def fitmtf_keck(nu, power, error, pspec_sources,
 
         return (0, res)
 
-    print 'Start Fitting: ', time.ctime()
+    print('Start Fitting: ', time.ctime())
     fit = mpfit.mpfit(residuals, startp, nprint=1,
                       parinfo=pinfo, functkw=fcnargs, quiet=1)
-    print 'Stop Fitting: ', time.ctime()
+    print('Stop Fitting: ', time.ctime())
 
     params = {}
     params['wave'] = fcnargs['wave']
@@ -766,7 +766,7 @@ def t_perfect_keck(x, p, pupil=None):
     """
     # Some image testing to catch unexpected inputs
     if x.min() < 0:
-        print 'Input NU cannot be less than zeros.'
+        print('Input NU cannot be less than zeros.')
         return
     if type(p) == dict:
         D = p['D']
@@ -1101,7 +1101,7 @@ def t_perfect(x, ee):
 
     """
     if x.min() < 0:
-        print 'Input NU cannot be less than zero.'
+        print('Input NU cannot be less than zero.')
     
     if type(ee) == dict:
         e = ee['pupil']
@@ -1112,7 +1112,7 @@ def t_perfect(x, ee):
         e = ee
 
     if e < 0 or e >= 1:
-        print 'Central obscuration cannot be < 0 or >= 1'
+        print('Central obscuration cannot be < 0 or >= 1')
         
     nx = len(x)
     ind0 = np.where(x <= 1)[0]
@@ -1189,7 +1189,7 @@ def t_pix(x, p):
             Written by Christopher Sheehy, January 2006.
     """
     if x.min() < 0:
-        print 'Input NU cannot be less than zero.'
+        print('Input NU cannot be less than zero.')
     
     d = p['D']
     wave = p['wave']
@@ -1200,7 +1200,7 @@ def t_pix(x, p):
     fratio = f / d
     
     if d <= 0 or wave <= 0 or a <= 0 or f <=0:
-        print 'Input D, wave, Apix, and F must all be > 0.'
+        print('Input D, wave, Apix, and F must all be > 0.')
 
     delta = wave * fratio / a
 
@@ -1255,9 +1255,9 @@ def t_atmos_ao(x, p):
             Written by Christopher D. Sheehy, January 2006.
     """
     if x.min() < 0:
-        print 'Input NU cannot be less than zero.'
+        print('Input NU cannot be less than zero.')
     if type(p) != dict:
-        print 'Input PARAMS must be a dictionary.'
+        print('Input PARAMS must be a dictionary.')
 
     wave = p['wave']
     flength = p['F']
@@ -1607,7 +1607,7 @@ def structure_function(rr, pp, phi_call=phi_atmos_ao):
 
     # Make function is valid
     if not hasattr(phi_call, '__call__'):
-        print 'Invalid phi_call in structure_function()'
+        print('Invalid phi_call in structure_function()')
 
     # Numerically compute the integral at each r necessary to construct
     # D(r). The integral's limits are actually 0 to infinity, but

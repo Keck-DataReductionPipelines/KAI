@@ -1,0 +1,23 @@
+﻿kai.reduce
+==========
+
+.. automodule:: kai.reduce
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>kai.photometry &mdash; KAI  documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> KAI
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../autoapi/index.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">KAI</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      <li>kai.photometry</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for kai.photometry</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pylab</span> <span class="k">as</span> <span class="nn">py</span>
+<span class="kn">from</span> <span class="nn">astropy.table</span> <span class="kn">import</span> <span class="n">Table</span>
+<span class="kn">from</span> <span class="nn">astropy.io</span> <span class="kn">import</span> <span class="n">fits</span>
+<span class="kn">import</span> <span class="nn">pickle</span><span class="o">,</span> <span class="nn">glob</span>
+<span class="kn">from</span> <span class="nn">mpl_toolkits.mplot3d</span> <span class="kn">import</span> <span class="n">Axes3D</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">cm</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">interpolate</span>
+<span class="kn">import</span> <span class="nn">kai</span>
+
+<div class="viewcode-block" id="setup_phot"><a class="viewcode-back" href="../../autoapi/kai/photometry/index.html#kai.photometry.setup_phot">[docs]</a><span class="k">def</span> <span class="nf">setup_phot</span><span class="p">(</span><span class="n">imageRoot</span><span class="p">,</span> <span class="n">silent</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+               <span class="n">apertures</span><span class="o">=</span><span class="p">[</span><span class="mi">25</span><span class="p">,</span><span class="mi">50</span><span class="p">,</span><span class="mi">75</span><span class="p">,</span><span class="mi">100</span><span class="p">,</span><span class="mi">125</span><span class="p">,</span><span class="mi">150</span><span class="p">,</span><span class="mi">175</span><span class="p">,</span><span class="mi">200</span><span class="p">],</span>
+               <span class="n">sky_annulus</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">sky_dannulus</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">zmag</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+
+    <span class="kn">from</span> <span class="nn">pyraf</span> <span class="kn">import</span> <span class="n">iraf</span> <span class="k">as</span> <span class="n">ir</span>
+    
+    <span class="c1"># Load image header</span>
+    <span class="n">hdr</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getheader</span><span class="p">(</span><span class="n">imageRoot</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">)</span>
+
+    <span class="n">ir</span><span class="o">.</span><span class="n">digiphot</span><span class="p">()</span>
+    <span class="n">ir</span><span class="o">.</span><span class="n">daophot</span><span class="p">()</span>
+    <span class="n">ir</span><span class="o">.</span><span class="n">unlearn</span><span class="p">(</span><span class="s1">&#39;phot&#39;</span><span class="p">)</span>
+    <span class="n">ir</span><span class="o">.</span><span class="n">unlearn</span><span class="p">(</span><span class="s1">&#39;datapars&#39;</span><span class="p">)</span>
+    <span class="n">ir</span><span class="o">.</span><span class="n">unlearn</span><span class="p">(</span><span class="s1">&#39;centerpars&#39;</span><span class="p">)</span>
+    <span class="n">ir</span><span class="o">.</span><span class="n">unlearn</span><span class="p">(</span><span class="s1">&#39;fitskypars&#39;</span><span class="p">)</span>
+    <span class="n">ir</span><span class="o">.</span><span class="n">unlearn</span><span class="p">(</span><span class="s1">&#39;photpars&#39;</span><span class="p">)</span>
+
+    <span class="c1">##########</span>
+    <span class="c1"># Set up datapars</span>
+    <span class="c1">##########</span>
+    <span class="n">ir</span><span class="o">.</span><span class="n">datapars</span><span class="o">.</span><span class="n">fwhmpsf</span> <span class="o">=</span> <span class="mf">5.0</span> <span class="c1"># shouldn&#39;t really matter</span>
+    <span class="n">ir</span><span class="o">.</span><span class="n">datapars</span><span class="o">.</span><span class="n">sigma</span> <span class="o">=</span> <span class="s1">&#39;INDEF&#39;</span>
+    <span class="n">ir</span><span class="o">.</span><span class="n">datapars</span><span class="o">.</span><span class="n">datamin</span> <span class="o">=</span> <span class="s1">&#39;INDEF&#39;</span>
+
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">imageRoot</span> <span class="o">+</span> <span class="s1">&#39;.max&#39;</span><span class="p">):</span>
+        <span class="n">max_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">imageRoot</span> <span class="o">+</span> <span class="s1">&#39;.max&#39;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
+        <span class="n">max_line</span> <span class="o">=</span> <span class="n">max_file</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+        <span class="nb">max</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">max_line</span><span class="p">)</span>
+        <span class="n">ir</span><span class="o">.</span><span class="n">datapars</span><span class="o">.</span><span class="n">datamax</span> <span class="o">=</span> <span class="nb">max</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">silent</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span> <span class="s1">&#39;Set ir.datapars.datamax = </span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="nb">max</span><span class="p">)</span>
+
+    <span class="c1"># Pull gain from the header</span>
+    <span class="n">ir</span><span class="o">.</span><span class="n">datapars</span><span class="o">.</span><span class="n">gain</span> <span class="o">=</span> <span class="s1">&#39;GAIN&#39;</span>
+    <span class="n">ir</span><span class="o">.</span><span class="n">datapars</span><span class="o">.</span><span class="n">epadu</span> <span class="o">=</span> <span class="s1">&#39;INDEF&#39;</span>
+
+    <span class="c1"># Assumes 43.1 electrons per read of noise</span>
+    <span class="n">nreads</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;SAMPMODE&#39;</span><span class="p">])</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">nreads</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;MULTISAM&#39;</span><span class="p">])</span>
+    
+    <span class="n">ir</span><span class="o">.</span><span class="n">datapars</span><span class="o">.</span><span class="n">ccdread</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+    <span class="n">ir</span><span class="o">.</span><span class="n">datapars</span><span class="o">.</span><span class="n">readnoise</span> <span class="o">=</span> <span class="mf">43.1</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span> <span class="o">/</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">nreads</span><span class="p">)</span>
+
+    <span class="c1"># Get exposure times from header</span>
+    <span class="n">ir</span><span class="o">.</span><span class="n">datapars</span><span class="o">.</span><span class="n">exposure</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+    <span class="n">ir</span><span class="o">.</span><span class="n">datapars</span><span class="o">.</span><span class="n">itime</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;ITIME&#39;</span><span class="p">])</span> <span class="o">*</span> <span class="nb">int</span><span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;COADDS&#39;</span><span class="p">])</span>
+
+    <span class="c1"># Other Header keywords</span>
+    <span class="n">ir</span><span class="o">.</span><span class="n">datapars</span><span class="o">.</span><span class="n">airmass</span> <span class="o">=</span> <span class="s1">&#39;AIRMASS&#39;</span>
+    <span class="n">ir</span><span class="o">.</span><span class="n">datapars</span><span class="o">.</span><span class="n">filter</span> <span class="o">=</span> <span class="s1">&#39;FWINAME&#39;</span>
+    <span class="n">ir</span><span class="o">.</span><span class="n">datapars</span><span class="o">.</span><span class="n">obstime</span> <span class="o">=</span> <span class="s1">&#39;EXPSTART&#39;</span>
+
+    
+    <span class="c1">##########</span>
+    <span class="c1"># Setup centerpars. We will use *.coo file for initial guess.</span>
+    <span class="c1">##########</span>
+    <span class="n">ir</span><span class="o">.</span><span class="n">centerpars</span><span class="o">.</span><span class="n">calgorithm</span> <span class="o">=</span> <span class="s1">&#39;centroid&#39;</span>
+
+    <span class="c1">##########</span>
+    <span class="c1"># Setup fitskypars</span>
+    <span class="c1">##########</span>
+    <span class="n">ir</span><span class="o">.</span><span class="n">fitskypars</span><span class="o">.</span><span class="n">salgorithm</span> <span class="o">=</span> <span class="s1">&#39;centroid&#39;</span>
+    <span class="n">ir</span><span class="o">.</span><span class="n">fitskypars</span><span class="o">.</span><span class="n">annulus</span> <span class="o">=</span> <span class="n">sky_annulus</span>
+    <span class="n">ir</span><span class="o">.</span><span class="n">fitskypars</span><span class="o">.</span><span class="n">dannulus</span> <span class="o">=</span> <span class="n">sky_dannulus</span>
+
+    <span class="c1">##########</span>
+    <span class="c1"># Setup photpars</span>
+    <span class="c1">##########</span>
+    <span class="c1"># Setup a zeropoint... this assumes Strehl = 1, but good enough for now.</span>
+    <span class="n">ir</span><span class="o">.</span><span class="n">photpars</span><span class="o">.</span><span class="n">zmag</span> <span class="o">=</span> <span class="n">zmag</span>
+    <span class="n">ir</span><span class="o">.</span><span class="n">photpars</span><span class="o">.</span><span class="n">apertures</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">aa</span><span class="p">)</span> <span class="k">for</span> <span class="n">aa</span> <span class="ow">in</span> <span class="n">apertures</span><span class="p">])</span>
+    
+    <span class="c1">##########</span>
+    <span class="c1"># Setup phot</span>
+    <span class="c1">##########</span>
+    <span class="n">ir</span><span class="o">.</span><span class="n">phot</span><span class="o">.</span><span class="n">interactive</span> <span class="o">=</span> <span class="s1">&#39;no&#39;</span>
+    <span class="n">ir</span><span class="o">.</span><span class="n">phot</span><span class="o">.</span><span class="n">radplots</span> <span class="o">=</span> <span class="s1">&#39;no&#39;</span>
+    <span class="n">ir</span><span class="o">.</span><span class="n">phot</span><span class="o">.</span><span class="n">verify</span> <span class="o">=</span> <span class="s1">&#39;No&#39;</span>
+
+    <span class="k">if</span> <span class="n">silent</span><span class="p">:</span>
+        <span class="n">ir</span><span class="o">.</span><span class="n">phot</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="s1">&#39;no&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">ir</span><span class="o">.</span><span class="n">phot</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="s1">&#39;yes&#39;</span></div>
+
+<div class="viewcode-block" id="run_phot"><a class="viewcode-back" href="../../autoapi/kai/photometry/index.html#kai.photometry.run_phot">[docs]</a><span class="k">def</span> <span class="nf">run_phot</span><span class="p">(</span><span class="n">imageRoot</span><span class="p">,</span> <span class="n">silent</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+             <span class="n">apertures</span><span class="o">=</span><span class="p">[</span><span class="mi">25</span><span class="p">,</span><span class="mi">50</span><span class="p">,</span><span class="mi">75</span><span class="p">,</span><span class="mi">100</span><span class="p">,</span><span class="mi">125</span><span class="p">,</span><span class="mi">150</span><span class="p">,</span><span class="mi">175</span><span class="p">,</span><span class="mi">200</span><span class="p">],</span>
+             <span class="n">sky_annulus</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">sky_dannulus</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">zmag</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+
+    <span class="kn">from</span> <span class="nn">pyraf</span> <span class="kn">import</span> <span class="n">iraf</span> <span class="k">as</span> <span class="n">ir</span>
+    
+    <span class="n">setup_phot</span><span class="p">(</span><span class="n">imageRoot</span><span class="p">,</span> <span class="n">apertures</span><span class="o">=</span><span class="n">apertures</span><span class="p">,</span> <span class="n">zmag</span><span class="o">=</span><span class="n">zmag</span><span class="p">,</span> <span class="n">silent</span><span class="o">=</span><span class="n">silent</span><span class="p">,</span>
+               <span class="n">sky_annulus</span><span class="o">=</span><span class="n">sky_annulus</span><span class="p">,</span> <span class="n">sky_dannulus</span><span class="o">=</span><span class="n">sky_dannulus</span><span class="p">)</span>
+
+    <span class="n">image</span> <span class="o">=</span> <span class="n">imageRoot</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span>
+    <span class="n">coords</span> <span class="o">=</span> <span class="n">imageRoot</span> <span class="o">+</span> <span class="s1">&#39;.coo&#39;</span>
+
+    <span class="c1"># Output into current directory, not data directory</span>
+    <span class="n">rootSplit</span> <span class="o">=</span> <span class="n">imageRoot</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">rootSplit</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.phot.mag&#39;</span>
+
+    <span class="n">ir</span><span class="o">.</span><span class="n">phot</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">coords</span><span class="p">,</span> <span class="n">output</span><span class="p">)</span>
+
+    <span class="p">(</span><span class="n">radius</span><span class="p">,</span> <span class="n">flux</span><span class="p">,</span> <span class="n">mag</span><span class="p">,</span> <span class="n">merr</span><span class="p">)</span> <span class="o">=</span> <span class="n">get_phot_output</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">silent</span><span class="o">=</span><span class="n">silent</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">(</span><span class="n">radius</span><span class="p">,</span> <span class="n">flux</span><span class="p">,</span> <span class="n">mag</span><span class="p">,</span> <span class="n">merr</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="get_phot_output"><a class="viewcode-back" href="../../autoapi/kai/photometry/index.html#kai.photometry.get_phot_output">[docs]</a><span class="k">def</span> <span class="nf">get_phot_output</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">silent</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="kn">from</span> <span class="nn">pyraf</span> <span class="kn">import</span> <span class="n">iraf</span> <span class="k">as</span> <span class="n">ir</span>
+    
+    <span class="c1"># Now get the results using txdump</span>
+    <span class="n">radStr</span> <span class="o">=</span> <span class="n">ir</span><span class="o">.</span><span class="n">txdump</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="s1">&#39;RAPERT&#39;</span><span class="p">,</span> <span class="s1">&#39;yes&#39;</span><span class="p">,</span> <span class="n">Stdout</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">fluxStr</span> <span class="o">=</span> <span class="n">ir</span><span class="o">.</span><span class="n">txdump</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="s1">&#39;FLUX&#39;</span><span class="p">,</span> <span class="s1">&#39;yes&#39;</span><span class="p">,</span> <span class="n">Stdout</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">magStr</span> <span class="o">=</span> <span class="n">ir</span><span class="o">.</span><span class="n">txdump</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="s1">&#39;MAG&#39;</span><span class="p">,</span> <span class="s1">&#39;yes&#39;</span><span class="p">,</span> <span class="n">Stdout</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">merrStr</span> <span class="o">=</span> <span class="n">ir</span><span class="o">.</span><span class="n">txdump</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="s1">&#39;MERR&#39;</span><span class="p">,</span> <span class="s1">&#39;yes&#39;</span><span class="p">,</span> <span class="n">Stdout</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">pierStr</span> <span class="o">=</span> <span class="n">ir</span><span class="o">.</span><span class="n">txdump</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="s1">&#39;PIER&#39;</span><span class="p">,</span> <span class="s1">&#39;yes&#39;</span><span class="p">,</span> <span class="n">Stdout</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">radFields</span> <span class="o">=</span> <span class="n">radStr</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+    <span class="n">fluxFields</span> <span class="o">=</span> <span class="n">fluxStr</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+    <span class="n">magFields</span> <span class="o">=</span> <span class="n">magStr</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+    <span class="n">merrFields</span> <span class="o">=</span> <span class="n">merrStr</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+    <span class="n">pierFields</span> <span class="o">=</span> <span class="n">pierStr</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+
+    <span class="n">count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">radFields</span><span class="p">)</span>
+
+    <span class="n">radius</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">count</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">flux</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">count</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">mag</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">count</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">merr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">count</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">rr</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">count</span><span class="p">):</span>
+        <span class="n">radius</span><span class="p">[</span><span class="n">rr</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">radFields</span><span class="p">[</span><span class="n">rr</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">pierFields</span><span class="p">[</span><span class="n">rr</span><span class="p">])</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">magFields</span><span class="p">[</span><span class="n">rr</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;INDEF&#39;</span> <span class="ow">or</span>
+            <span class="n">merrFields</span><span class="p">[</span><span class="n">rr</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;INDEF&#39;</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span> <span class="s1">&#39;Problem in image: &#39;</span> <span class="o">+</span> <span class="n">output</span><span class="p">)</span>
+
+            <span class="c1"># Error</span>
+            <span class="n">flux</span><span class="p">[</span><span class="n">rr</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">mag</span><span class="p">[</span><span class="n">rr</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">merr</span><span class="p">[</span><span class="n">rr</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">flux</span><span class="p">[</span><span class="n">rr</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">fluxFields</span><span class="p">[</span><span class="n">rr</span><span class="p">])</span>
+            <span class="n">mag</span><span class="p">[</span><span class="n">rr</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">magFields</span><span class="p">[</span><span class="n">rr</span><span class="p">])</span>
+            <span class="n">merr</span><span class="p">[</span><span class="n">rr</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">merrFields</span><span class="p">[</span><span class="n">rr</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">silent</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span> <span class="s1">&#39;</span><span class="si">%6s</span><span class="s1">  </span><span class="si">%10s</span><span class="s1">  </span><span class="si">%6s</span><span class="s1">  </span><span class="si">%6s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="s1">&#39;Radius&#39;</span><span class="p">,</span> <span class="s1">&#39;Flux&#39;</span><span class="p">,</span> <span class="s1">&#39;Mag&#39;</span><span class="p">,</span> <span class="s1">&#39;MagErr&#39;</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">count</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span> <span class="s1">&#39;</span><span class="si">%8.1f</span><span class="s1">  </span><span class="si">%10d</span><span class="s1">  </span><span class="si">%6.3f</span><span class="s1">  </span><span class="si">%6.3f</span><span class="s1">&#39;</span> <span class="o">%</span> \
+                <span class="p">(</span><span class="n">radius</span><span class="p">[</span><span class="n">ii</span><span class="p">],</span> <span class="n">flux</span><span class="p">[</span><span class="n">ii</span><span class="p">],</span> <span class="n">mag</span><span class="p">[</span><span class="n">ii</span><span class="p">],</span> <span class="n">merr</span><span class="p">[</span><span class="n">ii</span><span class="p">]))</span>
+    
+    <span class="k">return</span> <span class="p">(</span><span class="n">radius</span><span class="p">,</span> <span class="n">flux</span><span class="p">,</span> <span class="n">mag</span><span class="p">,</span> <span class="n">merr</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="get_filter_profile"><a class="viewcode-back" href="../../autoapi/kai/photometry/index.html#kai.photometry.get_filter_profile">[docs]</a><span class="k">def</span> <span class="nf">get_filter_profile</span><span class="p">(</span><span class="nb">filter</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns the wavelength (in microns) and the transmission for </span>
+<span class="sd">    the specified NIRC2 filter.</span>
+
+<span class="sd">    Example: </span>
+<span class="sd">    (wave, trans) = kai.photometry.get_filter_profile(&#39;Kp&#39;)</span>
+<span class="sd">    py.clf()</span>
+<span class="sd">    py.plot(wave, trans)</span>
+<span class="sd">    py.xlabel(&#39;Wavelength (microns)&#39;)</span>
+<span class="sd">    py.ylabel(&#39;Transmission&#39;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">base_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">kai</span><span class="o">.</span><span class="vm">__file__</span><span class="p">)</span>
+    <span class="n">rootDir</span> <span class="o">=</span> <span class="n">base_path</span> <span class="o">+</span> <span class="s1">&#39;/filters/&#39;</span>
+
+    <span class="n">filters</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;J&#39;</span><span class="p">,</span> <span class="s1">&#39;H&#39;</span><span class="p">,</span> <span class="s1">&#39;K&#39;</span><span class="p">,</span> <span class="s1">&#39;Kcont&#39;</span><span class="p">,</span> <span class="s1">&#39;Kp&#39;</span><span class="p">,</span> <span class="s1">&#39;Ks&#39;</span><span class="p">,</span> <span class="s1">&#39;Lp&#39;</span><span class="p">,</span> <span class="s1">&#39;Ms&#39;</span><span class="p">,</span>
+               <span class="s1">&#39;Hcont&#39;</span><span class="p">,</span> <span class="s1">&#39;Brgamma&#39;</span><span class="p">,</span> <span class="s1">&#39;FeII&#39;</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="nb">filter</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">filters</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span> <span class="s1">&#39;Could not find profile for filter </span><span class="si">%s</span><span class="s1">.&#39;</span> <span class="o">%</span> <span class="nb">filter</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span> <span class="s1">&#39;Choices are: &#39;</span><span class="p">,</span> <span class="n">filters</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">rootDir</span> <span class="o">+</span> <span class="nb">filter</span> <span class="o">+</span> <span class="s1">&#39;.dat&#39;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;ascii&#39;</span><span class="p">)</span>
+
+    <span class="n">wavelength</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span><span class="n">table</span><span class="o">.</span><span class="n">colnames</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+    <span class="n">transmission</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span><span class="n">table</span><span class="o">.</span><span class="n">colnames</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+
+    <span class="c1"># Lets fix wavelength array for duplicate values</span>
+    <span class="n">diff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">wavelength</span><span class="p">)</span>
+    <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">diff</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">wavelength</span><span class="p">[</span><span class="n">idx</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="mf">1.0e-7</span>
+
+    <span class="c1"># Get rid of all entries with negative transmission</span>
+    <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">transmission</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">wavelength</span> <span class="o">=</span> <span class="n">wavelength</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+    <span class="n">transmission</span> <span class="o">=</span> <span class="n">transmission</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">/</span> <span class="mf">100.0</span> <span class="c1"># convert from % to ratio</span>
+
+    <span class="k">return</span> <span class="p">(</span><span class="n">wavelength</span><span class="p">,</span> <span class="n">transmission</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="test_filter_profile_interp"><a class="viewcode-back" href="../../autoapi/kai/photometry/index.html#kai.photometry.test_filter_profile_interp">[docs]</a><span class="k">def</span> <span class="nf">test_filter_profile_interp</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Plot up the filter transmission curves and their interpolations</span>
+<span class="sd">    for the three K-band filters (K, Kp, Ks).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Get the transmission curve for NIRC2 filters and atmosphere.</span>
+    <span class="n">K_wave</span><span class="p">,</span> <span class="n">K_trans</span> <span class="o">=</span> <span class="n">get_filter_profile</span><span class="p">(</span><span class="s1">&#39;K&#39;</span><span class="p">)</span>
+    <span class="n">Kp_wave</span><span class="p">,</span> <span class="n">Kp_trans</span> <span class="o">=</span> <span class="n">get_filter_profile</span><span class="p">(</span><span class="s1">&#39;Kp&#39;</span><span class="p">)</span>
+    <span class="n">Ks_wave</span><span class="p">,</span> <span class="n">Ks_trans</span> <span class="o">=</span> <span class="n">get_filter_profile</span><span class="p">(</span><span class="s1">&#39;Ks&#39;</span><span class="p">)</span>
+    <span class="n">J_wave</span><span class="p">,</span> <span class="n">J_trans</span> <span class="o">=</span> <span class="n">get_filter_profile</span><span class="p">(</span><span class="s1">&#39;J&#39;</span><span class="p">)</span>
+    <span class="n">H_wave</span><span class="p">,</span> <span class="n">H_trans</span> <span class="o">=</span> <span class="n">get_filter_profile</span><span class="p">(</span><span class="s1">&#39;H&#39;</span><span class="p">)</span>
+    <span class="n">Lp_wave</span><span class="p">,</span> <span class="n">Lp_trans</span> <span class="o">=</span> <span class="n">get_filter_profile</span><span class="p">(</span><span class="s1">&#39;Lp&#39;</span><span class="p">)</span>
+
+    <span class="c1"># We will need to resample these transmission curves.</span>
+    <span class="nb">print</span><span class="p">(</span> <span class="s1">&#39;Creating interp object&#39;</span><span class="p">)</span>
+    <span class="n">K_interp</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">splrep</span><span class="p">(</span><span class="n">K_wave</span><span class="p">,</span> <span class="n">K_trans</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">Kp_interp</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">splrep</span><span class="p">(</span><span class="n">Kp_wave</span><span class="p">,</span> <span class="n">Kp_trans</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">Ks_interp</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">splrep</span><span class="p">(</span><span class="n">Ks_wave</span><span class="p">,</span> <span class="n">Ks_trans</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">J_interp</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">splrep</span><span class="p">(</span><span class="n">J_wave</span><span class="p">,</span> <span class="n">J_trans</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">H_interp</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">splrep</span><span class="p">(</span><span class="n">H_wave</span><span class="p">,</span> <span class="n">H_trans</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">Lp_interp</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">splrep</span><span class="p">(</span><span class="n">Lp_wave</span><span class="p">,</span> <span class="n">Lp_trans</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">K_wave_new</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">K_wave</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">K_wave</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span> <span class="mf">0.0005</span><span class="p">)</span>
+    <span class="n">Kp_wave_new</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">Kp_wave</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">Kp_wave</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span> <span class="mf">0.0005</span><span class="p">)</span>
+    <span class="n">Ks_wave_new</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">Ks_wave</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">Ks_wave</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span> <span class="mf">0.0005</span><span class="p">)</span>
+    <span class="n">J_wave_new</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">J_wave</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">J_wave</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span> <span class="mf">0.0005</span><span class="p">)</span>
+    <span class="n">H_wave_new</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">H_wave</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">H_wave</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span> <span class="mf">0.0005</span><span class="p">)</span>
+    <span class="n">Lp_wave_new</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">Lp_wave</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">Lp_wave</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span> <span class="mf">0.0005</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span> <span class="s1">&#39;Interpolating&#39;</span><span class="p">)</span>
+    <span class="n">K_trans_new</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">splev</span><span class="p">(</span><span class="n">K_wave_new</span><span class="p">,</span> <span class="n">K_interp</span><span class="p">)</span>
+    <span class="n">Kp_trans_new</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">splev</span><span class="p">(</span><span class="n">Kp_wave_new</span><span class="p">,</span> <span class="n">Kp_interp</span><span class="p">)</span>
+    <span class="n">Ks_trans_new</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">splev</span><span class="p">(</span><span class="n">Ks_wave_new</span><span class="p">,</span> <span class="n">Ks_interp</span><span class="p">)</span>
+    <span class="n">J_trans_new</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">splev</span><span class="p">(</span><span class="n">J_wave_new</span><span class="p">,</span> <span class="n">J_interp</span><span class="p">)</span>
+    <span class="n">H_trans_new</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">splev</span><span class="p">(</span><span class="n">H_wave_new</span><span class="p">,</span> <span class="n">H_interp</span><span class="p">)</span>
+    <span class="n">Lp_trans_new</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">splev</span><span class="p">(</span><span class="n">Lp_wave_new</span><span class="p">,</span> <span class="n">Lp_interp</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span> <span class="s1">&#39;Plotting&#39;</span><span class="p">)</span>
+<span class="c1">#     py.figure(2, figsize=(4,4))</span>
+<span class="c1">#     py.subplots_adjust(left=0.2, bottom=0.14, top=0.95, right=0.94)</span>
+    <span class="n">py</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+    <span class="n">py</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">K_wave</span><span class="p">,</span> <span class="n">K_trans</span><span class="p">,</span> <span class="s1">&#39;bo&#39;</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;_nolegend_&#39;</span><span class="p">,</span> <span class="n">mec</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">)</span>
+    <span class="n">py</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">K_wave_new</span><span class="p">,</span> <span class="n">K_trans_new</span><span class="p">,</span> <span class="s1">&#39;b-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;K&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="n">py</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">Kp_wave</span><span class="p">,</span> <span class="n">Kp_trans</span><span class="p">,</span> <span class="s1">&#39;ro&#39;</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;_nolegend_&#39;</span><span class="p">,</span> <span class="n">mec</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">)</span>
+    <span class="n">py</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">Kp_wave_new</span><span class="p">,</span> <span class="n">Kp_trans_new</span><span class="p">,</span> <span class="s1">&#39;r-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Kp&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="n">py</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">Ks_wave</span><span class="p">,</span> <span class="n">Ks_trans</span><span class="p">,</span> <span class="s1">&#39;go&#39;</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;_nolegend_&#39;</span><span class="p">,</span> <span class="n">mec</span><span class="o">=</span><span class="s1">&#39;green&#39;</span><span class="p">)</span>
+    <span class="n">py</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">Ks_wave_new</span><span class="p">,</span> <span class="n">Ks_trans_new</span><span class="p">,</span> <span class="s1">&#39;g-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Ks&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="n">py</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">J_wave</span><span class="p">,</span> <span class="n">J_trans</span><span class="p">,</span> <span class="s1">&#39;go&#39;</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;_nolegend_&#39;</span><span class="p">,</span> <span class="n">mec</span><span class="o">=</span><span class="s1">&#39;green&#39;</span><span class="p">)</span>
+    <span class="n">py</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">J_wave_new</span><span class="p">,</span> <span class="n">J_trans_new</span><span class="p">,</span> <span class="s1">&#39;g-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;J&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="n">py</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">H_wave</span><span class="p">,</span> <span class="n">H_trans</span><span class="p">,</span> <span class="s1">&#39;go&#39;</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;_nolegend_&#39;</span><span class="p">,</span> <span class="n">mec</span><span class="o">=</span><span class="s1">&#39;green&#39;</span><span class="p">)</span>
+    <span class="n">py</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">H_wave_new</span><span class="p">,</span> <span class="n">H_trans_new</span><span class="p">,</span> <span class="s1">&#39;g-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;H&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="n">py</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">Lp_wave</span><span class="p">,</span> <span class="n">Lp_trans</span><span class="p">,</span> <span class="s1">&#39;go&#39;</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;_nolegend_&#39;</span><span class="p">,</span> <span class="n">mec</span><span class="o">=</span><span class="s1">&#39;green&#39;</span><span class="p">)</span>
+    <span class="n">py</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">Lp_wave_new</span><span class="p">,</span> <span class="n">Lp_trans_new</span><span class="p">,</span> <span class="s1">&#39;g-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Lp&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    
+    <span class="n">py</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;lower right&#39;</span><span class="p">,</span> <span class="n">numpoints</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">markerscale</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+    <span class="n">py</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Wavelength (microns)&#39;</span><span class="p">)</span>
+    <span class="n">py</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Transmission (%)&#39;</span><span class="p">)</span></div>
+
+<span class="c1">#     py.axis([2.110, 2.120, 0.928, 0.945])</span>
+
+<div class="viewcode-block" id="test_atmosphere_profile_interp"><a class="viewcode-back" href="../../autoapi/kai/photometry/index.html#kai.photometry.test_atmosphere_profile_interp">[docs]</a><span class="k">def</span> <span class="nf">test_atmosphere_profile_interp</span><span class="p">():</span>
+    <span class="n">atmDir</span> <span class="o">=</span> <span class="s1">&#39;/u/jlu/data/w51/09jun26/weather/atmosphere_transmission.dat&#39;</span>
+    <span class="n">atmData</span> <span class="o">=</span> <span class="n">Table</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">atmDir</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;ascii&#39;</span><span class="p">)</span>
+    <span class="n">atm_wave</span> <span class="o">=</span> <span class="n">atmData</span><span class="p">[</span><span class="n">atmData</span><span class="o">.</span><span class="n">colnames</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+    <span class="n">atm_trans</span> <span class="o">=</span> <span class="n">atmData</span><span class="p">[</span><span class="n">atmData</span><span class="o">.</span><span class="n">colnames</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+
+    <span class="n">atm_interp</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">splrep</span><span class="p">(</span><span class="n">atm_wave</span><span class="p">,</span> <span class="n">atm_trans</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">atm_wave_new</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.4</span><span class="p">,</span> <span class="mf">0.0005</span><span class="p">)</span>
+    <span class="n">atm_trans_new</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">splev</span><span class="p">(</span><span class="n">atm_wave_new</span><span class="p">,</span> <span class="n">atm_interp</span><span class="p">)</span>
+
+    <span class="n">py</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+    <span class="n">py</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">atm_wave</span><span class="p">,</span> <span class="n">atm_trans</span><span class="p">,</span> <span class="s1">&#39;r.&#39;</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">py</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">atm_wave_new</span><span class="p">,</span> <span class="n">atm_trans_new</span><span class="p">,</span> <span class="s1">&#39;b-&#39;</span><span class="p">)</span>
+    <span class="n">py</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Wavelength (microns)&#39;</span><span class="p">)</span>
+    <span class="n">py</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Transmission (%)&#39;</span><span class="p">)</span>
+    <span class="n">py</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mf">2.4</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, J. R. Lu, A. K. Gautam, T. Do.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

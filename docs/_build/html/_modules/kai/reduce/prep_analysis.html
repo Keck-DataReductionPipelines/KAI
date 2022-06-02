@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>kai.reduce.prep_analysis &mdash; KAI  documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> KAI
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../autoapi/index.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">KAI</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      <li>kai.reduce.prep_analysis</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for kai.reduce.prep_analysis</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">astropy.io</span> <span class="kn">import</span> <span class="n">fits</span><span class="p">,</span> <span class="n">ascii</span>
+<span class="kn">from</span> <span class="nn">astropy.table</span> <span class="kn">import</span> <span class="n">Table</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">astropy.stats</span> <span class="kn">import</span> <span class="n">sigma_clipped_stats</span>
+<span class="kn">import</span> <span class="nn">photutils.detection</span> <span class="k">as</span> <span class="nn">sf</span>
+<span class="kn">import</span> <span class="nn">microlens.jlu.align_flystar</span> <span class="k">as</span> <span class="nn">af</span>
+<span class="kn">from</span> <span class="nn">matplotlib.colors</span> <span class="kn">import</span> <span class="n">LogNorm</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">date</span>
+
+
+<div class="viewcode-block" id="euclidean"><a class="viewcode-back" href="../../../autoapi/kai/reduce/prep_analysis/index.html#kai.reduce.prep_analysis.euclidean">[docs]</a><span class="k">def</span> <span class="nf">euclidean</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">x2</span> <span class="o">-</span> <span class="n">x1</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">y2</span> <span class="o">-</span> <span class="n">y1</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="removeEdges"><a class="viewcode-back" href="../../../autoapi/kai/reduce/prep_analysis/index.html#kai.reduce.prep_analysis.removeEdges">[docs]</a><span class="k">def</span> <span class="nf">removeEdges</span><span class="p">(</span><span class="n">imgArr</span><span class="p">,</span> <span class="n">finalTable</span><span class="p">,</span> <span class="n">cutoff</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span> <span class="n">x</span> <span class="o">=</span> <span class="s2">&quot;xcentroid&quot;</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="s2">&quot;ycentroid&quot;</span><span class="p">,</span> <span class="n">scale</span> <span class="o">=</span> <span class="mf">0.009942</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Ignores stars close to the edge, i.e., within 100 * scale pixels by default.&quot;&quot;&quot;</span>
+    <span class="n">cutoff</span> <span class="o">=</span> <span class="p">(</span><span class="n">cutoff</span> <span class="o">*</span> <span class="n">scale</span><span class="p">)</span> <span class="o">/</span> <span class="mf">0.009942</span>
+    <span class="n">finalTable</span><span class="o">.</span><span class="n">remove_rows</span><span class="p">([</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">finalTable</span><span class="p">[</span><span class="n">x</span><span class="p">]))</span> <span class="k">if</span> <span class="n">finalTable</span><span class="p">[</span><span class="n">x</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">cutoff</span><span class="p">])</span>
+    <span class="n">finalTable</span><span class="o">.</span><span class="n">remove_rows</span><span class="p">([</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">finalTable</span><span class="p">[</span><span class="n">y</span><span class="p">]))</span> <span class="k">if</span> <span class="n">finalTable</span><span class="p">[</span><span class="n">y</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">cutoff</span><span class="p">])</span>
+    <span class="n">finalTable</span><span class="o">.</span><span class="n">remove_rows</span><span class="p">([</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">finalTable</span><span class="p">[</span><span class="n">x</span><span class="p">]))</span> <span class="k">if</span> <span class="n">finalTable</span><span class="p">[</span><span class="n">x</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">imgArr</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">-</span> <span class="n">cutoff</span><span class="p">])</span>
+    <span class="n">finalTable</span><span class="o">.</span><span class="n">remove_rows</span><span class="p">([</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">finalTable</span><span class="p">[</span><span class="n">y</span><span class="p">]))</span> <span class="k">if</span> <span class="n">finalTable</span><span class="p">[</span><span class="n">y</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">imgArr</span><span class="p">)</span> <span class="o">-</span> <span class="n">cutoff</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">finalTable</span></div>
+
+
+
+
+<div class="viewcode-block" id="psfRadius"><a class="viewcode-back" href="../../../autoapi/kai/reduce/prep_analysis/index.html#kai.reduce.prep_analysis.psfRadius">[docs]</a><span class="k">def</span> <span class="nf">psfRadius</span><span class="p">(</span><span class="n">starPeak</span><span class="p">,</span> <span class="n">imagePeak</span><span class="p">,</span> <span class="n">scale</span> <span class="o">=</span> <span class="mf">0.009942</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Arbitrary function that ties the predicted radius of the star to the peak brightness in the image.</span>
+<span class="sd">    returns a radius: 10 &lt; (Ratio of &quot;magnitudes&quot; cubed * 80) &lt; 60 and scaled acc. to plate scale in arcsec</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">((</span><span class="nb">max</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="mi">80</span> <span class="o">*</span> <span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">starPeak</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">imagePeak</span><span class="p">))</span> <span class="o">**</span> <span class="mi">3</span><span class="p">),</span> <span class="mi">60</span><span class="p">),</span> <span class="mi">10</span><span class="p">)</span> <span class="o">/</span> <span class="n">scale</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.00942</span><span class="p">)</span></div>
+
+
+
+
+<div class="viewcode-block" id="isBrightSpeckleStar"><a class="viewcode-back" href="../../../autoapi/kai/reduce/prep_analysis/index.html#kai.reduce.prep_analysis.isBrightSpeckleStar">[docs]</a><span class="k">def</span> <span class="nf">isBrightSpeckleStar</span><span class="p">(</span><span class="n">starPeak</span><span class="p">,</span> <span class="n">imagePeak</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Can this star have halo speckles? If it&#39;s half the peak brightness, it is assumed yes. &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">starPeak</span> <span class="o">&gt;</span> <span class="p">(</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">imagePeak</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="isNearBrightStar"><a class="viewcode-back" href="../../../autoapi/kai/reduce/prep_analysis/index.html#kai.reduce.prep_analysis.isNearBrightStar">[docs]</a><span class="k">def</span> <span class="nf">isNearBrightStar</span><span class="p">(</span><span class="n">nearStarPeak</span><span class="p">,</span> <span class="n">mainPeak</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Is the main star near another bright star? &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">(</span><span class="mf">0.2</span> <span class="o">*</span> <span class="n">mainPeak</span> <span class="o">&lt;</span> <span class="n">nearStarPeak</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="isInPSFRadius"><a class="viewcode-back" href="../../../autoapi/kai/reduce/prep_analysis/index.html#kai.reduce.prep_analysis.isInPSFRadius">[docs]</a><span class="k">def</span> <span class="nf">isInPSFRadius</span><span class="p">(</span><span class="n">starCoo</span><span class="p">,</span> <span class="n">mainCoo</span><span class="p">,</span> <span class="n">psfr</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Is star within the psf radius from earlier? &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">euclidean</span><span class="p">(</span><span class="n">starCoo</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">starCoo</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">mainCoo</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mainCoo</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">&lt;</span> <span class="n">psfr</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="isInSecondaryRadius"><a class="viewcode-back" href="../../../autoapi/kai/reduce/prep_analysis/index.html#kai.reduce.prep_analysis.isInSecondaryRadius">[docs]</a><span class="k">def</span> <span class="nf">isInSecondaryRadius</span><span class="p">(</span><span class="n">starCoo</span><span class="p">,</span> <span class="n">mainCoo</span><span class="p">,</span> <span class="n">psfr</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Is star within the secondary radius, defined as 1.35x the psf radius? (arbitrarily) &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">euclidean</span><span class="p">(</span><span class="n">starCoo</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">starCoo</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">mainCoo</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mainCoo</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">&lt;</span> <span class="n">psfr</span> <span class="o">*</span> <span class="mf">1.35</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="getTableIndex"><a class="viewcode-back" href="../../../autoapi/kai/reduce/prep_analysis/index.html#kai.reduce.prep_analysis.getTableIndex">[docs]</a><span class="k">def</span> <span class="nf">getTableIndex</span><span class="p">(</span><span class="n">mainIndex</span><span class="p">,</span> <span class="n">starIndex</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Helper function to get star being considered in removeCloseStars. &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">mainIndex</span> <span class="o">+</span> <span class="n">starIndex</span> <span class="o">+</span> <span class="mi">1</span></div>
+
+
+<div class="viewcode-block" id="removeCloseStars"><a class="viewcode-back" href="../../../autoapi/kai/reduce/prep_analysis/index.html#kai.reduce.prep_analysis.removeCloseStars">[docs]</a><span class="k">def</span> <span class="nf">removeCloseStars</span><span class="p">(</span><span class="n">imgArr</span><span class="p">,</span> <span class="n">newTable</span><span class="p">,</span> <span class="n">pixelDist</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">x</span> <span class="o">=</span> <span class="s2">&quot;xcentroid&quot;</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="s2">&quot;ycentroid&quot;</span><span class="p">,</span> <span class="n">verbose</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">scale</span> <span class="o">=</span> <span class="mf">0.009942</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    In order of brightest stars in table, checks if it&#39;s a valid star, and tracks secondaries near it.</span>
+<span class="sd">    Removes all invalid stars from table, i.e, those that are likely halo speckles, or too close for valid psf generation.   </span>
+<span class="sd">    Edge stars are already removed from table using the removeEdges() method.</span>
+<span class="sd">    </span>
+<span class="sd">    Terminology?</span>
+<span class="sd">    main - Star that is being considered for psf-ness. </span>
+<span class="sd">    star - Star that is being checked for nearness to main</span>
+<span class="sd">    psf radius - Radius (arbitrary function tied to brightness) that is checked for halo speckles/close bright stars</span>
+<span class="sd">    secondary radius - Radius in which, if star found, mark as secondary</span>
+<span class="sd">    </span>
+<span class="sd">    Pseudocode:</span>
+<span class="sd">    </span>
+<span class="sd">    Sort the table by brightest</span>
+<span class="sd">    imagePeak = brightest star peak value in image</span>
+<span class="sd">    invalidStarIndices = indices of stars to be removed from table</span>
+<span class="sd">    </span>
+<span class="sd">    for each star in table, that is not marked invalid yet:</span>
+<span class="sd">        set this star to the main star</span>
+<span class="sd">        find the psf radius of this star</span>
+<span class="sd">        </span>
+<span class="sd">        for all star-lookalikes less bright than main star:</span>
+<span class="sd">        </span>
+<span class="sd">            if star-lookalike is within psf radius (arbitrary function tied to brightness):</span>
+<span class="sd">            </span>
+<span class="sd">                if main star can have halo speckles (arbitrary brightness limit tied to imagePeak):</span>
+<span class="sd">                </span>
+<span class="sd">                    if lookalike is too bright to be a halo speckle (arbitrary brightness limit tied to mainPeak):</span>
+<span class="sd">                        add main star to invalidIndices (another bright star is too near it!)</span>
+<span class="sd">                        add bright star to invalidIndices (too close to main star)</span>
+<span class="sd">                        </span>
+<span class="sd">                    else lookalike is probably halo speckle:</span>
+<span class="sd">                        add lookalike to invalidIndices (too close to main star, not actually a star)</span>
+<span class="sd">                        keep the main star!!</span>
+<span class="sd">                        </span>
+<span class="sd">                else main star cannot have halo speckles:</span>
+<span class="sd">                </span>
+<span class="sd">                    if there is a BRIGHT star-lookalike nearby:</span>
+<span class="sd">                        its definitely a star and not halo speckle AND star is too close!</span>
+<span class="sd">                        add main star to invalidIndices (another bright star is too near it!)</span>
+<span class="sd">                        add bright star to invalidIndices (too close to main star)</span>
+<span class="sd">                        </span>
+<span class="sd">            else if star-lookalike is within secondary radius (arbitrary function tied to brightness):</span>
+<span class="sd">                set the &quot;psf?&quot; value of this star in table to 0 (secondary)</span>
+<span class="sd">                </span>
+<span class="sd">    from the table, remove all the invalid stars!</span>
+<span class="sd">    return table</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">newTable</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="s2">&quot;peak&quot;</span><span class="p">,</span> <span class="n">reverse</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">imagePeak</span> <span class="o">=</span> <span class="n">newTable</span><span class="p">[</span><span class="s2">&quot;peak&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+    
+    <span class="n">mainIndex</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">invalidStarIndices</span> <span class="o">=</span> <span class="p">[]</span>
+    
+    <span class="k">while</span> <span class="n">mainIndex</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">newTable</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">mainIndex</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">invalidStarIndices</span><span class="p">:</span>
+            
+            <span class="n">mainCoo</span> <span class="o">=</span> <span class="p">(</span><span class="n">newTable</span><span class="p">[</span><span class="n">x</span><span class="p">][</span><span class="n">mainIndex</span><span class="p">],</span> <span class="n">newTable</span><span class="p">[</span><span class="n">y</span><span class="p">][</span><span class="n">mainIndex</span><span class="p">],</span> <span class="n">newTable</span><span class="p">[</span><span class="s2">&quot;peak&quot;</span><span class="p">][</span><span class="n">mainIndex</span><span class="p">])</span>
+            <span class="n">psfr</span> <span class="o">=</span> <span class="n">psfRadius</span><span class="p">(</span><span class="n">mainCoo</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">imagePeak</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span>
+            
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Found PSF Star: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">mainCoo</span><span class="p">,</span> <span class="mi">2</span><span class="p">)))</span>
+                
+            <span class="k">for</span> <span class="n">starIndex</span><span class="p">,</span> <span class="n">starCoo</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">newTable</span><span class="p">[</span><span class="n">x</span><span class="p">][</span><span class="n">mainIndex</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:],</span> <span class="n">newTable</span><span class="p">[</span><span class="n">y</span><span class="p">][</span><span class="n">mainIndex</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:],</span> <span class="n">newTable</span><span class="p">[</span><span class="s2">&quot;peak&quot;</span><span class="p">][</span><span class="n">mainIndex</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:])):</span>
+                <span class="k">if</span> <span class="n">isInPSFRadius</span><span class="p">(</span><span class="n">starCoo</span><span class="p">,</span> <span class="n">mainCoo</span><span class="p">,</span> <span class="n">psfr</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">isBrightSpeckleStar</span><span class="p">(</span><span class="n">mainCoo</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">imagePeak</span><span class="p">):</span>
+                        <span class="k">if</span> <span class="n">isNearBrightStar</span><span class="p">(</span><span class="n">starCoo</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">mainCoo</span><span class="p">[</span><span class="mi">2</span><span class="p">]):</span>
+                            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Ignoring PSF Star Due To Bright Nearby Star: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">starCoo</span><span class="p">,</span> <span class="mi">2</span><span class="p">)))</span>
+                            <span class="n">invalidStarIndices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mainIndex</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Ignoring Halo Speckle/Bright Nearby Star: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">starCoo</span><span class="p">,</span> <span class="mi">2</span><span class="p">)))</span>
+                        <span class="n">invalidStarIndices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">getTableIndex</span><span class="p">(</span><span class="n">mainIndex</span><span class="p">,</span> <span class="n">starIndex</span><span class="p">))</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">isNearBrightStar</span><span class="p">(</span><span class="n">starCoo</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">mainCoo</span><span class="p">[</span><span class="mi">2</span><span class="p">]):</span>
+                            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Ignoring PSF Star Due To Bright Nearby Star: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">starCoo</span><span class="p">,</span> <span class="mi">2</span><span class="p">)))</span>
+                            <span class="n">invalidStarIndices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mainIndex</span><span class="p">)</span>
+                            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Ignoring Nearby Star: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">starCoo</span><span class="p">,</span> <span class="mi">2</span><span class="p">)))</span>
+                            <span class="n">invalidStarIndices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">getTableIndex</span><span class="p">(</span><span class="n">mainIndex</span><span class="p">,</span> <span class="n">starIndex</span><span class="p">))</span>
+                <span class="k">elif</span> <span class="n">isInSecondaryRadius</span><span class="p">(</span><span class="n">starCoo</span><span class="p">,</span> <span class="n">mainCoo</span><span class="p">,</span> <span class="n">psfr</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Adding Possible Secondary Star: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">starCoo</span><span class="p">,</span> <span class="mi">2</span><span class="p">)))</span>
+                    <span class="n">newTable</span><span class="p">[</span><span class="s2">&quot;psf&quot;</span><span class="p">][</span><span class="n">getTableIndex</span><span class="p">(</span><span class="n">mainIndex</span><span class="p">,</span> <span class="n">starIndex</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">0</span>
+                    <span class="n">newTable</span><span class="p">[</span><span class="s2">&quot;mx&quot;</span><span class="p">][</span><span class="n">getTableIndex</span><span class="p">(</span><span class="n">mainIndex</span><span class="p">,</span> <span class="n">starIndex</span><span class="p">)]</span> <span class="o">=</span> <span class="n">mainCoo</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="n">newTable</span><span class="p">[</span><span class="s2">&quot;my&quot;</span><span class="p">][</span><span class="n">getTableIndex</span><span class="p">(</span><span class="n">mainIndex</span><span class="p">,</span> <span class="n">starIndex</span><span class="p">)]</span> <span class="o">=</span> <span class="n">mainCoo</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>             
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;*****&quot;</span><span class="p">)</span>
+        <span class="n">mainIndex</span> <span class="o">+=</span> <span class="mi">1</span>
+        
+    <span class="n">newTable</span><span class="o">.</span><span class="n">remove_rows</span><span class="p">(</span><span class="n">invalidStarIndices</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">newTable</span></div>
+    
+
+
+
+<div class="viewcode-block" id="getStats"><a class="viewcode-back" href="../../../autoapi/kai/reduce/prep_analysis/index.html#kai.reduce.prep_analysis.getStats">[docs]</a><span class="k">def</span> <span class="nf">getStats</span><span class="p">(</span><span class="n">imgArr</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Returns mean median and mode of pixel values in image array. &quot;&quot;&quot;</span>
+    <span class="n">mean</span><span class="p">,</span> <span class="n">median</span><span class="p">,</span> <span class="n">std</span> <span class="o">=</span> <span class="n">sigma_clipped_stats</span><span class="p">(</span><span class="n">imgArr</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">3.0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">mean</span><span class="p">,</span> <span class="n">median</span><span class="p">,</span> <span class="n">std</span></div>
+
+
+
+<div class="viewcode-block" id="getNStarsHelper"><a class="viewcode-back" href="../../../autoapi/kai/reduce/prep_analysis/index.html#kai.reduce.prep_analysis.getNStarsHelper">[docs]</a><span class="k">def</span> <span class="nf">getNStarsHelper</span><span class="p">(</span><span class="n">imgArr</span><span class="p">,</span> <span class="n">expStars</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">counter</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">starsFound</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">fwhm</span> <span class="o">=</span> <span class="mf">4.5</span><span class="p">,</span> <span class="n">scale</span> <span class="o">=</span> <span class="mf">0.009942</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    Attempts to get N stars. If stars aren&#39;t found, returns what it can and presents the error. </span>
+<span class="sd">    If so, starfinding may have to be done manually.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">std</span> <span class="o">=</span> <span class="n">getStats</span><span class="p">(</span><span class="n">imgArr</span><span class="p">)[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">med</span> <span class="o">=</span> <span class="n">getStats</span><span class="p">(</span><span class="n">imgArr</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">thr</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">finderClass</span> <span class="o">=</span> <span class="n">sf</span><span class="o">.</span><span class="n">DAOStarFinder</span><span class="p">(</span><span class="n">fwhm</span> <span class="o">=</span> <span class="n">fwhm</span><span class="p">,</span> 
+                                   <span class="n">threshold</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">thr</span><span class="p">,</span> <span class="n">std</span> <span class="o">*</span> <span class="mi">5</span><span class="p">),</span> 
+                                   <span class="n">sharphi</span> <span class="o">=</span> <span class="mf">0.4</span><span class="p">,</span>
+                                   <span class="n">roundlo</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.2</span><span class="p">,</span> 
+                                   <span class="n">exclude_border</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">newTable</span> <span class="o">=</span> <span class="n">finderClass</span><span class="o">.</span><span class="n">find_stars</span><span class="p">(</span><span class="n">imgArr</span> <span class="o">-</span> <span class="n">med</span><span class="p">)</span>
+    <span class="n">newTable</span><span class="p">[</span><span class="s2">&quot;psf&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">newTable</span><span class="p">[</span><span class="s2">&quot;mx&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">newTable</span><span class="p">[</span><span class="s2">&quot;my&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">newTable</span><span class="p">[</span><span class="s2">&quot;peak&quot;</span><span class="p">])</span> <span class="o">&lt;</span> <span class="n">expStars</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Pre-Filtering PSF Stars Found: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">newTable</span><span class="p">[</span><span class="s2">&quot;peak&quot;</span><span class="p">])))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;More Stars Required. Widening Search Parameters.&quot;</span><span class="p">)</span>
+        <span class="n">nowStarsFound</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">newTable</span><span class="p">[</span><span class="s2">&quot;peak&quot;</span><span class="p">])</span>
+        <span class="n">newTable</span> <span class="o">=</span> <span class="n">getNStarsHelper</span><span class="p">(</span><span class="n">imgArr</span><span class="p">,</span> <span class="n">expStars</span><span class="p">,</span> <span class="n">counter</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">nowStarsFound</span><span class="p">,</span> <span class="n">fwhm</span><span class="p">)</span>
+    <span class="n">newTable</span> <span class="o">=</span> <span class="n">removeEdges</span><span class="p">(</span><span class="n">imgArr</span><span class="p">,</span> <span class="n">newTable</span><span class="p">,</span> <span class="n">scale</span> <span class="o">=</span> <span class="n">scale</span><span class="p">)</span>
+    <span class="n">newTable</span> <span class="o">=</span> <span class="n">removeCloseStars</span><span class="p">(</span><span class="n">imgArr</span><span class="p">,</span> <span class="n">newTable</span><span class="p">,</span> <span class="n">verbose</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">scale</span> <span class="o">=</span> <span class="n">scale</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">newTable</span><span class="p">[</span><span class="s2">&quot;peak&quot;</span><span class="p">])</span> <span class="o">&lt;</span> <span class="n">expStars</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">counter</span> <span class="o">&lt;</span> <span class="mi">20</span><span class="p">)):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;PSF Stars Found: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">newTable</span><span class="p">[</span><span class="s2">&quot;peak&quot;</span><span class="p">])))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;More Stars Required. Widening Search Parameters.&quot;</span><span class="p">)</span>
+        <span class="n">nowStarsFound</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">newTable</span><span class="p">[</span><span class="s2">&quot;peak&quot;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">nowStarsFound</span> <span class="o">&lt;</span> <span class="n">starsFound</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">std</span> <span class="o">*</span> <span class="mi">5</span> <span class="o">&gt;</span> <span class="n">thr</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Failed to find sufficient stars. Do starfinding manually or reduce PSF stars to be found.&quot;</span><span class="o">.</span><span class="n">upper</span><span class="p">())</span>
+            <span class="k">return</span> <span class="n">newTable</span>
+        <span class="n">newTable</span> <span class="o">=</span> <span class="n">getNStarsHelper</span><span class="p">(</span><span class="n">imgArr</span><span class="p">,</span> <span class="n">expStars</span><span class="p">,</span> <span class="n">counter</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">nowStarsFound</span><span class="p">,</span> <span class="n">fwhm</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">counter</span> <span class="o">&gt;=</span> <span class="mi">20</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;PSF Stars Found: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">newTable</span><span class="p">[</span><span class="s2">&quot;peak&quot;</span><span class="p">])))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Failed to find sufficient stars. Do starfinding manually or reduce PSF stars to be found.&quot;</span><span class="o">.</span><span class="n">upper</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">newTable</span>
+    <span class="k">return</span> <span class="n">newTable</span></div>
+
+
+<div class="viewcode-block" id="getNStars"><a class="viewcode-back" href="../../../autoapi/kai/reduce/prep_analysis/index.html#kai.reduce.prep_analysis.getNStars">[docs]</a><span class="k">def</span> <span class="nf">getNStars</span><span class="p">(</span><span class="n">imgArr</span><span class="p">,</span> <span class="n">numStars</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">fwhm</span> <span class="o">=</span> <span class="mf">4.5</span><span class="p">,</span> <span class="n">scale</span> <span class="o">=</span> <span class="mf">0.009942</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    Reformats table of chosen psf stars and adds the relevant secondaries to it.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">newTable</span> <span class="o">=</span> <span class="n">getNStarsHelper</span><span class="p">(</span><span class="n">imgArr</span><span class="p">,</span> <span class="n">numStars</span><span class="p">,</span> <span class="n">fwhm</span> <span class="o">=</span> <span class="n">fwhm</span><span class="p">,</span> <span class="n">scale</span> <span class="o">=</span> <span class="n">scale</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;PSF Stars Found: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">newTable</span><span class="p">[</span><span class="s2">&quot;peak&quot;</span><span class="p">]))</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">numStars</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Returning Best: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">newTable</span><span class="p">[</span><span class="s2">&quot;peak&quot;</span><span class="p">]),</span> <span class="n">numStars</span><span class="p">)))</span>
+    <span class="n">newTable</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="s2">&quot;peak&quot;</span><span class="p">,</span> <span class="n">reverse</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">secondaryTable</span> <span class="o">=</span> <span class="n">newTable</span><span class="p">[:]</span>
+    <span class="n">nonSecIdx</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">psfIdx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">secondaryTable</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">secondaryTable</span><span class="p">[</span><span class="s2">&quot;psf&quot;</span><span class="p">][</span><span class="n">psfIdx</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="n">nonSecIdx</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">psfIdx</span><span class="p">)</span>
+    <span class="n">secondaryTable</span><span class="o">.</span><span class="n">remove_rows</span><span class="p">(</span><span class="n">nonSecIdx</span><span class="p">)</span>
+    <span class="n">removed</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">newTable</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="n">newTable</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s2">&quot;psf&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">removed</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+    <span class="n">newTable</span><span class="o">.</span><span class="n">remove_rows</span><span class="p">(</span><span class="n">removed</span><span class="p">)</span>
+    <span class="n">newTable</span><span class="o">.</span><span class="n">remove_rows</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">numStars</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">newTable</span><span class="p">)))</span>
+    <span class="n">goodSecIdx</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">secondaryTable</span><span class="p">)):</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">newTable</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">secondaryTable</span><span class="p">[</span><span class="s2">&quot;mx&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">newTable</span><span class="p">[</span><span class="s2">&quot;xcentroid&quot;</span><span class="p">][</span><span class="n">j</span><span class="p">])</span> <span class="ow">and</span> <span class="p">(</span><span class="n">secondaryTable</span><span class="p">[</span><span class="s2">&quot;my&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">newTable</span><span class="p">[</span><span class="s2">&quot;ycentroid&quot;</span><span class="p">][</span><span class="n">j</span><span class="p">]):</span>
+                <span class="n">goodSecIdx</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+                <span class="k">break</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">goodSecIdx</span><span class="p">:</span>
+        <span class="n">newTable</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="n">secondaryTable</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">newTable</span></div>
+
+<div class="viewcode-block" id="generate_list"><a class="viewcode-back" href="../../../autoapi/kai/reduce/prep_analysis/index.html#kai.reduce.prep_analysis.generate_list">[docs]</a><span class="k">def</span> <span class="nf">generate_list</span><span class="p">(</span><span class="n">imgPath</span><span class="p">,</span> <span class="n">numPSFStars</span> <span class="o">=</span> <span class="mi">7</span><span class="p">,</span> <span class="n">fwhm</span> <span class="o">=</span> <span class="mf">4.5</span><span class="p">,</span> <span class="n">scale</span> <span class="o">=</span> <span class="mf">0.009942</span><span class="p">,</span> <span class="n">targName</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Plots the table generated by PSFListGen, and prints the list of stars in a format that can be used.</span>
+<span class="sd">    @params</span>
+<span class="sd">    imgPath - path to .fits image, Eg. /g/lu/data/microlens/18jun22/combo/mag18jun22_ob040361_kp.fits</span>
+<span class="sd">    numPSFStars - number of stars to be found</span>
+<span class="sd">    scale - defaults to nirc2 scale. Enter in arcsec/pixel.</span>
+<span class="sd">    targName - name of target (can be anything, not important)</span>
+<span class="sd">    fwhm - full-width half maximum variable for finicky images</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">imgArr</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getdata</span><span class="p">(</span><span class="n">imgPath</span><span class="p">)</span>
+    <span class="n">newTable</span> <span class="o">=</span> <span class="n">getNStars</span><span class="p">(</span><span class="n">imgArr</span><span class="p">,</span> <span class="n">numStars</span> <span class="o">=</span> <span class="n">numPSFStars</span><span class="p">,</span> <span class="n">fwhm</span> <span class="o">=</span> <span class="n">fwhm</span><span class="p">,</span> <span class="n">scale</span> <span class="o">=</span> <span class="n">scale</span><span class="p">)</span>
+    <span class="n">finalTable</span> <span class="o">=</span> <span class="n">newTable</span><span class="p">[</span><span class="s2">&quot;xcentroid&quot;</span><span class="p">,</span> <span class="s2">&quot;ycentroid&quot;</span><span class="p">,</span> <span class="s2">&quot;peak&quot;</span><span class="p">,</span> <span class="s2">&quot;psf&quot;</span><span class="p">,</span> <span class="s2">&quot;mx&quot;</span><span class="p">,</span> <span class="s2">&quot;my&quot;</span><span class="p">]</span>
+    <span class="n">finalTable</span><span class="o">.</span><span class="n">rename_column</span><span class="p">(</span><span class="s2">&quot;xcentroid&quot;</span><span class="p">,</span> <span class="s2">&quot;x&quot;</span><span class="p">)</span>
+    <span class="n">finalTable</span><span class="o">.</span><span class="n">rename_column</span><span class="p">(</span><span class="s2">&quot;ycentroid&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">)</span>
+    <span class="n">finalTable</span><span class="o">.</span><span class="n">rename_column</span><span class="p">(</span><span class="s2">&quot;psf&quot;</span><span class="p">,</span> <span class="s2">&quot;m&quot;</span><span class="p">)</span>
+    <span class="n">finalTable</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">finalTable</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">],</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">finalTable</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">finalTable</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">],</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">finalTable</span><span class="p">[</span><span class="s2">&quot;peak&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">finalTable</span><span class="p">[</span><span class="s2">&quot;peak&quot;</span><span class="p">],</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">finalTable</span><span class="p">[</span><span class="s2">&quot;mx&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">finalTable</span><span class="p">[</span><span class="s2">&quot;mx&quot;</span><span class="p">],</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">finalTable</span><span class="p">[</span><span class="s2">&quot;my&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">finalTable</span><span class="p">[</span><span class="s2">&quot;my&quot;</span><span class="p">],</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">finalTable</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;loremipsum&quot;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">finalTable</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">]]</span>
+    <span class="n">finalTable</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">targName</span>
+    <span class="n">modded_plot_starlist_on_image_pixel</span><span class="p">(</span><span class="n">finalTable</span><span class="p">,</span> <span class="n">imgPath</span><span class="p">,</span> <span class="n">targName</span><span class="p">,</span>
+                                    <span class="n">flip</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">magCut</span> <span class="o">=</span> <span class="mi">400000</span><span class="p">,</span> <span class="n">verbose</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;*************************************************&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;PSF List Details: &quot;</span><span class="p">)</span>
+    <span class="n">finalTable</span><span class="o">.</span><span class="n">remove_column</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)</span>
+    <span class="n">finalTable</span><span class="o">.</span><span class="n">pprint</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;*************************************************&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;PSFListGen Identified the Following List of Stars:&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;[&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">finalTable</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">],</span> <span class="n">finalTable</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">],</span> <span class="n">finalTable</span><span class="p">[</span><span class="s2">&quot;m&quot;</span><span class="p">]):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;   &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">i</span><span class="p">))</span> <span class="o">+</span> <span class="s2">&quot;,&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;]&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;*************************************************&quot;</span><span class="p">)</span></div>
+    
+
+<div class="viewcode-block" id="plot_starlist_on_image_arcsec"><a class="viewcode-back" href="../../../autoapi/kai/reduce/prep_analysis/index.html#kai.reduce.prep_analysis.plot_starlist_on_image_arcsec">[docs]</a><span class="k">def</span> <span class="nf">plot_starlist_on_image_arcsec</span><span class="p">(</span><span class="n">starList</span><span class="p">,</span> <span class="n">imagePath</span><span class="p">,</span> <span class="n">refCoo</span><span class="p">,</span> <span class="n">scale</span> <span class="o">=</span> <span class="p">(</span><span class="mf">9.942</span><span class="o">/</span><span class="mi">1000</span><span class="p">),</span> <span class="n">magCut</span> <span class="o">=</span> <span class="mi">23</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">flip</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Plot a NIRC2 image and overlay a starlist. Input in relative arcsec coordinates.</span>
+<span class="sd">    @params</span>
+<span class="sd">    starList - any astropy Table with a &quot;name&quot; (including target),</span>
+<span class="sd">                                        &quot;m&quot;, </span>
+<span class="sd">                                        &quot;x&quot; (relative arcsec coordinates), and </span>
+<span class="sd">                                        &quot;y&quot; (relative arcsec coordinates) column. </span>
+<span class="sd">    imagePath - path to image from root.</span>
+<span class="sd">    refCoo - reference pixel coordinates of a star in image file.</span>
+<span class="sd">    scale - plate scale. Defaults to NIRC2 plate scale.</span>
+<span class="sd">    magCut - highest magnitude of star allowed to be plotted.</span>
+<span class="sd">    label - if True, adds labels. Defaults to true.</span>
+<span class="sd">    verbose - if True, prints the astropy table inputted. Defaults to true.</span>
+<span class="sd">    flip - if True, flips image in x (helps in case image is backwards).</span>
+<span class="sd">    </span>
+<span class="sd">    Ensure that the image passed in is at a Position Angle of 0.</span>
+<span class="sd">    </span>
+<span class="sd">    The image is NOT Flipped on plotting by default. </span>
+<span class="sd">    In order to flip image, set flip = True.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    
+    <span class="c1"># Initializing the Image and starList columns </span>
+    <span class="n">img</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getdata</span><span class="p">(</span><span class="n">imagePath</span><span class="p">)</span>
+    
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">xCoordList</span> <span class="o">=</span> <span class="n">starList</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span>
+        <span class="n">yCoordList</span> <span class="o">=</span> <span class="n">starList</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span>
+        <span class="n">mList</span> <span class="o">=</span> <span class="n">starList</span><span class="p">[</span><span class="s1">&#39;m&#39;</span><span class="p">]</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;Starlist must have columns named &#39;x&#39; and &#39;y&#39;, in pixel coordinates, and magnitude &#39;m&#39;.&quot;</span><span class="p">)</span>
+        
+    <span class="k">if</span> <span class="n">label</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">nameList</span> <span class="o">=</span> <span class="n">starList</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;Starlist must have a column named &#39;name&#39; if label = True. Else, set label = False.&quot;</span><span class="p">)</span>
+    
+   
+    <span class="c1"># Get image dimensions</span>
+    <span class="n">x_axis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span> <span class="c1">#[0, 1, ...., 1166]</span>
+    <span class="n">y_axis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">x_axis</span> <span class="o">=</span> <span class="p">((</span><span class="n">x_axis</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">refCoo</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">*</span> <span class="n">scale</span><span class="p">)</span>
+    <span class="n">y_axis</span> <span class="o">=</span> <span class="p">((</span><span class="n">y_axis</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">refCoo</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">*</span> <span class="n">scale</span><span class="p">)</span>
+    
+    <span class="n">extent</span> <span class="o">=</span> <span class="p">[</span><span class="n">x_axis</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">x_axis</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">y_axis</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">y_axis</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+    
+    <span class="k">if</span> <span class="n">flip</span><span class="p">:</span>
+        <span class="n">img</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">x_axis</span> <span class="o">*=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="n">extent</span> <span class="o">=</span> <span class="p">[</span><span class="n">x_axis</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">x_axis</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">y_axis</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">y_axis</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+    
+    <span class="c1"># Plotting prerequisites</span>
+    <span class="n">vmin</span> <span class="o">=</span> <span class="mi">10</span>
+    <span class="n">vmax</span> <span class="o">=</span> <span class="mf">1e5</span>
+    <span class="n">norm</span> <span class="o">=</span> <span class="n">LogNorm</span><span class="p">(</span><span class="n">vmin</span><span class="p">,</span> <span class="n">vmax</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">starList</span><span class="p">)</span>
+    
+    <span class="c1"># Plotting the image</span>
+    <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">mList</span> <span class="o">&lt;</span> <span class="n">magCut</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">8</span><span class="p">))</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;gist_heat_r&#39;</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="n">norm</span><span class="p">,</span> <span class="n">extent</span><span class="o">=</span><span class="n">extent</span><span class="p">,</span> <span class="n">origin</span> <span class="o">=</span> <span class="s2">&quot;lower&quot;</span><span class="p">)</span>
+    
+
+    <span class="c1"># Scatter the sources in starlist.</span>
+    <span class="n">sc</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">xCoordList</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">yCoordList</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">c</span> <span class="o">=</span> <span class="n">mList</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">s</span> <span class="o">=</span> <span class="mi">300</span><span class="p">,</span> <span class="n">linewidth</span> <span class="o">=</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="n">sc</span><span class="o">.</span><span class="n">set_facecolor</span><span class="p">(</span><span class="s1">&#39;none&#39;</span><span class="p">)</span>
+    
+    <span class="c1"># Label the sources.</span>
+    <span class="k">if</span> <span class="n">label</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">txt</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">nameList</span><span class="p">[</span><span class="n">idx</span><span class="p">]):</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="n">txt</span><span class="p">,</span> <span class="p">(</span><span class="n">xCoordList</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">yCoordList</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="mf">0.3</span><span class="p">))</span>
+    
+    <span class="c1"># Add titles, etc.</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Starlist Magnitude (mag)&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Distance from Reference Star (arcsec)&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Distance from Reference Star (arcsec)&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;equal&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">label</span><span class="p">:</span>
+        <span class="n">targIndex</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">xCoordList</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">nameList</span><span class="p">[</span><span class="n">targIndex</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">())</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Target at &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">refCoo</span><span class="p">))</span>
+    
+    <span class="k">return</span> </div>
+
+<div class="viewcode-block" id="plot_starlist_on_image_pixel"><a class="viewcode-back" href="../../../autoapi/kai/reduce/prep_analysis/index.html#kai.reduce.prep_analysis.plot_starlist_on_image_pixel">[docs]</a><span class="k">def</span> <span class="nf">plot_starlist_on_image_pixel</span><span class="p">(</span><span class="n">starList</span><span class="p">,</span> <span class="n">imagePath</span><span class="p">,</span> <span class="n">refStar</span><span class="p">,</span> <span class="n">scale</span> <span class="o">=</span> <span class="p">(</span><span class="mf">9.942</span><span class="o">/</span><span class="mi">1000</span><span class="p">),</span> <span class="n">magCut</span> <span class="o">=</span> <span class="mi">23</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">flip</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="s2">&quot;pixel&quot;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Plot a NIRC2 image and overlay a starlist. Input in pixel coordinates.</span>
+<span class="sd">    @params</span>
+<span class="sd">    starList - any astropy Table with a &quot;name&quot; (including target),</span>
+<span class="sd">                                        &quot;m&quot;, </span>
+<span class="sd">                                        &quot;x&quot; (pixel coordinates), and </span>
+<span class="sd">                                        &quot;y&quot; (pixel coordinates) column. </span>
+<span class="sd">    imagePath - path to image from root.</span>
+<span class="sd">    refStar - name of reference star in astropy table, generally the target.</span>
+<span class="sd">    scale - plate scale. Defaults to NIRC2 plate scale.</span>
+<span class="sd">    magCut - highest magnitude of star allowed to be plotted.</span>
+<span class="sd">    label - if True, adds labels. Defaults to true.</span>
+<span class="sd">    verbose - if True, prints the astropy table inputted. Defaults to true.</span>
+<span class="sd">    flip - if True, flips image in x (helps in case image is backwards).</span>
+<span class="sd">    axes - determines units on the axes of plot (pixel or arcsec). Defaults to pixel.</span>
+<span class="sd">    </span>
+<span class="sd">    Ensure that the image passed in is at a Position Angle of 0.</span>
+<span class="sd">    </span>
+<span class="sd">    The image is NOT Flipped on plotting by default. </span>
+<span class="sd">    In order to flip image, set flip = True.</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="c1"># Initializing the Image and starList columns </span>
+    <span class="n">img</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getdata</span><span class="p">(</span><span class="n">imagePath</span><span class="p">)</span>
+    
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">xCoordList</span> <span class="o">=</span> <span class="n">starList</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span>
+        <span class="n">yCoordList</span> <span class="o">=</span> <span class="n">starList</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span>
+        <span class="n">mList</span> <span class="o">=</span> <span class="n">starList</span><span class="p">[</span><span class="s1">&#39;m&#39;</span><span class="p">]</span>
+        <span class="n">nameList</span> <span class="o">=</span> <span class="n">starList</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;Starlist must have columns named &#39;name&#39;, &#39;x&#39; and &#39;y&#39;, in pixel coordinates, and magnitude &#39;m&#39;.&quot;</span><span class="p">)</span>
+    
+    <span class="c1"># Find the target and get its coordinates.</span>
+    <span class="n">targetIndex</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">nameList</span> <span class="o">==</span> <span class="n">refStar</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">targetIndex</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s2">&quot;Target does not match any name in starlist.&quot;</span><span class="p">)</span>
+    
+    <span class="c1"># Get image dimensions and make relative to reference</span>
+    <span class="n">x_axis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">y_axis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">x_axis</span> <span class="o">=</span> <span class="p">(</span><span class="n">x_axis</span> <span class="o">-</span>  <span class="p">(</span><span class="n">xCoordList</span><span class="p">[</span><span class="n">targetIndex</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="n">y_axis</span> <span class="o">=</span> <span class="p">(</span><span class="n">y_axis</span> <span class="o">-</span> <span class="p">(</span><span class="n">yCoordList</span><span class="p">[</span><span class="n">targetIndex</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
+
+    
+    <span class="c1"># Make starList coordinates relative to reference</span>
+    <span class="n">xCoordList</span> <span class="o">=</span> <span class="p">(</span><span class="n">xCoordList</span> <span class="o">-</span> <span class="n">xCoordList</span><span class="p">[</span><span class="n">targetIndex</span><span class="p">])</span>
+    <span class="n">yCoordList</span> <span class="o">=</span> <span class="p">(</span><span class="n">yCoordList</span> <span class="o">-</span> <span class="n">yCoordList</span><span class="p">[</span><span class="n">targetIndex</span><span class="p">])</span>
+    
+    <span class="c1"># Handle if axes are asked in asrcsec</span>
+    <span class="k">if</span> <span class="n">axes</span> <span class="o">==</span> <span class="s2">&quot;arcsec&quot;</span><span class="p">:</span>
+        <span class="n">x_axis</span> <span class="o">*=</span> <span class="n">scale</span>
+        <span class="n">y_axis</span> <span class="o">*=</span> <span class="n">scale</span>
+        <span class="n">xCoordList</span> <span class="o">*=</span> <span class="n">scale</span>
+        <span class="n">yCoordList</span> <span class="o">*=</span> <span class="n">scale</span>
+    
+    <span class="c1"># Extent of image to beplotted in imshow</span>
+    <span class="n">extent</span> <span class="o">=</span> <span class="p">[</span><span class="n">x_axis</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">x_axis</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">y_axis</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">y_axis</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+    
+    <span class="c1"># Flips image in case it&#39;s backwards</span>
+    <span class="k">if</span> <span class="n">flip</span><span class="p">:</span>
+        <span class="n">x_axis</span> <span class="o">*=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="n">img</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">extent</span> <span class="o">=</span> <span class="p">[</span><span class="n">x_axis</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">x_axis</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">y_axis</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">y_axis</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+    
+    <span class="c1"># Plotting prerequisites</span>
+    <span class="n">vmin</span> <span class="o">=</span> <span class="mi">10</span>
+    <span class="n">vmax</span> <span class="o">=</span> <span class="mf">1e5</span>
+    <span class="n">norm</span> <span class="o">=</span> <span class="n">LogNorm</span><span class="p">(</span><span class="n">vmin</span><span class="p">,</span> <span class="n">vmax</span><span class="p">)</span>
+    
+    <span class="c1"># Verbose option</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">starList</span><span class="p">)</span>
+        
+    
+    <span class="c1"># Plot the image</span>
+    <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">mList</span> <span class="o">&lt;</span> <span class="n">magCut</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">8</span><span class="p">))</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;gist_heat_r&#39;</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="n">norm</span><span class="p">,</span> <span class="n">extent</span><span class="o">=</span><span class="n">extent</span><span class="p">,</span> <span class="n">origin</span> <span class="o">=</span> <span class="s2">&quot;lower&quot;</span><span class="p">)</span>
+    
+
+    <span class="c1"># Scatter the sources in starlist.</span>
+    <span class="n">sc</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">xCoordList</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">yCoordList</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">c</span> <span class="o">=</span> <span class="n">mList</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">s</span> <span class="o">=</span> <span class="mi">300</span><span class="p">,</span> <span class="n">linewidth</span> <span class="o">=</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="n">sc</span><span class="o">.</span><span class="n">set_facecolor</span><span class="p">(</span><span class="s1">&#39;none&#39;</span><span class="p">)</span>
+    
+    <span class="c1"># Label the sources.</span>
+    <span class="k">if</span> <span class="n">label</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">txt</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">nameList</span><span class="p">[</span><span class="n">idx</span><span class="p">]):</span>
+            <span class="k">if</span> <span class="n">axes</span> <span class="o">==</span> <span class="s2">&quot;pixel&quot;</span><span class="p">:</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="n">txt</span><span class="p">,</span> <span class="p">(</span><span class="n">xCoordList</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">yCoordList</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="mf">0.3</span> <span class="o">/</span> <span class="n">scale</span><span class="p">)))</span>
+            <span class="k">elif</span> <span class="n">axes</span> <span class="o">==</span> <span class="s2">&quot;arcsec&quot;</span><span class="p">:</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="n">txt</span><span class="p">,</span> <span class="p">(</span><span class="n">xCoordList</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">yCoordList</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="mf">0.3</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;&#39;axes&#39; variable must be &#39;pixel&#39; or &#39;arcsec&#39;&quot;</span><span class="p">)</span>
+    
+    <span class="c1"># Plot titles, etc.</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Starlist Magnitude (mag)&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Distance from Reference Star (&#39;</span> <span class="o">+</span> <span class="n">axes</span> <span class="o">+</span> <span class="s2">&quot;)&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Distance from Reference Star (&#39;</span> <span class="o">+</span> <span class="n">axes</span> <span class="o">+</span> <span class="s2">&quot;)&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;equal&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">refStar</span><span class="o">.</span><span class="n">upper</span><span class="p">())</span>
+    
+    
+    <span class="k">return</span></div>
+
+
+<div class="viewcode-block" id="modded_plot_starlist_on_image_pixel"><a class="viewcode-back" href="../../../autoapi/kai/reduce/prep_analysis/index.html#kai.reduce.prep_analysis.modded_plot_starlist_on_image_pixel">[docs]</a><span class="k">def</span> <span class="nf">modded_plot_starlist_on_image_pixel</span><span class="p">(</span><span class="n">starList</span><span class="p">,</span> <span class="n">imagePath</span><span class="p">,</span> <span class="n">refStar</span><span class="p">,</span> <span class="n">scale</span> <span class="o">=</span> <span class="p">(</span><span class="mf">9.942</span><span class="o">/</span><span class="mi">1000</span><span class="p">),</span> <span class="n">magCut</span> <span class="o">=</span> <span class="mi">23</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">flip</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="s2">&quot;pixel&quot;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Plot a NIRC2 image and overlay a starlist. Input in pixel coordinates.</span>
+<span class="sd">    @params</span>
+<span class="sd">    starList - any astropy Table with a &quot;name&quot; (including target),</span>
+<span class="sd">                                        &quot;m&quot;, </span>
+<span class="sd">                                        &quot;x&quot; (pixel coordinates), and </span>
+<span class="sd">                                        &quot;y&quot; (pixel coordinates) column. </span>
+<span class="sd">    imagePath - path to image from root.</span>
+<span class="sd">    refStar - name of reference star in astropy table, generally the target.</span>
+<span class="sd">    scale - plate scale. Defaults to NIRC2 plate scale.</span>
+<span class="sd">    magCut - highest magnitude of star allowed to be plotted.</span>
+<span class="sd">    label - if True, adds labels. Defaults to true.</span>
+<span class="sd">    verbose - if True, prints the astropy table inputted. Defaults to true.</span>
+<span class="sd">    flip - if True, flips image in x (helps in case image is backwards).</span>
+<span class="sd">    axes - determines units on the axes of plot (pixel or arcsec). Defaults to pixel.</span>
+<span class="sd">    </span>
+<span class="sd">    Ensure that the image passed in is at a Position Angle of 0.</span>
+<span class="sd">    </span>
+<span class="sd">    The image is NOT Flipped on plotting by default. </span>
+<span class="sd">    In order to flip image, set flip = True.</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="c1"># Initializing the Image and starList columns </span>
+    <span class="n">img</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getdata</span><span class="p">(</span><span class="n">imagePath</span><span class="p">)</span>
+    
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">xCoordList</span> <span class="o">=</span> <span class="n">starList</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span>
+        <span class="n">yCoordList</span> <span class="o">=</span> <span class="n">starList</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span>
+        <span class="n">mList</span> <span class="o">=</span> <span class="n">starList</span><span class="p">[</span><span class="s1">&#39;m&#39;</span><span class="p">]</span>
+        <span class="n">nameList</span> <span class="o">=</span> <span class="n">starList</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;Starlist must have columns named &#39;name&#39;, &#39;x&#39; and &#39;y&#39;, in pixel coordinates, and magnitude &#39;m&#39;.&quot;</span><span class="p">)</span>
+    
+    <span class="c1"># Find the target and get its coordinates.</span>
+    <span class="n">targetIndex</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">nameList</span> <span class="o">==</span> <span class="n">refStar</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">targetIndex</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s2">&quot;Target does not match any name in starlist.&quot;</span><span class="p">)</span>
+    
+    <span class="c1"># Get image dimensions and make relative to reference</span>
+    <span class="n">x_axis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">y_axis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">x_axis</span> <span class="o">=</span> <span class="p">(</span><span class="n">x_axis</span><span class="p">)</span>
+    <span class="n">y_axis</span> <span class="o">=</span> <span class="p">(</span><span class="n">y_axis</span><span class="p">)</span>
+
+    
+    <span class="c1"># Make starList coordinates relative to reference</span>
+    <span class="n">xCoordList</span> <span class="o">=</span> <span class="p">(</span><span class="n">xCoordList</span><span class="p">)</span>
+    <span class="n">yCoordList</span> <span class="o">=</span> <span class="p">(</span><span class="n">yCoordList</span><span class="p">)</span>
+    
+    <span class="c1"># Handle if axes are asked in arcsec</span>
+    <span class="k">if</span> <span class="n">axes</span> <span class="o">==</span> <span class="s2">&quot;arcsec&quot;</span><span class="p">:</span>
+        <span class="n">x_axis</span> <span class="o">*=</span> <span class="n">scale</span>
+        <span class="n">y_axis</span> <span class="o">*=</span> <span class="n">scale</span>
+        <span class="n">xCoordList</span> <span class="o">*=</span> <span class="n">scale</span>
+        <span class="n">yCoordList</span> <span class="o">*=</span> <span class="n">scale</span>
+    
+    <span class="c1"># Extent of image to be plotted in imshow</span>
+    <span class="n">extent</span> <span class="o">=</span> <span class="p">[</span><span class="n">x_axis</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">x_axis</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">y_axis</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">y_axis</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+    
+    <span class="c1"># Flips image in case it&#39;s backwards</span>
+    <span class="k">if</span> <span class="n">flip</span><span class="p">:</span>
+        <span class="n">x_axis</span> <span class="o">*=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="n">img</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">extent</span> <span class="o">=</span> <span class="p">[</span><span class="n">x_axis</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">x_axis</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">y_axis</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">y_axis</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+    
+    <span class="c1"># Plotting prerequisites</span>
+    <span class="n">vmin</span> <span class="o">=</span> <span class="mi">10</span>
+    <span class="n">vmax</span> <span class="o">=</span> <span class="mf">1e5</span>
+    <span class="n">norm</span> <span class="o">=</span> <span class="n">LogNorm</span><span class="p">(</span><span class="n">vmin</span><span class="p">,</span> <span class="n">vmax</span><span class="p">)</span>
+    
+    <span class="c1"># Verbose option</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">starList</span><span class="p">)</span>
+        
+    
+    <span class="c1"># Plot the image</span>
+    <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">mList</span> <span class="o">&lt;</span> <span class="n">magCut</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">8</span><span class="p">))</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;gist_heat_r&#39;</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="n">norm</span><span class="p">,</span> <span class="n">extent</span><span class="o">=</span><span class="n">extent</span><span class="p">,</span> <span class="n">origin</span> <span class="o">=</span> <span class="s2">&quot;lower&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;Raw Pixel Value&quot;</span><span class="p">)</span>
+    <span class="c1"># Scatter the sources in starlist.</span>
+    <span class="n">sc</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">xCoordList</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">yCoordList</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">color</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">mList</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">mList</span><span class="p">[</span><span class="n">idx</span><span class="p">]],</span> <span class="n">mList</span><span class="p">[</span><span class="n">idx</span><span class="p">]))</span> <span class="p">,</span> <span class="n">s</span> <span class="o">=</span> <span class="mi">300</span><span class="p">,</span> <span class="n">linewidth</span> <span class="o">=</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="n">sc</span><span class="o">.</span><span class="n">set_facecolor</span><span class="p">(</span><span class="s1">&#39;none&#39;</span><span class="p">)</span>
+    
+    <span class="c1"># Label the sources.</span>
+    <span class="k">if</span> <span class="n">label</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">txt</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">nameList</span><span class="p">[</span><span class="n">idx</span><span class="p">]):</span>
+            <span class="k">if</span> <span class="n">axes</span> <span class="o">==</span> <span class="s2">&quot;pixel&quot;</span><span class="p">:</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="n">txt</span><span class="p">,</span> <span class="p">(</span><span class="n">xCoordList</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">yCoordList</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="mf">0.3</span> <span class="o">/</span> <span class="n">scale</span><span class="p">)))</span>
+            <span class="k">elif</span> <span class="n">axes</span> <span class="o">==</span> <span class="s2">&quot;arcsec&quot;</span><span class="p">:</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="n">txt</span><span class="p">,</span> <span class="p">(</span><span class="n">xCoordList</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">yCoordList</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="mf">0.3</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;&#39;axes&#39; variable must be &#39;pixel&#39; or &#39;arcsec&#39;&quot;</span><span class="p">)</span>
+    
+    <span class="c1"># Plot titles, etc.</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Physical Image X (&#39;</span> <span class="o">+</span> <span class="n">axes</span> <span class="o">+</span> <span class="s2">&quot;)&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Physical Image Y (&#39;</span> <span class="o">+</span> <span class="n">axes</span> <span class="o">+</span> <span class="s2">&quot;)&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;equal&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">refStar</span><span class="o">.</span><span class="n">upper</span><span class="p">())</span>
+    
+    
+    <span class="k">return</span></div>
+
+<div class="viewcode-block" id="prepStarfinder"><a class="viewcode-back" href="../../../autoapi/kai/reduce/prep_analysis/index.html#kai.reduce.prep_analysis.prepStarfinder">[docs]</a><span class="k">def</span> <span class="nf">prepStarfinder</span><span class="p">(</span><span class="n">dirName</span><span class="p">,</span> <span class="n">targetName</span><span class="p">,</span> <span class="n">targetCoords</span><span class="p">,</span> <span class="n">psfStars</span><span class="p">,</span> <span class="n">filterName</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Creates a _psf.list file and saves it in the source_list/ directory.&quot;&quot;&quot;</span>
+        
+        <span class="c1"># Covering possible variable inputs and initializing</span>
+        <span class="n">targetName</span> <span class="o">=</span> <span class="n">targetName</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="n">filterName</span> <span class="o">=</span> <span class="n">filterName</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span>
+        <span class="n">targetCoords</span> <span class="o">=</span> <span class="n">targetCoords</span><span class="p">[:]</span>
+        <span class="n">psfListLocation</span> <span class="o">=</span> <span class="n">dirName</span> <span class="o">+</span> <span class="n">targetName</span> <span class="o">+</span> <span class="s1">&#39;_psf.list&#39;</span>
+        <span class="n">year</span> <span class="o">=</span> <span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y&quot;</span> <span class="o">+</span> <span class="s2">&quot;.0&quot;</span><span class="p">)</span>
+        
+        <span class="c1"># Modifying the starlist provided into an astropy table</span>
+        <span class="n">starno</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">star</span> <span class="ow">in</span> <span class="n">psfStars</span><span class="p">:</span>
+            <span class="n">star</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{:.3f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(((</span><span class="n">star</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">targetCoords</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">*</span> <span class="p">(</span><span class="mf">9.942</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">)</span> <span class="o">*</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+            <span class="n">star</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{:.3f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(((</span><span class="n">star</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">targetCoords</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">*</span> <span class="p">(</span><span class="mf">9.942</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">)))</span>
+            <span class="n">star</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;1.000&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">starno</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">star</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;S&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">starno</span><span class="p">)</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">star</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">targetName</span><span class="p">)</span>
+            <span class="n">star</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">)</span>
+            <span class="n">star</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">year</span><span class="p">)</span>
+            <span class="n">star</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="s2">&quot;0.000&quot;</span><span class="p">)</span>
+            <span class="n">star</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="s2">&quot;0.000&quot;</span><span class="p">)</span>
+            <span class="n">starno</span> <span class="o">+=</span> <span class="mi">1</span>
+            
+        <span class="n">psfStars</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">psfStars</span><span class="p">)</span>
+        <span class="n">psfStarTable</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">psfStars</span><span class="p">,</span> <span class="n">names</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;#Name&#39;</span><span class="p">,</span> <span class="s1">&#39;Kp&#39;</span><span class="p">,</span> <span class="s1">&#39;Xarc&#39;</span><span class="p">,</span>
+                                                      <span class="s1">&#39;Yarc&#39;</span><span class="p">,</span> <span class="s1">&#39;Vx&#39;</span><span class="p">,</span> <span class="s1">&#39;Vy&#39;</span><span class="p">,</span>
+                                                      <span class="s1">&#39;t0&#39;</span><span class="p">,</span> <span class="s1">&#39;Filt&#39;</span><span class="p">,</span> <span class="s1">&#39;PSF?&#39;</span><span class="p">))</span>
+        
+        <span class="n">ascii</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">psfStarTable</span><span class="p">,</span> <span class="n">psfListLocation</span><span class="p">,</span> 
+                    <span class="nb">format</span> <span class="o">=</span> <span class="s1">&#39;fixed_width&#39;</span><span class="p">,</span> 
+                    <span class="n">delimiter</span> <span class="o">=</span> <span class="s1">&#39;  &#39;</span><span class="p">,</span> 
+                    <span class="n">bookend</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> 
+                    <span class="n">overwrite</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, J. R. Lu, A. K. Gautam, T. Do.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
