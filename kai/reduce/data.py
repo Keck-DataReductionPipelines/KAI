@@ -45,7 +45,7 @@ outputVerify = 'ignore'
 
 def clean(files, nite, wave, refSrc, strSrc, badColumns=None, field=None,
           skyscale=False, skyfile=None, angOff=0.0, cent_box=12,
-          fixDAR=True,
+          fixDAR=True, use_koa_weather=False,
           raw_dir=None, clean_dir=None,
           instrument=instruments.default_inst, check_ref_loc=True):
     """
@@ -271,7 +271,9 @@ def clean(files, nite, wave, refSrc, strSrc, badColumns=None, field=None,
             bkg = clean_bkgsubtract(_ff_f, _bp)
 
             ### Drizzle individual file ###
-            clean_drizzle(distXgeoim, distYgeoim, _bp, _ce, _wgt, _dlog, fixDAR=fixDAR, instrument=instrument)
+            clean_drizzle(distXgeoim, distYgeoim, _bp, _ce, _wgt, _dlog,
+                          fixDAR=fixDAR, instrument=instrument,
+                          use_koa_weather=use_koa_weather)
 
             ### Make .max file ###
             # Determine the non-linearity level. Raw data level of
@@ -402,7 +404,8 @@ def combine(files, wave, outroot, field=None, outSuffix=None,
             trim=False, weight=None, fwhm_max=0, submaps=0,
             fixDAR=True, mask=True,
             clean_dirs=None, combo_dir=None,
-            instrument=instruments.default_inst):
+            instrument=instruments.default_inst,
+            use_koa_weather=False):
     """
     Accepts a list of cleaned images and does a weighted combining after
     performing frame selection based on the Strehl and FWHM.
@@ -703,13 +706,15 @@ def combine(files, wave, outroot, field=None, outSuffix=None,
 
     # Combine all the images together.
     combine_drizzle(xysize, cleanDir, roots, _out, weights, shiftsTab,
-                    wave, diffPA, fixDAR=fixDAR, mask=mask, instrument=instrument)
+                    wave, diffPA, fixDAR=fixDAR, mask=mask, instrument=instrument,
+                    use_koa_weather=use_koa_weather)
 
     # Now make submaps
     if (submaps > 0):
         combine_submaps(xysize, cleanDir, roots, _sub, weights,
                         shiftsTab, submaps, wave, diffPA, fixDAR=fixDAR,
-                        mask=mask, instrument=instrument)
+                        mask=mask, instrument=instrument,
+                        use_koa_weather=use_koa_weather)
 
     # Remove *.lis_r file & rotated rcoo files, if any - these
     # were just needed to get the proper shifts for xregister
@@ -1000,7 +1005,8 @@ def trim_table_by_name(outroots, tableFileName):
 
 def combine_drizzle(imgsize, cleanDir, roots, outroot, weights, shifts,
                     wave, diffPA, fixDAR=True, mask=True,
-                    instrument=instruments.default_inst):
+                    instrument=instruments.default_inst,
+                    use_koa_weather=False):
     _fits = outroot + '.fits'
     _tmpfits = outroot + '_tmp.fits'
     _wgt = outroot + '_sig.fits'
@@ -1070,10 +1076,12 @@ def combine_drizzle(imgsize, cleanDir, roots, outroot, weights, shifts,
 
         if (fixDAR == True):
             darRoot = _cdwt.replace('.fits', 'geo')
-            (xgeoim, ygeoim) = dar.darPlusDistortion(_cdwt, darRoot,
-                                                     xgeoim=distXgeoim,
-                                                     ygeoim=distYgeoim,
-                                                     instrument=instrument)
+            (xgeoim, ygeoim) = dar.darPlusDistortion(
+                                   _cdwt, darRoot,
+                                   xgeoim=distXgeoim,
+                                   ygeoim=distYgeoim,
+                                   instrument=instrument,
+                                   use_koa_weather=use_koa_weather)
 
             xgeoim = xgeoim.replace(cleanDir, 'cleanDir$')
             ygeoim = ygeoim.replace(cleanDir, 'cleanDir$')
@@ -1178,7 +1186,8 @@ def combine_drizzle(imgsize, cleanDir, roots, outroot, weights, shifts,
 
 def combine_submaps(imgsize, cleanDir, roots, outroot, weights,
             shifts, submaps, wave, diffPA, fixDAR=True, mask=True,
-            instrument=instruments.default_inst):
+            instrument=instruments.default_inst,
+            use_koa_weather=False):
     """
     Assumes the list of roots are pre-sorted based on quality. Images are then
           divided up with every Nth image going into the Nth submap.
@@ -1279,10 +1288,12 @@ def combine_submaps(imgsize, cleanDir, roots, outroot, weights,
         if (fixDAR == True):
             darRoot = cdwt.replace('.fits', 'geo')
             print('submap: ',cdwt)
-            (xgeoim, ygeoim) = dar.darPlusDistortion(cdwt, darRoot,
-                                                     xgeoim=distXgeoim,
-                                                     ygeoim=distYgeoim,
-                                                     instrument=instrument)
+            (xgeoim, ygeoim) = dar.darPlusDistortion(
+                                   cdwt, darRoot,
+                                   xgeoim=distXgeoim,
+                                   ygeoim=distYgeoim,
+                                   instrument=instrument,
+                                   use_koa_weather=use_koa_weather)
             xgeoim = xgeoim.replace(cleanDir, 'cleanDir$')
             ygeoim = ygeoim.replace(cleanDir, 'cleanDir$')
             ir.drizzle.xgeoim = xgeoim
@@ -1694,7 +1705,9 @@ def setup_drizzle(imgsize):
     ir.drizzle.in_un = 'counts'
     ir.drizzle.out_un = 'counts'
 
-def clean_drizzle(xgeoim, ygeoim, _bp, _cd, _wgt, _dlog, fixDAR=True, instrument=instruments.default_inst):
+def clean_drizzle(xgeoim, ygeoim, _bp, _cd, _wgt, _dlog,
+        fixDAR=True, instrument=instruments.default_inst,
+        use_koa_weather=False):
     # Get the distortion maps for this instrument.
     hdr = fits.getheader(_bp)
     distXgeoim, distYgeoim = instrument.get_distortion_maps(hdr)
@@ -1702,7 +1715,10 @@ def clean_drizzle(xgeoim, ygeoim, _bp, _cd, _wgt, _dlog, fixDAR=True, instrument
     if (fixDAR == True):
         darRoot = _cd.replace('.fits', 'geo')
 
-        (xgeoim, ygeoim) = dar.darPlusDistortion(_bp, darRoot, xgeoim, ygeoim, instrument=instrument)
+        (xgeoim, ygeoim) = dar.darPlusDistortion(
+                               _bp, darRoot, xgeoim, ygeoim,
+                               instrument=instrument,
+                               use_koa_weather=use_koa_weather)
 
         ir.drizzle.xgeoim = xgeoim
         ir.drizzle.ygeoim = ygeoim
