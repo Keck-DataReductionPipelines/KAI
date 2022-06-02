@@ -167,7 +167,7 @@ Attributes
    ..
        !! processed by numpydoc !!
 
-.. py:function:: clean(files, nite, wave, refSrc, strSrc, badColumns=None, field=None, skyscale=False, skyfile=None, angOff=0.0, cent_box=12, fixDAR=True, raw_dir=None, clean_dir=None, instrument=instruments.default_inst, check_ref_loc=True)
+.. py:function:: clean(files, nite, wave, refSrc, strSrc, badColumns=None, field=None, skyscale=False, skyfile=None, angOff=0.0, cent_box=12, fixDAR=True, use_koa_weather=False, raw_dir=None, clean_dir=None, instrument=instruments.default_inst, check_ref_loc=True)
 
    
    Clean near infrared NIRC2 or OSIRIS images.
@@ -341,7 +341,7 @@ Attributes
    ..
        !! processed by numpydoc !!
 
-.. py:function:: combine(files, wave, outroot, field=None, outSuffix=None, trim=False, weight=None, fwhm_max=0, submaps=0, fixDAR=True, mask=True, clean_dirs=None, combo_dir=None, instrument=instruments.default_inst)
+.. py:function:: combine(files, wave, outroot, field=None, outSuffix=None, trim=False, weight=None, fwhm_max=0, submaps=0, fixDAR=True, mask=True, clean_dirs=None, combo_dir=None, instrument=instruments.default_inst, use_koa_weather=False)
 
    
    Accepts a list of cleaned images and does a weighted combining after
@@ -662,7 +662,7 @@ Attributes
    ..
        !! processed by numpydoc !!
 
-.. py:function:: combine_drizzle(imgsize, cleanDir, roots, outroot, weights, shifts, wave, diffPA, fixDAR=True, mask=True, instrument=instruments.default_inst)
+.. py:function:: combine_drizzle(imgsize, cleanDir, roots, outroot, weights, shifts, wave, diffPA, fixDAR=True, mask=True, instrument=instruments.default_inst, use_koa_weather=False)
 
    
 
@@ -684,7 +684,7 @@ Attributes
    ..
        !! processed by numpydoc !!
 
-.. py:function:: combine_submaps(imgsize, cleanDir, roots, outroot, weights, shifts, submaps, wave, diffPA, fixDAR=True, mask=True, instrument=instruments.default_inst)
+.. py:function:: combine_submaps(imgsize, cleanDir, roots, outroot, weights, shifts, submaps, wave, diffPA, fixDAR=True, mask=True, instrument=instruments.default_inst, use_koa_weather=False)
 
    
    Assumes the list of roots are pre-sorted based on quality. Images are then
@@ -937,7 +937,7 @@ Attributes
    ..
        !! processed by numpydoc !!
 
-.. py:function:: clean_drizzle(xgeoim, ygeoim, _bp, _cd, _wgt, _dlog, fixDAR=True, instrument=instruments.default_inst)
+.. py:function:: clean_drizzle(xgeoim, ygeoim, _bp, _cd, _wgt, _dlog, fixDAR=True, instrument=instruments.default_inst, use_koa_weather=False)
 
    
 

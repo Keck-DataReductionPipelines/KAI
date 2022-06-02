@@ -85,6 +85,7 @@
 <span class="kn">from</span> <span class="nn">kai.reduce</span> <span class="kn">import</span> <span class="n">slalib</span>
 <span class="kn">from</span> <span class="nn">kai</span> <span class="kn">import</span> <span class="n">instruments</span>
 <span class="kn">from</span> <span class="nn">astropy.table</span> <span class="kn">import</span> <span class="n">Table</span>
+<span class="kn">from</span> <span class="nn">astropy.time</span> <span class="kn">import</span> <span class="n">Time</span>
 
 <div class="viewcode-block" id="module_dir"><a class="viewcode-back" href="../../../autoapi/kai/reduce/dar/index.html#kai.reduce.dar.module_dir">[docs]</a><span class="n">module_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span></div>
 
@@ -117,7 +118,6 @@
     <span class="n">atmfile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
     <span class="n">splitAtmosphereCFHT</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">year</span><span class="p">))</span></div>
-
 
 <div class="viewcode-block" id="keckDARcoeffs"><a class="viewcode-back" href="../../../autoapi/kai/reduce/dar/index.html#kai.reduce.dar.keckDARcoeffs">[docs]</a><span class="k">def</span> <span class="nf">keckDARcoeffs</span><span class="p">(</span><span class="n">lamda</span><span class="p">,</span> <span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">,</span> <span class="n">day</span><span class="p">,</span> <span class="n">hour</span><span class="p">,</span> <span class="n">minute</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -200,7 +200,146 @@
     <span class="nb">print</span><span class="p">(</span><span class="n">hm</span><span class="p">,</span> <span class="n">tdk</span><span class="p">,</span> <span class="n">pmb</span><span class="p">,</span> <span class="n">rh</span><span class="p">,</span> <span class="n">lamda</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">tlr</span><span class="p">,</span> <span class="n">eps</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">slalib</span><span class="o">.</span><span class="n">refco</span><span class="p">(</span><span class="n">hm</span><span class="p">,</span> <span class="n">tdk</span><span class="p">,</span> <span class="n">pmb</span><span class="p">,</span> <span class="n">rh</span><span class="p">,</span> <span class="n">lamda</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">tlr</span><span class="p">,</span> <span class="n">eps</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="kaidar"><a class="viewcode-back" href="../../../autoapi/kai/reduce/dar/index.html#kai.reduce.dar.kaidar">[docs]</a><span class="k">def</span> <span class="nf">kaidar</span><span class="p">(</span><span class="n">fitsFile</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">):</span>
+<div class="viewcode-block" id="download_koa_dat_files"><a class="viewcode-back" href="../../../autoapi/kai/reduce/dar/index.html#kai.reduce.dar.download_koa_dat_files">[docs]</a><span class="k">def</span> <span class="nf">download_koa_dat_files</span><span class="p">(</span><span class="n">date_str</span><span class="p">,</span> <span class="n">telescope_str</span><span class="p">,</span> <span class="n">param_name</span><span class="p">,</span> <span class="n">download_loc</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Download the KOA atmospheric condition file for given date and parameters,</span>
+<span class="sd">    and save at the download location</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;https://koa.ipac.caltech.edu/data33/WEATHER/</span><span class="si">{0}</span><span class="s1">/nightly2/</span><span class="si">{1}</span><span class="s1">_</span><span class="si">{0}</span><span class="s1">_</span><span class="si">{2}</span><span class="s1">.dat&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+        <span class="n">date_str</span><span class="p">,</span> <span class="n">telescope_str</span><span class="p">,</span> <span class="n">param_name</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">p2</span><span class="p">:</span> <span class="c1"># Python 2 command, necessary for IRAF</span>
+        <span class="n">_atm</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">_atm</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+    <span class="n">atm</span> <span class="o">=</span> <span class="n">_atm</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="n">_atm</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    
+    <span class="n">out_file_name</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{0}</span><span class="s1">_</span><span class="si">{1}</span><span class="s1">_</span><span class="si">{2}</span><span class="s1">.dat&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">telescope_str</span><span class="p">,</span> <span class="n">date_str</span><span class="p">,</span> <span class="n">param_name</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">atm</span><span class="p">)</span> <span class="o">==</span> <span class="nb">bytes</span><span class="p">:</span>
+        <span class="c1"># this is for python 3</span>
+        <span class="n">atmfile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">download_loc</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">out_file_name</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">atmfile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">download_loc</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">out_file_name</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">)</span>
+    
+    <span class="n">atmfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">atm</span><span class="p">)</span>
+    <span class="n">atmfile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="keckDARcoeffs_koa"><a class="viewcode-back" href="../../../autoapi/kai/reduce/dar/index.html#kai.reduce.dar.keckDARcoeffs_koa">[docs]</a><span class="k">def</span> <span class="nf">keckDARcoeffs_koa</span><span class="p">(</span><span class="n">lamda</span><span class="p">,</span> <span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">,</span> <span class="n">day</span><span class="p">,</span> <span class="n">hour</span><span class="p">,</span> <span class="n">minute</span><span class="p">,</span> <span class="n">second</span><span class="p">,</span>
+        <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate the differential atmospheric refraction</span>
+<span class="sd">    for two objects observed at Keck, using atmospheric conditions obtained</span>
+<span class="sd">    via the KOA.</span>
+
+<span class="sd">    Input:</span>
+<span class="sd">    lamda -- Effective wavelength (microns) assumed to be the same for both</span>
+<span class="sd">    year, month, day, hour, minute of observation (UTC)</span>
+
+<span class="sd">    Output:</span>
+<span class="sd">    refA</span>
+<span class="sd">    refB</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">utc</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">,</span> <span class="n">day</span><span class="p">,</span> <span class="n">hour</span><span class="p">,</span> <span class="n">minute</span><span class="p">,</span> <span class="n">second</span><span class="p">)</span>
+    
+    <span class="c1">####################</span>
+    <span class="c1"># Setup all the parameters for the atmospheric refraction</span>
+    <span class="c1"># calculations. Typical values obtained from the Mauna Kea</span>
+    <span class="c1"># weather pages and from the web.</span>
+    <span class="c1">#################### </span>
+    <span class="c1"># Temperature Lapse Rate (Kelvin/meter)</span>
+    <span class="n">tlr</span> <span class="o">=</span> <span class="mf">0.0065</span>
+    
+    <span class="c1"># Precision required to terminate the iteration (radian)</span>
+    <span class="n">eps</span> <span class="o">=</span> <span class="mf">1.0e-9</span>
+    
+    <span class="c1"># Following hard coded to remove iraf dependency</span>
+    <span class="c1"># Height above sea level (meters)</span>
+    <span class="n">hm</span> <span class="o">=</span> <span class="mf">4160.0</span>     <span class="c1">#Keck height</span>
+    
+    <span class="c1"># Latitude of the observer (radian)</span>
+    <span class="n">phi</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mf">19.82833333333333</span><span class="p">)</span>   <span class="c1">#Keck latitude</span>
+    
+    <span class="c1"># Write out atm files</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="s1">&#39;weather&#39;</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="s1">&#39;weather&#39;</span><span class="p">)</span>
+    
+    <span class="c1"># Generate telescope and date strings for the atm files</span>
+    <span class="n">telescope_strs</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;NIRC2&#39;</span><span class="p">:</span> <span class="s1">&#39;k2&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;OSIRIS&#39;</span><span class="p">:</span> <span class="s1">&#39;k1&#39;</span><span class="p">,</span>
+    <span class="p">}</span>
+    
+    <span class="n">telescope_str</span> <span class="o">=</span> <span class="n">telescope_strs</span><span class="p">[</span><span class="n">instrument</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
+    
+    <span class="n">date_str</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{0}{1}{2}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">year</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">month</span><span class="p">)</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">day</span><span class="p">)</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+    
+    <span class="n">dat_file_root</span> <span class="o">=</span> <span class="s1">&#39;./weather/</span><span class="si">{0}</span><span class="s1">_</span><span class="si">{1}</span><span class="s1">_&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">telescope_str</span><span class="p">,</span> <span class="n">date_str</span><span class="p">)</span>
+    
+    <span class="c1"># Check if necessary logs are pulled for the observation date</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">dat_file_root</span> <span class="o">+</span> <span class="s1">&#39;OutsideTemp.dat&#39;</span><span class="p">):</span>
+        <span class="n">download_koa_dat_files</span><span class="p">(</span>
+            <span class="n">date_str</span><span class="p">,</span> <span class="n">telescope_str</span><span class="p">,</span> <span class="s1">&#39;OutsideTemp&#39;</span><span class="p">,</span> <span class="s1">&#39;./weather&#39;</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">dat_file_root</span> <span class="o">+</span> <span class="s1">&#39;OutsideHumidity.dat&#39;</span><span class="p">):</span>
+        <span class="n">download_koa_dat_files</span><span class="p">(</span>
+            <span class="n">date_str</span><span class="p">,</span> <span class="n">telescope_str</span><span class="p">,</span> <span class="s1">&#39;OutsideHumidity&#39;</span><span class="p">,</span> <span class="s1">&#39;./weather&#39;</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">dat_file_root</span> <span class="o">+</span> <span class="s1">&#39;Pressure.dat&#39;</span><span class="p">):</span>
+        <span class="n">download_koa_dat_files</span><span class="p">(</span>
+            <span class="n">date_str</span><span class="p">,</span> <span class="n">telescope_str</span><span class="p">,</span> <span class="s1">&#39;Pressure&#39;</span><span class="p">,</span> <span class="s1">&#39;./weather&#39;</span><span class="p">)</span>
+    
+    <span class="c1"># Read in tables and find closest row to image time</span>
+    <span class="c1"># Temperature</span>
+    <span class="n">temp_table</span> <span class="o">=</span> <span class="n">Table</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">dat_file_root</span> <span class="o">+</span> <span class="s1">&#39;OutsideTemp.dat&#39;</span><span class="p">,</span>
+                            <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;ascii.basic&#39;</span><span class="p">,</span> <span class="n">data_start</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span>
+                            <span class="n">guess</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">fast_reader</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                            <span class="n">header_start</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                            <span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;row&#39;</span><span class="p">,</span> <span class="s1">&#39;temp&#39;</span><span class="p">,</span> <span class="s1">&#39;timeinsecs&#39;</span><span class="p">,</span>
+                                   <span class="s1">&#39;datetime_utc&#39;</span><span class="p">],</span>
+                           <span class="p">)</span>
+    
+    <span class="n">temp_datetimes</span> <span class="o">=</span> <span class="n">Time</span><span class="p">(</span><span class="n">temp_table</span><span class="p">[</span><span class="s1">&#39;datetime_utc&#39;</span><span class="p">],</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;iso&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">datetime</span>
+    <span class="n">temp_closest_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">temp_datetimes</span> <span class="o">-</span> <span class="n">utc</span><span class="p">))</span>
+    
+    <span class="n">atm_temp</span> <span class="o">=</span> <span class="p">(</span><span class="n">temp_table</span><span class="p">[</span><span class="n">temp_closest_index</span><span class="p">])[</span><span class="s1">&#39;temp&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="mf">272.15</span>    <span class="c1"># Kelvin</span>
+    
+    <span class="c1"># Humidity</span>
+    <span class="n">hum_table</span> <span class="o">=</span> <span class="n">Table</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">dat_file_root</span> <span class="o">+</span> <span class="s1">&#39;OutsideHumidity.dat&#39;</span><span class="p">,</span>
+                            <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;ascii.basic&#39;</span><span class="p">,</span> <span class="n">data_start</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span>
+                            <span class="n">guess</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">fast_reader</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                            <span class="n">header_start</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                            <span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;row&#39;</span><span class="p">,</span> <span class="s1">&#39;humidity&#39;</span><span class="p">,</span> <span class="s1">&#39;timeinsecs&#39;</span><span class="p">,</span>
+                                   <span class="s1">&#39;datetime_utc&#39;</span><span class="p">],</span>
+                           <span class="p">)</span>
+    
+    <span class="n">hum_datetimes</span> <span class="o">=</span> <span class="n">Time</span><span class="p">(</span><span class="n">hum_table</span><span class="p">[</span><span class="s1">&#39;datetime_utc&#39;</span><span class="p">],</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;iso&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">datetime</span>
+    <span class="n">hum_closest_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">hum_datetimes</span> <span class="o">-</span> <span class="n">utc</span><span class="p">))</span>
+    
+    <span class="n">atm_hum</span> <span class="o">=</span> <span class="p">(</span><span class="n">hum_table</span><span class="p">[</span><span class="n">hum_closest_index</span><span class="p">])[</span><span class="s1">&#39;humidity&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="mf">100.</span>     <span class="c1"># Percent</span>
+    
+    <span class="c1"># Pressure</span>
+    <span class="n">pres_table</span> <span class="o">=</span> <span class="n">Table</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">dat_file_root</span> <span class="o">+</span> <span class="s1">&#39;Pressure.dat&#39;</span><span class="p">,</span>
+                            <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;ascii.basic&#39;</span><span class="p">,</span> <span class="n">data_start</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span>
+                            <span class="n">guess</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">fast_reader</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                            <span class="n">header_start</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                            <span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;row&#39;</span><span class="p">,</span> <span class="s1">&#39;pressure&#39;</span><span class="p">,</span> <span class="s1">&#39;timeinsecs&#39;</span><span class="p">,</span>
+                                   <span class="s1">&#39;datetime_utc&#39;</span><span class="p">],</span>
+                           <span class="p">)</span>
+    
+    <span class="n">pres_datetimes</span> <span class="o">=</span> <span class="n">Time</span><span class="p">(</span><span class="n">pres_table</span><span class="p">[</span><span class="s1">&#39;datetime_utc&#39;</span><span class="p">],</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;iso&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">datetime</span>
+    <span class="n">pres_closest_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">pres_datetimes</span> <span class="o">-</span> <span class="n">utc</span><span class="p">))</span>
+    
+    <span class="n">atm_pres</span> <span class="o">=</span> <span class="p">(</span><span class="n">pres_table</span><span class="p">[</span><span class="n">pres_closest_index</span><span class="p">])[</span><span class="s1">&#39;pressure&#39;</span><span class="p">]</span>     <span class="c1"># millibar</span>
+    
+    <span class="c1"># Calculate refraction coefficients</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">hm</span><span class="p">,</span> <span class="n">atm_temp</span><span class="p">,</span> <span class="n">atm_pres</span><span class="p">,</span> <span class="n">atm_hum</span><span class="p">,</span> <span class="n">lamda</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">tlr</span><span class="p">,</span> <span class="n">eps</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">slalib</span><span class="o">.</span><span class="n">refco</span><span class="p">(</span><span class="n">hm</span><span class="p">,</span> <span class="n">atm_temp</span><span class="p">,</span> <span class="n">atm_pres</span><span class="p">,</span> <span class="n">atm_hum</span><span class="p">,</span> <span class="n">lamda</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">tlr</span><span class="p">,</span> <span class="n">eps</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="kaidar"><a class="viewcode-back" href="../../../autoapi/kai/reduce/dar/index.html#kai.reduce.dar.kaidar">[docs]</a><span class="k">def</span> <span class="nf">kaidar</span><span class="p">(</span><span class="n">fitsFile</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">,</span>
+        <span class="n">use_koa_weather</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Use the FITS header to extract date, time, wavelength,</span>
 <span class="sd">    elevation, and image orientation information. This is everything</span>
@@ -210,7 +349,7 @@
 <span class="sd">    This code calculates the predicted DAR using archived CFHT</span>
 <span class="sd">    atmospheric data and the elevation and wavelength of the observations.</span>
 <span class="sd">    Then the DAR correction is transformed into image coefficients that</span>
-<span class="sd">    can be applied in image coordinates. </span>
+<span class="sd">    can be applied in image coordinates.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Get header info</span>
     <span class="n">img</span><span class="p">,</span> <span class="n">hdr</span> <span class="o">=</span> <span class="n">pyfits</span><span class="o">.</span><span class="n">getdata</span><span class="p">(</span><span class="n">fitsFile</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -233,9 +372,13 @@
     <span class="n">utc</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">,</span> <span class="n">day</span><span class="p">,</span> <span class="n">hour</span><span class="p">,</span> <span class="n">minute</span><span class="p">,</span> <span class="n">second</span><span class="p">)</span>
     <span class="n">utc2hst</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=-</span><span class="mi">10</span><span class="p">)</span>
     <span class="n">hst</span> <span class="o">=</span> <span class="n">utc</span> <span class="o">+</span> <span class="n">utc2hst</span>
-
-    <span class="p">(</span><span class="n">refA</span><span class="p">,</span> <span class="n">refB</span><span class="p">)</span> <span class="o">=</span> <span class="n">keckDARcoeffs</span><span class="p">(</span><span class="n">effWave</span><span class="p">,</span> <span class="n">hst</span><span class="o">.</span><span class="n">year</span><span class="p">,</span> <span class="n">hst</span><span class="o">.</span><span class="n">month</span><span class="p">,</span> <span class="n">hst</span><span class="o">.</span><span class="n">day</span><span class="p">,</span>
-                                 <span class="n">hst</span><span class="o">.</span><span class="n">hour</span><span class="p">,</span> <span class="n">hst</span><span class="o">.</span><span class="n">minute</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">use_koa_weather</span><span class="p">:</span>
+        <span class="p">(</span><span class="n">refA</span><span class="p">,</span> <span class="n">refB</span><span class="p">)</span> <span class="o">=</span> <span class="n">keckDARcoeffs_koa</span><span class="p">(</span><span class="n">effWave</span><span class="p">,</span> <span class="n">utc</span><span class="o">.</span><span class="n">year</span><span class="p">,</span> <span class="n">utc</span><span class="o">.</span><span class="n">month</span><span class="p">,</span> <span class="n">utc</span><span class="o">.</span><span class="n">day</span><span class="p">,</span>
+                                         <span class="n">utc</span><span class="o">.</span><span class="n">hour</span><span class="p">,</span> <span class="n">utc</span><span class="o">.</span><span class="n">minute</span><span class="p">,</span> <span class="n">utc</span><span class="o">.</span><span class="n">second</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="p">(</span><span class="n">refA</span><span class="p">,</span> <span class="n">refB</span><span class="p">)</span> <span class="o">=</span> <span class="n">keckDARcoeffs</span><span class="p">(</span><span class="n">effWave</span><span class="p">,</span> <span class="n">hst</span><span class="o">.</span><span class="n">year</span><span class="p">,</span> <span class="n">hst</span><span class="o">.</span><span class="n">month</span><span class="p">,</span> <span class="n">hst</span><span class="o">.</span><span class="n">day</span><span class="p">,</span>
+                                     <span class="n">hst</span><span class="o">.</span><span class="n">hour</span><span class="p">,</span> <span class="n">hst</span><span class="o">.</span><span class="n">minute</span><span class="p">)</span>
 
     <span class="n">tanz</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mf">90.0</span> <span class="o">-</span> <span class="n">elevation</span><span class="p">))</span>
     <span class="n">tmp</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">+</span> <span class="n">tanz</span><span class="o">**</span><span class="mi">2</span>
@@ -272,7 +415,9 @@
 
     <span class="k">return</span> <span class="p">(</span><span class="n">darCoeffL</span><span class="p">,</span> <span class="n">darCoeffQ</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="darPlusDistortion"><a class="viewcode-back" href="../../../autoapi/kai/reduce/dar/index.html#kai.reduce.dar.darPlusDistortion">[docs]</a><span class="k">def</span> <span class="nf">darPlusDistortion</span><span class="p">(</span><span class="n">inputFits</span><span class="p">,</span> <span class="n">outputRoot</span><span class="p">,</span> <span class="n">xgeoim</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ygeoim</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">):</span>
+<div class="viewcode-block" id="darPlusDistortion"><a class="viewcode-back" href="../../../autoapi/kai/reduce/dar/index.html#kai.reduce.dar.darPlusDistortion">[docs]</a><span class="k">def</span> <span class="nf">darPlusDistortion</span><span class="p">(</span><span class="n">inputFits</span><span class="p">,</span> <span class="n">outputRoot</span><span class="p">,</span> <span class="n">xgeoim</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ygeoim</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">,</span>
+        <span class="n">use_koa_weather</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Create lookup tables (stored as FITS files) that can be used</span>
 <span class="sd">    to correct DAR. Optionally, the shifts due to DAR can be added</span>
@@ -299,7 +444,8 @@
     <span class="n">halfY</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">imgsizeY</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">))</span>
 
     <span class="c1"># First get the coefficients</span>
-    <span class="p">(</span><span class="n">darCoeffL</span><span class="p">,</span> <span class="n">darCoeffQ</span><span class="p">)</span> <span class="o">=</span> <span class="n">kaidar</span><span class="p">(</span><span class="n">inputFits</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">instrument</span><span class="p">)</span>
+    <span class="p">(</span><span class="n">darCoeffL</span><span class="p">,</span> <span class="n">darCoeffQ</span><span class="p">)</span> <span class="o">=</span> <span class="n">kaidar</span><span class="p">(</span><span class="n">inputFits</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">instrument</span><span class="p">,</span>
+                                    <span class="n">use_koa_weather</span><span class="o">=</span><span class="n">use_koa_weather</span><span class="p">)</span>
     <span class="c1"># Convert DAR coefficients for use with units of NIRC2 pixels</span>
     <span class="n">scale</span> <span class="o">=</span> <span class="n">instrument</span><span class="o">.</span><span class="n">get_plate_scale</span><span class="p">(</span><span class="n">hdr</span><span class="p">)</span>
     <span class="n">darCoeffL</span> <span class="o">*=</span> <span class="mf">1.0</span>                

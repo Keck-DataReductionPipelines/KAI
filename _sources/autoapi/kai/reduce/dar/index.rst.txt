@@ -21,6 +21,8 @@ Functions
 
    kai.reduce.dar.get_atm_conditions
    kai.reduce.dar.keckDARcoeffs
+   kai.reduce.dar.download_koa_dat_files
+   kai.reduce.dar.keckDARcoeffs_koa
    kai.reduce.dar.kaidar
    kai.reduce.dar.darPlusDistortion
    kai.reduce.dar.applyDAR
@@ -140,18 +142,11 @@ Attributes
    ..
        !! processed by numpydoc !!
 
-.. py:function:: kaidar(fitsFile, instrument=instruments.default_inst)
+.. py:function:: download_koa_dat_files(date_str, telescope_str, param_name, download_loc)
 
    
-   Use the FITS header to extract date, time, wavelength,
-   elevation, and image orientation information. This is everything
-   that is necessary to calculate the differential atmospheric
-   refraction. The differential atmospheric refraction 
-   is applicable only along the zenith direction of an image.
-   This code calculates the predicted DAR using archived CFHT
-   atmospheric data and the elevation and wavelength of the observations.
-   Then the DAR correction is transformed into image coefficients that
-   can be applied in image coordinates. 
+   Download the KOA atmospheric condition file for given date and parameters,
+   and save at the download location
 
 
 
@@ -171,7 +166,70 @@ Attributes
    ..
        !! processed by numpydoc !!
 
-.. py:function:: darPlusDistortion(inputFits, outputRoot, xgeoim=None, ygeoim=None, instrument=instruments.default_inst)
+.. py:function:: keckDARcoeffs_koa(lamda, year, month, day, hour, minute, second, instrument=instruments.default_inst)
+
+   
+   Calculate the differential atmospheric refraction
+   for two objects observed at Keck, using atmospheric conditions obtained
+   via the KOA.
+
+   Input:
+   lamda -- Effective wavelength (microns) assumed to be the same for both
+   year, month, day, hour, minute of observation (UTC)
+
+   Output:
+   refA
+   refB
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: kaidar(fitsFile, instrument=instruments.default_inst, use_koa_weather=False)
+
+   
+   Use the FITS header to extract date, time, wavelength,
+   elevation, and image orientation information. This is everything
+   that is necessary to calculate the differential atmospheric
+   refraction. The differential atmospheric refraction 
+   is applicable only along the zenith direction of an image.
+   This code calculates the predicted DAR using archived CFHT
+   atmospheric data and the elevation and wavelength of the observations.
+   Then the DAR correction is transformed into image coefficients that
+   can be applied in image coordinates.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: darPlusDistortion(inputFits, outputRoot, xgeoim=None, ygeoim=None, instrument=instruments.default_inst, use_koa_weather=False)
 
    
    Create lookup tables (stored as FITS files) that can be used

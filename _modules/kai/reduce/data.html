@@ -112,7 +112,7 @@
 
 <div class="viewcode-block" id="clean"><a class="viewcode-back" href="../../../autoapi/kai/reduce/data/index.html#kai.reduce.data.clean">[docs]</a><span class="k">def</span> <span class="nf">clean</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="n">nite</span><span class="p">,</span> <span class="n">wave</span><span class="p">,</span> <span class="n">refSrc</span><span class="p">,</span> <span class="n">strSrc</span><span class="p">,</span> <span class="n">badColumns</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">field</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
           <span class="n">skyscale</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">skyfile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">angOff</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">cent_box</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
-          <span class="n">fixDAR</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+          <span class="n">fixDAR</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">use_koa_weather</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
           <span class="n">raw_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">clean_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
           <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">,</span> <span class="n">check_ref_loc</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -338,7 +338,9 @@
             <span class="n">bkg</span> <span class="o">=</span> <span class="n">clean_bkgsubtract</span><span class="p">(</span><span class="n">_ff_f</span><span class="p">,</span> <span class="n">_bp</span><span class="p">)</span>
 
             <span class="c1">### Drizzle individual file ###</span>
-            <span class="n">clean_drizzle</span><span class="p">(</span><span class="n">distXgeoim</span><span class="p">,</span> <span class="n">distYgeoim</span><span class="p">,</span> <span class="n">_bp</span><span class="p">,</span> <span class="n">_ce</span><span class="p">,</span> <span class="n">_wgt</span><span class="p">,</span> <span class="n">_dlog</span><span class="p">,</span> <span class="n">fixDAR</span><span class="o">=</span><span class="n">fixDAR</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">instrument</span><span class="p">)</span>
+            <span class="n">clean_drizzle</span><span class="p">(</span><span class="n">distXgeoim</span><span class="p">,</span> <span class="n">distYgeoim</span><span class="p">,</span> <span class="n">_bp</span><span class="p">,</span> <span class="n">_ce</span><span class="p">,</span> <span class="n">_wgt</span><span class="p">,</span> <span class="n">_dlog</span><span class="p">,</span>
+                          <span class="n">fixDAR</span><span class="o">=</span><span class="n">fixDAR</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">instrument</span><span class="p">,</span>
+                          <span class="n">use_koa_weather</span><span class="o">=</span><span class="n">use_koa_weather</span><span class="p">)</span>
 
             <span class="c1">### Make .max file ###</span>
             <span class="c1"># Determine the non-linearity level. Raw data level of</span>
@@ -469,7 +471,8 @@
             <span class="n">trim</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fwhm_max</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">submaps</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
             <span class="n">fixDAR</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="n">clean_dirs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">combo_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-            <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">):</span>
+            <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">,</span>
+            <span class="n">use_koa_weather</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Accepts a list of cleaned images and does a weighted combining after</span>
 <span class="sd">    performing frame selection based on the Strehl and FWHM.</span>
@@ -770,13 +773,15 @@
 
     <span class="c1"># Combine all the images together.</span>
     <span class="n">combine_drizzle</span><span class="p">(</span><span class="n">xysize</span><span class="p">,</span> <span class="n">cleanDir</span><span class="p">,</span> <span class="n">roots</span><span class="p">,</span> <span class="n">_out</span><span class="p">,</span> <span class="n">weights</span><span class="p">,</span> <span class="n">shiftsTab</span><span class="p">,</span>
-                    <span class="n">wave</span><span class="p">,</span> <span class="n">diffPA</span><span class="p">,</span> <span class="n">fixDAR</span><span class="o">=</span><span class="n">fixDAR</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="n">mask</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">instrument</span><span class="p">)</span>
+                    <span class="n">wave</span><span class="p">,</span> <span class="n">diffPA</span><span class="p">,</span> <span class="n">fixDAR</span><span class="o">=</span><span class="n">fixDAR</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="n">mask</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">instrument</span><span class="p">,</span>
+                    <span class="n">use_koa_weather</span><span class="o">=</span><span class="n">use_koa_weather</span><span class="p">)</span>
 
     <span class="c1"># Now make submaps</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">submaps</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">):</span>
         <span class="n">combine_submaps</span><span class="p">(</span><span class="n">xysize</span><span class="p">,</span> <span class="n">cleanDir</span><span class="p">,</span> <span class="n">roots</span><span class="p">,</span> <span class="n">_sub</span><span class="p">,</span> <span class="n">weights</span><span class="p">,</span>
                         <span class="n">shiftsTab</span><span class="p">,</span> <span class="n">submaps</span><span class="p">,</span> <span class="n">wave</span><span class="p">,</span> <span class="n">diffPA</span><span class="p">,</span> <span class="n">fixDAR</span><span class="o">=</span><span class="n">fixDAR</span><span class="p">,</span>
-                        <span class="n">mask</span><span class="o">=</span><span class="n">mask</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">instrument</span><span class="p">)</span>
+                        <span class="n">mask</span><span class="o">=</span><span class="n">mask</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">instrument</span><span class="p">,</span>
+                        <span class="n">use_koa_weather</span><span class="o">=</span><span class="n">use_koa_weather</span><span class="p">)</span>
 
     <span class="c1"># Remove *.lis_r file &amp; rotated rcoo files, if any - these</span>
     <span class="c1"># were just needed to get the proper shifts for xregister</span>
@@ -1067,7 +1072,8 @@
 
 <div class="viewcode-block" id="combine_drizzle"><a class="viewcode-back" href="../../../autoapi/kai/reduce/data/index.html#kai.reduce.data.combine_drizzle">[docs]</a><span class="k">def</span> <span class="nf">combine_drizzle</span><span class="p">(</span><span class="n">imgsize</span><span class="p">,</span> <span class="n">cleanDir</span><span class="p">,</span> <span class="n">roots</span><span class="p">,</span> <span class="n">outroot</span><span class="p">,</span> <span class="n">weights</span><span class="p">,</span> <span class="n">shifts</span><span class="p">,</span>
                     <span class="n">wave</span><span class="p">,</span> <span class="n">diffPA</span><span class="p">,</span> <span class="n">fixDAR</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                    <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">):</span>
+                    <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">,</span>
+                    <span class="n">use_koa_weather</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="n">_fits</span> <span class="o">=</span> <span class="n">outroot</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span>
     <span class="n">_tmpfits</span> <span class="o">=</span> <span class="n">outroot</span> <span class="o">+</span> <span class="s1">&#39;_tmp.fits&#39;</span>
     <span class="n">_wgt</span> <span class="o">=</span> <span class="n">outroot</span> <span class="o">+</span> <span class="s1">&#39;_sig.fits&#39;</span>
@@ -1137,10 +1143,12 @@
 
         <span class="k">if</span> <span class="p">(</span><span class="n">fixDAR</span> <span class="o">==</span> <span class="kc">True</span><span class="p">):</span>
             <span class="n">darRoot</span> <span class="o">=</span> <span class="n">_cdwt</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.fits&#39;</span><span class="p">,</span> <span class="s1">&#39;geo&#39;</span><span class="p">)</span>
-            <span class="p">(</span><span class="n">xgeoim</span><span class="p">,</span> <span class="n">ygeoim</span><span class="p">)</span> <span class="o">=</span> <span class="n">dar</span><span class="o">.</span><span class="n">darPlusDistortion</span><span class="p">(</span><span class="n">_cdwt</span><span class="p">,</span> <span class="n">darRoot</span><span class="p">,</span>
-                                                     <span class="n">xgeoim</span><span class="o">=</span><span class="n">distXgeoim</span><span class="p">,</span>
-                                                     <span class="n">ygeoim</span><span class="o">=</span><span class="n">distYgeoim</span><span class="p">,</span>
-                                                     <span class="n">instrument</span><span class="o">=</span><span class="n">instrument</span><span class="p">)</span>
+            <span class="p">(</span><span class="n">xgeoim</span><span class="p">,</span> <span class="n">ygeoim</span><span class="p">)</span> <span class="o">=</span> <span class="n">dar</span><span class="o">.</span><span class="n">darPlusDistortion</span><span class="p">(</span>
+                                   <span class="n">_cdwt</span><span class="p">,</span> <span class="n">darRoot</span><span class="p">,</span>
+                                   <span class="n">xgeoim</span><span class="o">=</span><span class="n">distXgeoim</span><span class="p">,</span>
+                                   <span class="n">ygeoim</span><span class="o">=</span><span class="n">distYgeoim</span><span class="p">,</span>
+                                   <span class="n">instrument</span><span class="o">=</span><span class="n">instrument</span><span class="p">,</span>
+                                   <span class="n">use_koa_weather</span><span class="o">=</span><span class="n">use_koa_weather</span><span class="p">)</span>
 
             <span class="n">xgeoim</span> <span class="o">=</span> <span class="n">xgeoim</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">cleanDir</span><span class="p">,</span> <span class="s1">&#39;cleanDir$&#39;</span><span class="p">)</span>
             <span class="n">ygeoim</span> <span class="o">=</span> <span class="n">ygeoim</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">cleanDir</span><span class="p">,</span> <span class="s1">&#39;cleanDir$&#39;</span><span class="p">)</span>
@@ -1245,7 +1253,8 @@
 
 <div class="viewcode-block" id="combine_submaps"><a class="viewcode-back" href="../../../autoapi/kai/reduce/data/index.html#kai.reduce.data.combine_submaps">[docs]</a><span class="k">def</span> <span class="nf">combine_submaps</span><span class="p">(</span><span class="n">imgsize</span><span class="p">,</span> <span class="n">cleanDir</span><span class="p">,</span> <span class="n">roots</span><span class="p">,</span> <span class="n">outroot</span><span class="p">,</span> <span class="n">weights</span><span class="p">,</span>
             <span class="n">shifts</span><span class="p">,</span> <span class="n">submaps</span><span class="p">,</span> <span class="n">wave</span><span class="p">,</span> <span class="n">diffPA</span><span class="p">,</span> <span class="n">fixDAR</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">):</span>
+            <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">,</span>
+            <span class="n">use_koa_weather</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Assumes the list of roots are pre-sorted based on quality. Images are then</span>
 <span class="sd">          divided up with every Nth image going into the Nth submap.</span>
@@ -1346,10 +1355,12 @@
         <span class="k">if</span> <span class="p">(</span><span class="n">fixDAR</span> <span class="o">==</span> <span class="kc">True</span><span class="p">):</span>
             <span class="n">darRoot</span> <span class="o">=</span> <span class="n">cdwt</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.fits&#39;</span><span class="p">,</span> <span class="s1">&#39;geo&#39;</span><span class="p">)</span>
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;submap: &#39;</span><span class="p">,</span><span class="n">cdwt</span><span class="p">)</span>
-            <span class="p">(</span><span class="n">xgeoim</span><span class="p">,</span> <span class="n">ygeoim</span><span class="p">)</span> <span class="o">=</span> <span class="n">dar</span><span class="o">.</span><span class="n">darPlusDistortion</span><span class="p">(</span><span class="n">cdwt</span><span class="p">,</span> <span class="n">darRoot</span><span class="p">,</span>
-                                                     <span class="n">xgeoim</span><span class="o">=</span><span class="n">distXgeoim</span><span class="p">,</span>
-                                                     <span class="n">ygeoim</span><span class="o">=</span><span class="n">distYgeoim</span><span class="p">,</span>
-                                                     <span class="n">instrument</span><span class="o">=</span><span class="n">instrument</span><span class="p">)</span>
+            <span class="p">(</span><span class="n">xgeoim</span><span class="p">,</span> <span class="n">ygeoim</span><span class="p">)</span> <span class="o">=</span> <span class="n">dar</span><span class="o">.</span><span class="n">darPlusDistortion</span><span class="p">(</span>
+                                   <span class="n">cdwt</span><span class="p">,</span> <span class="n">darRoot</span><span class="p">,</span>
+                                   <span class="n">xgeoim</span><span class="o">=</span><span class="n">distXgeoim</span><span class="p">,</span>
+                                   <span class="n">ygeoim</span><span class="o">=</span><span class="n">distYgeoim</span><span class="p">,</span>
+                                   <span class="n">instrument</span><span class="o">=</span><span class="n">instrument</span><span class="p">,</span>
+                                   <span class="n">use_koa_weather</span><span class="o">=</span><span class="n">use_koa_weather</span><span class="p">)</span>
             <span class="n">xgeoim</span> <span class="o">=</span> <span class="n">xgeoim</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">cleanDir</span><span class="p">,</span> <span class="s1">&#39;cleanDir$&#39;</span><span class="p">)</span>
             <span class="n">ygeoim</span> <span class="o">=</span> <span class="n">ygeoim</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">cleanDir</span><span class="p">,</span> <span class="s1">&#39;cleanDir$&#39;</span><span class="p">)</span>
             <span class="n">ir</span><span class="o">.</span><span class="n">drizzle</span><span class="o">.</span><span class="n">xgeoim</span> <span class="o">=</span> <span class="n">xgeoim</span>
@@ -1761,7 +1772,9 @@
     <span class="n">ir</span><span class="o">.</span><span class="n">drizzle</span><span class="o">.</span><span class="n">in_un</span> <span class="o">=</span> <span class="s1">&#39;counts&#39;</span>
     <span class="n">ir</span><span class="o">.</span><span class="n">drizzle</span><span class="o">.</span><span class="n">out_un</span> <span class="o">=</span> <span class="s1">&#39;counts&#39;</span></div>
 
-<div class="viewcode-block" id="clean_drizzle"><a class="viewcode-back" href="../../../autoapi/kai/reduce/data/index.html#kai.reduce.data.clean_drizzle">[docs]</a><span class="k">def</span> <span class="nf">clean_drizzle</span><span class="p">(</span><span class="n">xgeoim</span><span class="p">,</span> <span class="n">ygeoim</span><span class="p">,</span> <span class="n">_bp</span><span class="p">,</span> <span class="n">_cd</span><span class="p">,</span> <span class="n">_wgt</span><span class="p">,</span> <span class="n">_dlog</span><span class="p">,</span> <span class="n">fixDAR</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">):</span>
+<div class="viewcode-block" id="clean_drizzle"><a class="viewcode-back" href="../../../autoapi/kai/reduce/data/index.html#kai.reduce.data.clean_drizzle">[docs]</a><span class="k">def</span> <span class="nf">clean_drizzle</span><span class="p">(</span><span class="n">xgeoim</span><span class="p">,</span> <span class="n">ygeoim</span><span class="p">,</span> <span class="n">_bp</span><span class="p">,</span> <span class="n">_cd</span><span class="p">,</span> <span class="n">_wgt</span><span class="p">,</span> <span class="n">_dlog</span><span class="p">,</span>
+        <span class="n">fixDAR</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">,</span>
+        <span class="n">use_koa_weather</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="c1"># Get the distortion maps for this instrument.</span>
     <span class="n">hdr</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getheader</span><span class="p">(</span><span class="n">_bp</span><span class="p">)</span>
     <span class="n">distXgeoim</span><span class="p">,</span> <span class="n">distYgeoim</span> <span class="o">=</span> <span class="n">instrument</span><span class="o">.</span><span class="n">get_distortion_maps</span><span class="p">(</span><span class="n">hdr</span><span class="p">)</span>
@@ -1769,7 +1782,10 @@
     <span class="k">if</span> <span class="p">(</span><span class="n">fixDAR</span> <span class="o">==</span> <span class="kc">True</span><span class="p">):</span>
         <span class="n">darRoot</span> <span class="o">=</span> <span class="n">_cd</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.fits&#39;</span><span class="p">,</span> <span class="s1">&#39;geo&#39;</span><span class="p">)</span>
 
-        <span class="p">(</span><span class="n">xgeoim</span><span class="p">,</span> <span class="n">ygeoim</span><span class="p">)</span> <span class="o">=</span> <span class="n">dar</span><span class="o">.</span><span class="n">darPlusDistortion</span><span class="p">(</span><span class="n">_bp</span><span class="p">,</span> <span class="n">darRoot</span><span class="p">,</span> <span class="n">xgeoim</span><span class="p">,</span> <span class="n">ygeoim</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">instrument</span><span class="p">)</span>
+        <span class="p">(</span><span class="n">xgeoim</span><span class="p">,</span> <span class="n">ygeoim</span><span class="p">)</span> <span class="o">=</span> <span class="n">dar</span><span class="o">.</span><span class="n">darPlusDistortion</span><span class="p">(</span>
+                               <span class="n">_bp</span><span class="p">,</span> <span class="n">darRoot</span><span class="p">,</span> <span class="n">xgeoim</span><span class="p">,</span> <span class="n">ygeoim</span><span class="p">,</span>
+                               <span class="n">instrument</span><span class="o">=</span><span class="n">instrument</span><span class="p">,</span>
+                               <span class="n">use_koa_weather</span><span class="o">=</span><span class="n">use_koa_weather</span><span class="p">)</span>
 
         <span class="n">ir</span><span class="o">.</span><span class="n">drizzle</span><span class="o">.</span><span class="n">xgeoim</span> <span class="o">=</span> <span class="n">xgeoim</span>
         <span class="n">ir</span><span class="o">.</span><span class="n">drizzle</span><span class="o">.</span><span class="n">ygeoim</span> <span class="o">=</span> <span class="n">ygeoim</span>

@@ -91,7 +91,7 @@
 <h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this headline"></a></h2>
 <section id="functions">
 <h3>Functions<a class="headerlink" href="#functions" title="Permalink to this headline"></a></h3>
-<table class="longtable docutils align-default">
+<table class="autosummary longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -103,10 +103,16 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.dar.keckDARcoeffs" title="kai.reduce.dar.keckDARcoeffs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">keckDARcoeffs</span></code></a>(lamda, year, month, day, hour, minute)</p></td>
 <td><p>Calculate the differential atmospheric refraction</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.dar.kaidar" title="kai.reduce.dar.kaidar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">kaidar</span></code></a>(fitsFile, instrument=instruments.default_inst)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.dar.download_koa_dat_files" title="kai.reduce.dar.download_koa_dat_files"><code class="xref py py-obj docutils literal notranslate"><span class="pre">download_koa_dat_files</span></code></a>(date_str, telescope_str, param_name, download_loc)</p></td>
+<td><p>Download the KOA atmospheric condition file for given date and parameters,</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.dar.keckDARcoeffs_koa" title="kai.reduce.dar.keckDARcoeffs_koa"><code class="xref py py-obj docutils literal notranslate"><span class="pre">keckDARcoeffs_koa</span></code></a>(lamda, year, month, day, hour, minute, second, instrument=instruments.default_inst)</p></td>
+<td><p>Calculate the differential atmospheric refraction</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.dar.kaidar" title="kai.reduce.dar.kaidar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">kaidar</span></code></a>(fitsFile, instrument=instruments.default_inst, use_koa_weather=False)</p></td>
 <td><p>Use the FITS header to extract date, time, wavelength,</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.dar.darPlusDistortion" title="kai.reduce.dar.darPlusDistortion"><code class="xref py py-obj docutils literal notranslate"><span class="pre">darPlusDistortion</span></code></a>(inputFits, outputRoot, xgeoim=None, ygeoim=None, instrument=instruments.default_inst)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.dar.darPlusDistortion" title="kai.reduce.dar.darPlusDistortion"><code class="xref py py-obj docutils literal notranslate"><span class="pre">darPlusDistortion</span></code></a>(inputFits, outputRoot, xgeoim=None, ygeoim=None, instrument=instruments.default_inst, use_koa_weather=False)</p></td>
 <td><p>Create lookup tables (stored as FITS files) that can be used</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.dar.applyDAR" title="kai.reduce.dar.applyDAR"><code class="xref py py-obj docutils literal notranslate"><span class="pre">applyDAR</span></code></a>(inputFits, spaceStarlist, plot=False, instrument=instruments.default_inst, plotdir='./')</p></td>
@@ -123,7 +129,7 @@
 </section>
 <section id="attributes">
 <h3>Attributes<a class="headerlink" href="#attributes" title="Permalink to this headline"></a></h3>
-<table class="longtable docutils align-default">
+<table class="autosummary longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -169,8 +175,29 @@ refB</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="kai.reduce.dar.download_koa_dat_files">
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.dar.</span></span><span class="sig-name descname"><span class="pre">download_koa_dat_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">date_str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">telescope_str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">download_loc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/dar.html#download_koa_dat_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.dar.download_koa_dat_files" title="Permalink to this definition"></a></dt>
+<dd><p>Download the KOA atmospheric condition file for given date and parameters,
+and save at the download location</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.reduce.dar.keckDARcoeffs_koa">
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.dar.</span></span><span class="sig-name descname"><span class="pre">keckDARcoeffs_koa</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lamda</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">year</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">month</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">day</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hour</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minute</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">second</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instrument</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">instruments.default_inst</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/dar.html#keckDARcoeffs_koa"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.dar.keckDARcoeffs_koa" title="Permalink to this definition"></a></dt>
+<dd><p>Calculate the differential atmospheric refraction
+for two objects observed at Keck, using atmospheric conditions obtained
+via the KOA.</p>
+<p>Input:
+lamda – Effective wavelength (microns) assumed to be the same for both
+year, month, day, hour, minute of observation (UTC)</p>
+<p>Output:
+refA
+refB</p>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="kai.reduce.dar.kaidar">
-<span class="sig-prename descclassname"><span class="pre">kai.reduce.dar.</span></span><span class="sig-name descname"><span class="pre">kaidar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fitsFile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instrument</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">instruments.default_inst</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/dar.html#kaidar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.dar.kaidar" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.dar.</span></span><span class="sig-name descname"><span class="pre">kaidar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fitsFile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instrument</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">instruments.default_inst</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_koa_weather</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/dar.html#kaidar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.dar.kaidar" title="Permalink to this definition"></a></dt>
 <dd><p>Use the FITS header to extract date, time, wavelength,
 elevation, and image orientation information. This is everything
 that is necessary to calculate the differential atmospheric
@@ -184,7 +211,7 @@ can be applied in image coordinates.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="kai.reduce.dar.darPlusDistortion">
-<span class="sig-prename descclassname"><span class="pre">kai.reduce.dar.</span></span><span class="sig-name descname"><span class="pre">darPlusDistortion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputFits</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outputRoot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xgeoim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ygeoim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instrument</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">instruments.default_inst</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/dar.html#darPlusDistortion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.dar.darPlusDistortion" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.dar.</span></span><span class="sig-name descname"><span class="pre">darPlusDistortion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputFits</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outputRoot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xgeoim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ygeoim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instrument</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">instruments.default_inst</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_koa_weather</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/dar.html#darPlusDistortion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.dar.darPlusDistortion" title="Permalink to this definition"></a></dt>
 <dd><p>Create lookup tables (stored as FITS files) that can be used
 to correct DAR. Optionally, the shifts due to DAR can be added
 to existing NIRC2 distortion lookup tables if the xgeoim/ygeoim
