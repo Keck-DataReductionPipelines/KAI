@@ -142,13 +142,28 @@ Attributes
    ..
        !! processed by numpydoc !!
 
-.. py:function:: download_koa_dat_files(date_str, telescope_str, param_name, download_loc)
+.. py:function:: download_koa_dat_files(date_str, telescope_str, param_name, download_loc='./')
 
    
-   Download the KOA atmospheric condition file for given date and parameters,
-   and save at the download location
+   Download the KOA atmospheric condition file for given date and
+   specified parameter, and save at the download location
 
 
+   :Parameters:
+
+       **date_str** : str
+           Date string for the night (e.g.: '20220525').
+
+       **telescope_str** : str
+           String to specify which Keck telescope's weather data to download.
+           Can be 'k1' or 'k2'.
+
+       **param_name** : str
+           Name of the parameter to download the conditions table
+           (e.g.: 'OutsideTemp')
+
+       **download_loc** : str, default = './'
+           Directory to store the downloaded atmospheric condition table file.
 
 
 
@@ -173,15 +188,37 @@ Attributes
    for two objects observed at Keck, using atmospheric conditions obtained
    via the KOA.
 
-   Input:
-   lamda -- Effective wavelength (microns) assumed to be the same for both
-   year, month, day, hour, minute of observation (UTC)
 
-   Output:
-   refA
-   refB
+   :Parameters:
 
+       **lamda** : float
+           Effective wavelength (microns), assumed to be the same for both.
 
+       **year** : int
+           UTC year
+
+       **month** : int
+           UTC month
+
+       **day** : int
+           UTC date
+
+       **hour** : int
+           UTC hour
+
+       **minute** : int
+           UTC minute
+
+       **second** : int, float
+           UTC second
+
+   :Returns:
+
+       **refA** : float
+           ..
+
+       **refB** : float
+           ..
 
 
 

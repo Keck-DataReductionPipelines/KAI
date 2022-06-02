@@ -168,11 +168,17 @@
 <span class="sd">        An optional absolute offset in the rotator</span>
 <span class="sd">        mirror angle for cases (wave=&#39;lp&#39;) when sky subtraction is done with</span>
 <span class="sd">        skies taken at matching rotator mirror angles.</span>
-<span class="sd">    cent_box: int (def = 12)</span>
+<span class="sd">    cent_box : int (def = 12)</span>
 <span class="sd">        the box to use for better centroiding the reference star</span>
 <span class="sd">    badColumns : int array, default = None</span>
 <span class="sd">        An array specifying the bad columns (zero-based).</span>
 <span class="sd">        Assumes a repeating pattern every 8 columns.</span>
+<span class="sd">    fixDAR : boolean, default = True</span>
+<span class="sd">        Whether or not to calculate DAR correction coefficients.</span>
+<span class="sd">    use_koa_weather : boolean, default = False</span>
+<span class="sd">        If calculating DAR correction, this keyword specifies if the atmosphere</span>
+<span class="sd">        conditions should be downloaded from the KOA weather data. If False,</span>
+<span class="sd">        atmosphere conditions are downloaded from the MKWC CFHT data.</span>
 <span class="sd">    raw_dir : str, optional</span>
 <span class="sd">        Directory where raw files are stored. By default,</span>
 <span class="sd">        assumes that raw files are stored in &#39;../raw&#39;</span>
@@ -469,10 +475,11 @@
 
 <div class="viewcode-block" id="combine"><a class="viewcode-back" href="../../../autoapi/kai/reduce/data/index.html#kai.reduce.data.combine">[docs]</a><span class="k">def</span> <span class="nf">combine</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="n">wave</span><span class="p">,</span> <span class="n">outroot</span><span class="p">,</span> <span class="n">field</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">outSuffix</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
             <span class="n">trim</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fwhm_max</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">submaps</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
-            <span class="n">fixDAR</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">fixDAR</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">use_koa_weather</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">mask</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="n">clean_dirs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">combo_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
             <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">,</span>
-            <span class="n">use_koa_weather</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+           <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Accepts a list of cleaned images and does a weighted combining after</span>
 <span class="sd">    performing frame selection based on the Strehl and FWHM.</span>
@@ -516,7 +523,12 @@
 <span class="sd">        The maximum allowed FWHM for keeping frames when trimming is turned on.</span>
 <span class="sd">    submaps : int, default=0</span>
 <span class="sd">        Set to the number of submaps to be made (def=0).</span>
-<span class="sd">    fixDAR : bool, default=True</span>
+<span class="sd">    fixDAR : boolean, default = True</span>
+<span class="sd">        Whether or not to calculate and apply DAR correction coefficients.</span>
+<span class="sd">    use_koa_weather : boolean, default = False</span>
+<span class="sd">        If calculating DAR correction, this keyword specifies if the atmosphere</span>
+<span class="sd">        conditions should be downloaded from the KOA weather data. If False,</span>
+<span class="sd">        atmosphere conditions are downloaded from the MKWC CFHT data.</span>
 <span class="sd">    mask : bool, default=True</span>
 <span class="sd">    clean_dirs : list of str, optional</span>
 <span class="sd">        List of directories where clean files are stored. Needs to be same</span>
@@ -1071,9 +1083,9 @@
 
 
 <div class="viewcode-block" id="combine_drizzle"><a class="viewcode-back" href="../../../autoapi/kai/reduce/data/index.html#kai.reduce.data.combine_drizzle">[docs]</a><span class="k">def</span> <span class="nf">combine_drizzle</span><span class="p">(</span><span class="n">imgsize</span><span class="p">,</span> <span class="n">cleanDir</span><span class="p">,</span> <span class="n">roots</span><span class="p">,</span> <span class="n">outroot</span><span class="p">,</span> <span class="n">weights</span><span class="p">,</span> <span class="n">shifts</span><span class="p">,</span>
-                    <span class="n">wave</span><span class="p">,</span> <span class="n">diffPA</span><span class="p">,</span> <span class="n">fixDAR</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                    <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">,</span>
-                    <span class="n">use_koa_weather</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+                    <span class="n">wave</span><span class="p">,</span> <span class="n">diffPA</span><span class="p">,</span> <span class="n">fixDAR</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">use_koa_weather</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                    <span class="n">mask</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">,</span>
+                   <span class="p">):</span>
     <span class="n">_fits</span> <span class="o">=</span> <span class="n">outroot</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span>
     <span class="n">_tmpfits</span> <span class="o">=</span> <span class="n">outroot</span> <span class="o">+</span> <span class="s1">&#39;_tmp.fits&#39;</span>
     <span class="n">_wgt</span> <span class="o">=</span> <span class="n">outroot</span> <span class="o">+</span> <span class="s1">&#39;_sig.fits&#39;</span>
@@ -1251,10 +1263,12 @@
     <span class="n">fits_f</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">writeto</span><span class="p">(</span><span class="n">_fits</span><span class="p">,</span> <span class="n">output_verify</span><span class="o">=</span><span class="n">outputVerify</span><span class="p">)</span>
     <span class="n">util</span><span class="o">.</span><span class="n">rmall</span><span class="p">([</span><span class="n">_tmpfits</span><span class="p">,</span> <span class="n">_cdwt</span><span class="p">])</span></div>
 
-<div class="viewcode-block" id="combine_submaps"><a class="viewcode-back" href="../../../autoapi/kai/reduce/data/index.html#kai.reduce.data.combine_submaps">[docs]</a><span class="k">def</span> <span class="nf">combine_submaps</span><span class="p">(</span><span class="n">imgsize</span><span class="p">,</span> <span class="n">cleanDir</span><span class="p">,</span> <span class="n">roots</span><span class="p">,</span> <span class="n">outroot</span><span class="p">,</span> <span class="n">weights</span><span class="p">,</span>
-            <span class="n">shifts</span><span class="p">,</span> <span class="n">submaps</span><span class="p">,</span> <span class="n">wave</span><span class="p">,</span> <span class="n">diffPA</span><span class="p">,</span> <span class="n">fixDAR</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">,</span>
-            <span class="n">use_koa_weather</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="combine_submaps"><a class="viewcode-back" href="../../../autoapi/kai/reduce/data/index.html#kai.reduce.data.combine_submaps">[docs]</a><span class="k">def</span> <span class="nf">combine_submaps</span><span class="p">(</span>
+        <span class="n">imgsize</span><span class="p">,</span> <span class="n">cleanDir</span><span class="p">,</span> <span class="n">roots</span><span class="p">,</span> <span class="n">outroot</span><span class="p">,</span> <span class="n">weights</span><span class="p">,</span>
+        <span class="n">shifts</span><span class="p">,</span> <span class="n">submaps</span><span class="p">,</span> <span class="n">wave</span><span class="p">,</span> <span class="n">diffPA</span><span class="p">,</span>
+        <span class="n">fixDAR</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">use_koa_weather</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">mask</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">,</span>
+    <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Assumes the list of roots are pre-sorted based on quality. Images are then</span>
 <span class="sd">          divided up with every Nth image going into the Nth submap.</span>
@@ -2546,6 +2560,7 @@
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;combine: Size of output image is </span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">xysize</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">xysize</span></div>
+    
 </pre></div>
 
            </div>

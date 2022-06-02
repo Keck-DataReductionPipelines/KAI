@@ -103,8 +103,8 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.dar.keckDARcoeffs" title="kai.reduce.dar.keckDARcoeffs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">keckDARcoeffs</span></code></a>(lamda, year, month, day, hour, minute)</p></td>
 <td><p>Calculate the differential atmospheric refraction</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.dar.download_koa_dat_files" title="kai.reduce.dar.download_koa_dat_files"><code class="xref py py-obj docutils literal notranslate"><span class="pre">download_koa_dat_files</span></code></a>(date_str, telescope_str, param_name, download_loc)</p></td>
-<td><p>Download the KOA atmospheric condition file for given date and parameters,</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.dar.download_koa_dat_files" title="kai.reduce.dar.download_koa_dat_files"><code class="xref py py-obj docutils literal notranslate"><span class="pre">download_koa_dat_files</span></code></a>(date_str, telescope_str, param_name, download_loc='./')</p></td>
+<td><p>Download the KOA atmospheric condition file for given date and</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.dar.keckDARcoeffs_koa" title="kai.reduce.dar.keckDARcoeffs_koa"><code class="xref py py-obj docutils literal notranslate"><span class="pre">keckDARcoeffs_koa</span></code></a>(lamda, year, month, day, hour, minute, second, instrument=instruments.default_inst)</p></td>
 <td><p>Calculate the differential atmospheric refraction</p></td>
@@ -176,9 +176,25 @@ refB</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="kai.reduce.dar.download_koa_dat_files">
-<span class="sig-prename descclassname"><span class="pre">kai.reduce.dar.</span></span><span class="sig-name descname"><span class="pre">download_koa_dat_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">date_str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">telescope_str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">download_loc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/dar.html#download_koa_dat_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.dar.download_koa_dat_files" title="Permalink to this definition"></a></dt>
-<dd><p>Download the KOA atmospheric condition file for given date and parameters,
-and save at the download location</p>
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.dar.</span></span><span class="sig-name descname"><span class="pre">download_koa_dat_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">date_str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">telescope_str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">download_loc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'./'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/dar.html#download_koa_dat_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.dar.download_koa_dat_files" title="Permalink to this definition"></a></dt>
+<dd><p>Download the KOA atmospheric condition file for given date and
+specified parameter, and save at the download location</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>date_str</strong><span class="classifier">str</span></dt><dd><p>Date string for the night (e.g.: ‘20220525’).</p>
+</dd>
+<dt><strong>telescope_str</strong><span class="classifier">str</span></dt><dd><p>String to specify which Keck telescope’s weather data to download.
+Can be ‘k1’ or ‘k2’.</p>
+</dd>
+<dt><strong>param_name</strong><span class="classifier">str</span></dt><dd><p>Name of the parameter to download the conditions table
+(e.g.: ‘OutsideTemp’)</p>
+</dd>
+<dt><strong>download_loc</strong><span class="classifier">str, default = ‘./’</span></dt><dd><p>Directory to store the downloaded atmospheric condition table file.</p>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -187,12 +203,32 @@ and save at the download location</p>
 <dd><p>Calculate the differential atmospheric refraction
 for two objects observed at Keck, using atmospheric conditions obtained
 via the KOA.</p>
-<p>Input:
-lamda – Effective wavelength (microns) assumed to be the same for both
-year, month, day, hour, minute of observation (UTC)</p>
-<p>Output:
-refA
-refB</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>lamda</strong><span class="classifier">float</span></dt><dd><p>Effective wavelength (microns), assumed to be the same for both.</p>
+</dd>
+<dt><strong>year</strong><span class="classifier">int</span></dt><dd><p>UTC year</p>
+</dd>
+<dt><strong>month</strong><span class="classifier">int</span></dt><dd><p>UTC month</p>
+</dd>
+<dt><strong>day</strong><span class="classifier">int</span></dt><dd><p>UTC date</p>
+</dd>
+<dt><strong>hour</strong><span class="classifier">int</span></dt><dd><p>UTC hour</p>
+</dd>
+<dt><strong>minute</strong><span class="classifier">int</span></dt><dd><p>UTC minute</p>
+</dd>
+<dt><strong>second</strong><span class="classifier">int, float</span></dt><dd><p>UTC second</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>refA</strong><span class="classifier">float</span></dt><dd></dd>
+<dt><strong>refB</strong><span class="classifier">float</span></dt><dd></dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
