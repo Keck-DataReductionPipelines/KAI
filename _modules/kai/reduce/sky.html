@@ -14,6 +14,7 @@
         <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
         <script src="../../../_static/jquery.js"></script>
         <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../../_static/doctools.js"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
@@ -113,6 +114,10 @@
     <span class="n">redDir</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">trimdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">waveDir</span> <span class="o">+</span> <span class="s1">&#39;../&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span>
     <span class="n">rootDir</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">trimdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">redDir</span> <span class="o">+</span> <span class="s1">&#39;../&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span>
     <span class="n">skyDir</span> <span class="o">=</span> <span class="n">waveDir</span> <span class="o">+</span> <span class="s1">&#39;sky_&#39;</span> <span class="o">+</span> <span class="n">nite</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">waveDir</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">redDir</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">rootDir</span><span class="p">)</span>
+              
     
     <span class="c1"># Set location of raw data</span>
     <span class="n">rawDir</span> <span class="o">=</span> <span class="n">rootDir</span> <span class="o">+</span> <span class="s1">&#39;raw/&#39;</span>
@@ -122,8 +127,9 @@
         <span class="n">rawDir</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">trimdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">raw_dir</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span>
     
     <span class="n">util</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">skyDir</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;sky dir: &#39;</span><span class="p">,</span><span class="n">skyDir</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;wave dir: &#39;</span><span class="p">,</span><span class="n">waveDir</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;raw dir: &#39;</span><span class="p">,</span> <span class="n">rawDir</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;sky dir: &#39;</span><span class="p">,</span> <span class="n">skyDir</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;wave dir: &#39;</span><span class="p">,</span> <span class="n">waveDir</span><span class="p">)</span>
 
     <span class="n">skylist</span> <span class="o">=</span> <span class="n">skyDir</span> <span class="o">+</span> <span class="s1">&#39;skies_to_combine.lis&#39;</span>
     <span class="n">output</span> <span class="o">=</span> <span class="n">skyDir</span> <span class="o">+</span> <span class="s1">&#39;sky_&#39;</span> <span class="o">+</span> <span class="n">wave</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span>
