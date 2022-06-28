@@ -55,6 +55,10 @@ class Instrument(object):
     def get_saturation_level(self):
         pass
     
+    def get_lin_corr_coeffs(self):
+        pass
+
+    
 class NIRC2(Instrument):
     def __init__(self):
         self.name = 'NIRC2'
@@ -180,7 +184,24 @@ class NIRC2(Instrument):
         Set to the 95% saturation threshold in DN.
         """
         return 12000.0
-
+    
+    def get_lin_corr_coeffs(self):
+        """
+        Returns coefficients (`coeffs`, as defined below)
+        in order to perform linearity correction
+        
+        x = (FITS_orig) / (No. of coadds)
+        
+        norm = coeffs[0] + coeffs[1] * x + coeffs[1] * x^2
+        
+        FITS_corrected = FITS_orig / norm
+        
+        From Stanimir Metchev's linearity correction code
+        (http://www.astro.sunysb.edu/metchev/ao.html)
+        """
+        
+        lin_corr_coeffs = np.array([1.001, -6.9e-6, -0.70e-10])
+        
 
 
 class OSIRIS(Instrument):
