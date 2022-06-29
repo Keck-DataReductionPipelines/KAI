@@ -6,7 +6,7 @@ from astropy import stats
 import math
 from pyraf import iraf as ir
 from . import kai_util
-from kai.reduce import util
+from kai.reduce import util, lin_correction
 from kai import instruments
 from kai import strehl
 import time
@@ -47,6 +47,7 @@ def clean(files, nite, wave, refSrc, strSrc, badColumns=None, field=None,
           skyscale=False, skyfile=None, angOff=0.0, cent_box=12,
           fixDAR=True, use_koa_weather=False,
           raw_dir=None, clean_dir=None,
+          lin_corr=False,
           instrument=instruments.default_inst, check_ref_loc=True):
     """
     Clean near infrared NIRC2 or OSIRIS images.
@@ -118,6 +119,8 @@ def clean(files, nite, wave, refSrc, strSrc, badColumns=None, field=None,
     clean_dir : str, optional
         Directory where clean files will be stored. By default,
         assumes that clean files will be stored in '../clean'
+    lin_corr : bool, default=False
+        Perform linearity correction. Currently only works for NIRC2 data.
     instrument : instruments object, optional
         Instrument of data. Default is `instruments.default_inst`
     """
@@ -184,7 +187,7 @@ def clean(files, nite, wave, refSrc, strSrc, badColumns=None, field=None,
         hdr1 = fits.getheader(firstFile, ignore_missing_end=True)
         radecRef = [float(hdr1['RA']), float(hdr1['DEC'])]
         aotsxyRef = kai_util.getAotsxy(hdr1)
-
+        
         # Setup a Sky object that will figure out the sky subtraction
         skyDir = waveDir + 'sky_' + nite + '/'
         skyObj = Sky(sciDir, skyDir, wave, scale=skyscale,
@@ -245,7 +248,11 @@ def clean(files, nite, wave, refSrc, strSrc, badColumns=None, field=None,
             ### Make persistance mask ###
             # - Checked images, this doesn't appear to be a large effect.
             #clean_persistance(_cp, _pers, instrument=instrument)
-
+            
+            # Linearity correction
+            if lin_corr:
+                lin_correction.lin_correction(_cp, instrument=instrument)
+            
             ### Sky subtract ###
             # Get the proper sky for this science frame.
             # It might be scaled or there might be a specific one for L'.

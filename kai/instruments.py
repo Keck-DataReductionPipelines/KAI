@@ -192,7 +192,7 @@ class NIRC2(Instrument):
         
         x = (FITS_orig) / (No. of coadds)
         
-        norm = coeffs[0] + coeffs[1] * x + coeffs[1] * x^2
+        norm = coeffs[0] + coeffs[1] * x + coeffs[2] * x^2
         
         FITS_corrected = FITS_orig / norm
         
@@ -201,6 +201,7 @@ class NIRC2(Instrument):
         """
         
         lin_corr_coeffs = np.array([1.001, -6.9e-6, -0.70e-10])
+        return lin_corr_coeffs
         
 
 
