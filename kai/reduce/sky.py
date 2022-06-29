@@ -2,7 +2,7 @@ from astropy.io import fits
 from astropy.table import Table
 from astropy import stats
 import os, sys, shutil
-from kai.reduce import util
+from kai.reduce import util, lin_correction
 #import util
 import numpy as np
 from pyraf import iraf as ir
@@ -14,7 +14,7 @@ from pkg_resources import parse_version
 
 def makesky(files, nite,
             wave, skyscale=True,
-            raw_dir=None,
+            raw_dir=None, lin_corr=False,
             instrument=instruments.default_inst):
     """
     Make short wavelength (not L-band or longer) skies.
@@ -34,6 +34,8 @@ def makesky(files, nite,
     raw_dir : str, optional
         Directory where raw files are stored. By default,
         assumes that raw files are stored in '../raw'
+    lin_corr : bool, default=False
+        Perform linearity correction. Currently only works for NIRC2 data.
     instrument : instruments object, optional
         Instrument of data. Default is `instruments.default_inst`
     """
@@ -81,6 +83,11 @@ def makesky(files, nite,
         data_sources_file.write(out_line)
     
     data_sources_file.close()
+    
+    # Perform linearity correction
+    if lin_corr:
+        for i in range(len(skies)):
+            lin_correction.lin_correction(nn[i], instrument=instrument)
     
     # scale skies to common median
     if skyscale:
