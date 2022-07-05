@@ -1,5 +1,5 @@
 import os, sys
-from . import util
+from kai.reduce import util, lin_correction
 from astropy.io import fits
 from astropy import stats
 from pyraf import iraf as ir
@@ -13,7 +13,7 @@ from pkg_resources import parse_version
 module_dir = os.path.dirname(__file__)
 
 def makedark(files, output,
-             raw_dir=None,
+             raw_dir=None, lin_corr=False,
              instrument=instruments.default_inst):
     """
     Make dark image for imaging data. Makes a calib/ directory
@@ -29,6 +29,8 @@ def makedark(files, output,
     raw_dir : str, optional
         Directory where raw files are stored. By default,
         assumes that raw files are stored in '../raw'
+    lin_corr : bool, default=False
+        Perform linearity correction. Currently only works for NIRC2 data.
     instrument : instruments object, optional
         Instrument of data. Default is `instruments.default_inst`
     """
@@ -50,21 +52,33 @@ def makedark(files, output,
     _outlis = darkDir + 'dark.lis'
     util.rmall([_out, _outlis])
 
-    darks = instrument.make_filenames(files, rootDir=rawDir)
+    darks_orig = instrument.make_filenames(files, rootDir=rawDir)
+    darks_copied = instrument.make_filenames(files, rootDir=darkDir)
+    
+    for ii in range(len(darks_copied)):
+        if os.path.exists(darks_copied[ii]): os.remove(darks_copied[ii])
+        shutil.copy(darks_orig[ii], darks_copied[ii])
     
     # Write out the sources of the dark files
     data_sources_file = open(redDir + 'data_sources.txt', 'a')
     data_sources_file.write(
         '---\n# Dark Files for {0} \n'.format(output))
     
-    for cur_file in darks:
+    for cur_file in darks_orig:
         out_line = '{0} ({1})\n'.format(cur_file, datetime.now())
         data_sources_file.write(out_line)
     
     data_sources_file.close()
     
+    # Perform linearity correction
+    if lin_corr:
+        for i in range(len(darks_copied)):
+            lin_correction.lin_correction(darks_copied[i],
+                                          instrument=instrument)
+    
+    # Create a combined dark
     f_on = open(_outlis, 'w')
-    f_on.write('\n'.join(darks) + '\n')
+    f_on.write('\n'.join(darks_copied) + '\n')
     f_on.close()
 
     ir.unlearn('imcombine')
@@ -76,7 +90,7 @@ def makedark(files, output,
 
 
 def makeflat(onFiles, offFiles, output, normalizeFirst=False,
-             raw_dir=None,
+             raw_dir=None, lin_corr=False,
              instrument=instruments.default_inst):
     """
     Make flat field image for imaging data. Makes a calib/ directory
@@ -103,6 +117,8 @@ def makeflat(onFiles, offFiles, output, normalizeFirst=False,
     raw_dir : str, optional
         Directory where raw files are stored. By default,
         assumes that raw files are stored in '../raw'
+    lin_corr : bool, default=False
+        Perform linearity correction. Currently only works for NIRC2 data.
     instrument : instruments object, optional
         Instrument of data. Default is `instruments.default_inst`
     """
@@ -132,10 +148,23 @@ def makeflat(onFiles, offFiles, output, normalizeFirst=False,
 
     lampson = instrument.make_filenames(onFiles, rootDir=rawDir)
     lampsoff = instrument.make_filenames(offFiles, rootDir=rawDir)
+    
+    lampson_copied = instrument.make_filenames(onFiles, rootDir=flatDir)
+    lampsoff_copied = instrument.make_filenames(offFiles, rootDir=flatDir)
+    
     lampsonNorm = instrument.make_filenames(onFiles, rootDir=flatDir + 'norm')
     util.rmall(lampsonNorm)
     
-    # Write out the sources of the dark files
+    # Copy files
+    for ii in range(len(lampson_copied)):
+        if os.path.exists(lampson_copied[ii]): os.remove(lampson_copied[ii])
+        shutil.copy(lampson[ii], lampson_copied[ii])
+    
+    for ii in range(len(lampsoff_copied)):
+        if os.path.exists(lampsoff_copied[ii]): os.remove(lampsoff_copied[ii])
+        shutil.copy(lampsoff[ii], lampsoff_copied[ii])
+    
+    # Write out the sources of the flat files
     data_sources_file = open(redDir + 'data_sources.txt', 'a')
     
     data_sources_file.write(
@@ -152,12 +181,23 @@ def makeflat(onFiles, offFiles, output, normalizeFirst=False,
     
     data_sources_file.close()
     
+    # Perform linearity correction
+    if lin_corr:
+        for i in range(len(lampson_copied)):
+            lin_correction.lin_correction(lampson_copied[i],
+                                          instrument=instrument)
+        
+        for i in range(len(lampsoff_copied)):
+            lin_correction.lin_correction(lampsoff_copied[i],
+                                          instrument=instrument)
+    
+    
     if (len(offFiles) != 0):
         f_on = open(_onlis, 'w')
-        f_on.write('\n'.join(lampson) + '\n')
+        f_on.write('\n'.join(lampson_copied) + '\n')
         f_on.close()
         f_on = open(_offlis, 'w')
-        f_on.write('\n'.join(lampsoff) + '\n')
+        f_on.write('\n'.join(lampsoff_copied) + '\n')
         f_on.close()
         f_onn = open(_onNormLis, 'w')
         f_onn.write('\n'.join(lampsonNorm) + '\n')
@@ -206,7 +246,7 @@ def makeflat(onFiles, offFiles, output, normalizeFirst=False,
 
     else:
         f_on = open(_onlis, 'w')
-        f_on.write('\n'.join(lampson) + '\n')
+        f_on.write('\n'.join(lampson_copied) + '\n')
         f_on.close()
 
         # Combine twilight flats
