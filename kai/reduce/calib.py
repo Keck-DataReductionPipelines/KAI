@@ -1,4 +1,4 @@
-import os, sys
+import os, sys, shutil
 from kai.reduce import util, lin_correction
 from astropy.io import fits
 from astropy import stats
