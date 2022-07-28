@@ -58,7 +58,7 @@ An example dataset with scripts can be found at this [Google Drive link](https:/
 
 Citation
 --------
-If you use the KAI pipeline, please cite Lu et al. 2022, DOI: 10.5281/zenodo.6522913 (or see the CITATION.cff file).
+If you use the KAI pipeline, please cite Lu et al. 2022, DOI: 10.5281/zenodo.6677744 (or see the CITATION.cff file or [Zenodo](https://zenodo.org/record/6677744#.YrS6bS9h3UI) listing). 
 
 
 Contributing
