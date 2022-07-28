@@ -176,39 +176,28 @@ def radec2pix(radec, phi, scale, posRef):
     
     return [d_x, d_y]
 
-def aotsxy2pix(aotsxy, scale, aotsxyRef, inst_angle=0.0,
-               instrument=instruments.default_inst):
+def aotsxy2pix(aotsxy, scale, aotsxyRef, inst_angle=0.0):
     # Determine pixel shifts from AOTSX and AOTSY positions.
     
-    x = 0.0
-    y = 0.0
+    x = aotsxy[0]
+    y = aotsxy[1]
+    x_ref = aotsxyRef[0]
+    y_ref = aotsxyRef[1]
     
-    if instrument.name == 'NIRC2':
-        x = aotsxy[0]
-        y = aotsxy[1]
-    elif instrument.name == 'OSIRIS':
-        # For OSIRIS:
-        # We flip the image prior to reduction
-        # AOTSY gives x offset
-        # AOTSX gives -y offset
-        
-        x = aotsxy[1]
-        y = -1. * aotsxy[0]
-
     # AOTSX,Y are in units of mm. Conversion is 0.727 mm/arcsec
-    d_x = (x - aotsxyRef[0]) / 0.727
-    d_y = (y - aotsxyRef[1]) / 0.727
+    d_x = (x - x_ref) / 0.727
+    d_y = (y - y_ref) / 0.727
     d_x = d_x * (1.0/scale)
     d_y = d_y * (1.0/scale)
-
+    
     # Rotate to the instrument PA
     cosa = np.cos(np.radians(-inst_angle))
     sina = np.sin(np.radians(-inst_angle))
-
+    
     rot_matrix = np.array([[cosa, sina], [-sina, cosa]])
     coo_ao = np.array([d_x, d_y])
     coo_inst = rot_matrix.dot(coo_ao)
-
+    
     d_x = coo_inst[0]
     d_y = coo_inst[1]
     

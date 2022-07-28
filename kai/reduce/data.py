@@ -47,7 +47,8 @@ def clean(files, nite, wave, refSrc, strSrc, badColumns=None, field=None,
           skyscale=False, skyfile=None, angOff=0.0, cent_box=12,
           fixDAR=True, use_koa_weather=False,
           raw_dir=None, clean_dir=None,
-          instrument=instruments.default_inst, check_ref_loc=True):
+          instrument=instruments.default_inst, check_ref_loc=True,
+          ref_offset_method='aotsxy'):
     """
     Clean near infrared NIRC2 or OSIRIS images.
 
@@ -120,6 +121,11 @@ def clean(files, nite, wave, refSrc, strSrc, badColumns=None, field=None,
         assumes that clean files will be stored in '../clean'
     instrument : instruments object, optional
         Instrument of data. Default is `instruments.default_inst`
+    ref_offset_method : str, default='aotsxy'
+        Method to calculate offsets from reference image.
+        Options are 'aotsxy' or 'radec'.
+        In images where 'aotsxy' keywords aren't reliable, 'radec' calculated
+        offsets may work better.
     """
     
     # Make sure directory for current passband exists and switch into it
@@ -304,7 +310,7 @@ def clean(files, nite, wave, refSrc, strSrc, badColumns=None, field=None,
 
             clean_makecoo(_ce, _cc, refSrc, strSrc, aotsxyRef, radecRef,
                           instrument=instrument, check_loc=check_ref_loc,
-                          cent_box=cent_box)
+                          cent_box=cent_box, offset_method=ref_offset_method)
 
             ### Move to the clean directory ###
             util.rmall([clean + _cc, clean + _coo, clean + _rcoo,
@@ -1895,8 +1901,9 @@ def clean_bkgsubtract(_ff_f, _bp):
     return bkg
 
 def clean_makecoo(_ce, _cc, refSrc, strSrc, aotsxyRef, radecRef,
-                  instrument=instruments.default_inst, check_loc=True,
-                  update_fits=True,cent_box=12):
+        instrument=instruments.default_inst, check_loc=True,
+        update_fits=True,cent_box=12,
+        offset_method='aotsxy'):
     """Make the *.coo file for this science image. Use the difference
     between the AOTSX/Y keywords from a reference image and each science
     image to tell how the positions of the two frames are related.
@@ -1916,10 +1923,19 @@ def clean_makecoo(_ce, _cc, refSrc, strSrc, aotsxyRef, radecRef,
     @param radecRef: The RA/DEC header values from the reference image.
     @type radecRef: array of floats with length=2 [x, y]
 
-    check_loc (bool):  If True the reference source is recentered for this frame.
-                     Use False if the offsets are large enough to move the reference source off of the image
-    update_fits : update the fits files with the reference pixel values
-    cent_box : box size to center the source (default: 12)
+    check_loc : bool, default=True
+        If True the reference source is recentered for this frame.
+        Use False if the offsets are large enough to move the reference source
+        off of the image.
+    update_fits : bool, default=True
+        Update the fits files with the reference pixel values
+    cent_box : float, default: 12
+        Box size to center the source
+    offset_method : str, default='aotsxy'
+        Method to calculate offsets from reference image.
+        Options are 'aotsxy' or 'radec'.
+        In images where 'aotsxy' keywords aren't reliable, 'radec' calculated
+        offsets may work better.
     """
 
     hdr = fits.getheader(_ce, ignore_missing_end=True)
@@ -1935,11 +1951,14 @@ def clean_makecoo(_ce, _cc, refSrc, strSrc, aotsxyRef, radecRef,
     inst_angle = instrument.get_instrument_angle(hdr)
 
     # Calculate the pixel offsets from the reference image
-    # We've been using aotsxy2pix, but the keywords are wrong
-    # for 07maylgs and 07junlgs
-    #d_xy = kai_util.radec2pix(radec, phi, scale, radecRef)
-    d_xy = kai_util.aotsxy2pix(aotsxy, scale, aotsxyRef, inst_angle=inst_angle,
-                               instrument=instrument)
+    if offset_method == 'radec':
+        d_xy = kai_util.radec2pix(radec, phi, scale, radecRef)
+    elif offset_method == 'aotsxy':
+        d_xy = kai_util.aotsxy2pix(aotsxy, scale, aotsxyRef,
+                                   inst_angle=inst_angle)
+    else:
+        d_xy = kai_util.aotsxy2pix(aotsxy, scale, aotsxyRef,
+                                   inst_angle=inst_angle)
 
     # In the new image, find the REF and STRL coords
     xref = refSrc[0] + d_xy[0]
