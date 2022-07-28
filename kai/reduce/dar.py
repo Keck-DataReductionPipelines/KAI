@@ -133,10 +133,23 @@ def keckDARcoeffs(lamda, year, month, day, hour, minute):
     print(hm, tdk, pmb, rh, lamda, phi, tlr, eps)
     return slalib.refco(hm, tdk, pmb, rh, lamda, phi, tlr, eps)
 
-def download_koa_dat_files(date_str, telescope_str, param_name, download_loc):
+def download_koa_dat_files(date_str, telescope_str, param_name, download_loc='./'):
     """
-    Download the KOA atmospheric condition file for given date and parameters,
-    and save at the download location
+    Download the KOA atmospheric condition file for given date and
+    specified parameter, and save at the download location
+    
+    Parameters
+    ----------
+    date_str : str
+        Date string for the night (e.g.: '20220525').
+    telescope_str : str
+        String to specify which Keck telescope's weather data to download.
+        Can be 'k1' or 'k2'.
+    param_name : str
+        Name of the parameter to download the conditions table
+        (e.g.: 'OutsideTemp')
+    download_loc : str, default = './'
+        Directory to store the downloaded atmospheric condition table file.
     """
     
     url = 'https://koa.ipac.caltech.edu/data33/WEATHER/{0}/nightly2/{1}_{0}_{2}.dat'.format(
@@ -167,21 +180,35 @@ def keckDARcoeffs_koa(lamda, year, month, day, hour, minute, second,
     for two objects observed at Keck, using atmospheric conditions obtained
     via the KOA.
 
-    Input:
-    lamda -- Effective wavelength (microns) assumed to be the same for both
-    year, month, day, hour, minute of observation (UTC)
-
-    Output:
-    refA
-    refB
+    Parameters
+    ----------
+    lamda : float
+        Effective wavelength (microns), assumed to be the same for both.
+    year : int
+        UTC year
+    month : int
+        UTC month
+    day : int
+        UTC date
+    hour : int
+        UTC hour
+    minute : int
+        UTC minute
+    second : int, float
+        UTC second
+    
+    Returns
+    -------
+    refA : float
+    refB : float
     """
+    # Set up datetime object for image time
     utc = datetime.datetime(year, month, day, hour, minute, second)
     
-    ####################
     # Setup all the parameters for the atmospheric refraction
     # calculations. Typical values obtained from the Mauna Kea
     # weather pages and from the web.
-    #################### 
+    
     # Temperature Lapse Rate (Kelvin/meter)
     tlr = 0.0065
     
@@ -224,7 +251,7 @@ def keckDARcoeffs_koa(lamda, year, month, day, hour, minute, second,
         download_koa_dat_files(
             date_str, telescope_str, 'Pressure', './weather')
     
-    # Read in tables and find closest row to image time
+    # Read in tables and find closest rows to image time
     # Temperature
     temp_table = Table.read(dat_file_root + 'OutsideTemp.dat',
                             format='ascii.basic', data_start=1, delimiter='\t',

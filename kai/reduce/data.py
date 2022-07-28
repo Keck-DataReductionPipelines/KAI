@@ -101,11 +101,17 @@ def clean(files, nite, wave, refSrc, strSrc, badColumns=None, field=None,
         An optional absolute offset in the rotator
         mirror angle for cases (wave='lp') when sky subtraction is done with
         skies taken at matching rotator mirror angles.
-    cent_box: int (def = 12)
+    cent_box : int (def = 12)
         the box to use for better centroiding the reference star
     badColumns : int array, default = None
         An array specifying the bad columns (zero-based).
         Assumes a repeating pattern every 8 columns.
+    fixDAR : boolean, default = True
+        Whether or not to calculate DAR correction coefficients.
+    use_koa_weather : boolean, default = False
+        If calculating DAR correction, this keyword specifies if the atmosphere
+        conditions should be downloaded from the KOA weather data. If False,
+        atmosphere conditions are downloaded from the MKWC CFHT data.
     raw_dir : str, optional
         Directory where raw files are stored. By default,
         assumes that raw files are stored in '../raw'
@@ -402,10 +408,11 @@ def clean_lp(files, nite, wave, refSrc, strSrc, angOff, skyfile):
 
 def combine(files, wave, outroot, field=None, outSuffix=None,
             trim=False, weight=None, fwhm_max=0, submaps=0,
-            fixDAR=True, mask=True,
+            fixDAR=True, use_koa_weather=False,
+            mask=True,
             clean_dirs=None, combo_dir=None,
             instrument=instruments.default_inst,
-            use_koa_weather=False):
+           ):
     """
     Accepts a list of cleaned images and does a weighted combining after
     performing frame selection based on the Strehl and FWHM.
@@ -449,7 +456,12 @@ def combine(files, wave, outroot, field=None, outSuffix=None,
         The maximum allowed FWHM for keeping frames when trimming is turned on.
     submaps : int, default=0
         Set to the number of submaps to be made (def=0).
-    fixDAR : bool, default=True
+    fixDAR : boolean, default = True
+        Whether or not to calculate and apply DAR correction coefficients.
+    use_koa_weather : boolean, default = False
+        If calculating DAR correction, this keyword specifies if the atmosphere
+        conditions should be downloaded from the KOA weather data. If False,
+        atmosphere conditions are downloaded from the MKWC CFHT data.
     mask : bool, default=True
     clean_dirs : list of str, optional
         List of directories where clean files are stored. Needs to be same
@@ -1004,9 +1016,9 @@ def trim_table_by_name(outroots, tableFileName):
 
 
 def combine_drizzle(imgsize, cleanDir, roots, outroot, weights, shifts,
-                    wave, diffPA, fixDAR=True, mask=True,
-                    instrument=instruments.default_inst,
-                    use_koa_weather=False):
+                    wave, diffPA, fixDAR=True, use_koa_weather=False,
+                    mask=True, instrument=instruments.default_inst,
+                   ):
     _fits = outroot + '.fits'
     _tmpfits = outroot + '_tmp.fits'
     _wgt = outroot + '_sig.fits'
@@ -1184,10 +1196,12 @@ def combine_drizzle(imgsize, cleanDir, roots, outroot, weights, shifts,
     fits_f[0].writeto(_fits, output_verify=outputVerify)
     util.rmall([_tmpfits, _cdwt])
 
-def combine_submaps(imgsize, cleanDir, roots, outroot, weights,
-            shifts, submaps, wave, diffPA, fixDAR=True, mask=True,
-            instrument=instruments.default_inst,
-            use_koa_weather=False):
+def combine_submaps(
+        imgsize, cleanDir, roots, outroot, weights,
+        shifts, submaps, wave, diffPA,
+        fixDAR=True, use_koa_weather=False,
+        mask=True, instrument=instruments.default_inst,
+    ):
     """
     Assumes the list of roots are pre-sorted based on quality. Images are then
           divided up with every Nth image going into the Nth submap.
@@ -2479,3 +2493,4 @@ def mosaic_size(shiftsTable, refImage, outroot, subroot, submaps):
     print('combine: Size of output image is %d' % xysize)
 
     return xysize
+    

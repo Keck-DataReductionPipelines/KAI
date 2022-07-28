@@ -17,7 +17,8 @@ def kailog(directory):
 
     return
 
-def makelog(directory, outfile='image_log.txt', instrument=instruments.default_inst):
+def makelog(directory, outfile='image_log.txt',
+            instrument=instruments.default_inst):
     """Make an electronic log for all the FITS files in the 
     specified directory.
 
@@ -175,11 +176,24 @@ def radec2pix(radec, phi, scale, posRef):
     
     return [d_x, d_y]
 
-def aotsxy2pix(aotsxy, scale, aotsxyRef, inst_angle=0.0):
+def aotsxy2pix(aotsxy, scale, aotsxyRef, inst_angle=0.0,
+               instrument=instruments.default_inst):
     # Determine pixel shifts from AOTSX and AOTSY positions.
     
-    x = aotsxy[0]
-    y = aotsxy[1]
+    x = 0.0
+    y = 0.0
+    
+    if instrument.name == 'NIRC2':
+        x = aotsxy[0]
+        y = aotsxy[1]
+    elif instrument.name == 'OSIRIS':
+        # For OSIRIS:
+        # We flip the image prior to reduction
+        # AOTSY gives x offset
+        # AOTSX gives -y offset
+        
+        x = aotsxy[1]
+        y = -1. * aotsxy[0]
 
     # AOTSX,Y are in units of mm. Conversion is 0.727 mm/arcsec
     d_x = (x - aotsxyRef[0]) / 0.727
