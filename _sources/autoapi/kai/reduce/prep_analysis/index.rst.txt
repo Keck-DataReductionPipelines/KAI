@@ -3,12 +3,6 @@
 
 .. py:module:: kai.reduce.prep_analysis
 
-.. autoapi-nested-parse::
-
-   
-   ..
-       !! processed by numpydoc !!
-
 
 Module Contents
 ---------------
@@ -41,25 +35,6 @@ Functions
 
 .. py:function:: euclidean(x1, y1, x2, y2)
 
-   
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-   ..
-       !! processed by numpydoc !!
 
 .. py:function:: removeEdges(imgArr, finalTable, cutoff=100, x='xcentroid', y='ycentroid', scale=0.009942)
 

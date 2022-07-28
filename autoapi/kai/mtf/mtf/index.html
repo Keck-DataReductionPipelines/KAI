@@ -115,13 +115,13 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#kai.mtf.mtf.get_mtf" title="kai.mtf.mtf.get_mtf"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_mtf</span></code></a>(image, params, sources)</p></td>
 <td><p>image - 2D numpy array containing the image. Image must be square.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#kai.mtf.mtf.hanning" title="kai.mtf.mtf.hanning"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hanning</span></code></a>(xsize, ysize, invert=False)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.mtf.mtf.hanning" title="kai.mtf.mtf.hanning"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hanning</span></code></a>(xsize, ysize[, invert])</p></td>
 <td><p>Make a 2D hanning kernel from the seperable 1D hanning kernels. The</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#kai.mtf.mtf.mtffunc_keck" title="kai.mtf.mtf.mtffunc_keck"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mtffunc_keck</span></code></a>(pp, nu=None, wave=None, F=None, D=None, Apix=None, pupil=None, tperf=None, sources=None, output='system', fjac=None)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.mtf.mtf.mtffunc_keck" title="kai.mtf.mtf.mtffunc_keck"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mtffunc_keck</span></code></a>(pp[, nu, wave, F, D, Apix, pupil, tperf, ...])</p></td>
 <td><p>NAME:</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#kai.mtf.mtf.fitmtf_keck" title="kai.mtf.mtf.fitmtf_keck"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fitmtf_keck</span></code></a>(nu, power, error, pspec_sources, clip=None, startParams=None, relStep=0.2, quiet=False)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.mtf.mtf.fitmtf_keck" title="kai.mtf.mtf.fitmtf_keck"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fitmtf_keck</span></code></a>(nu, power, error, pspec_sources[, clip, ...])</p></td>
 <td><p>NAME:</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#kai.mtf.mtf.params_arr2dict" title="kai.mtf.mtf.params_arr2dict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">params_arr2dict</span></code></a>(param_array)</p></td>
@@ -130,16 +130,16 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#kai.mtf.mtf.params_dict2arr" title="kai.mtf.mtf.params_dict2arr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">params_dict2arr</span></code></a>(param_dict)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#kai.mtf.mtf.t_perfect_keck" title="kai.mtf.mtf.t_perfect_keck"><code class="xref py py-obj docutils literal notranslate"><span class="pre">t_perfect_keck</span></code></a>(x, p, pupil=None)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.mtf.mtf.t_perfect_keck" title="kai.mtf.mtf.t_perfect_keck"><code class="xref py py-obj docutils literal notranslate"><span class="pre">t_perfect_keck</span></code></a>(x, p[, pupil])</p></td>
 <td><p>NAME:</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#kai.mtf.mtf.autocorr2d" title="kai.mtf.mtf.autocorr2d"><code class="xref py py-obj docutils literal notranslate"><span class="pre">autocorr2d</span></code></a>(d)</p></td>
 <td><p>2D auto correlation.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#kai.mtf.mtf.nirc2pupil" title="kai.mtf.mtf.nirc2pupil"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nirc2pupil</span></code></a>(npix=256, du=None, pmsname='largehex', pmrangl=0.0)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.mtf.mtf.nirc2pupil" title="kai.mtf.mtf.nirc2pupil"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nirc2pupil</span></code></a>([npix, du, pmsname, pmrangl])</p></td>
 <td><p>NAME:</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#kai.mtf.mtf.dist_circle" title="kai.mtf.mtf.dist_circle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dist_circle</span></code></a>(size, center=None)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.mtf.mtf.dist_circle" title="kai.mtf.mtf.dist_circle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dist_circle</span></code></a>(size[, center])</p></td>
 <td><p><p>&quot;</p>
 </p></td>
 </tr>
@@ -152,10 +152,10 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#kai.mtf.mtf.t_atmos_ao" title="kai.mtf.mtf.t_atmos_ao"><code class="xref py py-obj docutils literal notranslate"><span class="pre">t_atmos_ao</span></code></a>(x, p)</p></td>
 <td><p>NAME:</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#kai.mtf.mtf.phi_atmos_ao" title="kai.mtf.mtf.phi_atmos_ao"><code class="xref py py-obj docutils literal notranslate"><span class="pre">phi_atmos_ao</span></code></a>(x, p, unmod=False, tat=False)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.mtf.mtf.phi_atmos_ao" title="kai.mtf.mtf.phi_atmos_ao"><code class="xref py py-obj docutils literal notranslate"><span class="pre">phi_atmos_ao</span></code></a>(x, p[, unmod, tat])</p></td>
 <td><p>NAME:</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#kai.mtf.mtf.phi_atmos" title="kai.mtf.mtf.phi_atmos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">phi_atmos</span></code></a>(x, p, tat=False, unmod=False)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.mtf.mtf.phi_atmos" title="kai.mtf.mtf.phi_atmos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">phi_atmos</span></code></a>(x, p[, tat, unmod])</p></td>
 <td><p>NAME:</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#kai.mtf.mtf.ft_infl_func" title="kai.mtf.mtf.ft_infl_func"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ft_infl_func</span></code></a>(x, p)</p></td>
@@ -164,15 +164,15 @@
 </ul>
 </p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#kai.mtf.mtf.structure_function" title="kai.mtf.mtf.structure_function"><code class="xref py py-obj docutils literal notranslate"><span class="pre">structure_function</span></code></a>(rr, pp, phi_call=phi_atmos_ao)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.mtf.mtf.structure_function" title="kai.mtf.mtf.structure_function"><code class="xref py py-obj docutils literal notranslate"><span class="pre">structure_function</span></code></a>(rr, pp[, phi_call])</p></td>
 <td><p><p>&quot;</p>
 </p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#kai.mtf.mtf.mtf2psf" title="kai.mtf.mtf.mtf2psf"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mtf2psf</span></code></a>(par, sz, perfect=False)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.mtf.mtf.mtf2psf" title="kai.mtf.mtf.mtf2psf"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mtf2psf</span></code></a>(par, sz[, perfect])</p></td>
 <td><p><p>&quot;</p>
 </p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#kai.mtf.mtf.mtf2ee" title="kai.mtf.mtf.mtf2ee"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mtf2ee</span></code></a>(par, pixx, perfect=False)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.mtf.mtf.mtf2ee" title="kai.mtf.mtf.mtf2ee"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mtf2ee</span></code></a>(par, pixx[, perfect])</p></td>
 <td><p><p>&quot;</p>
 </p></td>
 </tr>

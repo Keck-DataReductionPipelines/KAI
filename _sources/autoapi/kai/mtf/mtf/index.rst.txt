@@ -3,12 +3,6 @@
 
 .. py:module:: kai.mtf.mtf
 
-.. autoapi-nested-parse::
-
-   
-   ..
-       !! processed by numpydoc !!
-
 
 Module Contents
 ---------------
@@ -62,24 +56,6 @@ Attributes
    
 
    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-   ..
-       !! processed by numpydoc !!
 
 .. py:function:: get_mtf(image, params, sources)
 
@@ -522,47 +498,9 @@ Attributes
 
 .. py:function:: params_arr2dict(param_array)
 
-   
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-   ..
-       !! processed by numpydoc !!
 
 .. py:function:: params_dict2arr(param_dict)
 
-   
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-   ..
-       !! processed by numpydoc !!
 
 .. py:function:: t_perfect_keck(x, p, pupil=None)
 
@@ -1625,23 +1563,4 @@ Attributes
 
    Bases: :py:obj:`object`
 
-   
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-   ..
-       !! processed by numpydoc !!
 

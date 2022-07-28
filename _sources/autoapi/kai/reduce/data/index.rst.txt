@@ -3,12 +3,6 @@
 
 .. py:module:: kai.reduce.data
 
-.. autoapi-nested-parse::
-
-   
-   ..
-       !! processed by numpydoc !!
-
 
 Module Contents
 ---------------
@@ -80,92 +74,20 @@ Attributes
 
    
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-   ..
-       !! processed by numpydoc !!
-
 .. py:data:: distCoef
    :annotation: = 
 
    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-   ..
-       !! processed by numpydoc !!
 
 .. py:data:: supermaskName
    :annotation: = supermask.fits
 
    
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-   ..
-       !! processed by numpydoc !!
-
 .. py:data:: outputVerify
    :annotation: = ignore
 
    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-   ..
-       !! processed by numpydoc !!
 
 .. py:function:: clean(files, nite, wave, refSrc, strSrc, badColumns=None, field=None, skyscale=False, skyfile=None, angOff=0.0, cent_box=12, fixDAR=True, use_koa_weather=False, raw_dir=None, clean_dir=None, instrument=instruments.default_inst, check_ref_loc=True)
 
@@ -677,25 +599,6 @@ Attributes
 
 .. py:function:: combine_drizzle(imgsize, cleanDir, roots, outroot, weights, shifts, wave, diffPA, fixDAR=True, use_koa_weather=False, mask=True, instrument=instruments.default_inst)
 
-   
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-   ..
-       !! processed by numpydoc !!
 
 .. py:function:: combine_submaps(imgsize, cleanDir, roots, outroot, weights, shifts, submaps, wave, diffPA, fixDAR=True, use_koa_weather=False, mask=True, instrument=instruments.default_inst)
 
@@ -753,25 +656,6 @@ Attributes
 
 .. py:function:: sort_frames(roots, strehls, fwhm, weights, shiftsTab)
 
-   
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-   ..
-       !! processed by numpydoc !!
 
 .. py:function:: combine_ref(coofile, cleanDir, roots, diffPA, refImage_index=0)
 
@@ -821,69 +705,12 @@ Attributes
 
 .. py:function:: combine_lis(outfile, cleanDir, roots, diffPA)
 
-   
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-   ..
-       !! processed by numpydoc !!
 
 .. py:function:: combine_register(outroot, refImage, diffPA)
 
-   
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-   ..
-       !! processed by numpydoc !!
 
 .. py:function:: combine_log(outroot, roots, strehls, fwhm, weights)
 
-   
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-   ..
-       !! processed by numpydoc !!
 
 .. py:function:: combine_size(shiftsTable, refImage, outroot, subroot, submaps)
 
@@ -952,25 +779,6 @@ Attributes
 
 .. py:function:: clean_drizzle(xgeoim, ygeoim, _bp, _cd, _wgt, _dlog, fixDAR=True, instrument=instruments.default_inst, use_koa_weather=False)
 
-   
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-   ..
-       !! processed by numpydoc !!
 
 .. py:function:: clean_cosmicrays(_ff, _mask, wave)
 
@@ -1167,70 +975,13 @@ Attributes
 
    Bases: :py:obj:`object`
 
-   
+   .. py:method:: __initLp__()
 
 
+   .. py:method:: getSky(_n)
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-   ..
-       !! processed by numpydoc !!
-   .. py:method:: __initLp__(self)
-
-      
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      ..
-          !! processed by numpydoc !!
-
-   .. py:method:: getSky(self, _n)
-
-      
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      ..
-          !! processed by numpydoc !!
-
-   .. py:method:: scaleSky(self, _n, _sky)
+   .. py:method:: scaleSky(_n, _sky)
 
       
       Scale the mean level of the sky so that it matches the
@@ -1258,7 +1009,7 @@ Attributes
       ..
           !! processed by numpydoc !!
 
-   .. py:method:: getSkyLp(self, _n)
+   .. py:method:: getSkyLp(_n)
 
       
       Determine which sky we should use for L'. Does all the
@@ -1286,7 +1037,7 @@ Attributes
       ..
           !! processed by numpydoc !!
 
-   .. py:method:: getNonlinearCorrection(self, sky)
+   .. py:method:: getNonlinearCorrection(sky)
 
       
       Determine the non-linearity level. Raw data level of
@@ -1318,7 +1069,7 @@ Attributes
       ..
           !! processed by numpydoc !!
 
-   .. py:method:: close(self)
+   .. py:method:: close()
 
       
       Close log files opened at init.

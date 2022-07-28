@@ -101,10 +101,10 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.prep_analysis.euclidean" title="kai.reduce.prep_analysis.euclidean"><code class="xref py py-obj docutils literal notranslate"><span class="pre">euclidean</span></code></a>(x1, y1, x2, y2)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.prep_analysis.removeEdges" title="kai.reduce.prep_analysis.removeEdges"><code class="xref py py-obj docutils literal notranslate"><span class="pre">removeEdges</span></code></a>(imgArr, finalTable, cutoff=100, x='xcentroid', y='ycentroid', scale=0.009942)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.prep_analysis.removeEdges" title="kai.reduce.prep_analysis.removeEdges"><code class="xref py py-obj docutils literal notranslate"><span class="pre">removeEdges</span></code></a>(imgArr, finalTable[, cutoff, x, y, scale])</p></td>
 <td><p>Ignores stars close to the edge, i.e., within 100 * scale pixels by default.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.prep_analysis.psfRadius" title="kai.reduce.prep_analysis.psfRadius"><code class="xref py py-obj docutils literal notranslate"><span class="pre">psfRadius</span></code></a>(starPeak, imagePeak, scale=0.009942)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.prep_analysis.psfRadius" title="kai.reduce.prep_analysis.psfRadius"><code class="xref py py-obj docutils literal notranslate"><span class="pre">psfRadius</span></code></a>(starPeak, imagePeak[, scale])</p></td>
 <td><p>Arbitrary function that ties the predicted radius of the star to the peak brightness in the image.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.prep_analysis.isBrightSpeckleStar" title="kai.reduce.prep_analysis.isBrightSpeckleStar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isBrightSpeckleStar</span></code></a>(starPeak, imagePeak)</p></td>
@@ -122,31 +122,31 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.prep_analysis.getTableIndex" title="kai.reduce.prep_analysis.getTableIndex"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getTableIndex</span></code></a>(mainIndex, starIndex)</p></td>
 <td><p>Helper function to get star being considered in removeCloseStars.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.prep_analysis.removeCloseStars" title="kai.reduce.prep_analysis.removeCloseStars"><code class="xref py py-obj docutils literal notranslate"><span class="pre">removeCloseStars</span></code></a>(imgArr, newTable, pixelDist=10, x='xcentroid', y='ycentroid', verbose=False, scale=0.009942)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.prep_analysis.removeCloseStars" title="kai.reduce.prep_analysis.removeCloseStars"><code class="xref py py-obj docutils literal notranslate"><span class="pre">removeCloseStars</span></code></a>(imgArr, newTable[, pixelDist, x, y, ...])</p></td>
 <td><p>In order of brightest stars in table, checks if it's a valid star, and tracks secondaries near it.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.prep_analysis.getStats" title="kai.reduce.prep_analysis.getStats"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getStats</span></code></a>(imgArr)</p></td>
 <td><p>Returns mean median and mode of pixel values in image array.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.prep_analysis.getNStarsHelper" title="kai.reduce.prep_analysis.getNStarsHelper"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getNStarsHelper</span></code></a>(imgArr, expStars=10, counter=0, starsFound=0, fwhm=4.5, scale=0.009942)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.prep_analysis.getNStarsHelper" title="kai.reduce.prep_analysis.getNStarsHelper"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getNStarsHelper</span></code></a>(imgArr[, expStars, counter, ...])</p></td>
 <td><p>Attempts to get N stars. If stars aren't found, returns what it can and presents the error.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.prep_analysis.getNStars" title="kai.reduce.prep_analysis.getNStars"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getNStars</span></code></a>(imgArr, numStars=10, fwhm=4.5, scale=0.009942)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.prep_analysis.getNStars" title="kai.reduce.prep_analysis.getNStars"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getNStars</span></code></a>(imgArr[, numStars, fwhm, scale])</p></td>
 <td><p>Reformats table of chosen psf stars and adds the relevant secondaries to it.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.prep_analysis.generate_list" title="kai.reduce.prep_analysis.generate_list"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generate_list</span></code></a>(imgPath, numPSFStars=7, fwhm=4.5, scale=0.009942, targName='')</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.prep_analysis.generate_list" title="kai.reduce.prep_analysis.generate_list"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generate_list</span></code></a>(imgPath[, numPSFStars, fwhm, scale, ...])</p></td>
 <td><p>Plots the table generated by PSFListGen, and prints the list of stars in a format that can be used.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.prep_analysis.plot_starlist_on_image_arcsec" title="kai.reduce.prep_analysis.plot_starlist_on_image_arcsec"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_starlist_on_image_arcsec</span></code></a>(starList, imagePath, refCoo, scale=9.942 / 1000, magCut=23, label=True, verbose=True, flip=False)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.prep_analysis.plot_starlist_on_image_arcsec" title="kai.reduce.prep_analysis.plot_starlist_on_image_arcsec"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_starlist_on_image_arcsec</span></code></a>(starList, imagePath, refCoo)</p></td>
 <td><p>Plot a NIRC2 image and overlay a starlist. Input in relative arcsec coordinates.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.prep_analysis.plot_starlist_on_image_pixel" title="kai.reduce.prep_analysis.plot_starlist_on_image_pixel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_starlist_on_image_pixel</span></code></a>(starList, imagePath, refStar, scale=9.942 / 1000, magCut=23, label=True, verbose=True, flip=False, axes='pixel')</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.prep_analysis.plot_starlist_on_image_pixel" title="kai.reduce.prep_analysis.plot_starlist_on_image_pixel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_starlist_on_image_pixel</span></code></a>(starList, imagePath, refStar)</p></td>
 <td><p>Plot a NIRC2 image and overlay a starlist. Input in pixel coordinates.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.prep_analysis.modded_plot_starlist_on_image_pixel" title="kai.reduce.prep_analysis.modded_plot_starlist_on_image_pixel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">modded_plot_starlist_on_image_pixel</span></code></a>(starList, imagePath, refStar, scale=9.942 / 1000, magCut=23, label=True, verbose=True, flip=False, axes='pixel')</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.prep_analysis.modded_plot_starlist_on_image_pixel" title="kai.reduce.prep_analysis.modded_plot_starlist_on_image_pixel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">modded_plot_starlist_on_image_pixel</span></code></a>(starList, ...[, ...])</p></td>
 <td><p>Plot a NIRC2 image and overlay a starlist. Input in pixel coordinates.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.prep_analysis.prepStarfinder" title="kai.reduce.prep_analysis.prepStarfinder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">prepStarfinder</span></code></a>(dirName, targetName, targetCoords, psfStars, filterName)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.prep_analysis.prepStarfinder" title="kai.reduce.prep_analysis.prepStarfinder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">prepStarfinder</span></code></a>(dirName, targetName, targetCoords, ...)</p></td>
 <td><p>Creates a _psf.list file and saves it in the source_list/ directory.</p></td>
 </tr>
 </tbody>

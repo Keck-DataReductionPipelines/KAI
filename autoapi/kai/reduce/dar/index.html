@@ -104,19 +104,19 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.dar.keckDARcoeffs" title="kai.reduce.dar.keckDARcoeffs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">keckDARcoeffs</span></code></a>(lamda, year, month, day, hour, minute)</p></td>
 <td><p>Calculate the differential atmospheric refraction</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.dar.download_koa_dat_files" title="kai.reduce.dar.download_koa_dat_files"><code class="xref py py-obj docutils literal notranslate"><span class="pre">download_koa_dat_files</span></code></a>(date_str, telescope_str, param_name, download_loc='./')</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.dar.download_koa_dat_files" title="kai.reduce.dar.download_koa_dat_files"><code class="xref py py-obj docutils literal notranslate"><span class="pre">download_koa_dat_files</span></code></a>(date_str, telescope_str, param_name)</p></td>
 <td><p>Download the KOA atmospheric condition file for given date and</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.dar.keckDARcoeffs_koa" title="kai.reduce.dar.keckDARcoeffs_koa"><code class="xref py py-obj docutils literal notranslate"><span class="pre">keckDARcoeffs_koa</span></code></a>(lamda, year, month, day, hour, minute, second, instrument=instruments.default_inst)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.dar.keckDARcoeffs_koa" title="kai.reduce.dar.keckDARcoeffs_koa"><code class="xref py py-obj docutils literal notranslate"><span class="pre">keckDARcoeffs_koa</span></code></a>(lamda, year, month, day, hour, ...)</p></td>
 <td><p>Calculate the differential atmospheric refraction</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.dar.kaidar" title="kai.reduce.dar.kaidar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">kaidar</span></code></a>(fitsFile, instrument=instruments.default_inst, use_koa_weather=False)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.dar.kaidar" title="kai.reduce.dar.kaidar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">kaidar</span></code></a>(fitsFile[, instrument, use_koa_weather])</p></td>
 <td><p>Use the FITS header to extract date, time, wavelength,</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.dar.darPlusDistortion" title="kai.reduce.dar.darPlusDistortion"><code class="xref py py-obj docutils literal notranslate"><span class="pre">darPlusDistortion</span></code></a>(inputFits, outputRoot, xgeoim=None, ygeoim=None, instrument=instruments.default_inst, use_koa_weather=False)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.dar.darPlusDistortion" title="kai.reduce.dar.darPlusDistortion"><code class="xref py py-obj docutils literal notranslate"><span class="pre">darPlusDistortion</span></code></a>(inputFits, outputRoot[, xgeoim, ...])</p></td>
 <td><p>Create lookup tables (stored as FITS files) that can be used</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.dar.applyDAR" title="kai.reduce.dar.applyDAR"><code class="xref py py-obj docutils literal notranslate"><span class="pre">applyDAR</span></code></a>(inputFits, spaceStarlist, plot=False, instrument=instruments.default_inst, plotdir='./')</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.dar.applyDAR" title="kai.reduce.dar.applyDAR"><code class="xref py py-obj docutils literal notranslate"><span class="pre">applyDAR</span></code></a>(inputFits, spaceStarlist[, plot, instrument, ...])</p></td>
 <td><p>inputFits: (str) name of fits file associated with this starlist</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.dar.splitAtmosphereCFHT" title="kai.reduce.dar.splitAtmosphereCFHT"><code class="xref py py-obj docutils literal notranslate"><span class="pre">splitAtmosphereCFHT</span></code></a>(year)</p></td>

@@ -112,34 +112,34 @@
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.data.clean" title="kai.reduce.data.clean"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clean</span></code></a>(files, nite, wave, refSrc, strSrc, badColumns=None, field=None, skyscale=False, skyfile=None, angOff=0.0, cent_box=12, fixDAR=True, use_koa_weather=False, raw_dir=None, clean_dir=None, instrument=instruments.default_inst, check_ref_loc=True)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.data.clean" title="kai.reduce.data.clean"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clean</span></code></a>(files, nite, wave, refSrc, strSrc[, badColumns, ...])</p></td>
 <td><p>Clean near infrared NIRC2 or OSIRIS images.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.data.clean_get_supermask" title="kai.reduce.data.clean_get_supermask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clean_get_supermask</span></code></a>(_statmask, _supermask, badColumns)</p></td>
 <td><p>Create temporary mask for each individual image that will contain the</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.data.clean_makemask" title="kai.reduce.data.clean_makemask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clean_makemask</span></code></a>(_mask, _mask_cosmic, _mask_static, wave, instrument=instruments.default_inst)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.data.clean_makemask" title="kai.reduce.data.clean_makemask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clean_makemask</span></code></a>(_mask, _mask_cosmic, _mask_static, wave)</p></td>
 <td><p>_mask -- output name for final mask</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.data.clean_lp" title="kai.reduce.data.clean_lp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clean_lp</span></code></a>(files, nite, wave, refSrc, strSrc, angOff, skyfile)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.data.clean_lp" title="kai.reduce.data.clean_lp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clean_lp</span></code></a>(files, nite, wave, refSrc, strSrc, angOff, ...)</p></td>
 <td><p>Only here for backwards compatability.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.data.combine" title="kai.reduce.data.combine"><code class="xref py py-obj docutils literal notranslate"><span class="pre">combine</span></code></a>(files, wave, outroot, field=None, outSuffix=None, trim=False, weight=None, fwhm_max=0, submaps=0, fixDAR=True, use_koa_weather=False, mask=True, clean_dirs=None, combo_dir=None, instrument=instruments.default_inst)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.data.combine" title="kai.reduce.data.combine"><code class="xref py py-obj docutils literal notranslate"><span class="pre">combine</span></code></a>(files, wave, outroot[, field, outSuffix, ...])</p></td>
 <td><p>Accepts a list of cleaned images and does a weighted combining after</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.data.rot_img" title="kai.reduce.data.rot_img"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rot_img</span></code></a>(root, phi, cleanDir)</p></td>
 <td><p>Rotate images to PA=0 if they have a different PA from one</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.data.gcSourceXY" title="kai.reduce.data.gcSourceXY"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gcSourceXY</span></code></a>(name, label_file='/Users/jlu/data/gc/source_list/label.dat')</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.data.gcSourceXY" title="kai.reduce.data.gcSourceXY"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gcSourceXY</span></code></a>(name[, label_file])</p></td>
 <td><p>Queries label.dat for the xy offset from Sgr A* (in arcsec)</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.data.calcStrehl" title="kai.reduce.data.calcStrehl"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calcStrehl</span></code></a>(files, wave, clean_dir=None, field=None, instrument=instruments.default_inst)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.data.calcStrehl" title="kai.reduce.data.calcStrehl"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calcStrehl</span></code></a>(files, wave[, clean_dir, field, instrument])</p></td>
 <td><p>Make Strehl and FWHM table on the strehl source for all</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.data.weight_by_strehl" title="kai.reduce.data.weight_by_strehl"><code class="xref py py-obj docutils literal notranslate"><span class="pre">weight_by_strehl</span></code></a>(roots, strehls)</p></td>
 <td><p>Calculate weights based on the strehl of each image.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.data.trim_on_fwhm" title="kai.reduce.data.trim_on_fwhm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">trim_on_fwhm</span></code></a>(roots, strehls, fwhm, fwhm_max=0)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.data.trim_on_fwhm" title="kai.reduce.data.trim_on_fwhm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">trim_on_fwhm</span></code></a>(roots, strehls, fwhm[, fwhm_max])</p></td>
 <td><p>Take a list of files and trim based on the FWHM. All files that have a</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.data.readWeightsFile" title="kai.reduce.data.readWeightsFile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">readWeightsFile</span></code></a>(roots, weightFile)</p></td>
@@ -151,22 +151,22 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.data.trim_table_by_name" title="kai.reduce.data.trim_table_by_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">trim_table_by_name</span></code></a>(outroots, tableFileName)</p></td>
 <td><p>Takes a list of values (listed in tableFileName) and trim them down based on</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.data.combine_drizzle" title="kai.reduce.data.combine_drizzle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">combine_drizzle</span></code></a>(imgsize, cleanDir, roots, outroot, weights, shifts, wave, diffPA, fixDAR=True, use_koa_weather=False, mask=True, instrument=instruments.default_inst)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.data.combine_drizzle" title="kai.reduce.data.combine_drizzle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">combine_drizzle</span></code></a>(imgsize, cleanDir, roots, outroot, ...)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.data.combine_submaps" title="kai.reduce.data.combine_submaps"><code class="xref py py-obj docutils literal notranslate"><span class="pre">combine_submaps</span></code></a>(imgsize, cleanDir, roots, outroot, weights, shifts, submaps, wave, diffPA, fixDAR=True, use_koa_weather=False, mask=True, instrument=instruments.default_inst)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.data.combine_submaps" title="kai.reduce.data.combine_submaps"><code class="xref py py-obj docutils literal notranslate"><span class="pre">combine_submaps</span></code></a>(imgsize, cleanDir, roots, outroot, ...)</p></td>
 <td><p>Assumes the list of roots are pre-sorted based on quality. Images are then</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.data.combine_rotation" title="kai.reduce.data.combine_rotation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">combine_rotation</span></code></a>(cleanDir, roots, instrument=instruments.default_inst)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.data.combine_rotation" title="kai.reduce.data.combine_rotation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">combine_rotation</span></code></a>(cleanDir, roots[, instrument])</p></td>
 <td><p>Determine if images are different PAs. If so, then</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.data.sort_frames" title="kai.reduce.data.sort_frames"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sort_frames</span></code></a>(roots, strehls, fwhm, weights, shiftsTab)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.data.combine_ref" title="kai.reduce.data.combine_ref"><code class="xref py py-obj docutils literal notranslate"><span class="pre">combine_ref</span></code></a>(coofile, cleanDir, roots, diffPA, refImage_index=0)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.data.combine_ref" title="kai.reduce.data.combine_ref"><code class="xref py py-obj docutils literal notranslate"><span class="pre">combine_ref</span></code></a>(coofile, cleanDir, roots, diffPA[, ...])</p></td>
 <td><p>Pulls reference star coordinates from image header keywords.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.data.combine_coo" title="kai.reduce.data.combine_coo"><code class="xref py py-obj docutils literal notranslate"><span class="pre">combine_coo</span></code></a>(coofile, cleanDir, roots, diffPA, refImage_index=0)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.data.combine_coo" title="kai.reduce.data.combine_coo"><code class="xref py py-obj docutils literal notranslate"><span class="pre">combine_coo</span></code></a>(coofile, cleanDir, roots, diffPA[, ...])</p></td>
 <td><p>Pulls reference star coordinates from <a href="#id1"><span class="problematic" id="id2">*</span></a>.coo files.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.data.combine_lis" title="kai.reduce.data.combine_lis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">combine_lis</span></code></a>(outfile, cleanDir, roots, diffPA)</p></td>
@@ -178,40 +178,40 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.data.combine_log" title="kai.reduce.data.combine_log"><code class="xref py py-obj docutils literal notranslate"><span class="pre">combine_log</span></code></a>(outroot, roots, strehls, fwhm, weights)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.data.combine_size" title="kai.reduce.data.combine_size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">combine_size</span></code></a>(shiftsTable, refImage, outroot, subroot, submaps)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.data.combine_size" title="kai.reduce.data.combine_size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">combine_size</span></code></a>(shiftsTable, refImage, outroot, subroot, ...)</p></td>
 <td><p>Determine the final size of the fully combined image. Use the</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.data.setup_drizzle" title="kai.reduce.data.setup_drizzle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setup_drizzle</span></code></a>(imgsize)</p></td>
 <td><p>Setup drizzle parameters for NIRC2 data.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.data.clean_drizzle" title="kai.reduce.data.clean_drizzle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clean_drizzle</span></code></a>(xgeoim, ygeoim, _bp, _cd, _wgt, _dlog, fixDAR=True, instrument=instruments.default_inst, use_koa_weather=False)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.data.clean_drizzle" title="kai.reduce.data.clean_drizzle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clean_drizzle</span></code></a>(xgeoim, ygeoim, _bp, _cd, _wgt, _dlog[, ...])</p></td>
 <td><p></p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.data.clean_cosmicrays" title="kai.reduce.data.clean_cosmicrays"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clean_cosmicrays</span></code></a>(_ff, _mask, wave)</p></td>
 <td><p>Clean the image of cosmicrays and make a mask containing the location</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.data.clean_cosmicrays2" title="kai.reduce.data.clean_cosmicrays2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clean_cosmicrays2</span></code></a>(_ff, _ff_cr, _mask, wave, instrument=instruments.default_inst)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.data.clean_cosmicrays2" title="kai.reduce.data.clean_cosmicrays2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clean_cosmicrays2</span></code></a>(_ff, _ff_cr, _mask, wave[, instrument])</p></td>
 <td><p>Clean the image of cosmicrays and make a mask containing the location</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.data.clean_persistance" title="kai.reduce.data.clean_persistance"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clean_persistance</span></code></a>(_n, _pers, instrument=instruments.default_inst)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.data.clean_persistance" title="kai.reduce.data.clean_persistance"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clean_persistance</span></code></a>(_n, _pers[, instrument])</p></td>
 <td><p>Make masks of the persistance to be used in combining the images</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.data.clean_bkgsubtract" title="kai.reduce.data.clean_bkgsubtract"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clean_bkgsubtract</span></code></a>(_ff_f, _bp)</p></td>
 <td><p>Do additional background subtraction of any excess background</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.data.clean_makecoo" title="kai.reduce.data.clean_makecoo"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clean_makecoo</span></code></a>(_ce, _cc, refSrc, strSrc, aotsxyRef, radecRef, instrument=instruments.default_inst, check_loc=True, update_fits=True, cent_box=12)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.data.clean_makecoo" title="kai.reduce.data.clean_makecoo"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clean_makecoo</span></code></a>(_ce, _cc, refSrc, strSrc, aotsxyRef, ...)</p></td>
 <td><p>Make the <a href="#id3"><span class="problematic" id="id4">*</span></a>.coo file for this science image. Use the difference</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.data.mosaic_ref" title="kai.reduce.data.mosaic_ref"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mosaic_ref</span></code></a>(outFile, cleanDir, roots, diffPA, instrument=instruments.default_inst)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.data.mosaic_ref" title="kai.reduce.data.mosaic_ref"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mosaic_ref</span></code></a>(outFile, cleanDir, roots, diffPA[, instrument])</p></td>
 <td><p>Calculate an initial guess at the offsets between mosaic frames.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.data.mosaic" title="kai.reduce.data.mosaic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mosaic</span></code></a>(files, wave, outroot, field=None, outSuffix=None, trim=0, weight=0, fwhm_max=0, submaps=0, fixDAR=True, maskSubmap=False, instrument=instruments.default_inst)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.data.mosaic" title="kai.reduce.data.mosaic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mosaic</span></code></a>(files, wave, outroot[, field, outSuffix, trim, ...])</p></td>
 <td><p>Accepts a list of cleaned images and does a weighted combining after</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.data.mosaic_register" title="kai.reduce.data.mosaic_register"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mosaic_register</span></code></a>(outroot, refImage, diffPA)</p></td>
 <td><p>Register images for a mosaic. This only calculates the exact</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.data.mosaic_size" title="kai.reduce.data.mosaic_size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mosaic_size</span></code></a>(shiftsTable, refImage, outroot, subroot, submaps)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.data.mosaic_size" title="kai.reduce.data.mosaic_size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mosaic_size</span></code></a>(shiftsTable, refImage, outroot, subroot, ...)</p></td>
 <td><p>Determine the final size for the completed mosaic.</p></td>
 </tr>
 </tbody>
@@ -743,17 +743,17 @@ image to tell how the positions of the two frames are related.</p>
 <dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="kai.reduce.data.Sky.__initLp__">
-<span class="sig-name descname"><span class="pre">__initLp__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/data.html#Sky.__initLp__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.data.Sky.__initLp__" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__initLp__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/data.html#Sky.__initLp__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.data.Sky.__initLp__" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="kai.reduce.data.Sky.getSky">
-<span class="sig-name descname"><span class="pre">getSky</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/data.html#Sky.getSky"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.data.Sky.getSky" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">getSky</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/data.html#Sky.getSky"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.data.Sky.getSky" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="kai.reduce.data.Sky.scaleSky">
-<span class="sig-name descname"><span class="pre">scaleSky</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_sky</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/data.html#Sky.scaleSky"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.data.Sky.scaleSky" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">scaleSky</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_sky</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/data.html#Sky.scaleSky"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.data.Sky.scaleSky" title="Permalink to this definition"></a></dt>
 <dd><p>Scale the mean level of the sky so that it matches the
 science image.</p>
 <p>&#64;param _n: name of science frame
@@ -764,7 +764,7 @@ science image.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="kai.reduce.data.Sky.getSkyLp">
-<span class="sig-name descname"><span class="pre">getSkyLp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/data.html#Sky.getSkyLp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.data.Sky.getSkyLp" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">getSkyLp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/data.html#Sky.getSkyLp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.data.Sky.getSkyLp" title="Permalink to this definition"></a></dt>
 <dd><p>Determine which sky we should use for L’. Does all the
 rotator mirror angle matching.</p>
 <p>&#64;param _n: Name of science frame.
@@ -775,7 +775,7 @@ rotator mirror angle matching.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="kai.reduce.data.Sky.getNonlinearCorrection">
-<span class="sig-name descname"><span class="pre">getNonlinearCorrection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sky</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/data.html#Sky.getNonlinearCorrection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.data.Sky.getNonlinearCorrection" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">getNonlinearCorrection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sky</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/data.html#Sky.getNonlinearCorrection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.data.Sky.getNonlinearCorrection" title="Permalink to this definition"></a></dt>
 <dd><p>Determine the non-linearity level. Raw data level of
 non-linearity is 12,000 but we subtracted
 off a sky which changed this level. The sky is
@@ -792,7 +792,7 @@ for every frame.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="kai.reduce.data.Sky.close">
-<span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/data.html#Sky.close"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.data.Sky.close" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/data.html#Sky.close"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.data.Sky.close" title="Permalink to this definition"></a></dt>
 <dd><p>Close log files opened at init.</p>
 </dd></dl>
 

@@ -3,12 +3,6 @@
 
 .. py:module:: kai.reduce.calib
 
-.. autoapi-nested-parse::
-
-   
-   ..
-       !! processed by numpydoc !!
-
 
 Module Contents
 ---------------
@@ -39,24 +33,6 @@ Attributes
    
 
    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-   ..
-       !! processed by numpydoc !!
 
 .. py:function:: makedark(files, output, raw_dir=None, instrument=instruments.default_inst)
 

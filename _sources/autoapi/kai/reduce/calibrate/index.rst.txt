@@ -3,12 +3,6 @@
 
 .. py:module:: kai.reduce.calibrate
 
-.. autoapi-nested-parse::
-
-   
-   ..
-       !! processed by numpydoc !!
-
 
 Module Contents
 ---------------
@@ -52,24 +46,6 @@ Attributes
 
    
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-   ..
-       !! processed by numpydoc !!
-
 .. py:class:: IndentedHelpFormatterWithNL(indent_increment=2, max_help_position=24, width=None, short_first=1)
 
    Bases: :py:obj:`optparse.IndentedHelpFormatter`
@@ -94,116 +70,21 @@ Attributes
 
    ..
        !! processed by numpydoc !!
-   .. py:method:: format_description(self, description)
-
-      
+   .. py:method:: format_description(description)
 
 
+   .. py:method:: format_option(option)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-      ..
-          !! processed by numpydoc !!
-
-   .. py:method:: format_option(self, option)
-
-      
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      ..
-          !! processed by numpydoc !!
 
 
 .. py:function:: main(argv=None)
 
-   
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-   ..
-       !! processed by numpydoc !!
 
 .. py:function:: read_command_line(argv)
 
-   
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-   ..
-       !! processed by numpydoc !!
 
 .. py:function:: read_photo_calib_file(options, verbose=False)
 
-   
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-   ..
-       !! processed by numpydoc !!
 
 .. py:function:: input_data(options)
 

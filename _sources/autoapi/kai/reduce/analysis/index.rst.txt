@@ -3,12 +3,6 @@
 
 .. py:module:: kai.reduce.analysis
 
-.. autoapi-nested-parse::
-
-   
-   ..
-       !! processed by numpydoc !!
-
 
 Module Contents
 ---------------
@@ -57,7 +51,7 @@ Functions
 
    ..
        !! processed by numpydoc !!
-   .. py:method:: prepStarfinder(self, targetName, targetCoords, psfStars, filterName)
+   .. py:method:: prepStarfinder(targetName, targetCoords, psfStars, filterName)
 
       
       Creates a _psf.list file and saves it in the source_list/ directory.
@@ -80,225 +74,35 @@ Functions
       ..
           !! processed by numpydoc !!
 
-   .. py:method:: analyzeCombo(self)
-
-      
+   .. py:method:: analyzeCombo()
 
 
+   .. py:method:: analyzeClean()
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-      ..
-          !! processed by numpydoc !!
-
-   .. py:method:: analyzeClean(self)
-
-      
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      ..
-          !! processed by numpydoc !!
 
    .. py:method:: analyzeComboClean()
 
-      
 
+   .. py:method:: starfinderCombo(oldPsf=False)
 
 
+   .. py:method:: starfinderClean()
 
 
+   .. py:method:: starfinderCleanLoop()
 
 
+   .. py:method:: calibrateCombo()
 
 
+   .. py:method:: calibrateClean()
 
 
+   .. py:method:: alignCombo()
 
 
+   .. py:method:: alignClean()
 
-
-
-      ..
-          !! processed by numpydoc !!
-
-   .. py:method:: starfinderCombo(self, oldPsf=False)
-
-      
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      ..
-          !! processed by numpydoc !!
-
-   .. py:method:: starfinderClean(self)
-
-      
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      ..
-          !! processed by numpydoc !!
-
-   .. py:method:: starfinderCleanLoop(self)
-
-      
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      ..
-          !! processed by numpydoc !!
-
-   .. py:method:: calibrateCombo(self)
-
-      
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      ..
-          !! processed by numpydoc !!
-
-   .. py:method:: calibrateClean(self)
-
-      
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      ..
-          !! processed by numpydoc !!
-
-   .. py:method:: alignCombo(self)
-
-      
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      ..
-          !! processed by numpydoc !!
-
-   .. py:method:: alignClean(self)
-
-      
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      ..
-          !! processed by numpydoc !!
 
 
 .. py:function:: plotPosError(starlist, raw=False, suffix='', radius=4, magCutOff=15.0, title=True)

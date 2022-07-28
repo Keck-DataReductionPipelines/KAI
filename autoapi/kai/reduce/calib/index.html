@@ -98,19 +98,19 @@
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.calib.makedark" title="kai.reduce.calib.makedark"><code class="xref py py-obj docutils literal notranslate"><span class="pre">makedark</span></code></a>(files, output, raw_dir=None, instrument=instruments.default_inst)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.calib.makedark" title="kai.reduce.calib.makedark"><code class="xref py py-obj docutils literal notranslate"><span class="pre">makedark</span></code></a>(files, output[, raw_dir, instrument])</p></td>
 <td><p>Make dark image for imaging data. Makes a calib/ directory</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.calib.makeflat" title="kai.reduce.calib.makeflat"><code class="xref py py-obj docutils literal notranslate"><span class="pre">makeflat</span></code></a>(onFiles, offFiles, output, normalizeFirst=False, raw_dir=None, instrument=instruments.default_inst)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.calib.makeflat" title="kai.reduce.calib.makeflat"><code class="xref py py-obj docutils literal notranslate"><span class="pre">makeflat</span></code></a>(onFiles, offFiles, output[, normalizeFirst, ...])</p></td>
 <td><p>Make flat field image for imaging data. Makes a calib/ directory</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.calib.makemask" title="kai.reduce.calib.makemask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">makemask</span></code></a>(dark, flat, output, instrument=instruments.default_inst)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.calib.makemask" title="kai.reduce.calib.makemask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">makemask</span></code></a>(dark, flat, output[, instrument])</p></td>
 <td><p>Make bad pixel mask for imaging data. Makes a calib/ directory</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.calib.make_instrument_mask" title="kai.reduce.calib.make_instrument_mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_instrument_mask</span></code></a>(dark, flat, outDir, instrument=instruments.default_inst)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.calib.make_instrument_mask" title="kai.reduce.calib.make_instrument_mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_instrument_mask</span></code></a>(dark, flat, outDir[, instrument])</p></td>
 <td><p>Make the static bad pixel mask for the instrument. This only needs to be</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.calib.analyzeDarkCalib" title="kai.reduce.calib.analyzeDarkCalib"><code class="xref py py-obj docutils literal notranslate"><span class="pre">analyzeDarkCalib</span></code></a>(firstFrame, skipcombo=False)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.calib.analyzeDarkCalib" title="kai.reduce.calib.analyzeDarkCalib"><code class="xref py py-obj docutils literal notranslate"><span class="pre">analyzeDarkCalib</span></code></a>(firstFrame[, skipcombo])</p></td>
 <td><p>Reduce data from the dark_calib script that should be run once</p></td>
 </tr>
 </tbody>

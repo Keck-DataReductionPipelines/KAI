@@ -334,15 +334,16 @@
                      <span class="s1">&#39;Kp&#39;</span><span class="p">:</span> <span class="mf">2.12</span><span class="p">,</span>
                      <span class="s1">&#39;Kp-sHex&#39;</span><span class="p">:</span> <span class="mf">2.12</span><span class="p">,</span>
                      <span class="s1">&#39;Kn3&#39;</span><span class="p">:</span> <span class="mf">2.12</span><span class="p">,</span>
+                     <span class="s1">&#39;Kn3-sHex&#39;</span><span class="p">:</span> <span class="mf">2.12</span><span class="p">,</span>
                      <span class="s1">&#39;Hbb&#39;</span><span class="p">:</span> <span class="mf">1.65</span><span class="p">,</span>
                      <span class="s1">&#39;Hbb-LAnn&#39;</span><span class="p">:</span><span class="mf">1.65</span><span class="p">,</span>
                      <span class="s1">&#39;Hn3&#39;</span><span class="p">:</span> <span class="mf">1.635</span><span class="p">,</span>
                      <span class="s1">&#39;Hcont&#39;</span><span class="p">:</span><span class="mf">1.5832</span><span class="p">,</span>
                      <span class="s1">&#39;BrGamma&#39;</span><span class="p">:</span><span class="mf">2.169</span><span class="p">,</span>
-                     <span class="s1">&#39;BrGamma-sAnn&#39;</span><span class="p">:</span><span class="mf">2.169</span>
-                         <span class="p">}</span>
+                     <span class="s1">&#39;BrGamma-sAnn&#39;</span><span class="p">:</span><span class="mf">2.169</span><span class="p">,</span>
+                    <span class="p">}</span>
         <span class="k">if</span> <span class="n">filt_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">wave_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;NO information available on this filter&#39;</span> <span class="o">+</span> <span class="n">filt_name</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;NO information available on this filter: &#39;</span> <span class="o">+</span> <span class="n">filt_name</span><span class="p">)</span>
             <span class="k">return</span> <span class="mf">2.12</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">wave_dict</span><span class="p">[</span><span class="n">filt_name</span><span class="p">]</span></div>

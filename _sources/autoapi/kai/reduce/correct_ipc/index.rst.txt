@@ -3,12 +3,6 @@
 
 .. py:module:: kai.reduce.correct_ipc
 
-.. autoapi-nested-parse::
-
-   
-   ..
-       !! processed by numpydoc !!
-
 
 Module Contents
 ---------------
@@ -26,45 +20,7 @@ Functions
 
 .. py:function:: correct_ipc(input_im, alpha, beta=None, strip_reference=0)
 
-   
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-   ..
-       !! processed by numpydoc !!
 
 .. py:function:: test_correct_ipc()
 
-   
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-   ..
-       !! processed by numpydoc !!
 

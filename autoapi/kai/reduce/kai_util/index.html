@@ -101,7 +101,7 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.kai_util.kailog" title="kai.reduce.kai_util.kailog"><code class="xref py py-obj docutils literal notranslate"><span class="pre">kailog</span></code></a>(directory)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.kai_util.makelog" title="kai.reduce.kai_util.makelog"><code class="xref py py-obj docutils literal notranslate"><span class="pre">makelog</span></code></a>(directory, outfile='image_log.txt', instrument=instruments.default_inst)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.kai_util.makelog" title="kai.reduce.kai_util.makelog"><code class="xref py py-obj docutils literal notranslate"><span class="pre">makelog</span></code></a>(directory[, outfile, instrument])</p></td>
 <td><p>Make an electronic log for all the FITS files in the</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.kai_util.getAotsxy" title="kai.reduce.kai_util.getAotsxy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getAotsxy</span></code></a>(hdr)</p></td>
@@ -113,7 +113,7 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.kai_util.radec2pix" title="kai.reduce.kai_util.radec2pix"><code class="xref py py-obj docutils literal notranslate"><span class="pre">radec2pix</span></code></a>(radec, phi, scale, posRef)</p></td>
 <td><p>Determine pixel shifts from true RA and Dec positions.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.kai_util.aotsxy2pix" title="kai.reduce.kai_util.aotsxy2pix"><code class="xref py py-obj docutils literal notranslate"><span class="pre">aotsxy2pix</span></code></a>(aotsxy, scale, aotsxyRef, inst_angle=0.0)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.kai_util.aotsxy2pix" title="kai.reduce.kai_util.aotsxy2pix"><code class="xref py py-obj docutils literal notranslate"><span class="pre">aotsxy2pix</span></code></a>(aotsxy, scale, aotsxyRef[, inst_angle, ...])</p></td>
 <td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.kai_util.pix2xyarcsec" title="kai.reduce.kai_util.pix2xyarcsec"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pix2xyarcsec</span></code></a>(xypix, phi, scale, sgra)</p></td>
@@ -125,16 +125,16 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.kai_util.rotate_coo" title="kai.reduce.kai_util.rotate_coo"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rotate_coo</span></code></a>(x, y, phi)</p></td>
 <td><p>Rotate the coordinates in the <a href="#id1"><span class="problematic" id="id2">*</span></a>.coo files for data sets</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.kai_util.getScale" title="kai.reduce.kai_util.getScale"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getScale</span></code></a>(hdr, instrument=instruments.default_inst)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.kai_util.getScale" title="kai.reduce.kai_util.getScale"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getScale</span></code></a>(hdr[, instrument])</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.kai_util.getPA" title="kai.reduce.kai_util.getPA"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getPA</span></code></a>(hdr, instrument=instruments.default_inst)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.kai_util.getPA" title="kai.reduce.kai_util.getPA"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getPA</span></code></a>(hdr[, instrument])</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.kai_util.getCentralWavelength" title="kai.reduce.kai_util.getCentralWavelength"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getCentralWavelength</span></code></a>(hdr, instrument=instruments.default_inst)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.kai_util.getCentralWavelength" title="kai.reduce.kai_util.getCentralWavelength"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getCentralWavelength</span></code></a>(hdr[, instrument])</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.kai_util.calcOverhead" title="kai.reduce.kai_util.calcOverhead"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calcOverhead</span></code></a>(tint, coadds, ndithers, nframes, reads, tread=0.181)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.kai_util.calcOverhead" title="kai.reduce.kai_util.calcOverhead"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calcOverhead</span></code></a>(tint, coadds, ndithers, nframes, reads[, ...])</p></td>
 <td><p></p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.kai_util.plotKeyword" title="kai.reduce.kai_util.plotKeyword"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plotKeyword</span></code></a>(keyword1, keyword2, imgList)</p></td>
@@ -202,7 +202,7 @@ specified directory.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="kai.reduce.kai_util.aotsxy2pix">
-<span class="sig-prename descclassname"><span class="pre">kai.reduce.kai_util.</span></span><span class="sig-name descname"><span class="pre">aotsxy2pix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">aotsxy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aotsxyRef</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inst_angle</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/kai_util.html#aotsxy2pix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.kai_util.aotsxy2pix" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.kai_util.</span></span><span class="sig-name descname"><span class="pre">aotsxy2pix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">aotsxy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aotsxyRef</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inst_angle</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instrument</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">instruments.default_inst</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/kai_util.html#aotsxy2pix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.kai_util.aotsxy2pix" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">

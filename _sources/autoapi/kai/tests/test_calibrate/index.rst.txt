@@ -3,12 +3,6 @@
 
 .. py:module:: kai.tests.test_calibrate
 
-.. autoapi-nested-parse::
-
-   
-   ..
-       !! processed by numpydoc !!
-
 
 Module Contents
 ---------------
@@ -25,23 +19,4 @@ Functions
 
 .. py:function:: test_star_names()
 
-   
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-   ..
-       !! processed by numpydoc !!
 

@@ -100,16 +100,16 @@
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#kai.strehl.calc_strehl" title="kai.strehl.calc_strehl"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calc_strehl</span></code></a>(file_list, out_file, apersize=0.3, instrument=instruments.default_inst)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.strehl.calc_strehl" title="kai.strehl.calc_strehl"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calc_strehl</span></code></a>(file_list, out_file[, apersize, instrument])</p></td>
 <td><p>Calculate the Strehl, FWHM, and RMS WFE for each image in a</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#kai.strehl.calc_strehl_single" title="kai.strehl.calc_strehl_single"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calc_strehl_single</span></code></a>(img_file, radius, dl_peak_flux_ratio, instrument=instruments.default_inst)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.strehl.calc_strehl_single" title="kai.strehl.calc_strehl_single"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calc_strehl_single</span></code></a>(img_file, radius, dl_peak_flux_ratio)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#kai.strehl.calc_peak_flux_ratio" title="kai.strehl.calc_peak_flux_ratio"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calc_peak_flux_ratio</span></code></a>(img, coords, radius, skysub=True)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.strehl.calc_peak_flux_ratio" title="kai.strehl.calc_peak_flux_ratio"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calc_peak_flux_ratio</span></code></a>(img, coords, radius[, skysub])</p></td>
 <td><p>img : 2D numpy array</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#kai.strehl.fit_gaussian2d" title="kai.strehl.fit_gaussian2d"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit_gaussian2d</span></code></a>(img, coords, boxsize, plot=False, fwhm_min=1.7, fwhm_max=30, pos_delta_max=1.7)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.strehl.fit_gaussian2d" title="kai.strehl.fit_gaussian2d"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit_gaussian2d</span></code></a>(img, coords, boxsize[, plot, fwhm_min, ...])</p></td>
 <td><p>Calculate the FWHM of an objected located at the pixel</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#kai.strehl.fwhm_to_stddev" title="kai.strehl.fwhm_to_stddev"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fwhm_to_stddev</span></code></a>(fwhm)</p></td>

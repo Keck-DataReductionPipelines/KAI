@@ -3,12 +3,6 @@
 
 .. py:module:: kai.reduce.kai_util
 
-.. autoapi-nested-parse::
-
-   
-   ..
-       !! processed by numpydoc !!
-
 
 Module Contents
 ---------------
@@ -46,25 +40,6 @@ Attributes
 
 .. py:function:: kailog(directory)
 
-   
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-   ..
-       !! processed by numpydoc !!
 
 .. py:function:: makelog(directory, outfile='image_log.txt', instrument=instruments.default_inst)
 
@@ -95,67 +70,11 @@ Attributes
 
    
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-   ..
-       !! processed by numpydoc !!
-
 .. py:function:: getAotsxy(hdr)
 
-   
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-   ..
-       !! processed by numpydoc !!
 
 .. py:function:: pix2radec()
 
-   
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-   ..
-       !! processed by numpydoc !!
 
 .. py:function:: radec2pix(radec, phi, scale, posRef)
 
@@ -189,27 +108,8 @@ Attributes
    ..
        !! processed by numpydoc !!
 
-.. py:function:: aotsxy2pix(aotsxy, scale, aotsxyRef, inst_angle=0.0)
+.. py:function:: aotsxy2pix(aotsxy, scale, aotsxyRef, inst_angle=0.0, instrument=instruments.default_inst)
 
-   
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-   ..
-       !! processed by numpydoc !!
 
 .. py:function:: pix2xyarcsec(xypix, phi, scale, sgra)
 
@@ -291,91 +191,15 @@ Attributes
 
 .. py:function:: getScale(hdr, instrument=instruments.default_inst)
 
-   
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-   ..
-       !! processed by numpydoc !!
 
 .. py:function:: getPA(hdr, instrument=instruments.default_inst)
 
-   
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-   ..
-       !! processed by numpydoc !!
 
 .. py:function:: getCentralWavelength(hdr, instrument=instruments.default_inst)
 
-   
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-   ..
-       !! processed by numpydoc !!
 
 .. py:function:: calcOverhead(tint, coadds, ndithers, nframes, reads, tread=0.181)
 
-   
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-   ..
-       !! processed by numpydoc !!
 
 .. py:function:: plotKeyword(keyword1, keyword2, imgList)
 

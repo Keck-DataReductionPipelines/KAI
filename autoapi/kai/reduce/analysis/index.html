@@ -112,7 +112,7 @@
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.analysis.plotPosError" title="kai.reduce.analysis.plotPosError"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plotPosError</span></code></a>(starlist, raw=False, suffix='', radius=4, magCutOff=15.0, title=True)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.analysis.plotPosError" title="kai.reduce.analysis.plotPosError"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plotPosError</span></code></a>(starlist[, raw, suffix, radius, ...])</p></td>
 <td><p>Make three standard figures that show the data quality</p></td>
 </tr>
 </tbody>
@@ -126,18 +126,18 @@ This includes running starfinder, calibrating, and extracting positional
 and photometric errors via align_rms.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="kai.reduce.analysis.Analysis.prepStarfinder">
-<span class="sig-name descname"><span class="pre">prepStarfinder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">targetName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">targetCoords</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">psfStars</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filterName</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/analysis.html#Analysis.prepStarfinder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.analysis.Analysis.prepStarfinder" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">prepStarfinder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">targetName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">targetCoords</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">psfStars</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filterName</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/analysis.html#Analysis.prepStarfinder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.analysis.Analysis.prepStarfinder" title="Permalink to this definition"></a></dt>
 <dd><p>Creates a _psf.list file and saves it in the source_list/ directory.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="kai.reduce.analysis.Analysis.analyzeCombo">
-<span class="sig-name descname"><span class="pre">analyzeCombo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/analysis.html#Analysis.analyzeCombo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.analysis.Analysis.analyzeCombo" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">analyzeCombo</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/analysis.html#Analysis.analyzeCombo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.analysis.Analysis.analyzeCombo" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="kai.reduce.analysis.Analysis.analyzeClean">
-<span class="sig-name descname"><span class="pre">analyzeClean</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/analysis.html#Analysis.analyzeClean"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.analysis.Analysis.analyzeClean" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">analyzeClean</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/analysis.html#Analysis.analyzeClean"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.analysis.Analysis.analyzeClean" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -147,37 +147,37 @@ and photometric errors via align_rms.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="kai.reduce.analysis.Analysis.starfinderCombo">
-<span class="sig-name descname"><span class="pre">starfinderCombo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">oldPsf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/analysis.html#Analysis.starfinderCombo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.analysis.Analysis.starfinderCombo" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">starfinderCombo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">oldPsf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/analysis.html#Analysis.starfinderCombo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.analysis.Analysis.starfinderCombo" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="kai.reduce.analysis.Analysis.starfinderClean">
-<span class="sig-name descname"><span class="pre">starfinderClean</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/analysis.html#Analysis.starfinderClean"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.analysis.Analysis.starfinderClean" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">starfinderClean</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/analysis.html#Analysis.starfinderClean"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.analysis.Analysis.starfinderClean" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="kai.reduce.analysis.Analysis.starfinderCleanLoop">
-<span class="sig-name descname"><span class="pre">starfinderCleanLoop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/analysis.html#Analysis.starfinderCleanLoop"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.analysis.Analysis.starfinderCleanLoop" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">starfinderCleanLoop</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/analysis.html#Analysis.starfinderCleanLoop"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.analysis.Analysis.starfinderCleanLoop" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="kai.reduce.analysis.Analysis.calibrateCombo">
-<span class="sig-name descname"><span class="pre">calibrateCombo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/analysis.html#Analysis.calibrateCombo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.analysis.Analysis.calibrateCombo" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">calibrateCombo</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/analysis.html#Analysis.calibrateCombo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.analysis.Analysis.calibrateCombo" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="kai.reduce.analysis.Analysis.calibrateClean">
-<span class="sig-name descname"><span class="pre">calibrateClean</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/analysis.html#Analysis.calibrateClean"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.analysis.Analysis.calibrateClean" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">calibrateClean</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/analysis.html#Analysis.calibrateClean"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.analysis.Analysis.calibrateClean" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="kai.reduce.analysis.Analysis.alignCombo">
-<span class="sig-name descname"><span class="pre">alignCombo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/analysis.html#Analysis.alignCombo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.analysis.Analysis.alignCombo" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">alignCombo</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/analysis.html#Analysis.alignCombo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.analysis.Analysis.alignCombo" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="kai.reduce.analysis.Analysis.alignClean">
-<span class="sig-name descname"><span class="pre">alignClean</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/analysis.html#Analysis.alignClean"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.analysis.Analysis.alignClean" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">alignClean</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/analysis.html#Analysis.alignClean"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.analysis.Analysis.alignClean" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>

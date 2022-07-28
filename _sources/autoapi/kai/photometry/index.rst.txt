@@ -3,12 +3,6 @@
 
 .. py:module:: kai.photometry
 
-.. autoapi-nested-parse::
-
-   
-   ..
-       !! processed by numpydoc !!
-
 
 Module Contents
 ---------------
@@ -30,69 +24,12 @@ Functions
 
 .. py:function:: setup_phot(imageRoot, silent=False, apertures=[25, 50, 75, 100, 125, 150, 175, 200], sky_annulus=200, sky_dannulus=50, zmag=0)
 
-   
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-   ..
-       !! processed by numpydoc !!
 
 .. py:function:: run_phot(imageRoot, silent=False, apertures=[25, 50, 75, 100, 125, 150, 175, 200], sky_annulus=200, sky_dannulus=50, zmag=0)
 
-   
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-   ..
-       !! processed by numpydoc !!
 
 .. py:function:: get_phot_output(output, silent=False)
 
-   
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-   ..
-       !! processed by numpydoc !!
 
 .. py:function:: get_filter_profile(filter)
 
@@ -150,23 +87,4 @@ Functions
 
 .. py:function:: test_atmosphere_profile_interp()
 
-   
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-   ..
-       !! processed by numpydoc !!
 

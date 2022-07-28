@@ -3,12 +3,6 @@
 
 .. py:module:: kai.instruments
 
-.. autoapi-nested-parse::
-
-   
-   ..
-       !! processed by numpydoc !!
-
 
 Module Contents
 ---------------
@@ -39,358 +33,55 @@ Attributes
 
    
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-   ..
-       !! processed by numpydoc !!
-
 .. py:class:: Instrument
 
    Bases: :py:obj:`object`
 
-   
+   .. py:method:: get_bad_pixel_mask_name()
 
 
+   .. py:method:: get_filter_name(hdr)
 
 
+   .. py:method:: get_plate_scale(hdr)
 
 
+   .. py:method:: get_position_angle(hdr)
 
 
+   .. py:method:: get_parallactic_angle(hdr)
 
 
+   .. py:method:: get_instrument_angle(hdr)
 
 
+   .. py:method:: get_central_wavelength(hdr)
 
 
+   .. py:method:: get_gain(hdr)
 
 
-   ..
-       !! processed by numpydoc !!
-   .. py:method:: get_bad_pixel_mask_name(self)
+   .. py:method:: make_filenames(files, rootDir='', prefix='n')
 
-      
 
+   .. py:method:: get_distortion_maps(date)
 
 
+   .. py:method:: get_align_type(errors=False)
 
 
+   .. py:method:: get_saturation_level()
 
-
-
-
-
-
-
-
-
-
-
-      ..
-          !! processed by numpydoc !!
-
-   .. py:method:: get_filter_name(self, hdr)
-
-      
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      ..
-          !! processed by numpydoc !!
-
-   .. py:method:: get_plate_scale(self, hdr)
-
-      
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      ..
-          !! processed by numpydoc !!
-
-   .. py:method:: get_position_angle(self, hdr)
-
-      
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      ..
-          !! processed by numpydoc !!
-
-   .. py:method:: get_parallactic_angle(self, hdr)
-
-      
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      ..
-          !! processed by numpydoc !!
-
-   .. py:method:: get_instrument_angle(self, hdr)
-
-      
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      ..
-          !! processed by numpydoc !!
-
-   .. py:method:: get_central_wavelength(self, hdr)
-
-      
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      ..
-          !! processed by numpydoc !!
-
-   .. py:method:: get_gain(self, hdr)
-
-      
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      ..
-          !! processed by numpydoc !!
-
-   .. py:method:: make_filenames(self, files, rootDir='', prefix='n')
-
-      
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      ..
-          !! processed by numpydoc !!
-
-   .. py:method:: get_distortion_maps(self, date)
-
-      
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      ..
-          !! processed by numpydoc !!
-
-   .. py:method:: get_align_type(self, errors=False)
-
-      
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      ..
-          !! processed by numpydoc !!
-
-   .. py:method:: get_saturation_level(self)
-
-      
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      ..
-          !! processed by numpydoc !!
 
 
 .. py:class:: NIRC2
 
    Bases: :py:obj:`Instrument`
 
-   
+   .. py:method:: get_filter_name(hdr)
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-   ..
-       !! processed by numpydoc !!
-   .. py:method:: get_filter_name(self, hdr)
-
-      
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      ..
-          !! processed by numpydoc !!
-
-   .. py:method:: get_plate_scale(self, hdr)
+   .. py:method:: get_plate_scale(hdr)
 
       
       Return the plate scale in arcsec/pixel.
@@ -413,7 +104,7 @@ Attributes
       ..
           !! processed by numpydoc !!
 
-   .. py:method:: get_position_angle(self, hdr)
+   .. py:method:: get_position_angle(hdr)
 
       
       Get the sky PA in degrees East of North. 
@@ -436,7 +127,7 @@ Attributes
       ..
           !! processed by numpydoc !!
 
-   .. py:method:: get_parallactic_angle(self, hdr)
+   .. py:method:: get_parallactic_angle(hdr)
 
       
       Get the parallactic angle in degrees East of North
@@ -459,29 +150,10 @@ Attributes
       ..
           !! processed by numpydoc !!
 
-   .. py:method:: get_instrument_angle(self, hdr)
-
-      
+   .. py:method:: get_instrument_angle(hdr)
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      ..
-          !! processed by numpydoc !!
-
-   .. py:method:: get_central_wavelength(self, hdr)
+   .. py:method:: get_central_wavelength(hdr)
 
       
       Return the central wavelength of the filter for 
@@ -505,51 +177,13 @@ Attributes
       ..
           !! processed by numpydoc !!
 
-   .. py:method:: get_gain(self, hdr)
-
-      
+   .. py:method:: get_gain(hdr)
 
 
+   .. py:method:: make_filenames(files, rootDir='', prefix='n')
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-      ..
-          !! processed by numpydoc !!
-
-   .. py:method:: make_filenames(self, files, rootDir='', prefix='n')
-
-      
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      ..
-          !! processed by numpydoc !!
-
-   .. py:method:: get_distortion_maps(self, hdr)
+   .. py:method:: get_distortion_maps(hdr)
 
       
 
@@ -572,29 +206,10 @@ Attributes
       ..
           !! processed by numpydoc !!
 
-   .. py:method:: get_align_type(self, hdr, errors=False)
-
-      
+   .. py:method:: get_align_type(hdr, errors=False)
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      ..
-          !! processed by numpydoc !!
-
-   .. py:method:: get_saturation_level(self)
+   .. py:method:: get_saturation_level()
 
       
       Set to the 95% saturation threshold in DN.
@@ -642,29 +257,10 @@ Attributes
 
    ..
        !! processed by numpydoc !!
-   .. py:method:: get_filter_name(self, hdr)
-
-      
+   .. py:method:: get_filter_name(hdr)
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      ..
-          !! processed by numpydoc !!
-
-   .. py:method:: get_plate_scale(self, hdr)
+   .. py:method:: get_plate_scale(hdr)
 
       
       Return the plate scale in arcsec/pix.
@@ -687,7 +283,7 @@ Attributes
       ..
           !! processed by numpydoc !!
 
-   .. py:method:: get_position_angle(self, hdr)
+   .. py:method:: get_position_angle(hdr)
 
       
       Get the sky PA in degrees East of North. 
@@ -710,7 +306,7 @@ Attributes
       ..
           !! processed by numpydoc !!
 
-   .. py:method:: get_instrument_angle(self, hdr)
+   .. py:method:: get_instrument_angle(hdr)
 
       
       Get the angle of the instrument w.r.t. to the telescope or 
@@ -734,7 +330,7 @@ Attributes
       ..
           !! processed by numpydoc !!
 
-   .. py:method:: get_parallactic_angle(self, hdr)
+   .. py:method:: get_parallactic_angle(hdr)
 
       
       Get the parallactic angle in degrees East of North
@@ -757,7 +353,7 @@ Attributes
       ..
           !! processed by numpydoc !!
 
-   .. py:method:: get_central_wavelength(self, hdr)
+   .. py:method:: get_central_wavelength(hdr)
 
       
       Return the central wavelength of the filter for 
@@ -781,51 +377,13 @@ Attributes
       ..
           !! processed by numpydoc !!
 
-   .. py:method:: get_gain(self, hdr)
-
-      
+   .. py:method:: get_gain(hdr)
 
 
+   .. py:method:: make_filenames(files, rootDir='', prefix='')
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-      ..
-          !! processed by numpydoc !!
-
-   .. py:method:: make_filenames(self, files, rootDir='', prefix='')
-
-      
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      ..
-          !! processed by numpydoc !!
-
-   .. py:method:: flip_images(self, files, rootDir='')
+   .. py:method:: flip_images(files, rootDir='')
 
       
       Flip images (as they come from the detector flipped) and
@@ -849,73 +407,16 @@ Attributes
       ..
           !! processed by numpydoc !!
 
-   .. py:method:: subtract_reference_pixels(self, img)
-
-      
+   .. py:method:: subtract_reference_pixels(img)
 
 
+   .. py:method:: get_distortion_maps(hdr)
 
 
+   .. py:method:: get_align_type(hdr, errors=False)
 
 
-
-
-
-
-
-
-
-
-
-
-      ..
-          !! processed by numpydoc !!
-
-   .. py:method:: get_distortion_maps(self, hdr)
-
-      
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      ..
-          !! processed by numpydoc !!
-
-   .. py:method:: get_align_type(self, hdr, errors=False)
-
-      
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      ..
-          !! processed by numpydoc !!
-
-   .. py:method:: get_saturation_level(self)
+   .. py:method:: get_saturation_level()
 
       
       Set to the 95% saturation threshold in DN.
@@ -943,22 +444,4 @@ Attributes
    
 
    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-   ..
-       !! processed by numpydoc !!
 

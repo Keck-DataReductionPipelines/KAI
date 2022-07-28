@@ -3,12 +3,6 @@
 
 .. py:module:: kai.reduce.align_rms
 
-.. autoapi-nested-parse::
-
-   
-   ..
-       !! processed by numpydoc !!
-
 
 Module Contents
 ---------------
@@ -29,25 +23,6 @@ Functions
 
 .. py:function:: main(argv=None)
 
-   
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-   ..
-       !! processed by numpydoc !!
 
 .. py:function:: run(args=None)
 
@@ -74,67 +49,10 @@ Functions
 
 .. py:function:: trim_stars(s, options)
 
-   
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-   ..
-       !! processed by numpydoc !!
 
 .. py:function:: calc_error(v_msk, v_avg, cnt, options)
 
-   
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-   ..
-       !! processed by numpydoc !!
 
 .. py:function:: parse_options(args)
 
-   
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-   ..
-       !! processed by numpydoc !!
 
