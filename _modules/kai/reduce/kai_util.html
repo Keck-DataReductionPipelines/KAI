@@ -244,39 +244,28 @@
     
     <span class="k">return</span> <span class="p">[</span><span class="n">d_x</span><span class="p">,</span> <span class="n">d_y</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="aotsxy2pix"><a class="viewcode-back" href="../../../autoapi/kai/reduce/kai_util/index.html#kai.reduce.kai_util.aotsxy2pix">[docs]</a><span class="k">def</span> <span class="nf">aotsxy2pix</span><span class="p">(</span><span class="n">aotsxy</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">aotsxyRef</span><span class="p">,</span> <span class="n">inst_angle</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
-               <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">):</span>
+<div class="viewcode-block" id="aotsxy2pix"><a class="viewcode-back" href="../../../autoapi/kai/reduce/kai_util/index.html#kai.reduce.kai_util.aotsxy2pix">[docs]</a><span class="k">def</span> <span class="nf">aotsxy2pix</span><span class="p">(</span><span class="n">aotsxy</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">aotsxyRef</span><span class="p">,</span> <span class="n">inst_angle</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
     <span class="c1"># Determine pixel shifts from AOTSX and AOTSY positions.</span>
     
-    <span class="n">x</span> <span class="o">=</span> <span class="mf">0.0</span>
-    <span class="n">y</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">aotsxy</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">aotsxy</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">x_ref</span> <span class="o">=</span> <span class="n">aotsxyRef</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">y_ref</span> <span class="o">=</span> <span class="n">aotsxyRef</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
     
-    <span class="k">if</span> <span class="n">instrument</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;NIRC2&#39;</span><span class="p">:</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="n">aotsxy</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="n">y</span> <span class="o">=</span> <span class="n">aotsxy</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-    <span class="k">elif</span> <span class="n">instrument</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;OSIRIS&#39;</span><span class="p">:</span>
-        <span class="c1"># For OSIRIS:</span>
-        <span class="c1"># We flip the image prior to reduction</span>
-        <span class="c1"># AOTSY gives x offset</span>
-        <span class="c1"># AOTSX gives -y offset</span>
-        
-        <span class="n">x</span> <span class="o">=</span> <span class="n">aotsxy</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-        <span class="n">y</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.</span> <span class="o">*</span> <span class="n">aotsxy</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-
     <span class="c1"># AOTSX,Y are in units of mm. Conversion is 0.727 mm/arcsec</span>
-    <span class="n">d_x</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">aotsxyRef</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="mf">0.727</span>
-    <span class="n">d_y</span> <span class="o">=</span> <span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="n">aotsxyRef</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="mf">0.727</span>
+    <span class="n">d_x</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">x_ref</span><span class="p">)</span> <span class="o">/</span> <span class="mf">0.727</span>
+    <span class="n">d_y</span> <span class="o">=</span> <span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="n">y_ref</span><span class="p">)</span> <span class="o">/</span> <span class="mf">0.727</span>
     <span class="n">d_x</span> <span class="o">=</span> <span class="n">d_x</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span><span class="o">/</span><span class="n">scale</span><span class="p">)</span>
     <span class="n">d_y</span> <span class="o">=</span> <span class="n">d_y</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span><span class="o">/</span><span class="n">scale</span><span class="p">)</span>
-
+    
     <span class="c1"># Rotate to the instrument PA</span>
     <span class="n">cosa</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="o">-</span><span class="n">inst_angle</span><span class="p">))</span>
     <span class="n">sina</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="o">-</span><span class="n">inst_angle</span><span class="p">))</span>
-
+    
     <span class="n">rot_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">cosa</span><span class="p">,</span> <span class="n">sina</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="n">sina</span><span class="p">,</span> <span class="n">cosa</span><span class="p">]])</span>
     <span class="n">coo_ao</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">d_x</span><span class="p">,</span> <span class="n">d_y</span><span class="p">])</span>
     <span class="n">coo_inst</span> <span class="o">=</span> <span class="n">rot_matrix</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">coo_ao</span><span class="p">)</span>
-
+    
     <span class="n">d_x</span> <span class="o">=</span> <span class="n">coo_inst</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">d_y</span> <span class="o">=</span> <span class="n">coo_inst</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
     

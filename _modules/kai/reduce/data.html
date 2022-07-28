@@ -115,7 +115,8 @@
           <span class="n">skyscale</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">skyfile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">angOff</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">cent_box</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
           <span class="n">fixDAR</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">use_koa_weather</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
           <span class="n">raw_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">clean_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-          <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">,</span> <span class="n">check_ref_loc</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+          <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">,</span> <span class="n">check_ref_loc</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+          <span class="n">ref_offset_method</span><span class="o">=</span><span class="s1">&#39;aotsxy&#39;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Clean near infrared NIRC2 or OSIRIS images.</span>
 
@@ -188,6 +189,11 @@
 <span class="sd">        assumes that clean files will be stored in &#39;../clean&#39;</span>
 <span class="sd">    instrument : instruments object, optional</span>
 <span class="sd">        Instrument of data. Default is `instruments.default_inst`</span>
+<span class="sd">    ref_offset_method : str, default=&#39;aotsxy&#39;</span>
+<span class="sd">        Method to calculate offsets from reference image.</span>
+<span class="sd">        Options are &#39;aotsxy&#39; or &#39;radec&#39;.</span>
+<span class="sd">        In images where &#39;aotsxy&#39; keywords aren&#39;t reliable, &#39;radec&#39; calculated</span>
+<span class="sd">        offsets may work better.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     
     <span class="c1"># Make sure directory for current passband exists and switch into it</span>
@@ -372,7 +378,7 @@
 
             <span class="n">clean_makecoo</span><span class="p">(</span><span class="n">_ce</span><span class="p">,</span> <span class="n">_cc</span><span class="p">,</span> <span class="n">refSrc</span><span class="p">,</span> <span class="n">strSrc</span><span class="p">,</span> <span class="n">aotsxyRef</span><span class="p">,</span> <span class="n">radecRef</span><span class="p">,</span>
                           <span class="n">instrument</span><span class="o">=</span><span class="n">instrument</span><span class="p">,</span> <span class="n">check_loc</span><span class="o">=</span><span class="n">check_ref_loc</span><span class="p">,</span>
-                          <span class="n">cent_box</span><span class="o">=</span><span class="n">cent_box</span><span class="p">)</span>
+                          <span class="n">cent_box</span><span class="o">=</span><span class="n">cent_box</span><span class="p">,</span> <span class="n">offset_method</span><span class="o">=</span><span class="n">ref_offset_method</span><span class="p">)</span>
 
             <span class="c1">### Move to the clean directory ###</span>
             <span class="n">util</span><span class="o">.</span><span class="n">rmall</span><span class="p">([</span><span class="n">clean</span> <span class="o">+</span> <span class="n">_cc</span><span class="p">,</span> <span class="n">clean</span> <span class="o">+</span> <span class="n">_coo</span><span class="p">,</span> <span class="n">clean</span> <span class="o">+</span> <span class="n">_rcoo</span><span class="p">,</span>
@@ -1963,8 +1969,9 @@
     <span class="k">return</span> <span class="n">bkg</span></div>
 
 <div class="viewcode-block" id="clean_makecoo"><a class="viewcode-back" href="../../../autoapi/kai/reduce/data/index.html#kai.reduce.data.clean_makecoo">[docs]</a><span class="k">def</span> <span class="nf">clean_makecoo</span><span class="p">(</span><span class="n">_ce</span><span class="p">,</span> <span class="n">_cc</span><span class="p">,</span> <span class="n">refSrc</span><span class="p">,</span> <span class="n">strSrc</span><span class="p">,</span> <span class="n">aotsxyRef</span><span class="p">,</span> <span class="n">radecRef</span><span class="p">,</span>
-                  <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">,</span> <span class="n">check_loc</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                  <span class="n">update_fits</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">cent_box</span><span class="o">=</span><span class="mi">12</span><span class="p">):</span>
+        <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">,</span> <span class="n">check_loc</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">update_fits</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">cent_box</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
+        <span class="n">offset_method</span><span class="o">=</span><span class="s1">&#39;aotsxy&#39;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Make the *.coo file for this science image. Use the difference</span>
 <span class="sd">    between the AOTSX/Y keywords from a reference image and each science</span>
 <span class="sd">    image to tell how the positions of the two frames are related.</span>
@@ -1984,10 +1991,19 @@
 <span class="sd">    @param radecRef: The RA/DEC header values from the reference image.</span>
 <span class="sd">    @type radecRef: array of floats with length=2 [x, y]</span>
 
-<span class="sd">    check_loc (bool):  If True the reference source is recentered for this frame.</span>
-<span class="sd">                     Use False if the offsets are large enough to move the reference source off of the image</span>
-<span class="sd">    update_fits : update the fits files with the reference pixel values</span>
-<span class="sd">    cent_box : box size to center the source (default: 12)</span>
+<span class="sd">    check_loc : bool, default=True</span>
+<span class="sd">        If True the reference source is recentered for this frame.</span>
+<span class="sd">        Use False if the offsets are large enough to move the reference source</span>
+<span class="sd">        off of the image.</span>
+<span class="sd">    update_fits : bool, default=True</span>
+<span class="sd">        Update the fits files with the reference pixel values</span>
+<span class="sd">    cent_box : float, default: 12</span>
+<span class="sd">        Box size to center the source</span>
+<span class="sd">    offset_method : str, default=&#39;aotsxy&#39;</span>
+<span class="sd">        Method to calculate offsets from reference image.</span>
+<span class="sd">        Options are &#39;aotsxy&#39; or &#39;radec&#39;.</span>
+<span class="sd">        In images where &#39;aotsxy&#39; keywords aren&#39;t reliable, &#39;radec&#39; calculated</span>
+<span class="sd">        offsets may work better.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">hdr</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getheader</span><span class="p">(</span><span class="n">_ce</span><span class="p">,</span> <span class="n">ignore_missing_end</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -2003,11 +2019,14 @@
     <span class="n">inst_angle</span> <span class="o">=</span> <span class="n">instrument</span><span class="o">.</span><span class="n">get_instrument_angle</span><span class="p">(</span><span class="n">hdr</span><span class="p">)</span>
 
     <span class="c1"># Calculate the pixel offsets from the reference image</span>
-    <span class="c1"># We&#39;ve been using aotsxy2pix, but the keywords are wrong</span>
-    <span class="c1"># for 07maylgs and 07junlgs</span>
-    <span class="c1">#d_xy = kai_util.radec2pix(radec, phi, scale, radecRef)</span>
-    <span class="n">d_xy</span> <span class="o">=</span> <span class="n">kai_util</span><span class="o">.</span><span class="n">aotsxy2pix</span><span class="p">(</span><span class="n">aotsxy</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">aotsxyRef</span><span class="p">,</span> <span class="n">inst_angle</span><span class="o">=</span><span class="n">inst_angle</span><span class="p">,</span>
-                               <span class="n">instrument</span><span class="o">=</span><span class="n">instrument</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">offset_method</span> <span class="o">==</span> <span class="s1">&#39;radec&#39;</span><span class="p">:</span>
+        <span class="n">d_xy</span> <span class="o">=</span> <span class="n">kai_util</span><span class="o">.</span><span class="n">radec2pix</span><span class="p">(</span><span class="n">radec</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">radecRef</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">offset_method</span> <span class="o">==</span> <span class="s1">&#39;aotsxy&#39;</span><span class="p">:</span>
+        <span class="n">d_xy</span> <span class="o">=</span> <span class="n">kai_util</span><span class="o">.</span><span class="n">aotsxy2pix</span><span class="p">(</span><span class="n">aotsxy</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">aotsxyRef</span><span class="p">,</span>
+                                   <span class="n">inst_angle</span><span class="o">=</span><span class="n">inst_angle</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">d_xy</span> <span class="o">=</span> <span class="n">kai_util</span><span class="o">.</span><span class="n">aotsxy2pix</span><span class="p">(</span><span class="n">aotsxy</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">aotsxyRef</span><span class="p">,</span>
+                                   <span class="n">inst_angle</span><span class="o">=</span><span class="n">inst_angle</span><span class="p">)</span>
 
     <span class="c1"># In the new image, find the REF and STRL coords</span>
     <span class="n">xref</span> <span class="o">=</span> <span class="n">refSrc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">d_xy</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>

@@ -89,7 +89,7 @@ Attributes
 
    
 
-.. py:function:: clean(files, nite, wave, refSrc, strSrc, badColumns=None, field=None, skyscale=False, skyfile=None, angOff=0.0, cent_box=12, fixDAR=True, use_koa_weather=False, raw_dir=None, clean_dir=None, instrument=instruments.default_inst, check_ref_loc=True)
+.. py:function:: clean(files, nite, wave, refSrc, strSrc, badColumns=None, field=None, skyscale=False, skyfile=None, angOff=0.0, cent_box=12, fixDAR=True, use_koa_weather=False, raw_dir=None, clean_dir=None, instrument=instruments.default_inst, check_ref_loc=True, ref_offset_method='aotsxy')
 
    
    Clean near infrared NIRC2 or OSIRIS images.
@@ -176,6 +176,12 @@ Attributes
 
        **instrument** : instruments object, optional
            Instrument of data. Default is `instruments.default_inst`
+
+       **ref_offset_method** : str, default='aotsxy'
+           Method to calculate offsets from reference image.
+           Options are 'aotsxy' or 'radec'.
+           In images where 'aotsxy' keywords aren't reliable, 'radec' calculated
+           offsets may work better.
 
 
 
@@ -896,7 +902,7 @@ Attributes
    ..
        !! processed by numpydoc !!
 
-.. py:function:: clean_makecoo(_ce, _cc, refSrc, strSrc, aotsxyRef, radecRef, instrument=instruments.default_inst, check_loc=True, update_fits=True, cent_box=12)
+.. py:function:: clean_makecoo(_ce, _cc, refSrc, strSrc, aotsxyRef, radecRef, instrument=instruments.default_inst, check_loc=True, update_fits=True, cent_box=12, offset_method='aotsxy')
 
    
    Make the *.coo file for this science image. Use the difference
@@ -918,10 +924,19 @@ Attributes
    @param radecRef: The RA/DEC header values from the reference image.
    @type radecRef: array of floats with length=2 [x, y]
 
-   check_loc (bool):  If True the reference source is recentered for this frame.
-                    Use False if the offsets are large enough to move the reference source off of the image
-   update_fits : update the fits files with the reference pixel values
-   cent_box : box size to center the source (default: 12)
+   check_loc : bool, default=True
+       If True the reference source is recentered for this frame.
+       Use False if the offsets are large enough to move the reference source
+       off of the image.
+   update_fits : bool, default=True
+       Update the fits files with the reference pixel values
+   cent_box : float, default: 12
+       Box size to center the source
+   offset_method : str, default='aotsxy'
+       Method to calculate offsets from reference image.
+       Options are 'aotsxy' or 'radec'.
+       In images where 'aotsxy' keywords aren't reliable, 'radec' calculated
+       offsets may work better.
 
 
 

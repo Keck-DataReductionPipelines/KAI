@@ -108,7 +108,7 @@ Attributes
    ..
        !! processed by numpydoc !!
 
-.. py:function:: aotsxy2pix(aotsxy, scale, aotsxyRef, inst_angle=0.0, instrument=instruments.default_inst)
+.. py:function:: aotsxy2pix(aotsxy, scale, aotsxyRef, inst_angle=0.0)
 
 
 .. py:function:: pix2xyarcsec(xypix, phi, scale, sgra)
