@@ -2006,7 +2006,8 @@
     <span class="c1"># We&#39;ve been using aotsxy2pix, but the keywords are wrong</span>
     <span class="c1"># for 07maylgs and 07junlgs</span>
     <span class="c1">#d_xy = kai_util.radec2pix(radec, phi, scale, radecRef)</span>
-    <span class="n">d_xy</span> <span class="o">=</span> <span class="n">kai_util</span><span class="o">.</span><span class="n">aotsxy2pix</span><span class="p">(</span><span class="n">aotsxy</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">aotsxyRef</span><span class="p">,</span> <span class="n">inst_angle</span><span class="o">=</span><span class="n">inst_angle</span><span class="p">)</span>
+    <span class="n">d_xy</span> <span class="o">=</span> <span class="n">kai_util</span><span class="o">.</span><span class="n">aotsxy2pix</span><span class="p">(</span><span class="n">aotsxy</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">aotsxyRef</span><span class="p">,</span> <span class="n">inst_angle</span><span class="o">=</span><span class="n">inst_angle</span><span class="p">,</span>
+                               <span class="n">instrument</span><span class="o">=</span><span class="n">instrument</span><span class="p">)</span>
 
     <span class="c1"># In the new image, find the REF and STRL coords</span>
     <span class="n">xref</span> <span class="o">=</span> <span class="n">refSrc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">d_xy</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
