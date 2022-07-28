@@ -1938,7 +1938,8 @@ def clean_makecoo(_ce, _cc, refSrc, strSrc, aotsxyRef, radecRef,
     # We've been using aotsxy2pix, but the keywords are wrong
     # for 07maylgs and 07junlgs
     #d_xy = kai_util.radec2pix(radec, phi, scale, radecRef)
-    d_xy = kai_util.aotsxy2pix(aotsxy, scale, aotsxyRef, inst_angle=inst_angle)
+    d_xy = kai_util.aotsxy2pix(aotsxy, scale, aotsxyRef, inst_angle=inst_angle,
+                               instrument=instrument)
 
     # In the new image, find the REF and STRL coords
     xref = refSrc[0] + d_xy[0]
