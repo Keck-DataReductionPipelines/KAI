@@ -454,6 +454,7 @@ def combine(files, wave, outroot, field=None, outSuffix=None,
         Default = None, no weighting.
     fwhm_max : float, default=0
         The maximum allowed FWHM for keeping frames when trimming is turned on.
+        If set to default=0 and trim=True, then we use FWHM < 1.25 * FWHM.min().
     submaps : int, default=0
         Set to the number of submaps to be made (def=0).
     fixDAR : boolean, default = True
