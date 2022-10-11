@@ -30,7 +30,6 @@ def lin_correction(file, instrument=instruments.default_inst):
     
     # Perform correction
     num_coadds = im_header['COADDS']
-    print(num_coadds)
     
     x = im_data / num_coadds
     coeffs = instrument.get_lin_corr_coeffs()
