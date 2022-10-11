@@ -23,13 +23,14 @@ def lin_correction(file, instrument=instruments.default_inst):
         Instrument of data. Default is `instruments.default_inst`
     """
     # Extract header and image data
-    hdul = fits.open(file)
+    hdul = fits.open(file, mode='update', ignore_missing_end=True)
     
     im_header = hdul[0].header
     im_data = hdul[0].data
     
     # Perform correction
     num_coadds = im_header['COADDS']
+    print(num_coadds)
     
     x = im_data / num_coadds
     coeffs = instrument.get_lin_corr_coeffs()
@@ -41,7 +42,7 @@ def lin_correction(file, instrument=instruments.default_inst):
     # Write out corrected image data to file
     hdul[0].data = im_data_corrected
     
-    hdul.writeto(file, overwrite=True)
-    hdul.close()
+    hdul.flush(output_verify='ignore')
+    hdul.close(output_verify='ignore')
     
     return
