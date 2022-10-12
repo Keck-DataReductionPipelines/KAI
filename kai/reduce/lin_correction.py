@@ -23,7 +23,7 @@ def lin_correction(file, instrument=instruments.default_inst):
         Instrument of data. Default is `instruments.default_inst`
     """
     # Extract header and image data
-    hdul = fits.open(file)
+    hdul = fits.open(file, ignore_missing_end=True)
     
     im_header = hdul[0].header
     im_data = hdul[0].data
@@ -41,7 +41,7 @@ def lin_correction(file, instrument=instruments.default_inst):
     # Write out corrected image data to file
     hdul[0].data = im_data_corrected
     
-    hdul.writeto(file, overwrite=True)
+    hdul.writeto(file, overwrite=True, ignore_missing_end=True)
     hdul.close()
     
     return
