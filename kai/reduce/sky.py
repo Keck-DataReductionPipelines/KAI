@@ -154,7 +154,7 @@ def makesky(files, nite,
 
 
 def makesky_lp(files, nite, wave, number=3, rejectHsigma=None,
-               raw_dir=None,
+               raw_dir=None, lin_corr=False,
                instrument=instruments.default_inst):
     """
     Make L' skies by carefully treating the ROTPPOSN angle
@@ -177,6 +177,8 @@ def makesky_lp(files, nite, wave, number=3, rejectHsigma=None,
     raw_dir : str, optional
         Directory where raw files are stored. By default,
         assumes that raw files are stored in '../raw'
+    lin_corr : bool, default=False
+        Perform linearity correction. Currently only works for NIRC2 data.
     instrument : instruments object, optional
         Instrument of data. Default is `instruments.default_inst`
     """
@@ -208,12 +210,11 @@ def makesky_lp(files, nite, wave, number=3, rejectHsigma=None,
     data_sources_file = open(redDir + 'data_sources.txt', 'a')
     data_sources_file.write('---\n# Sky Files ({0})\n'.format(wave))
     
-    for cur_file in skies:
+    for cur_file in raw:
         out_line = '{0} ({1})\n'.format(cur_file, datetime.now())
         data_sources_file.write(out_line)
     
     data_sources_file.close()
-    
     
     _rawlis = skyDir + 'raw.lis'
     _nlis = skyDir + 'n.lis'
@@ -226,11 +227,16 @@ def makesky_lp(files, nite, wave, number=3, rejectHsigma=None,
 
     open(_rawlis, 'w').write('\n'.join(raw)+'\n')
     open(_nlis, 'w').write('\n'.join(skies)+'\n')
-
+    
     print('makesky_lp: Getting raw files')
     ir.imcopy('@' + _rawlis, '@' + _nlis, verbose='no')
     ir.hselect('@' + _nlis, "$I,ROTPPOSN", 'yes', Stdout=_skyRot) 
-
+    
+    # Perform linearity correction
+    if lin_corr:
+        for i in range(len(skies)):
+            lin_correction.lin_correction(skies[i], instrument=instrument)
+    
     # Read in the list of files and rotation angles
     files, angles = read_sky_rot_file(_skyRot)
 
