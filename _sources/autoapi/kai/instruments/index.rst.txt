@@ -412,6 +412,26 @@ Attributes
 
    .. py:method:: get_distortion_maps(hdr)
 
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
 
    .. py:method:: get_align_type(hdr, errors=False)
 

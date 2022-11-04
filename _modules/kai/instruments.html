@@ -16,6 +16,7 @@
         <script src="../../_static/underscore.js"></script>
         <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -54,9 +55,9 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../index.html">Module code</a> &raquo;</li>
-      <li>kai.instruments</li>
+      <li><a href="../../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">kai.instruments</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -275,8 +276,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">bad_pixel_mask</span> <span class="o">=</span> <span class="s1">&#39;osiris_img_mask.fits&#39;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">distCoef</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">distXgeoim</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">distYgeoim</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">distXgeoim</span> <span class="o">=</span> <span class="n">module_dir</span> <span class="o">+</span> <span class="s1">&#39;/reduce/distortion/OSIRIS_im_x_2021.fits&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">distYgeoim</span> <span class="o">=</span> <span class="n">module_dir</span> <span class="o">+</span> <span class="s1">&#39;/reduce/distortion/OSIRIS_im_y_2021.fits&#39;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">telescope</span> <span class="o">=</span> <span class="s1">&#39;Keck&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">telescope_diam</span> <span class="o">=</span> <span class="mf">10.5</span> <span class="c1"># telescope diameter in meters</span>
@@ -404,10 +405,21 @@
         <span class="k">return</span> <span class="n">new_img</span></div>
 
 <div class="viewcode-block" id="OSIRIS.get_distortion_maps"><a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.OSIRIS.get_distortion_maps">[docs]</a>    <span class="k">def</span> <span class="nf">get_distortion_maps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hdr</span><span class="p">):</span>
-        <span class="n">distXgeoim</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="n">distYgeoim</span> <span class="o">=</span> <span class="kc">None</span>
-
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Inputs</span>
+<span class="sd">        ----------</span>
+<span class="sd">        date : str</span>
+<span class="sd">            Date in string format such as &#39;2015-10-02&#39;.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">date</span> <span class="o">=</span> <span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;DATE-OBS&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">date</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">4</span><span class="p">])</span> <span class="o">&lt;=</span> <span class="mi">2020</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">distXgeoim</span> <span class="o">=</span> <span class="n">module_dir</span> <span class="o">+</span> <span class="s1">&#39;/reduce/distortion/OSIRIS_im_x_2020.fits&#39;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">distYgeoim</span> <span class="o">=</span> <span class="n">module_dir</span> <span class="o">+</span> <span class="s1">&#39;/reduce/distortion/OSIRIS_im_y_2020.fits&#39;</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">date</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">4</span><span class="p">])</span> <span class="o">&gt;=</span> <span class="mi">2021</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">distXgeoim</span> <span class="o">=</span> <span class="n">module_dir</span> <span class="o">+</span> <span class="s1">&#39;/reduce/distortion/OSIRIS_im_x_2021.fits&#39;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">distYgeoim</span> <span class="o">=</span> <span class="n">module_dir</span> <span class="o">+</span> <span class="s1">&#39;/reduce/distortion/OSIRIS_im_y_2021.fits&#39;</span>
         <span class="k">return</span> <span class="n">distXgeoim</span><span class="p">,</span> <span class="n">distYgeoim</span></div>
+
 
 <div class="viewcode-block" id="OSIRIS.get_align_type"><a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.OSIRIS.get_align_type">[docs]</a>    <span class="k">def</span> <span class="nf">get_align_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hdr</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="n">atype</span> <span class="o">=</span> <span class="mi">14</span>
