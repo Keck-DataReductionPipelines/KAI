@@ -207,8 +207,8 @@ class OSIRIS(Instrument):
         self.bad_pixel_mask = 'osiris_img_mask.fits'
 
         self.distCoef = ''
-        self.distXgeoim = None
-        self.distYgeoim = None
+        self.distXgeoim = module_dir + '/reduce/distortion/OSIRIS_im_x_2021.fits'
+        self.distYgeoim = module_dir + '/reduce/distortion/OSIRIS_im_y_2021.fits'
 
         self.telescope = 'Keck'
         self.telescope_diam = 10.5 # telescope diameter in meters
@@ -336,10 +336,21 @@ class OSIRIS(Instrument):
         return new_img
 
     def get_distortion_maps(self, hdr):
-        distXgeoim = None
-        distYgeoim = None
-
+        """
+        Inputs
+        ----------
+        date : str
+            Date in string format such as '2015-10-02'.
+        """
+        date = hdr['DATE-OBS']
+        if (float(date[0:4]) <= 2020):
+            self.distXgeoim = module_dir + '/reduce/distortion/OSIRIS_im_x_2020.fits'
+            self.distYgeoim = module_dir + '/reduce/distortion/OSIRIS_im_y_2020.fits'
+        elif (float(date[0:4]) >= 2021):
+            self.distXgeoim = module_dir + '/reduce/distortion/OSIRIS_im_x_2021.fits'
+            self.distYgeoim = module_dir + '/reduce/distortion/OSIRIS_im_y_2021.fits'
         return distXgeoim, distYgeoim
+
 
     def get_align_type(self, hdr, errors=False):
         atype = 14
