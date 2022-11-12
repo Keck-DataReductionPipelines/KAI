@@ -349,7 +349,7 @@ class OSIRIS(Instrument):
         elif (float(date[0:4]) >= 2021):
             self.distXgeoim = module_dir + '/reduce/distortion/OSIRIS_im_x_2021.fits'
             self.distYgeoim = module_dir + '/reduce/distortion/OSIRIS_im_y_2021.fits'
-        return distXgeoim, distYgeoim
+        return self.distXgeoim, self.distYgeoim
 
 
     def get_align_type(self, hdr, errors=False):
