@@ -1193,10 +1193,16 @@ def combine_drizzle(imgsize, cleanDir, roots, outroot, weights, shifts,
     mjd_weightedMean = mjd_weightedSum / np.sum(weights)
     time_obs = Time(mjd_weightedMean, format='mjd')
     
-    fits_f[0].header.set('MJD-OBS', mjd_weightedMean, 'Weighted modified julian date of combined observations')
+    fits_f[0].header.set(
+        'MJD-OBS', mjd_weightedMean,
+        'Weighted modified julian date of combined observations'
+    )
     
     ## Also update date field in header
-    fits_f[0].header.set('DATE', '{0}'.format(time_obs.fits), 'Weighted observation date')
+    fits_f[0].header.set(
+        'DATE', '{0}'.format(time_obs.fits),
+        'Weighted observation date'
+    )
     
     
     # Save to final fits file.
