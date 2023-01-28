@@ -51,6 +51,7 @@ def makelog(directory, outfile='image_log.txt', instrument=instruments.default_i
             # End of this line
             f.write('\n')
         else:
+            print(file)
             # First column is frame number
             frame = (hdr[ihk['filename']].strip())[:-5]
             f.write('%16s  ' % frame)

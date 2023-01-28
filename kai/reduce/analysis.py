@@ -173,7 +173,7 @@ class Analysis(object):
         self.cleanList = cleanList
         self.cleanFiles = []
         if cleanList != None:
-            _list = Table.read(self.dirClean + self.cleanList, format='ascii')
+            _list = Table.read(self.dirClean + self.cleanList, format='ascii.no_header')
             for ii in range(len(_list)):
                 fields = _list[_list.colnames[0]][ii].split('/')
                 filename = fields[-1].replace('.fits', '')
