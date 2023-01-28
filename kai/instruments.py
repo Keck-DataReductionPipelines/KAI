@@ -343,10 +343,10 @@ class OSIRIS(Instrument):
             Date in string format such as '2015-10-02'.
         """
         date = hdr['DATE-OBS']
-        if (float(date[0:4]+date[5:7]+date[8:10]) < 20201107):
+        if (float(date[0:4]+date[5:7]+date[8:10]) < 20201116):
             self.distXgeoim = module_dir + '/reduce/distortion/OSIRIS_im_x_2020.fits'
             self.distYgeoim = module_dir + '/reduce/distortion/OSIRIS_im_y_2020.fits'
-        elif (float(date[0:4]+date[5:7]+date[8:10]) >= 20201107):
+        elif (float(date[0:4]+date[5:7]+date[8:10]) >= 20201116):
             self.distXgeoim = module_dir + '/reduce/distortion/OSIRIS_im_x_2021.fits'
             self.distYgeoim = module_dir + '/reduce/distortion/OSIRIS_im_y_2021.fits'
         return self.distXgeoim, self.distYgeoim
