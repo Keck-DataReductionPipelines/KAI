@@ -30,12 +30,11 @@ Attributes
 
 
 .. py:data:: epoch
-   :annotation: = 20aug22os
+   :value: '20aug22os'
 
    
 
 .. py:data:: osiris
-   
 
    
 

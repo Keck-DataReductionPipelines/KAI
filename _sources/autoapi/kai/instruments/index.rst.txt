@@ -29,7 +29,6 @@ Attributes
 
 
 .. py:data:: module_dir
-   
 
    
 
@@ -461,7 +460,6 @@ Attributes
 
 
 .. py:data:: default_inst
-   
 
    
 

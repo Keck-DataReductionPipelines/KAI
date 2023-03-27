@@ -12,9 +12,6 @@
   <![endif]-->
   
         <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/underscore.js"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../../_static/doctools.js"></script>
         <script src="../../../_static/sphinx_highlight.js"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -27,11 +24,15 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../../index.html" class="icon icon-home"> KAI
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            KAI
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -55,7 +56,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
       <li class="breadcrumb-item active">kai.reduce.reduce_template_osiris</li>
       <li class="wy-breadcrumbs-aside">
@@ -114,7 +115,7 @@
 <span class="c1">#    - run this first thing for a new observing run.</span>
 <span class="c1">##########</span>
 <div class="viewcode-block" id="makelog_and_prep_images"><a class="viewcode-back" href="../../../autoapi/kai/reduce/reduce_template_osiris/index.html#kai.reduce.reduce_template_osiris.makelog_and_prep_images">[docs]</a><span class="k">def</span> <span class="nf">makelog_and_prep_images</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;Make an electronic log from all the files in the ../raw/ directory.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Make an electronic log from all the files in the ../raw/ directory.</span>
 <span class="sd">    The file will be called kai.log and stored in the same directory.</span>
 
 <span class="sd">    @author Jessica Lu</span>
@@ -150,7 +151,7 @@
 <span class="c1"># Reduce</span>
 <span class="c1">##########</span>
 <div class="viewcode-block" id="go_calib"><a class="viewcode-back" href="../../../autoapi/kai/reduce/reduce_template_osiris/index.html#kai.reduce.reduce_template_osiris.go_calib">[docs]</a><span class="k">def</span> <span class="nf">go_calib</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;Do the calibration reduction.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Do the calibration reduction.</span>
 
 <span class="sd">    @author Jessica Lu</span>
 <span class="sd">    @author Sylvana Yelda</span>
@@ -189,7 +190,7 @@
                    <span class="s1">&#39;supermask.fits&#39;</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">osiris</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="go"><a class="viewcode-back" href="../../../autoapi/kai/reduce/reduce_template_osiris/index.html#kai.reduce.reduce_template_osiris.go">[docs]</a><span class="k">def</span> <span class="nf">go</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Do the full data reduction.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1">##########</span>
@@ -248,7 +249,7 @@
 <span class="c1"># Jackknife</span>
 <span class="c1">############</span>
 <div class="viewcode-block" id="jackknife"><a class="viewcode-back" href="../../../autoapi/kai/reduce/reduce_template_osiris/index.html#kai.reduce.reduce_template_osiris.jackknife">[docs]</a><span class="k">def</span> <span class="nf">jackknife</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Perform the Jackknife data reduction. The methodology is as follows:</span>
 <span class="sd">    For N total images, there are N stacked images created by data.combine(),</span>
 <span class="sd">    each of these combo frames consists of N-1 images. The suffix &#39;_{i}&#39; is</span>

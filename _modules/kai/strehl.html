@@ -12,9 +12,6 @@
   <![endif]-->
   
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/underscore.js"></script>
-        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
         <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/js/theme.js"></script>
@@ -27,11 +24,15 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../index.html" class="icon icon-home"> KAI
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            KAI
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -55,7 +56,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
       <li class="breadcrumb-item active">kai.strehl</li>
       <li class="wy-breadcrumbs-aside">
@@ -81,7 +82,7 @@
 <span class="kn">import</span> <span class="nn">pdb</span>
 
 <div class="viewcode-block" id="calc_strehl"><a class="viewcode-back" href="../../autoapi/kai/strehl/index.html#kai.strehl.calc_strehl">[docs]</a><span class="k">def</span> <span class="nf">calc_strehl</span><span class="p">(</span><span class="n">file_list</span><span class="p">,</span> <span class="n">out_file</span><span class="p">,</span> <span class="n">apersize</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate the Strehl, FWHM, and RMS WFE for each image in a </span>
 <span class="sd">    list of files. The output is stored into the specified &lt;out_file&gt;</span>
 <span class="sd">    text file. The FWHM (and Strehl) is calculated over the specified </span>
@@ -272,7 +273,7 @@
     <span class="k">return</span> <span class="n">strehl</span><span class="p">,</span> <span class="n">fwhm</span><span class="p">,</span> <span class="n">rms_wfe</span></div>
 
 <div class="viewcode-block" id="calc_peak_flux_ratio"><a class="viewcode-back" href="../../autoapi/kai/strehl/index.html#kai.strehl.calc_peak_flux_ratio">[docs]</a><span class="k">def</span> <span class="nf">calc_peak_flux_ratio</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">coords</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">skysub</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    img : 2D numpy array</span>
 <span class="sd">        The image on which to calculate the flux ratio of the peak to a </span>
 <span class="sd">        wide-aperture.</span>
@@ -316,7 +317,7 @@
 
 <div class="viewcode-block" id="fit_gaussian2d"><a class="viewcode-back" href="../../autoapi/kai/strehl/index.html#kai.strehl.fit_gaussian2d">[docs]</a><span class="k">def</span> <span class="nf">fit_gaussian2d</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">coords</span><span class="p">,</span> <span class="n">boxsize</span><span class="p">,</span> <span class="n">plot</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                        <span class="n">fwhm_min</span><span class="o">=</span><span class="mf">1.7</span><span class="p">,</span> <span class="n">fwhm_max</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">pos_delta_max</span><span class="o">=</span><span class="mf">1.7</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate the FWHM of an objected located at the pixel</span>
 <span class="sd">    coordinates in the image. The FWHM will be estimated </span>
 <span class="sd">    from a cutout with the specified boxsize.</span>

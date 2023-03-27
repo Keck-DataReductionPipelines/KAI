@@ -12,9 +12,6 @@
   <![endif]-->
   
         <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/underscore.js"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../../_static/doctools.js"></script>
         <script src="../../../_static/sphinx_highlight.js"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -27,11 +24,15 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../../index.html" class="icon icon-home"> KAI
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            KAI
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -55,7 +56,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
       <li class="breadcrumb-item active">kai.reduce.util</li>
       <li class="wy-breadcrumbs-aside">
@@ -80,14 +81,14 @@
 <span class="n">dir_alias</span><span class="o">.</span><span class="n">rename_column</span><span class="p">(</span><span class="s1">&#39;col2&#39;</span><span class="p">,</span> <span class="s1">&#39;alias&#39;</span><span class="p">)</span>
     
 <div class="viewcode-block" id="rmall"><a class="viewcode-back" href="../../../autoapi/kai/reduce/util/index.html#kai.reduce.util.rmall">[docs]</a><span class="k">def</span> <span class="nf">rmall</span><span class="p">(</span><span class="n">files</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Remove list of files without confirmation.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Remove list of files without confirmation.&quot;&quot;&quot;</span>
     <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">access</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">F_OK</span><span class="p">):</span> <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
             
     <span class="k">return</span></div>
 
 <div class="viewcode-block" id="mkdir"><a class="viewcode-back" href="../../../autoapi/kai/reduce/util/index.html#kai.reduce.util.mkdir">[docs]</a><span class="k">def</span> <span class="nf">mkdir</span><span class="p">(</span><span class="nb">dir</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Make directory if it doesn&#39;t already exist.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Make directory if it doesn&#39;t already exist.&quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span> 
         <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="nb">dir</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
@@ -99,7 +100,7 @@
     <span class="k">return</span></div>
 
 <div class="viewcode-block" id="getcwd"><a class="viewcode-back" href="../../../autoapi/kai/reduce/util/index.html#kai.reduce.util.getcwd">[docs]</a><span class="k">def</span> <span class="nf">getcwd</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    IRAF doesn&#39;t like long file names. This reduces them.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">curdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
@@ -112,7 +113,7 @@
     <span class="k">return</span> <span class="n">curdir</span></div>
 
 <div class="viewcode-block" id="trimdir"><a class="viewcode-back" href="../../../autoapi/kai/reduce/util/index.html#kai.reduce.util.trimdir">[docs]</a><span class="k">def</span> <span class="nf">trimdir</span><span class="p">(</span><span class="n">olddir</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    IRAF doesn&#39;t like long file names. This reduces them.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dir_alias</span><span class="p">)):</span>
@@ -121,7 +122,7 @@
     <span class="k">return</span> <span class="n">olddir</span></div>
 
 <div class="viewcode-block" id="cp_change_prefix"><a class="viewcode-back" href="../../../autoapi/kai/reduce/util/index.html#kai.reduce.util.cp_change_prefix">[docs]</a><span class="k">def</span> <span class="nf">cp_change_prefix</span><span class="p">(</span><span class="n">arg1</span><span class="p">,</span><span class="n">arg2</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Takes files beginning with arg1 and replaces them with arg2</span>
 <span class="sd">    Must be in the directory where files live</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -143,7 +144,7 @@
     <span class="k">return</span></div>
 
 <div class="viewcode-block" id="cp_change_suffix"><a class="viewcode-back" href="../../../autoapi/kai/reduce/util/index.html#kai.reduce.util.cp_change_suffix">[docs]</a><span class="k">def</span> <span class="nf">cp_change_suffix</span><span class="p">(</span><span class="n">arg1</span><span class="p">,</span><span class="n">arg2</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Takes files ending with arg1 and replaces them with arg2</span>
 <span class="sd">    Must be in the directory where files live</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -165,7 +166,7 @@
     <span class="k">return</span></div>
 
 <div class="viewcode-block" id="update_header_coords"><a class="viewcode-back" href="../../../autoapi/kai/reduce/util/index.html#kai.reduce.util.update_header_coords">[docs]</a><span class="k">def</span> <span class="nf">update_header_coords</span><span class="p">(</span><span class="n">fileList</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Updates coordinates in the header for XREF, YREF</span>
 <span class="sd">    and XSTREHL, and YSTREHL.</span>
 <span class="sd"> </span>

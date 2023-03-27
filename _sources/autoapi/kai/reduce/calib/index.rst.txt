@@ -30,7 +30,6 @@ Attributes
 
 
 .. py:data:: module_dir
-   
 
    
 

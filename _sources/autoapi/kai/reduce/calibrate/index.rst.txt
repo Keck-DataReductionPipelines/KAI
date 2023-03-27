@@ -42,7 +42,7 @@ Attributes
 
 
 .. py:data:: all_scales
-   :annotation: = [[1.0, 'No scaling'], [0.0102, 'Speckle'], [0.0087, 'KCAM-AO'], [0.0085, 'SCAM-AO'], [0.00993,...
+   :value: [[1.0, 'No scaling'], [0.0102, 'Speckle'], [0.0087, 'KCAM-AO'], [0.0085, 'SCAM-AO'], [0.00993,...
 
    
 

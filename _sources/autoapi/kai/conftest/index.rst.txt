@@ -37,7 +37,7 @@ Attributes
 
 
 .. py:data:: ASTROPY_HEADER
-   :annotation: = True
+   :value: True
 
    
 

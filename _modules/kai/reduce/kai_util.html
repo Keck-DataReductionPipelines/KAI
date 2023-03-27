@@ -12,9 +12,6 @@
   <![endif]-->
   
         <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/underscore.js"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../../_static/doctools.js"></script>
         <script src="../../../_static/sphinx_highlight.js"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -27,11 +24,15 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../../index.html" class="icon icon-home"> KAI
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            KAI
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -55,7 +56,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
       <li class="breadcrumb-item active">kai.reduce.kai_util</li>
       <li class="wy-breadcrumbs-aside">
@@ -88,7 +89,7 @@
 
 <div class="viewcode-block" id="makelog"><a class="viewcode-back" href="../../../autoapi/kai/reduce/kai_util/index.html#kai.reduce.kai_util.makelog">[docs]</a><span class="k">def</span> <span class="nf">makelog</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span> <span class="n">outfile</span><span class="o">=</span><span class="s1">&#39;image_log.txt&#39;</span><span class="p">,</span>
             <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Make an electronic log for all the FITS files in the </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Make an electronic log for all the FITS files in the </span>
 <span class="sd">    specified directory.</span>
 
 <span class="sd">    Optional</span>
@@ -214,7 +215,7 @@
     <span class="k">return</span></div>
 
 <div class="viewcode-block" id="radec2pix"><a class="viewcode-back" href="../../../autoapi/kai/reduce/kai_util/index.html#kai.reduce.kai_util.radec2pix">[docs]</a><span class="k">def</span> <span class="nf">radec2pix</span><span class="p">(</span><span class="n">radec</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">posRef</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Determine pixel shifts from true RA and Dec positions.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Determine pixel shifts from true RA and Dec positions.</span>
 
 <span class="sd">    @param radec: a 2-element list containing the RA and Dec in degrees.</span>
 <span class="sd">    @type radec: float list</span>
@@ -273,7 +274,7 @@
     <span class="k">return</span> <span class="p">[</span><span class="n">d_x</span><span class="p">,</span> <span class="n">d_y</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="pix2xyarcsec"><a class="viewcode-back" href="../../../autoapi/kai/reduce/kai_util/index.html#kai.reduce.kai_util.pix2xyarcsec">[docs]</a><span class="k">def</span> <span class="nf">pix2xyarcsec</span><span class="p">(</span><span class="n">xypix</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">sgra</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Determine  E and N offsets from Sgr A* (in arcsec) from </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Determine  E and N offsets from Sgr A* (in arcsec) from </span>
 <span class="sd">    pixel positions and the pixel position of Sgr A*.</span>
 
 <span class="sd">    xypix: 2-element list containing the RA and Dec in degrees.</span>
@@ -296,7 +297,7 @@
     <span class="k">return</span> <span class="p">[</span><span class="n">d_x</span><span class="p">,</span> <span class="n">d_y</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="xyarcsec2pix"><a class="viewcode-back" href="../../../autoapi/kai/reduce/kai_util/index.html#kai.reduce.kai_util.xyarcsec2pix">[docs]</a><span class="k">def</span> <span class="nf">xyarcsec2pix</span><span class="p">(</span><span class="n">xyarcsec</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">scale</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Determine pixel shifts from E and N offsets from Sgr A*.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Determine pixel shifts from E and N offsets from Sgr A*.</span>
 
 <span class="sd">    xyarcsec: 2-element list containing the RA and Dec in degrees.</span>
 <span class="sd">    phi: position angle (E of N) in degrees.</span>
@@ -317,7 +318,7 @@
     <span class="k">return</span> <span class="p">[</span><span class="n">d_x</span><span class="p">,</span> <span class="n">d_y</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="rotate_coo"><a class="viewcode-back" href="../../../autoapi/kai/reduce/kai_util/index.html#kai.reduce.kai_util.rotate_coo">[docs]</a><span class="k">def</span> <span class="nf">rotate_coo</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">phi</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Rotate the coordinates in the *.coo files for data sets</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Rotate the coordinates in the *.coo files for data sets</span>
 <span class="sd">    containing images at different PAs.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Rotate around center of image, and keep origin at center</span>
@@ -364,7 +365,7 @@
           <span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">tmin</span><span class="p">)</span> <span class="p">))</span></div>
 
 <div class="viewcode-block" id="plotKeyword"><a class="viewcode-back" href="../../../autoapi/kai/reduce/kai_util/index.html#kai.reduce.kai_util.plotKeyword">[docs]</a><span class="k">def</span> <span class="nf">plotKeyword</span><span class="p">(</span><span class="n">keyword1</span><span class="p">,</span> <span class="n">keyword2</span><span class="p">,</span> <span class="n">imgList</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Pass in a file containing a list of images. For each of these</span>
 <span class="sd">    images, read out the values of the header keywords specified.</span>
 <span class="sd">    Then plot each of the keywords against each other.</span>

@@ -12,9 +12,6 @@
   <![endif]-->
   
         <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/underscore.js"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../../_static/doctools.js"></script>
         <script src="../../../_static/sphinx_highlight.js"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -27,11 +24,15 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../../index.html" class="icon icon-home"> KAI
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            KAI
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -55,7 +56,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
       <li class="breadcrumb-item active">kai.reduce.prep_analysis</li>
       <li class="wy-breadcrumbs-aside">
@@ -84,7 +85,7 @@
 
 
 <div class="viewcode-block" id="removeEdges"><a class="viewcode-back" href="../../../autoapi/kai/reduce/prep_analysis/index.html#kai.reduce.prep_analysis.removeEdges">[docs]</a><span class="k">def</span> <span class="nf">removeEdges</span><span class="p">(</span><span class="n">imgArr</span><span class="p">,</span> <span class="n">finalTable</span><span class="p">,</span> <span class="n">cutoff</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span> <span class="n">x</span> <span class="o">=</span> <span class="s2">&quot;xcentroid&quot;</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="s2">&quot;ycentroid&quot;</span><span class="p">,</span> <span class="n">scale</span> <span class="o">=</span> <span class="mf">0.009942</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Ignores stars close to the edge, i.e., within 100 * scale pixels by default.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Ignores stars close to the edge, i.e., within 100 * scale pixels by default.&quot;&quot;&quot;</span>
     <span class="n">cutoff</span> <span class="o">=</span> <span class="p">(</span><span class="n">cutoff</span> <span class="o">*</span> <span class="n">scale</span><span class="p">)</span> <span class="o">/</span> <span class="mf">0.009942</span>
     <span class="n">finalTable</span><span class="o">.</span><span class="n">remove_rows</span><span class="p">([</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">finalTable</span><span class="p">[</span><span class="n">x</span><span class="p">]))</span> <span class="k">if</span> <span class="n">finalTable</span><span class="p">[</span><span class="n">x</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">cutoff</span><span class="p">])</span>
     <span class="n">finalTable</span><span class="o">.</span><span class="n">remove_rows</span><span class="p">([</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">finalTable</span><span class="p">[</span><span class="n">y</span><span class="p">]))</span> <span class="k">if</span> <span class="n">finalTable</span><span class="p">[</span><span class="n">y</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">cutoff</span><span class="p">])</span>
@@ -96,7 +97,7 @@
 
 
 <div class="viewcode-block" id="psfRadius"><a class="viewcode-back" href="../../../autoapi/kai/reduce/prep_analysis/index.html#kai.reduce.prep_analysis.psfRadius">[docs]</a><span class="k">def</span> <span class="nf">psfRadius</span><span class="p">(</span><span class="n">starPeak</span><span class="p">,</span> <span class="n">imagePeak</span><span class="p">,</span> <span class="n">scale</span> <span class="o">=</span> <span class="mf">0.009942</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Arbitrary function that ties the predicted radius of the star to the peak brightness in the image.</span>
 <span class="sd">    returns a radius: 10 &lt; (Ratio of &quot;magnitudes&quot; cubed * 80) &lt; 60 and scaled acc. to plate scale in arcsec</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -106,36 +107,36 @@
 
 
 <div class="viewcode-block" id="isBrightSpeckleStar"><a class="viewcode-back" href="../../../autoapi/kai/reduce/prep_analysis/index.html#kai.reduce.prep_analysis.isBrightSpeckleStar">[docs]</a><span class="k">def</span> <span class="nf">isBrightSpeckleStar</span><span class="p">(</span><span class="n">starPeak</span><span class="p">,</span> <span class="n">imagePeak</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Can this star have halo speckles? If it&#39;s half the peak brightness, it is assumed yes. &quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Can this star have halo speckles? If it&#39;s half the peak brightness, it is assumed yes. &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="p">(</span><span class="n">starPeak</span> <span class="o">&gt;</span> <span class="p">(</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">imagePeak</span><span class="p">))</span></div>
 
 
 
 <div class="viewcode-block" id="isNearBrightStar"><a class="viewcode-back" href="../../../autoapi/kai/reduce/prep_analysis/index.html#kai.reduce.prep_analysis.isNearBrightStar">[docs]</a><span class="k">def</span> <span class="nf">isNearBrightStar</span><span class="p">(</span><span class="n">nearStarPeak</span><span class="p">,</span> <span class="n">mainPeak</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Is the main star near another bright star? &quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Is the main star near another bright star? &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="p">(</span><span class="mf">0.2</span> <span class="o">*</span> <span class="n">mainPeak</span> <span class="o">&lt;</span> <span class="n">nearStarPeak</span><span class="p">)</span></div>
 
 
 
 <div class="viewcode-block" id="isInPSFRadius"><a class="viewcode-back" href="../../../autoapi/kai/reduce/prep_analysis/index.html#kai.reduce.prep_analysis.isInPSFRadius">[docs]</a><span class="k">def</span> <span class="nf">isInPSFRadius</span><span class="p">(</span><span class="n">starCoo</span><span class="p">,</span> <span class="n">mainCoo</span><span class="p">,</span> <span class="n">psfr</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Is star within the psf radius from earlier? &quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Is star within the psf radius from earlier? &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="p">(</span><span class="n">euclidean</span><span class="p">(</span><span class="n">starCoo</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">starCoo</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">mainCoo</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mainCoo</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">&lt;</span> <span class="n">psfr</span><span class="p">)</span></div>
 
 
 
 <div class="viewcode-block" id="isInSecondaryRadius"><a class="viewcode-back" href="../../../autoapi/kai/reduce/prep_analysis/index.html#kai.reduce.prep_analysis.isInSecondaryRadius">[docs]</a><span class="k">def</span> <span class="nf">isInSecondaryRadius</span><span class="p">(</span><span class="n">starCoo</span><span class="p">,</span> <span class="n">mainCoo</span><span class="p">,</span> <span class="n">psfr</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Is star within the secondary radius, defined as 1.35x the psf radius? (arbitrarily) &quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Is star within the secondary radius, defined as 1.35x the psf radius? (arbitrarily) &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="p">(</span><span class="n">euclidean</span><span class="p">(</span><span class="n">starCoo</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">starCoo</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">mainCoo</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mainCoo</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">&lt;</span> <span class="n">psfr</span> <span class="o">*</span> <span class="mf">1.35</span><span class="p">)</span></div>
 
 
 
 <div class="viewcode-block" id="getTableIndex"><a class="viewcode-back" href="../../../autoapi/kai/reduce/prep_analysis/index.html#kai.reduce.prep_analysis.getTableIndex">[docs]</a><span class="k">def</span> <span class="nf">getTableIndex</span><span class="p">(</span><span class="n">mainIndex</span><span class="p">,</span> <span class="n">starIndex</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Helper function to get star being considered in removeCloseStars. &quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Helper function to get star being considered in removeCloseStars. &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">mainIndex</span> <span class="o">+</span> <span class="n">starIndex</span> <span class="o">+</span> <span class="mi">1</span></div>
 
 
 <div class="viewcode-block" id="removeCloseStars"><a class="viewcode-back" href="../../../autoapi/kai/reduce/prep_analysis/index.html#kai.reduce.prep_analysis.removeCloseStars">[docs]</a><span class="k">def</span> <span class="nf">removeCloseStars</span><span class="p">(</span><span class="n">imgArr</span><span class="p">,</span> <span class="n">newTable</span><span class="p">,</span> <span class="n">pixelDist</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">x</span> <span class="o">=</span> <span class="s2">&quot;xcentroid&quot;</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="s2">&quot;ycentroid&quot;</span><span class="p">,</span> <span class="n">verbose</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">scale</span> <span class="o">=</span> <span class="mf">0.009942</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">    In order of brightest stars in table, checks if it&#39;s a valid star, and tracks secondaries near it.</span>
 <span class="sd">    Removes all invalid stars from table, i.e, those that are likely halo speckles, or too close for valid psf generation.   </span>
 <span class="sd">    Edge stars are already removed from table using the removeEdges() method.</span>
@@ -228,14 +229,14 @@
 
 
 <div class="viewcode-block" id="getStats"><a class="viewcode-back" href="../../../autoapi/kai/reduce/prep_analysis/index.html#kai.reduce.prep_analysis.getStats">[docs]</a><span class="k">def</span> <span class="nf">getStats</span><span class="p">(</span><span class="n">imgArr</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Returns mean median and mode of pixel values in image array. &quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Returns mean median and mode of pixel values in image array. &quot;&quot;&quot;</span>
     <span class="n">mean</span><span class="p">,</span> <span class="n">median</span><span class="p">,</span> <span class="n">std</span> <span class="o">=</span> <span class="n">sigma_clipped_stats</span><span class="p">(</span><span class="n">imgArr</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">3.0</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">mean</span><span class="p">,</span> <span class="n">median</span><span class="p">,</span> <span class="n">std</span></div>
 
 
 
 <div class="viewcode-block" id="getNStarsHelper"><a class="viewcode-back" href="../../../autoapi/kai/reduce/prep_analysis/index.html#kai.reduce.prep_analysis.getNStarsHelper">[docs]</a><span class="k">def</span> <span class="nf">getNStarsHelper</span><span class="p">(</span><span class="n">imgArr</span><span class="p">,</span> <span class="n">expStars</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">counter</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">starsFound</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">fwhm</span> <span class="o">=</span> <span class="mf">4.5</span><span class="p">,</span> <span class="n">scale</span> <span class="o">=</span> <span class="mf">0.009942</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">    Attempts to get N stars. If stars aren&#39;t found, returns what it can and presents the error. </span>
 <span class="sd">    If so, starfinding may have to be done manually.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -275,7 +276,7 @@
 
 
 <div class="viewcode-block" id="getNStars"><a class="viewcode-back" href="../../../autoapi/kai/reduce/prep_analysis/index.html#kai.reduce.prep_analysis.getNStars">[docs]</a><span class="k">def</span> <span class="nf">getNStars</span><span class="p">(</span><span class="n">imgArr</span><span class="p">,</span> <span class="n">numStars</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">fwhm</span> <span class="o">=</span> <span class="mf">4.5</span><span class="p">,</span> <span class="n">scale</span> <span class="o">=</span> <span class="mf">0.009942</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">    Reformats table of chosen psf stars and adds the relevant secondaries to it.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">newTable</span> <span class="o">=</span> <span class="n">getNStarsHelper</span><span class="p">(</span><span class="n">imgArr</span><span class="p">,</span> <span class="n">numStars</span><span class="p">,</span> <span class="n">fwhm</span> <span class="o">=</span> <span class="n">fwhm</span><span class="p">,</span> <span class="n">scale</span> <span class="o">=</span> <span class="n">scale</span><span class="p">)</span>
@@ -305,7 +306,7 @@
     <span class="k">return</span> <span class="n">newTable</span></div>
 
 <div class="viewcode-block" id="generate_list"><a class="viewcode-back" href="../../../autoapi/kai/reduce/prep_analysis/index.html#kai.reduce.prep_analysis.generate_list">[docs]</a><span class="k">def</span> <span class="nf">generate_list</span><span class="p">(</span><span class="n">imgPath</span><span class="p">,</span> <span class="n">numPSFStars</span> <span class="o">=</span> <span class="mi">7</span><span class="p">,</span> <span class="n">fwhm</span> <span class="o">=</span> <span class="mf">4.5</span><span class="p">,</span> <span class="n">scale</span> <span class="o">=</span> <span class="mf">0.009942</span><span class="p">,</span> <span class="n">targName</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Plots the table generated by PSFListGen, and prints the list of stars in a format that can be used.</span>
 <span class="sd">    @params</span>
 <span class="sd">    imgPath - path to .fits image, Eg. /g/lu/data/microlens/18jun22/combo/mag18jun22_ob040361_kp.fits</span>
@@ -344,7 +345,7 @@
     
 
 <div class="viewcode-block" id="plot_starlist_on_image_arcsec"><a class="viewcode-back" href="../../../autoapi/kai/reduce/prep_analysis/index.html#kai.reduce.prep_analysis.plot_starlist_on_image_arcsec">[docs]</a><span class="k">def</span> <span class="nf">plot_starlist_on_image_arcsec</span><span class="p">(</span><span class="n">starList</span><span class="p">,</span> <span class="n">imagePath</span><span class="p">,</span> <span class="n">refCoo</span><span class="p">,</span> <span class="n">scale</span> <span class="o">=</span> <span class="p">(</span><span class="mf">9.942</span><span class="o">/</span><span class="mi">1000</span><span class="p">),</span> <span class="n">magCut</span> <span class="o">=</span> <span class="mi">23</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">flip</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Plot a NIRC2 image and overlay a starlist. Input in relative arcsec coordinates.</span>
 <span class="sd">    @params</span>
 <span class="sd">    starList - any astropy Table with a &quot;name&quot; (including target),</span>
@@ -434,7 +435,7 @@
     <span class="k">return</span> </div>
 
 <div class="viewcode-block" id="plot_starlist_on_image_pixel"><a class="viewcode-back" href="../../../autoapi/kai/reduce/prep_analysis/index.html#kai.reduce.prep_analysis.plot_starlist_on_image_pixel">[docs]</a><span class="k">def</span> <span class="nf">plot_starlist_on_image_pixel</span><span class="p">(</span><span class="n">starList</span><span class="p">,</span> <span class="n">imagePath</span><span class="p">,</span> <span class="n">refStar</span><span class="p">,</span> <span class="n">scale</span> <span class="o">=</span> <span class="p">(</span><span class="mf">9.942</span><span class="o">/</span><span class="mi">1000</span><span class="p">),</span> <span class="n">magCut</span> <span class="o">=</span> <span class="mi">23</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">flip</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="s2">&quot;pixel&quot;</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Plot a NIRC2 image and overlay a starlist. Input in pixel coordinates.</span>
 <span class="sd">    @params</span>
 <span class="sd">    starList - any astropy Table with a &quot;name&quot; (including target),</span>
@@ -543,7 +544,7 @@
 
 
 <div class="viewcode-block" id="modded_plot_starlist_on_image_pixel"><a class="viewcode-back" href="../../../autoapi/kai/reduce/prep_analysis/index.html#kai.reduce.prep_analysis.modded_plot_starlist_on_image_pixel">[docs]</a><span class="k">def</span> <span class="nf">modded_plot_starlist_on_image_pixel</span><span class="p">(</span><span class="n">starList</span><span class="p">,</span> <span class="n">imagePath</span><span class="p">,</span> <span class="n">refStar</span><span class="p">,</span> <span class="n">scale</span> <span class="o">=</span> <span class="p">(</span><span class="mf">9.942</span><span class="o">/</span><span class="mi">1000</span><span class="p">),</span> <span class="n">magCut</span> <span class="o">=</span> <span class="mi">23</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">flip</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="s2">&quot;pixel&quot;</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Plot a NIRC2 image and overlay a starlist. Input in pixel coordinates.</span>
 <span class="sd">    @params</span>
 <span class="sd">    starList - any astropy Table with a &quot;name&quot; (including target),</span>
@@ -649,7 +650,7 @@
     <span class="k">return</span></div>
 
 <div class="viewcode-block" id="prepStarfinder"><a class="viewcode-back" href="../../../autoapi/kai/reduce/prep_analysis/index.html#kai.reduce.prep_analysis.prepStarfinder">[docs]</a><span class="k">def</span> <span class="nf">prepStarfinder</span><span class="p">(</span><span class="n">dirName</span><span class="p">,</span> <span class="n">targetName</span><span class="p">,</span> <span class="n">targetCoords</span><span class="p">,</span> <span class="n">psfStars</span><span class="p">,</span> <span class="n">filterName</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Creates a _psf.list file and saves it in the source_list/ directory.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Creates a _psf.list file and saves it in the source_list/ directory.&quot;&quot;&quot;</span>
         
         <span class="c1"># Covering possible variable inputs and initializing</span>
         <span class="n">targetName</span> <span class="o">=</span> <span class="n">targetName</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>

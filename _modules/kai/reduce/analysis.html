@@ -12,9 +12,6 @@
   <![endif]-->
   
         <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/underscore.js"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../../_static/doctools.js"></script>
         <script src="../../../_static/sphinx_highlight.js"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -27,11 +24,15 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../../index.html" class="icon icon-home"> KAI
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            KAI
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -55,7 +56,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
       <li class="breadcrumb-item active">kai.reduce.analysis</li>
       <li class="wy-breadcrumbs-aside">
@@ -84,7 +85,7 @@
 <span class="kn">import</span> <span class="nn">pdb</span>
 
 <div class="viewcode-block" id="Analysis"><a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis">[docs]</a><span class="k">class</span> <span class="nc">Analysis</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Object that will perform our standard post-data-reduction analysis.</span>
 <span class="sd">    This includes running starfinder, calibrating, and extracting positional</span>
 <span class="sd">    and photometric errors via align_rms. </span>
@@ -97,7 +98,7 @@
                  <span class="n">useDistorted</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">cleanList</span><span class="o">=</span><span class="s1">&#39;c.lis&#39;</span><span class="p">,</span>
                  <span class="n">airopa_mode</span><span class="o">=</span><span class="s1">&#39;single&#39;</span><span class="p">,</span> <span class="n">stf_version</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set up Analysis object.</span>
 <span class="sd">        </span>
 <span class="sd">        Parameters</span>
@@ -255,7 +256,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">plotPosMagCut</span> <span class="o">=</span> <span class="mf">15.0</span>
         
 <div class="viewcode-block" id="Analysis.prepStarfinder"><a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.prepStarfinder">[docs]</a>    <span class="k">def</span> <span class="nf">prepStarfinder</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">targetName</span><span class="p">,</span> <span class="n">targetCoords</span><span class="p">,</span> <span class="n">psfStars</span><span class="p">,</span> <span class="n">filterName</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Creates a _psf.list file and saves it in the source_list/ directory.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Creates a _psf.list file and saves it in the source_list/ directory.&quot;&quot;&quot;</span>
         
         <span class="c1"># Covering possible variable inputs and initializing</span>
         <span class="n">targetName</span> <span class="o">=</span> <span class="n">targetName</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
@@ -862,7 +863,7 @@
 
 <div class="viewcode-block" id="plotPosError"><a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.plotPosError">[docs]</a><span class="k">def</span> <span class="nf">plotPosError</span><span class="p">(</span><span class="n">starlist</span><span class="p">,</span> <span class="n">raw</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">magCutOff</span><span class="o">=</span><span class="mf">15.0</span><span class="p">,</span>
                  <span class="n">title</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Make three standard figures that show the data quality </span>
 <span class="sd">    from  a *_rms.lis file. </span>
 

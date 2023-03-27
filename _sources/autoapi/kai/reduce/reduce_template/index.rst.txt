@@ -30,12 +30,11 @@ Attributes
 
 
 .. py:data:: epoch
-   :annotation: = 19apr21
+   :value: '19apr21'
 
    
 
 .. py:data:: nirc2
-   
 
    
 

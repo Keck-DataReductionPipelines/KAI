@@ -8,12 +8,12 @@ Module Contents
 ---------------
 
 .. py:data:: __version__
-   :annotation: = 
+   :value: ''
 
    
 
 .. py:data:: __githash__
-   :annotation: = 
+   :value: ''
 
    
 

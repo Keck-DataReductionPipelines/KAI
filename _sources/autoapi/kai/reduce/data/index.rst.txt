@@ -70,22 +70,21 @@ Attributes
 
 
 .. py:data:: module_dir
-   
 
    
 
 .. py:data:: distCoef
-   :annotation: = 
+   :value: ''
 
    
 
 .. py:data:: supermaskName
-   :annotation: = supermask.fits
+   :value: 'supermask.fits'
 
    
 
 .. py:data:: outputVerify
-   :annotation: = ignore
+   :value: 'ignore'
 
    
 

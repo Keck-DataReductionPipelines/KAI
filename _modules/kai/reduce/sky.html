@@ -12,9 +12,6 @@
   <![endif]-->
   
         <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/underscore.js"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../../_static/doctools.js"></script>
         <script src="../../../_static/sphinx_highlight.js"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -27,11 +24,15 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../../index.html" class="icon icon-home"> KAI
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            KAI
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -55,7 +56,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
       <li class="breadcrumb-item active">kai.reduce.sky</li>
       <li class="wy-breadcrumbs-aside">
@@ -85,7 +86,7 @@
             <span class="n">wave</span><span class="p">,</span> <span class="n">skyscale</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="n">raw_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
             <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Make short wavelength (not L-band or longer) skies.</span>
 <span class="sd">    </span>
 <span class="sd">    Parameters</span>
@@ -223,7 +224,7 @@
 <div class="viewcode-block" id="makesky_lp"><a class="viewcode-back" href="../../../autoapi/kai/reduce/sky/index.html#kai.reduce.sky.makesky_lp">[docs]</a><span class="k">def</span> <span class="nf">makesky_lp</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="n">nite</span><span class="p">,</span> <span class="n">wave</span><span class="p">,</span> <span class="n">number</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">rejectHsigma</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                <span class="n">raw_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Make L&#39; skies by carefully treating the ROTPPOSN angle</span>
 <span class="sd">    of the K-mirror. Uses 3 skies combined (set by number keyword).</span>
 <span class="sd">    </span>
@@ -374,7 +375,7 @@
 
 
 <div class="viewcode-block" id="makesky_lp2"><a class="viewcode-back" href="../../../autoapi/kai/reduce/sky/index.html#kai.reduce.sky.makesky_lp2">[docs]</a><span class="k">def</span> <span class="nf">makesky_lp2</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="n">nite</span><span class="p">,</span> <span class="n">wave</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Make L&#39; skies by carefully treating the ROTPPOSN angle</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Make L&#39; skies by carefully treating the ROTPPOSN angle</span>
 <span class="sd">    of the K-mirror. Uses only 2 skies combined.&quot;&quot;&quot;</span>
 
     <span class="c1"># Start out in something like &#39;06maylgs1/reduce/kp/&#39;</span>
@@ -464,7 +465,7 @@
     <span class="c1">#ir.imdelete(&#39;@&#39; + _nlis)</span>
 
 <div class="viewcode-block" id="makesky_fromsci"><a class="viewcode-back" href="../../../autoapi/kai/reduce/sky/index.html#kai.reduce.sky.makesky_fromsci">[docs]</a><span class="k">def</span> <span class="nf">makesky_fromsci</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="n">nite</span><span class="p">,</span> <span class="n">wave</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Make short wavelength (not L-band or longer) skies.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Make short wavelength (not L-band or longer) skies.&quot;&quot;&quot;</span>
 
     <span class="c1"># Start out in something like &#39;06maylgs1/reduce/kp/&#39;</span>
     <span class="n">waveDir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span>
@@ -534,7 +535,7 @@
     <span class="n">ir</span><span class="o">.</span><span class="n">imcombine</span><span class="p">(</span><span class="s1">&#39;@&#39;</span> <span class="o">+</span> <span class="n">skylist</span><span class="p">,</span> <span class="n">output</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="makesky_lp_fromsci"><a class="viewcode-back" href="../../../autoapi/kai/reduce/sky/index.html#kai.reduce.sky.makesky_lp_fromsci">[docs]</a><span class="k">def</span> <span class="nf">makesky_lp_fromsci</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="n">nite</span><span class="p">,</span> <span class="n">wave</span><span class="p">,</span> <span class="n">number</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">rejectHsigma</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Make L&#39; skies by carefully treating the ROTPPOSN angle</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Make L&#39; skies by carefully treating the ROTPPOSN angle</span>
 <span class="sd">    of the K-mirror. Uses 3 skies combined (set by number keyword).&quot;&quot;&quot;</span>
 
     <span class="c1"># Start out in something like &#39;06maylgs1/reduce/kp/&#39;</span>
@@ -647,7 +648,7 @@
 
 
 <div class="viewcode-block" id="read_sky_rot_file"><a class="viewcode-back" href="../../../autoapi/kai/reduce/sky/index.html#kai.reduce.sky.read_sky_rot_file">[docs]</a><span class="k">def</span> <span class="nf">read_sky_rot_file</span><span class="p">(</span><span class="n">sky_rot_file</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Read in the list of files and rotation angles.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read in the list of files and rotation angles.&quot;&quot;&quot;</span>
     
     <span class="n">rotTab</span> <span class="o">=</span> <span class="n">Table</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">sky_rot_file</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;ascii&#39;</span><span class="p">,</span> <span class="n">header_start</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
     <span class="n">cols</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">rotTab</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>

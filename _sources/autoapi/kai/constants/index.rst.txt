@@ -8,57 +8,57 @@ Module Contents
 ---------------
 
 .. py:data:: sigma
-   :annotation: = 5.6704e-05
+   :value: 5.6704e-05
 
    
 
 .. py:data:: Lsun
-   :annotation: = 3.839e+33
+   :value: 3.839e+33
 
    
 
 .. py:data:: Rsun
-   :annotation: = 0.004652
+   :value: 0.004652
 
    
 
 .. py:data:: Msun
-   :annotation: = 1.98892e+30
+   :value: 1.98892e+30
 
    
 
 .. py:data:: gsun
-   :annotation: = 27400.0
+   :value: 27400.0
 
    
 
 .. py:data:: G
-   :annotation: = 6.6726e-08
+   :value: 6.6726e-08
 
    
 
 .. py:data:: c
-   :annotation: = 299792.458
+   :value: 299792.458
 
    
 
 .. py:data:: cm_in_AU
-   :annotation: = 14960000000000.0
+   :value: 14960000000000.0
 
    
 
 .. py:data:: cm_in_pc
-   :annotation: = 3.086e+18
+   :value: 3.086e+18
 
    
 
 .. py:data:: AU_in_pc
-   :annotation: = 206264.806
+   :value: 206264.806
 
    
 
 .. py:data:: sec_in_yr
-   :annotation: = 31557000.0
+   :value: 31557000.0
 
    
 

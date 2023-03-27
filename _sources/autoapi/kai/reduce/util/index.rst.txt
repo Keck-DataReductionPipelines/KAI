@@ -34,17 +34,14 @@ Attributes
 
 
 .. py:data:: module_dir
-   
 
    
 
 .. py:data:: dir_alias_file
-   
 
    
 
 .. py:data:: dir_alias
-   
 
    
 

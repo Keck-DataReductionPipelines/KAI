@@ -12,9 +12,6 @@
   <![endif]-->
   
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/underscore.js"></script>
-        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
         <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/js/theme.js"></script>
@@ -27,11 +24,15 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../index.html" class="icon icon-home"> KAI
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            KAI
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -55,7 +56,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
       <li class="breadcrumb-item active">kai.instruments</li>
       <li class="wy-breadcrumbs-aside">
@@ -163,7 +164,7 @@
         <span class="k">return</span> <span class="n">filt</span></div>
 
 <div class="viewcode-block" id="NIRC2.get_plate_scale"><a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.NIRC2.get_plate_scale">[docs]</a>    <span class="k">def</span> <span class="nf">get_plate_scale</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hdr</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the plate scale in arcsec/pixel.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Setup NIRC2 plate scales</span>
@@ -177,13 +178,13 @@
         <span class="k">return</span> <span class="n">scale</span></div>
 
 <div class="viewcode-block" id="NIRC2.get_position_angle"><a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.NIRC2.get_position_angle">[docs]</a>    <span class="k">def</span> <span class="nf">get_position_angle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hdr</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the sky PA in degrees East of North. </span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;ROTPOSN&#39;</span><span class="p">])</span> <span class="o">-</span> <span class="nb">float</span><span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;INSTANGL&#39;</span><span class="p">])</span></div>
 
 <div class="viewcode-block" id="NIRC2.get_parallactic_angle"><a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.NIRC2.get_parallactic_angle">[docs]</a>    <span class="k">def</span> <span class="nf">get_parallactic_angle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">hdr</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the parallactic angle in degrees East of North</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">q</span> <span class="o">=</span> <span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;PARANG&#39;</span><span class="p">]</span>
@@ -193,7 +194,7 @@
         <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;INSTANGL&#39;</span><span class="p">])</span></div>
 
 <div class="viewcode-block" id="NIRC2.get_central_wavelength"><a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.NIRC2.get_central_wavelength">[docs]</a>    <span class="k">def</span> <span class="nf">get_central_wavelength</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hdr</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the central wavelength of the filter for </span>
 <span class="sd">        this observation in microns.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -207,7 +208,7 @@
         <span class="k">return</span> <span class="n">file_names</span></div>
 
 <div class="viewcode-block" id="NIRC2.get_distortion_maps"><a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.NIRC2.get_distortion_maps">[docs]</a>    <span class="k">def</span> <span class="nf">get_distortion_maps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hdr</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Inputs</span>
 <span class="sd">        ----------</span>
 <span class="sd">        date : str</span>
@@ -245,7 +246,7 @@
         <span class="k">return</span> <span class="n">atype</span></div>
 
 <div class="viewcode-block" id="NIRC2.get_saturation_level"><a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.NIRC2.get_saturation_level">[docs]</a>    <span class="k">def</span> <span class="nf">get_saturation_level</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set to the 95% saturation threshold in DN.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="mf">12000.0</span></div></div>
@@ -253,7 +254,7 @@
 
 
 <div class="viewcode-block" id="OSIRIS"><a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.OSIRIS">[docs]</a><span class="k">class</span> <span class="nc">OSIRIS</span><span class="p">(</span><span class="n">Instrument</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    OSIRIS Imager - after 2019</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -289,7 +290,7 @@
         <span class="k">return</span> <span class="n">f</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span></div>
         
 <div class="viewcode-block" id="OSIRIS.get_plate_scale"><a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.OSIRIS.get_plate_scale">[docs]</a>    <span class="k">def</span> <span class="nf">get_plate_scale</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hdr</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the plate scale in arcsec/pix.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">scale</span> <span class="o">=</span> <span class="mf">0.00995</span>
@@ -297,14 +298,14 @@
         <span class="k">return</span> <span class="n">scale</span></div>
     
 <div class="viewcode-block" id="OSIRIS.get_position_angle"><a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.OSIRIS.get_position_angle">[docs]</a>    <span class="k">def</span> <span class="nf">get_position_angle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hdr</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the sky PA in degrees East of North. </span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">pa</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;ROTPOSN&#39;</span><span class="p">])</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_instrument_angle</span><span class="p">(</span><span class="n">hdr</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">pa</span></div>
     
 <div class="viewcode-block" id="OSIRIS.get_instrument_angle"><a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.OSIRIS.get_instrument_angle">[docs]</a>    <span class="k">def</span> <span class="nf">get_instrument_angle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hdr</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the angle of the instrument w.r.t. to the telescope or </span>
 <span class="sd">        AO bench in degrees.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -312,14 +313,14 @@
         <span class="k">return</span> <span class="n">inst_angle</span></div>
 
 <div class="viewcode-block" id="OSIRIS.get_parallactic_angle"><a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.OSIRIS.get_parallactic_angle">[docs]</a>    <span class="k">def</span> <span class="nf">get_parallactic_angle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">hdr</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the parallactic angle in degrees East of North</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">q</span> <span class="o">=</span> <span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;PARANG&#39;</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">q</span></div>
     
 <div class="viewcode-block" id="OSIRIS.get_central_wavelength"><a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.OSIRIS.get_central_wavelength">[docs]</a>    <span class="k">def</span> <span class="nf">get_central_wavelength</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hdr</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the central wavelength of the filter for </span>
 <span class="sd">        this observation in microns.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -358,7 +359,7 @@
         <span class="k">return</span> <span class="n">file_names</span></div>
 
 <div class="viewcode-block" id="OSIRIS.flip_images"><a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.OSIRIS.flip_images">[docs]</a>    <span class="k">def</span> <span class="nf">flip_images</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">files</span><span class="p">,</span> <span class="n">rootDir</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Flip images (as they come from the detector flipped) and</span>
 <span class="sd">        subtract reference pixels.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -405,17 +406,17 @@
         <span class="k">return</span> <span class="n">new_img</span></div>
 
 <div class="viewcode-block" id="OSIRIS.get_distortion_maps"><a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.OSIRIS.get_distortion_maps">[docs]</a>    <span class="k">def</span> <span class="nf">get_distortion_maps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hdr</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Inputs</span>
 <span class="sd">        ----------</span>
 <span class="sd">        date : str</span>
 <span class="sd">            Date in string format such as &#39;2015-10-02&#39;.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">date</span> <span class="o">=</span> <span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;DATE-OBS&#39;</span><span class="p">]</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">date</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">4</span><span class="p">])</span> <span class="o">&lt;=</span> <span class="mi">2020</span><span class="p">):</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">date</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span><span class="o">+</span><span class="n">date</span><span class="p">[</span><span class="mi">5</span><span class="p">:</span><span class="mi">7</span><span class="p">]</span><span class="o">+</span><span class="n">date</span><span class="p">[</span><span class="mi">8</span><span class="p">:</span><span class="mi">10</span><span class="p">])</span> <span class="o">&lt;</span> <span class="mi">20201116</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">distXgeoim</span> <span class="o">=</span> <span class="n">module_dir</span> <span class="o">+</span> <span class="s1">&#39;/reduce/distortion/OSIRIS_im_x_2020.fits&#39;</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">distYgeoim</span> <span class="o">=</span> <span class="n">module_dir</span> <span class="o">+</span> <span class="s1">&#39;/reduce/distortion/OSIRIS_im_y_2020.fits&#39;</span>
-        <span class="k">elif</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">date</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">4</span><span class="p">])</span> <span class="o">&gt;=</span> <span class="mi">2021</span><span class="p">):</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">date</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span><span class="o">+</span><span class="n">date</span><span class="p">[</span><span class="mi">5</span><span class="p">:</span><span class="mi">7</span><span class="p">]</span><span class="o">+</span><span class="n">date</span><span class="p">[</span><span class="mi">8</span><span class="p">:</span><span class="mi">10</span><span class="p">])</span> <span class="o">&gt;=</span> <span class="mi">20201116</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">distXgeoim</span> <span class="o">=</span> <span class="n">module_dir</span> <span class="o">+</span> <span class="s1">&#39;/reduce/distortion/OSIRIS_im_x_2021.fits&#39;</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">distYgeoim</span> <span class="o">=</span> <span class="n">module_dir</span> <span class="o">+</span> <span class="s1">&#39;/reduce/distortion/OSIRIS_im_y_2021.fits&#39;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">distXgeoim</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">distYgeoim</span></div>
@@ -430,7 +431,7 @@
         <span class="k">return</span> <span class="n">atype</span></div>
     
 <div class="viewcode-block" id="OSIRIS.get_saturation_level"><a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.OSIRIS.get_saturation_level">[docs]</a>    <span class="k">def</span> <span class="nf">get_saturation_level</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set to the 95% saturation threshold in DN.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="mf">20000.0</span></div></div>

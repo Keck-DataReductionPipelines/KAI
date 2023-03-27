@@ -35,12 +35,11 @@ Attributes
 
 
 .. py:data:: p2
-   :annotation: = False
+   :value: False
 
    
 
 .. py:data:: module_dir
-   
 
    
 
