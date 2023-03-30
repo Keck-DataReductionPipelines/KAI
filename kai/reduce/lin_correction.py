@@ -34,7 +34,15 @@ def lin_correction(file, instrument=instruments.default_inst):
     x = im_data / num_coadds
     coeffs = instrument.get_lin_corr_coeffs()
     
+    # Generalize to arbitrary polynomial order
+    
+    
     norm = coeffs[0] + (coeffs[1] * x) + (coeffs[2] * x**2.0)
+    
+    
+    # Perform correction
+    # Only to positive pixel values
+    
     
     im_data_corrected = im_data / norm
     

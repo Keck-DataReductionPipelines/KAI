@@ -184,8 +184,11 @@ class NIRC2(Instrument):
         Set to the 95% saturation threshold in DN.
         """
         return 12000.0
+        
+        # Update to non-linearity correction
+        hard_saturation 
     
-    def get_lin_corr_coeffs(self):
+    def get_linearity_correction_coeffs(self):
         """
         Returns coefficients (`coeffs`, as defined below)
         in order to perform linearity correction
