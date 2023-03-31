@@ -35,6 +35,7 @@ def makesky(
     dark_frame : str, default=None
         File name for the dark frame in order to carry out dark correction.
         If not provided, dark frame is not subtracted and a warning is thrown.
+        Assumes dark file is located under ./calib/darks/
     skyscale : bool, default=True
         Whether or not to scale the sky files to the common median.
         Turn on for scaling skies before subtraction.
@@ -91,8 +92,10 @@ def makesky(
     
     # If dark frame is provided, carry out dark correction
     if dark_frame is not None:
+        dark_file = './calib/darks/' + dark_frame
+        
         # Read in dark frame data
-        dark_data = fits.getdata(dark_frame, ignore_missing_end=True)
+        dark_data = fits.getdata(dark_file, ignore_missing_end=True)
         
         # Go through each sky file
         for i in range(len(skies)):        
@@ -176,9 +179,13 @@ def makesky(
     os.chdir('../')
 
 
-def makesky_lp(files, nite, wave, number=3, rejectHsigma=None,
-               raw_dir=None,
-               instrument=instruments.default_inst):
+def makesky_lp(
+        files, nite,
+        wave, dark_frame=None,
+        number=3, rejectHsigma=None,
+        raw_dir=None,
+        instrument=instruments.default_inst,
+    ):
     """
     Make L' skies by carefully treating the ROTPPOSN angle
     of the K-mirror. Uses 3 skies combined (set by number keyword).
@@ -192,6 +199,10 @@ def makesky_lp(files, nite, wave, number=3, rejectHsigma=None,
         inside the reduce sub-directories.
     wave : str
         Name for the observation passband (e.g.: "lp")
+    dark_frame : str, default=None
+        File name for the dark frame in order to carry out dark correction.
+        If not provided, dark frame is not subtracted and a warning is thrown.
+        Assumes dark file is located under ./calib/darks/
     number : int, default=3
         Number of skies to be combined
     rejectHsigma : int, default:None
@@ -255,8 +266,10 @@ def makesky_lp(files, nite, wave, number=3, rejectHsigma=None,
     
     # If dark frame is provided, carry out dark correction
     if dark_frame is not None:
+        dark_file = './calib/darks/' + dark_frame
+        
         # Read in dark frame data
-        dark_data = fits.getdata(dark_frame, ignore_missing_end=True)
+        dark_data = fits.getdata(dark_file, ignore_missing_end=True)
         
         # Go through each sky file
         for i in range(len(skies)):        

@@ -13,7 +13,7 @@ from pkg_resources import parse_version
 module_dir = os.path.dirname(__file__)
 
 def makedark(files, output,
-             raw_dir=None, lin_corr=False,
+             raw_dir=None,
              instrument=instruments.default_inst):
     """
     Make dark image for imaging data. Makes a calib/ directory
@@ -29,8 +29,6 @@ def makedark(files, output,
     raw_dir : str, optional
         Directory where raw files are stored. By default,
         assumes that raw files are stored in '../raw'
-    lin_corr : bool, default=False
-        Perform linearity correction. Currently only works for NIRC2 data.
     instrument : instruments object, optional
         Instrument of data. Default is `instruments.default_inst`
     """
@@ -70,17 +68,11 @@ def makedark(files, output,
     
     data_sources_file.close()
     
-    # Perform linearity correction
-    if lin_corr:
-        for i in range(len(darks_copied)):
-            lin_correction.lin_correction(darks_copied[i],
-                                          instrument=instrument)
-    
     # Create a combined dark
     f_on = open(_outlis, 'w')
     f_on.write('\n'.join(darks_copied) + '\n')
     f_on.close()
-
+    
     ir.unlearn('imcombine')
     ir.imcombine.combine = 'median'
     ir.imcombine.reject = 'sigclip'
@@ -89,9 +81,13 @@ def makedark(files, output,
     ir.imcombine('@' + _outlis, _out)
 
 
-def makeflat(onFiles, offFiles, output, normalizeFirst=False,
-             raw_dir=None, lin_corr=False,
-             instrument=instruments.default_inst):
+def makeflat(
+        onFiles, offFiles, output,
+        dark_frame=None,
+        normalizeFirst=False,
+        raw_dir=None,
+        instrument=instruments.default_inst,
+    ):
     """
     Make flat field image for imaging data. Makes a calib/ directory
     and stores all output there. All output and temporary files
@@ -111,14 +107,16 @@ def makeflat(onFiles, offFiles, output, normalizeFirst=False,
         Integer list of lamps OFF files. Does not require padded zeros.
     output : str
         Output file name. Include the .fits extension.
+    dark_frame : str, default=None
+        File name for the dark frame in order to carry out dark correction.
+        If not provided, dark frame is not subtracted and a warning is thrown.
+        Assumes dark file is located under ./calib/darks/
     normalizeFirst : bool, default=False
         If the individual flats should be normalized first,
         such as in the case of twilight flats.
     raw_dir : str, optional
         Directory where raw files are stored. By default,
         assumes that raw files are stored in '../raw'
-    lin_corr : bool, default=False
-        Perform linearity correction. Currently only works for NIRC2 data.
     instrument : instruments object, optional
         Instrument of data. Default is `instruments.default_inst`
     """
@@ -180,6 +178,26 @@ def makeflat(onFiles, offFiles, output, normalizeFirst=False,
         data_sources_file.write(out_line)
     
     data_sources_file.close()
+    
+    # If dark frame is provided, carry out dark correction
+    if dark_frame is not None:
+        dark_file = './calib/darks/' + dark_frame
+        
+        # Read in dark frame data
+        dark_data = fits.getdata(dark_file, ignore_missing_end=True)
+        
+        # Go through each flat file
+        for i in range(len(skies)):        
+            with fits.open(nn[i], mode='update',
+                    ignore_missing_end=True) as cur_sky:
+                cur_sky.data = cur_sky.data - dark_data
+                
+                cur_sky.flush()   # Update the sky file in place
+    else:
+        warning_message = 'Dark frame not provided for makesky().'
+        warning_message += '\nUsing sky frames without dark subtraction.'
+        
+        warnings.warn(warning_message)
     
     # Perform linearity correction
     if lin_corr:

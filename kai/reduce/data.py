@@ -101,6 +101,7 @@ def clean(
     dark_frame : str, default=None
         File name for the dark frame in order to carry out dark correction.
         If not provided, dark frame is not subtracted and a warning is thrown.
+        Assumes dark file is located under ./calib/darks/
     field : str, default=None
         Optional prefix for clean directory and final
         combining. All clean files will be put into <field_><wave>. You
@@ -222,8 +223,10 @@ def clean(
         # Read in dark frame data
         # Throw warning if dark frame not provided for dark correction
         if dark_frame is not None:
+            dark_file = './calib/darks/' + dark_frame
+            
             # Read in dark frame data
-            dark_data = fits.getdata(dark_frame, ignore_missing_end=True)
+            dark_data = fits.getdata(dark_file, ignore_missing_end=True)
         else:
             warning_message = 'Dark frame not provided for clean().'
             warning_message += '\nCleaning without dark subtraction.'
