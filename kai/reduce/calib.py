@@ -9,6 +9,7 @@ from astropy import stats
 import astropy
 from datetime import datetime
 from pkg_resources import parse_version
+import warnings
 
 module_dir = os.path.dirname(__file__)
 
@@ -187,15 +188,22 @@ def makeflat(
         dark_data = fits.getdata(dark_file, ignore_missing_end=True)
         
         # Go through each flat file
-        for i in range(len(skies)):        
-            with fits.open(nn[i], mode='update',
-                    ignore_missing_end=True) as cur_sky:
-                cur_sky.data = cur_sky.data - dark_data
+        for i in range(len(lampson_copied)):
+            with fits.open(lampson_copied[i], mode='update',
+                    ignore_missing_end=True) as cur_flat:
+                cur_flat.data = cur_flat.data - dark_data
                 
-                cur_sky.flush()   # Update the sky file in place
+                cur_flat.flush()   # Update the flat file in place
+        
+        for i in range(len(lampsoff_copied)):
+            with fits.open(lampsoff_copied[i], mode='update',
+                    ignore_missing_end=True) as cur_flat:
+                cur_flat.data = cur_flat.data - dark_data
+                
+                cur_flat.flush()   # Update the flat file in place
     else:
         warning_message = 'Dark frame not provided for makesky().'
-        warning_message += '\nUsing sky frames without dark subtraction.'
+        warning_message += '\nUsing flat frames without dark subtraction.'
         
         warnings.warn(warning_message)
     
