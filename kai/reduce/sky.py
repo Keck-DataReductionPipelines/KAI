@@ -10,12 +10,16 @@ from kai import instruments
 from datetime import datetime
 import pdb
 import astropy
+import warnings
 from pkg_resources import parse_version
 
-def makesky(files, nite,
-            wave, skyscale=True,
-            raw_dir=None, lin_corr=False,
-            instrument=instruments.default_inst):
+def makesky(
+        files, nite,
+        wave, dark_frame=None,
+        skyscale=True,
+        raw_dir=None,
+        instrument=instruments.default_inst,
+    ):
     """
     Make short wavelength (not L-band or longer) skies.
     
@@ -28,14 +32,16 @@ def makesky(files, nite,
         inside the reduce sub-directories.
     wave : str
         Name for the observation passband (e.g.: "kp")
+    dark_frame : str, default=None
+        File name for the dark frame in order to carry out dark correction.
+        If not provided, dark frame is not subtracted and a warning is thrown.
+        Assumes dark file is located under ./calib/darks/
     skyscale : bool, default=True
         Whether or not to scale the sky files to the common median.
         Turn on for scaling skies before subtraction.
     raw_dir : str, optional
         Directory where raw files are stored. By default,
         assumes that raw files are stored in '../raw'
-    lin_corr : bool, default=False
-        Perform linearity correction. Currently only works for NIRC2 data.
     instrument : instruments object, optional
         Instrument of data. Default is `instruments.default_inst`
     """
@@ -84,10 +90,30 @@ def makesky(files, nite,
     
     data_sources_file.close()
     
+    # If dark frame is provided, carry out dark correction
+    if dark_frame is not None:
+        dark_file = './calib/darks/' + dark_frame
+        
+        # Read in dark frame data
+        dark_data = fits.getdata(dark_file, ignore_missing_end=True)
+        
+        # Go through each sky file
+        for i in range(len(skies)):        
+            with fits.open(nn[i], mode='update',
+                    ignore_missing_end=True) as cur_sky:
+                cur_sky[0].data = cur_sky[0].data - dark_data
+                
+                cur_sky.flush()   # Update the sky file in place
+    else:
+        warning_message = 'Dark frame not provided for makesky().'
+        warning_message += '\nUsing sky frames without dark subtraction.'
+        
+        warnings.warn(warning_message)
+    
+    
     # Perform linearity correction
-    if lin_corr:
-        for i in range(len(skies)):
-            lin_correction.lin_correction(nn[i], instrument=instrument)
+    for i in range(len(skies)):
+        lin_correction.lin_correction(nn[i], instrument=instrument)
     
     # scale skies to common median
     if skyscale:
@@ -153,9 +179,13 @@ def makesky(files, nite,
     os.chdir('../')
 
 
-def makesky_lp(files, nite, wave, number=3, rejectHsigma=None,
-               raw_dir=None, lin_corr=False,
-               instrument=instruments.default_inst):
+def makesky_lp(
+        files, nite,
+        wave, dark_frame=None,
+        number=3, rejectHsigma=None,
+        raw_dir=None,
+        instrument=instruments.default_inst,
+    ):
     """
     Make L' skies by carefully treating the ROTPPOSN angle
     of the K-mirror. Uses 3 skies combined (set by number keyword).
@@ -169,6 +199,10 @@ def makesky_lp(files, nite, wave, number=3, rejectHsigma=None,
         inside the reduce sub-directories.
     wave : str
         Name for the observation passband (e.g.: "lp")
+    dark_frame : str, default=None
+        File name for the dark frame in order to carry out dark correction.
+        If not provided, dark frame is not subtracted and a warning is thrown.
+        Assumes dark file is located under ./calib/darks/
     number : int, default=3
         Number of skies to be combined
     rejectHsigma : int, default:None
@@ -177,8 +211,6 @@ def makesky_lp(files, nite, wave, number=3, rejectHsigma=None,
     raw_dir : str, optional
         Directory where raw files are stored. By default,
         assumes that raw files are stored in '../raw'
-    lin_corr : bool, default=False
-        Perform linearity correction. Currently only works for NIRC2 data.
     instrument : instruments object, optional
         Instrument of data. Default is `instruments.default_inst`
     """
@@ -232,10 +264,29 @@ def makesky_lp(files, nite, wave, number=3, rejectHsigma=None,
     ir.imcopy('@' + _rawlis, '@' + _nlis, verbose='no')
     ir.hselect('@' + _nlis, "$I,ROTPPOSN", 'yes', Stdout=_skyRot) 
     
+    # If dark frame is provided, carry out dark correction
+    if dark_frame is not None:
+        dark_file = './calib/darks/' + dark_frame
+        
+        # Read in dark frame data
+        dark_data = fits.getdata(dark_file, ignore_missing_end=True)
+        
+        # Go through each sky file
+        for i in range(len(skies)):        
+            with fits.open(skies[i], mode='update',
+                    ignore_missing_end=True) as cur_sky:
+                cur_sky[0].data = cur_sky[0].data - dark_data
+                
+                cur_sky.flush()   # Update the sky file in place
+    else:
+        warning_message = 'Dark frame not provided for makesky_lp().'
+        warning_message += '\nUsing sky frames without dark subtraction.'
+        
+        warnings.warn(warning_message)
+    
     # Perform linearity correction
-    if lin_corr:
-        for i in range(len(skies)):
-            lin_correction.lin_correction(skies[i], instrument=instrument)
+    for i in range(len(skies)):
+        lin_correction.lin_correction(skies[i], instrument=instrument)
     
     # Read in the list of files and rotation angles
     files, angles = read_sky_rot_file(_skyRot)

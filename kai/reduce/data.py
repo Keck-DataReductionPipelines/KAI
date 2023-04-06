@@ -17,6 +17,7 @@ from . import bfixpix
 import subprocess
 import copy
 import shutil
+import warnings
 from datetime import datetime
 
 module_dir = os.path.dirname(__file__)
@@ -43,12 +44,15 @@ supermaskName = 'supermask.fits'
 outputVerify = 'ignore'
 
 
-def clean(files, nite, wave, refSrc, strSrc, badColumns=None, field=None,
-          skyscale=False, skyfile=None, angOff=0.0, cent_box=12,
-          fixDAR=True, use_koa_weather=False,
-          raw_dir=None, clean_dir=None,
-          lin_corr=False,
-          instrument=instruments.default_inst, check_ref_loc=True):
+def clean(
+        files, nite, wave, refSrc, strSrc,
+        dark_frame=None,
+        badColumns=None, field=None,
+        skyscale=False, skyfile=None, angOff=0.0, cent_box=12,
+        fixDAR=True, use_koa_weather=False,
+        raw_dir=None, clean_dir=None,
+        instrument=instruments.default_inst, check_ref_loc=True,
+    ):
     """
     Clean near infrared NIRC2 or OSIRIS images.
 
@@ -88,6 +92,16 @@ def clean(files, nite, wave, refSrc, strSrc, badColumns=None, field=None,
     wave : str
         Name for the observation passband (e.g.: "kp"), used as
         a wavelength suffix
+    refSrc : [float, float]
+        x and y coordinates for the reference source, provided as a list of two
+        float coordinates.
+    refSrc : [float, float]
+        x and y coordinates for the Strehl source, provided as a list of two
+        float coordinates.
+    dark_frame : str, default=None
+        File name for the dark frame in order to carry out dark correction.
+        If not provided, dark frame is not subtracted and a warning is thrown.
+        Assumes dark file is located under ./calib/darks/
     field : str, default=None
         Optional prefix for clean directory and final
         combining. All clean files will be put into <field_><wave>. You
@@ -119,8 +133,6 @@ def clean(files, nite, wave, refSrc, strSrc, badColumns=None, field=None,
     clean_dir : str, optional
         Directory where clean files will be stored. By default,
         assumes that clean files will be stored in '../clean'
-    lin_corr : bool, default=False
-        Perform linearity correction. Currently only works for NIRC2 data.
     instrument : instruments object, optional
         Instrument of data. Default is `instruments.default_inst`
     """
@@ -207,7 +219,20 @@ def clean(files, nite, wave, refSrc, strSrc, badColumns=None, field=None,
         else:
             imgsize = imgsizeY
         setup_drizzle(imgsize)
-
+        
+        # Read in dark frame data
+        # Throw warning if dark frame not provided for dark correction
+        if dark_frame is not None:
+            dark_file = './calib/darks/' + dark_frame
+            
+            # Read in dark frame data
+            dark_data = fits.getdata(dark_file, ignore_missing_end=True)
+        else:
+            warning_message = 'Dark frame not provided for clean().'
+            warning_message += '\nCleaning without dark subtraction.'
+        
+            warnings.warn(warning_message)
+        
         ##########
         # Loop through the list of images
         ##########
@@ -239,8 +264,11 @@ def clean(files, nite, wave, refSrc, strSrc, badColumns=None, field=None,
             data_sources_file.write(out_line)
 
             # Clean up if these files previously existed
-            util.rmall([_cp, _ss, _ff, _ff_f, _ff_s, _bp, _cd, _ce, _cc,
-                        _wgt, _statmask, _crmask, _mask, _pers, _max, _coo, _rcoo, _dlog])
+            util.rmall([
+                _cp, _ss, _ff, _ff_f, _ff_s, _bp, _cd, _ce, _cc,
+                _wgt, _statmask, _crmask, _mask, _pers, _max, _coo,
+                _rcoo, _dlog,
+            ])
 
             ### Copy the raw file to local directory ###
             ir.imcopy(_raw, _cp, verbose='no')
@@ -249,9 +277,16 @@ def clean(files, nite, wave, refSrc, strSrc, badColumns=None, field=None,
             # - Checked images, this doesn't appear to be a large effect.
             #clean_persistance(_cp, _pers, instrument=instrument)
             
+            # Dark correction
+            if dark_frame is not None:
+                with fits.open(_cp, mode='update',
+                        ignore_missing_end=True) as cur_fra,e:
+                    cur_frame[0].data = cur_frame[0].data - dark_data
+                
+                    cur_frame.flush()   # Update the current frame in place
+            
             # Linearity correction
-            if lin_corr:
-                lin_correction.lin_correction(_cp, instrument=instrument)
+            lin_correction.lin_correction(_cp, instrument=instrument)
             
             ### Sky subtract ###
             # Get the proper sky for this science frame.
@@ -1193,10 +1228,16 @@ def combine_drizzle(imgsize, cleanDir, roots, outroot, weights, shifts,
     mjd_weightedMean = mjd_weightedSum / np.sum(weights)
     time_obs = Time(mjd_weightedMean, format='mjd')
     
-    fits_f[0].header.set('MJD-OBS', mjd_weightedMean, 'Weighted modified julian date of combined observations')
+    fits_f[0].header.set(
+        'MJD-OBS', mjd_weightedMean,
+        'Weighted modified julian date of combined observations'
+    )
     
     ## Also update date field in header
-    fits_f[0].header.set('DATE', '{0}'.format(time_obs.fits), 'Weighted observation date')
+    fits_f[0].header.set(
+        'DATE', '{0}'.format(time_obs.fits),
+        'Weighted observation date'
+    )
     
     
     # Save to final fits file.
