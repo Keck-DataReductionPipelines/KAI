@@ -191,14 +191,14 @@ def makeflat(
         for i in range(len(lampson_copied)):
             with fits.open(lampson_copied[i], mode='update',
                     ignore_missing_end=True) as cur_flat:
-                cur_flat.data = cur_flat.data - dark_data
+                cur_flat[0].data = cur_flat[0].data - dark_data
                 
                 cur_flat.flush()   # Update the flat file in place
         
         for i in range(len(lampsoff_copied)):
             with fits.open(lampsoff_copied[i], mode='update',
                     ignore_missing_end=True) as cur_flat:
-                cur_flat.data = cur_flat.data - dark_data
+                cur_flat[0].data = cur_flat[0].data - dark_data
                 
                 cur_flat.flush()   # Update the flat file in place
     else:

@@ -281,7 +281,7 @@ def clean(
             if dark_frame is not None:
                 with fits.open(_cp, mode='update',
                         ignore_missing_end=True) as cur_fra,e:
-                    cur_frame.data = cur_frame.data - dark_data
+                    cur_frame[0].data = cur_frame[0].data - dark_data
                 
                     cur_frame.flush()   # Update the current frame in place
             

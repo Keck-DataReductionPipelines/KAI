@@ -101,7 +101,7 @@ def makesky(
         for i in range(len(skies)):        
             with fits.open(nn[i], mode='update',
                     ignore_missing_end=True) as cur_sky:
-                cur_sky.data = cur_sky.data - dark_data
+                cur_sky[0].data = cur_sky[0].data - dark_data
                 
                 cur_sky.flush()   # Update the sky file in place
     else:
@@ -275,7 +275,7 @@ def makesky_lp(
         for i in range(len(skies)):        
             with fits.open(skies[i], mode='update',
                     ignore_missing_end=True) as cur_sky:
-                cur_sky.data = cur_sky.data - dark_data
+                cur_sky[0].data = cur_sky[0].data - dark_data
                 
                 cur_sky.flush()   # Update the sky file in place
     else:
