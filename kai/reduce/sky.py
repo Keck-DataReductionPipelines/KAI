@@ -92,7 +92,7 @@ def makesky(
     
     # If dark frame is provided, carry out dark correction
     if dark_frame is not None:
-        dark_file = './calib/darks/' + dark_frame
+        dark_file = redDir + '/calib/darks/' + dark_frame
         
         # Read in dark frame data
         dark_data = fits.getdata(dark_file, ignore_missing_end=True)
@@ -266,7 +266,7 @@ def makesky_lp(
     
     # If dark frame is provided, carry out dark correction
     if dark_frame is not None:
-        dark_file = './calib/darks/' + dark_frame
+        dark_file = redDir + '/calib/darks/' + dark_frame
         
         # Read in dark frame data
         dark_data = fits.getdata(dark_file, ignore_missing_end=True)
