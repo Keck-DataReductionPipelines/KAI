@@ -32,7 +32,7 @@ def lin_correction(file, instrument=instruments.default_inst):
     num_coadds = im_header['COADDS']
     
     x = im_data / num_coadds
-    coeffs = instrument.get_lin_corr_coeffs()
+    coeffs = instrument.get_linearity_correction_coeffs()
     
     # Generalize to arbitrary polynomial order
     
