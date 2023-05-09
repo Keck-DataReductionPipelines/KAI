@@ -224,6 +224,8 @@ class OSIRIS(Instrument):
         Return the plate scale in arcsec/pix.
         """
         scale = 0.00995
+        # scale = 0.0099418
+        # scale = 0.0099576
         
         return scale
     
@@ -231,7 +233,17 @@ class OSIRIS(Instrument):
         """
         Get the sky PA in degrees East of North. 
         """
-        pa = float(hdr['ROTPOSN']) - self.get_instrument_angle(hdr)
+        # pa = float(hdr['ROTPOSN']) - self.get_instrument_angle(hdr)
+        pa = hdr['PA_IMAG']
+        
+        #if in PCU mode, read the PCU rotation angle instead
+        if 'PCUZ' in hdr.keys:
+            if hdr['PCUZ'] > 10:  
+                pcu_angle = hdr['PCUR']
+                pinhole_angle = 65.703 #the angle at which the pihole mask is installed
+                # rotator_angle = hdr['ROTPPOSN']
+                # default_rotator_angle = 90
+`               pa = pcu_angle - pinhole_angle       
         return pa
     
     def get_instrument_angle(self, hdr):

@@ -427,16 +427,17 @@ def applyDAR(inputFits, spaceStarlist, plot=False, instrument=instruments.defaul
         
     if (plot==True):
         # plt.close('all')
+        # plt.plot(figsize=(4,4))
         q = plt.quiver(x, y, xnew - x, ynew - y, scale=0.02)
-        plt.xlabel('RA (arcsec)')
-        plt.ylabel('DEC (arcsec)')
+        # plt.xlabel('RA (arcsec)')
+        # plt.ylabel('DEC (arcsec)')
         plt.xlabel(r'$\Delta$ RA * cos(Dec) (arcsec)')
         plt.ylabel(r'$\Delta$ Dec (arcsec)')
         plt.figtext(0.15,0.85,'q =' + str(round(math.degrees(pa))))
         plt.axis('equal')
         quiv_label = '1 mas'
         quiv_label_val = 0.001
-        plt.quiverkey(q, 0.80, 0.85, quiv_label_val, quiv_label, coordinates='figure', labelpos='E', color='green')     
+        plt.quiverkey(q, 0.78, 0.85, quiv_label_val, quiv_label, coordinates='figure', labelpos='E', color='green')     
         plt.savefig(plotdir+ inputFits[-26:-5] + '.pdf', bbox_inches='tight')
         # plt.show()
 
@@ -504,6 +505,7 @@ def removeDAR(inputFits, groundStarlist, plot=False, instrument=instruments.defa
 
     if (plot==True):
         # plt.close('all')
+        plt.figure(figsize=(6,6))
         q = plt.quiver(x, y, xnew - x, ynew - y, scale=2.0)
         plt.xlabel('x (pixels)')
         plt.ylabel('y (pixels)')
@@ -515,6 +517,7 @@ def removeDAR(inputFits, groundStarlist, plot=False, instrument=instruments.defa
         plt.quiverkey(q, 0.80, 0.85, quiv_label_val, quiv_label, coordinates='figure', labelpos='E', color='green')     
         plt.savefig(plotdir+ inputFits[-26:-5] + '.jpg', bbox_inches='tight')
         # plt.show()
+
 
     groundStarlist['x'] = xnew
     groundStarlist['y'] = ynew 
