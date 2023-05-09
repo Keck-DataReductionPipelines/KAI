@@ -64,17 +64,11 @@ Attributes
 .. autoapisummary::
 
    kai.reduce.data.module_dir
-   kai.reduce.data.distCoef
    kai.reduce.data.supermaskName
    kai.reduce.data.outputVerify
 
 
 .. py:data:: module_dir
-
-   
-
-.. py:data:: distCoef
-   :value: ''
 
    
 

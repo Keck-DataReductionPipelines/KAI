@@ -91,27 +91,8 @@
 
 <div class="viewcode-block" id="module_dir"><a class="viewcode-back" href="../../../autoapi/kai/reduce/data/index.html#kai.reduce.data.module_dir">[docs]</a><span class="n">module_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span></div>
 
-<span class="c1"># Remember to change these if you are going to use the wide camera.</span>
-<span class="c1"># You can change them in your reduce.py file after importing data.py</span>
-<span class="c1"># Narrow Camera</span>
-<div class="viewcode-block" id="distCoef"><a class="viewcode-back" href="../../../autoapi/kai/reduce/data/index.html#kai.reduce.data.distCoef">[docs]</a><span class="n">distCoef</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span></div>
-<span class="c1"># distXgeoim = module_dir + &#39;/distortion/nirc2_narrow_xgeoim.fits&#39;</span>
-<span class="c1"># distYgeoim = module_dir + &#39;/distortion/nirc2_narrow_ygeoim.fits&#39;</span>
-<span class="c1">#changing to test new distortion solutions right now</span>
-<span class="c1">#distXgeoim = &#39;/g/lu/data/m53/2015may/dist_sol/Leg_6r9_may_X.fits&#39;</span>
-<span class="c1">#distYgeoim = &#39;/g/lu/data/m53/2015may/dist_sol/Leg_6r9_may_Y.fits&#39;</span>
-<span class="c1"># Wide Camera</span>
-<span class="c1">#distCoef = module_dir + &#39;/distortion/coeffs/nirc2_cubic_wide&#39;</span>
-<span class="c1">#distXgeoim = &#39;&#39;</span>
-<span class="c1">#distYgeoim = &#39;&#39;</span>
-<span class="c1"># Wide Camera Hai Fu</span>
-<span class="c1">#distCoef = &#39; &#39;</span>
-<span class="c1">#distXgeoim = module_dir + &#39;/distortion/nirc2_wide_X_distortion.fits&#39;</span>
-<span class="c1">#distYgeoim = module_dir + &#39;/distortion/nirc2_wide_Y_distortion.fits&#39;</span>
-
 <div class="viewcode-block" id="supermaskName"><a class="viewcode-back" href="../../../autoapi/kai/reduce/data/index.html#kai.reduce.data.supermaskName">[docs]</a><span class="n">supermaskName</span> <span class="o">=</span> <span class="s1">&#39;supermask.fits&#39;</span></div>
 <div class="viewcode-block" id="outputVerify"><a class="viewcode-back" href="../../../autoapi/kai/reduce/data/index.html#kai.reduce.data.outputVerify">[docs]</a><span class="n">outputVerify</span> <span class="o">=</span> <span class="s1">&#39;ignore&#39;</span></div>
-
 
 <div class="viewcode-block" id="clean"><a class="viewcode-back" href="../../../autoapi/kai/reduce/data/index.html#kai.reduce.data.clean">[docs]</a><span class="k">def</span> <span class="nf">clean</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="n">nite</span><span class="p">,</span> <span class="n">wave</span><span class="p">,</span> <span class="n">refSrc</span><span class="p">,</span> <span class="n">strSrc</span><span class="p">,</span> <span class="n">badColumns</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">field</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
           <span class="n">skyscale</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">skyfile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">angOff</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">cent_box</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
@@ -209,7 +190,7 @@
     
     <span class="n">sciDir</span> <span class="o">=</span> <span class="n">waveDir</span> <span class="o">+</span> <span class="s1">&#39;/sci_&#39;</span> <span class="o">+</span> <span class="n">nite</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span>
     <span class="n">util</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">sciDir</span><span class="p">)</span>
-    <span class="n">ir</span><span class="o">.</span><span class="n">cd</span><span class="p">(</span><span class="n">sciDir</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">sciDir</span><span class="p">)</span>
 
     <span class="c1"># Set location of raw data</span>
     <span class="n">rawDir</span> <span class="o">=</span> <span class="n">rootDir</span> <span class="o">+</span> <span class="s1">&#39;raw/&#39;</span>
@@ -402,10 +383,10 @@
     <span class="k">finally</span><span class="p">:</span>
         <span class="c1"># Move back up to the original directory</span>
         <span class="c1">#skyObj.close()</span>
-        <span class="n">ir</span><span class="o">.</span><span class="n">cd</span><span class="p">(</span><span class="s1">&#39;../&#39;</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">redDir</span><span class="p">)</span>
 
     <span class="c1"># Change back to original directory</span>
-    <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="s1">&#39;../&#39;</span><span class="p">)</span></div>
+    <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">redDir</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="clean_get_supermask"><a class="viewcode-back" href="../../../autoapi/kai/reduce/data/index.html#kai.reduce.data.clean_get_supermask">[docs]</a><span class="k">def</span> <span class="nf">clean_get_supermask</span><span class="p">(</span><span class="n">_statmask</span><span class="p">,</span> <span class="n">_supermask</span><span class="p">,</span> <span class="n">badColumns</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -813,7 +794,7 @@
         <span class="n">util</span><span class="o">.</span><span class="n">rmall</span><span class="p">([</span><span class="n">_rcoo</span><span class="p">])</span>
     
     <span class="c1"># Change back to original directory</span>
-    <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="s1">&#39;../&#39;</span><span class="p">)</span></div>
+    <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">redDir</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="rot_img"><a class="viewcode-back" href="../../../autoapi/kai/reduce/data/index.html#kai.reduce.data.rot_img">[docs]</a><span class="k">def</span> <span class="nf">rot_img</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">cleanDir</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Rotate images to PA=0 if they have a different PA from one</span>
@@ -968,7 +949,7 @@
                            <span class="n">droppedFiles</span><span class="p">)</span>
     
     <span class="c1"># Switch back to parent directory</span>
-    <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="s1">&#39;../&#39;</span><span class="p">)</span></div>
+    <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">redDir</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="weight_by_strehl"><a class="viewcode-back" href="../../../autoapi/kai/reduce/data/index.html#kai.reduce.data.weight_by_strehl">[docs]</a><span class="k">def</span> <span class="nf">weight_by_strehl</span><span class="p">(</span><span class="n">roots</span><span class="p">,</span> <span class="n">strehls</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -1247,8 +1228,6 @@
                               <span class="s1">&#39;rotator user position&#39;</span><span class="p">)</span>
 
     <span class="c1"># Add keyword with distortion image information</span>
-    <span class="n">fits_f</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s1">&#39;DISTCOEF&#39;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">distCoef</span><span class="p">,</span>
-                          <span class="s1">&#39;Distortion Coefficients File&#39;</span><span class="p">)</span>
     <span class="n">fits_f</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s1">&#39;DISTORTX&#39;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">distXgeoim</span><span class="p">,</span>
                           <span class="s1">&#39;X Distortion Image&#39;</span><span class="p">)</span>
     <span class="n">fits_f</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s1">&#39;DISTORTY&#39;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">distYgeoim</span><span class="p">,</span>
