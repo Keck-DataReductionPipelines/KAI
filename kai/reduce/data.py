@@ -21,27 +21,8 @@ from datetime import datetime
 
 module_dir = os.path.dirname(__file__)
 
-# Remember to change these if you are going to use the wide camera.
-# You can change them in your reduce.py file after importing data.py
-# Narrow Camera
-distCoef = ''
-# distXgeoim = module_dir + '/distortion/nirc2_narrow_xgeoim.fits'
-# distYgeoim = module_dir + '/distortion/nirc2_narrow_ygeoim.fits'
-#changing to test new distortion solutions right now
-#distXgeoim = '/g/lu/data/m53/2015may/dist_sol/Leg_6r9_may_X.fits'
-#distYgeoim = '/g/lu/data/m53/2015may/dist_sol/Leg_6r9_may_Y.fits'
-# Wide Camera
-#distCoef = module_dir + '/distortion/coeffs/nirc2_cubic_wide'
-#distXgeoim = ''
-#distYgeoim = ''
-# Wide Camera Hai Fu
-#distCoef = ' '
-#distXgeoim = module_dir + '/distortion/nirc2_wide_X_distortion.fits'
-#distYgeoim = module_dir + '/distortion/nirc2_wide_Y_distortion.fits'
-
 supermaskName = 'supermask.fits'
 outputVerify = 'ignore'
-
 
 def clean(files, nite, wave, refSrc, strSrc, badColumns=None, field=None,
           skyscale=False, skyfile=None, angOff=0.0, cent_box=12,
@@ -139,7 +120,7 @@ def clean(files, nite, wave, refSrc, strSrc, badColumns=None, field=None,
     
     sciDir = waveDir + '/sci_' + nite + '/'
     util.mkdir(sciDir)
-    ir.cd(sciDir)
+    os.chdir(sciDir)
 
     # Set location of raw data
     rawDir = rootDir + 'raw/'
@@ -332,10 +313,10 @@ def clean(files, nite, wave, refSrc, strSrc, badColumns=None, field=None,
     finally:
         # Move back up to the original directory
         #skyObj.close()
-        ir.cd('../')
+        os.chdir(redDir)
 
     # Change back to original directory
-    os.chdir('../')
+    os.chdir(redDir)
 
 def clean_get_supermask(_statmask, _supermask, badColumns):
     """
@@ -743,7 +724,7 @@ def combine(files, wave, outroot, field=None, outSuffix=None,
         util.rmall([_rcoo])
     
     # Change back to original directory
-    os.chdir('../')
+    os.chdir(redDir)
 
 def rot_img(root, phi, cleanDir):
     """Rotate images to PA=0 if they have a different PA from one
@@ -898,7 +879,7 @@ def calcStrehl(files, wave,
                            droppedFiles)
     
     # Switch back to parent directory
-    os.chdir('../')
+    os.chdir(redDir)
 
 def weight_by_strehl(roots, strehls):
     """
@@ -1177,8 +1158,6 @@ def combine_drizzle(imgsize, cleanDir, roots, outroot, weights, shifts,
                               'rotator user position')
 
     # Add keyword with distortion image information
-    fits_f[0].header.set('DISTCOEF', "%s" % distCoef,
-                          'Distortion Coefficients File')
     fits_f[0].header.set('DISTORTX', "%s" % distXgeoim,
                           'X Distortion Image')
     fits_f[0].header.set('DISTORTY', "%s" % distYgeoim,
