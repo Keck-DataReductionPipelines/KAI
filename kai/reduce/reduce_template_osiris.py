@@ -133,9 +133,6 @@ def go():
     # Kp-band reduction
     ##########
 
-    util.mkdir('kp')
-    os.chdir('kp')
-
     target = 'mb19284'
     sci_files = ['i200822_a011{0:03d}_flip'.format(ii) for ii in range(2, 5+1)]
     sci_files += ['i200822_a012{0:03d}_flip'.format(ii) for ii in range(2, 25+1)]
@@ -148,7 +145,6 @@ def go():
     data.calcStrehl(sci_files, 'kp_tdOpen', field=target, instrument=osiris)
     data.combine(sci_files, 'kp_tdOpen', epoch, field=target,
                      trim=0, weight='strehl', submaps=3, instrument=osiris)
-    os.chdir('../')
 
     ##########
     #
@@ -159,9 +155,6 @@ def go():
     ##########
     # Kp-band reduction
     ##########
-
-    util.mkdir('kp')
-    os.chdir('kp')
 
     #    -- If you have more than one position angle, make sure to
     #       clean them seperatly.
@@ -181,3 +174,53 @@ def go():
     data.calcStrehl(sci_files, 'kp_tdOpen', field=target, instrument=osiris)
     data.combine(sci_files, 'kp_tdOpen', epoch, field=target,
                      trim=1, weight='strehl', submaps=3, instrument=osiris)
+
+############
+# Jackknife
+############
+def jackknife():
+    """
+    Perform the Jackknife data reduction. The methodology is as follows:
+    For N total images, there are N stacked images created by data.combine(),
+    each of these combo frames consists of N-1 images. The suffix '_{i}' is
+    given to each jackknife combo frame (i.e. mag_OB06284_17_kp_tdOpen.fits 
+    would be 17th jackknife combo frame created). Submaps flag has been turned
+    off for this function, as it is not needed.
+    """
+    ##########
+    #
+    # OSIRIS Format
+    #
+    ##########
+
+    ##########
+    # Kp-band reduction
+    ##########
+
+    # Nite 1
+    target = 'OB06284'
+    sci_files1 = ['i200810_a004{0:03d}_flip'.format(ii) for ii in range(2, 26+1)]
+    sky_files1 = ['i200810_a007{0:03d}_flip'.format(ii) for ii in range(2, 6+1)]
+    refSrc1 = [1071., 854.] # This is the target
+
+    sky.makesky(sky_files1, target, 'kp_tdOpen', instrument=osiris)
+    data.clean(sci_files1, target, 'kp_tdOpen', refSrc, refSrc1, field=target, instrument=osiris)
+
+    # Nite 2
+    sci_files2 = ['i200810_a004{0:03d}_flip'.format(ii) for ii in range(2, 26+1)]
+    sky_files2 = ['i200810_a007{0:03d}_flip'.format(ii) for ii in range(2, 6+1)]
+    refSrc2 = [1071., 854.] # This is the target
+
+    sky.makesky(sky_files2, target, 'kp_tdOpen', instrument=osiris)
+    data.clean(sci_files2, target, 'kp_tdOpen', refSrc, refSrc2, field=target, instrument=osiris)
+    #-----------------
+
+    sci_files = sci_files1 + sci_files2
+
+    for i in enumerate(sci_files, start=1):
+        jack_list = sci_files[:]
+        jack_list.remove(i[1])
+        data.calcStrehl(jack_list, 'kp_tdOpen', field=target, instrument=osiris)
+        data.combine(jack_list, 'kp_tdOpen', epoch, field=target,
+                     trim=0, weight='strehl', instrument=osiris, outSuffix=str(i[0]))
+        os.chdir('reduce')

@@ -1,0 +1,38 @@
+:py:mod:`kai.tests`
+===================
+
+.. py:module:: kai.tests
+
+.. autoapi-nested-parse::
+
+   
+   This module contains package tests.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+Submodules
+----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+
+   test_calibrate/index.rst
+
+

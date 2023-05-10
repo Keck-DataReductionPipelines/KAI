@@ -1,0 +1,218 @@
+:py:mod:`kai.reduce.sky`
+========================
+
+.. py:module:: kai.reduce.sky
+
+.. autoapi-nested-parse::
+
+   
+   ..
+       !! processed by numpydoc !!
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   kai.reduce.sky.makesky
+   kai.reduce.sky.makesky_lp
+   kai.reduce.sky.makesky_lp2
+   kai.reduce.sky.makesky_fromsci
+   kai.reduce.sky.makesky_lp_fromsci
+   kai.reduce.sky.read_sky_rot_file
+
+
+
+.. py:function:: makesky(files, nite, wave, skyscale=True, raw_dir=None, instrument=instruments.default_inst)
+
+   
+   Make short wavelength (not L-band or longer) skies.
+
+
+   :Parameters:
+
+       **files** : list of int
+           Integer list of the files. Does not require padded zeros.
+
+       **nite** : str
+           Name for night of observation (e.g.: "nite1"), used as suffix
+           inside the reduce sub-directories.
+
+       **wave** : str
+           Name for the observation passband (e.g.: "kp")
+
+       **skyscale** : bool, default=True
+           Whether or not to scale the sky files to the common median.
+           Turn on for scaling skies before subtraction.
+
+       **raw_dir** : str, optional
+           Directory where raw files are stored. By default,
+           assumes that raw files are stored in '../raw'
+
+       **instrument** : instruments object, optional
+           Instrument of data. Default is `instruments.default_inst`
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: makesky_lp(files, nite, wave, number=3, rejectHsigma=None, raw_dir=None, instrument=instruments.default_inst)
+
+   
+   Make L' skies by carefully treating the ROTPPOSN angle
+   of the K-mirror. Uses 3 skies combined (set by number keyword).
+
+
+   :Parameters:
+
+       **files** : list of int
+           Integer list of the files. Does not require padded zeros.
+
+       **nite** : str
+           Name for night of observation (e.g.: "nite1"), used as suffix
+           inside the reduce sub-directories.
+
+       **wave** : str
+           Name for the observation passband (e.g.: "lp")
+
+       **number** : int, default=3
+           Number of skies to be combined
+
+       **rejectHsigma** : int, default:None
+           Flag to pass for rejectHsigma for IRAF imcombine
+           By default, no flags are passed
+
+       **raw_dir** : str, optional
+           Directory where raw files are stored. By default,
+           assumes that raw files are stored in '../raw'
+
+       **instrument** : instruments object, optional
+           Instrument of data. Default is `instruments.default_inst`
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: makesky_lp2(files, nite, wave)
+
+   
+   Make L' skies by carefully treating the ROTPPOSN angle
+   of the K-mirror. Uses only 2 skies combined.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: makesky_fromsci(files, nite, wave)
+
+   
+   Make short wavelength (not L-band or longer) skies.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: makesky_lp_fromsci(files, nite, wave, number=3, rejectHsigma=None)
+
+   
+   Make L' skies by carefully treating the ROTPPOSN angle
+   of the K-mirror. Uses 3 skies combined (set by number keyword).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: read_sky_rot_file(sky_rot_file)
+
+   
+   Read in the list of files and rotation angles.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+

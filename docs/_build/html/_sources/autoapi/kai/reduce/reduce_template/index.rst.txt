@@ -1,0 +1,185 @@
+:py:mod:`kai.reduce.reduce_template`
+====================================
+
+.. py:module:: kai.reduce.reduce_template
+
+.. autoapi-nested-parse::
+
+   
+   ..
+       !! processed by numpydoc !!
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   kai.reduce.reduce_template.makelog
+   kai.reduce.reduce_template.analyze_darks
+   kai.reduce.reduce_template.go
+   kai.reduce.reduce_template.jackknife
+
+
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   kai.reduce.reduce_template.epoch
+   kai.reduce.reduce_template.nirc2
+
+
+.. py:data:: epoch
+   :annotation: = 19apr21
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:data:: nirc2
+   
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: makelog()
+
+   
+   Make an electronic log from all the files in the ../raw/ directory.
+   The file will be called kai.log and stored in the same directory.
+
+   @author Jessica Lu
+   @author Sylvana Yelda
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: analyze_darks()
+
+   
+   Analyze the dark_calib results
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: go()
+
+   
+   Do the full data reduction.
+
+   @author Jessica Lu
+   @author Sylvana Yelda
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: jackknife()
+
+   
+   Perform the Jackknife data reduction. The methodology is as follows:
+   For N total images, there are N stacked images created by data.combine(),
+   each of these combo frames consists of N-1 images. The suffix '_{i}' is
+   given to each jackknife combo frame (i.e. mag27maylgs_12_ks.fits would be
+   the 12th jackknife combo frame created). Submaps flag has been turned off
+   for this function, as it is not needed.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+

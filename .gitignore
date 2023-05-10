@@ -17,10 +17,6 @@ htmlcov
 MANIFEST
 .ipynb_checkpoints
 
-# Sphinx
-docs/api
-docs/_build
-
 # Eclipse editor project files
 .project
 .pydevproject
@@ -125,11 +121,6 @@ instance/
 # Scrapy stuff:
 .scrapy
 
-# Sphinx documentation
-docs/_build/
-doc/_build/
-docs/build/
-
 # PyBuilder
 target/
 
@@ -169,3 +160,8 @@ ENV/
 # Emacs aux files
 *.py~
 *.py#
+
+# Our test epoch data is hosted on GitHub.
+kai/data/test_epoch/
+
+

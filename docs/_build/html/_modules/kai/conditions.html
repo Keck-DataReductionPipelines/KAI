@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>kai.conditions &mdash; KAI  documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> KAI
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../autoapi/index.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">KAI</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      <li>kai.conditions</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for kai.conditions</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">asciidata</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pylab</span> <span class="k">as</span> <span class="nn">py</span>
+<span class="kn">from</span> <span class="nn">jlu.observe</span> <span class="kn">import</span> <span class="n">weather</span>
+<span class="kn">import</span> <span class="nn">pyfits</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+
+
+<div class="viewcode-block" id="summarize_observing_conditions"><a class="viewcode-back" href="../../autoapi/kai/conditions/index.html#kai.conditions.summarize_observing_conditions">[docs]</a><span class="k">def</span> <span class="nf">summarize_observing_conditions</span><span class="p">(</span><span class="n">fitsFiles</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Summarize the observing conditions for a set of fits files. Select</span>
+<span class="sd">    out the dates and times, range of airmasses, temperature,</span>
+<span class="sd">    pressure, humidity, and water vapor column.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">fitsFiles</span><span class="p">)</span>
+
+    <span class="c1"># Here is the data we are going to collect from the fits headers</span>
+    <span class="n">year</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">count</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">month</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">count</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">day</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">count</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">hour</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">count</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">minute</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">count</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">airmass</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">count</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">water_column</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">count</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    
+    <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">fitsFiles</span><span class="p">)):</span>
+        <span class="c1"># Get header info</span>
+        <span class="n">hdr</span> <span class="o">=</span> <span class="n">pyfits</span><span class="o">.</span><span class="n">getheader</span><span class="p">(</span><span class="n">fitsFiles</span><span class="p">[</span><span class="n">ii</span><span class="p">])</span>
+
+        <span class="n">airmass</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;AIRMASS&#39;</span><span class="p">])</span>
+
+        <span class="n">date</span> <span class="o">=</span> <span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;DATE-OBS&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">)</span>
+        <span class="n">_year</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">date</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">_month</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">date</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">_day</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">date</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+
+        <span class="n">utc</span> <span class="o">=</span> <span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;UTC&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)</span>
+        <span class="n">_hour</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">utc</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">_minute</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">utc</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">_second</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">utc</span><span class="p">[</span><span class="mi">2</span><span class="p">])))</span>
+
+        <span class="n">utc</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="n">_year</span><span class="p">,</span> <span class="n">_month</span><span class="p">,</span> <span class="n">_day</span><span class="p">,</span> <span class="n">_hour</span><span class="p">,</span> <span class="n">_minute</span><span class="p">,</span> <span class="n">_second</span><span class="p">)</span>
+        <span class="n">utc2hst</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=-</span><span class="mi">10</span><span class="p">)</span>
+        <span class="n">hst</span> <span class="o">=</span> <span class="n">utc</span> <span class="o">+</span> <span class="n">utc2hst</span>
+
+        <span class="n">year</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span> <span class="o">=</span> <span class="n">hst</span><span class="o">.</span><span class="n">year</span>
+        <span class="n">month</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span> <span class="o">=</span> <span class="n">hst</span><span class="o">.</span><span class="n">month</span>
+        <span class="n">day</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span> <span class="o">=</span> <span class="n">hst</span><span class="o">.</span><span class="n">day</span>
+        <span class="n">hour</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span> <span class="o">=</span> <span class="n">hst</span><span class="o">.</span><span class="n">hour</span>
+        <span class="n">minute</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span> <span class="o">=</span> <span class="n">hst</span><span class="o">.</span><span class="n">minute</span>
+
+        <span class="c1"># Get the water column in mm of H2O</span>
+        <span class="n">water_column</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span> <span class="o">=</span> <span class="n">weather</span><span class="o">.</span><span class="n">cso_water_column</span><span class="p">(</span><span class="n">_year</span><span class="p">,</span> <span class="n">_month</span><span class="p">,</span> <span class="n">_day</span><span class="p">,</span> 
+                                                    <span class="n">_hour</span><span class="p">,</span> <span class="n">_minute</span><span class="p">)</span>
+
+    <span class="c1"># Now lets fetch the CFHT weather data</span>
+    <span class="p">(</span><span class="n">temperature</span><span class="p">,</span> <span class="n">pressure</span><span class="p">,</span> <span class="n">humidity</span><span class="p">,</span> <span class="n">wind_speed</span><span class="p">,</span> <span class="n">wind_dir</span><span class="p">)</span> <span class="o">=</span> \
+        <span class="n">weather</span><span class="o">.</span><span class="n">cfht_weather_data</span><span class="p">(</span><span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">,</span> <span class="n">day</span><span class="p">,</span> <span class="n">hour</span><span class="p">,</span> <span class="n">minute</span><span class="p">)</span>
+
+    <span class="c1"># Print out a nicely formatted table</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%-20s</span><span class="s1"> </span><span class="si">%4s</span><span class="s1"> </span><span class="si">%2s</span><span class="s1"> </span><span class="si">%2s</span><span class="s1"> </span><span class="si">%2s</span><span class="s1"> </span><span class="si">%2s</span><span class="s1">   </span><span class="si">%4s</span><span class="s1"> </span><span class="si">%4s</span><span class="s1"> </span><span class="si">%5s</span><span class="s1"> </span><span class="si">%5s</span><span class="s1"> </span><span class="si">%4s</span><span class="s1"> </span><span class="si">%4s</span><span class="s1"> </span><span class="si">%4s</span><span class="s1">&#39;</span> <span class="o">%</span> \
+        <span class="p">(</span><span class="s1">&#39;Filename&#39;</span><span class="p">,</span> <span class="s1">&#39;Year&#39;</span><span class="p">,</span> <span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="s1">&#39;D&#39;</span><span class="p">,</span> <span class="s1">&#39;h&#39;</span><span class="p">,</span> <span class="s1">&#39;m&#39;</span><span class="p">,</span> <span class="s1">&#39;AirM&#39;</span><span class="p">,</span> <span class="s1">&#39;H2O&#39;</span><span class="p">,</span> <span class="s1">&#39;Temp&#39;</span><span class="p">,</span> 
+         <span class="s1">&#39;Press&#39;</span><span class="p">,</span> <span class="s1">&#39;Humi&#39;</span><span class="p">,</span> <span class="s1">&#39;Wind&#39;</span><span class="p">,</span> <span class="s1">&#39;Dir&#39;</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%-20s</span><span class="s1"> </span><span class="si">%4s</span><span class="s1"> </span><span class="si">%2s</span><span class="s1"> </span><span class="si">%2s</span><span class="s1"> </span><span class="si">%2s</span><span class="s1"> </span><span class="si">%2s</span><span class="s1">   </span><span class="si">%4s</span><span class="s1"> </span><span class="si">%4s</span><span class="s1"> </span><span class="si">%5s</span><span class="s1"> </span><span class="si">%5s</span><span class="s1"> </span><span class="si">%4s</span><span class="s1"> </span><span class="si">%4s</span><span class="s1"> </span><span class="si">%4s</span><span class="s1">&#39;</span> <span class="o">%</span> \
+        <span class="p">(</span><span class="s1">&#39;HST&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;mm&#39;</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">,</span> <span class="s1">&#39;mbar&#39;</span><span class="p">,</span> <span class="s1">&#39;%&#39;</span><span class="p">,</span> <span class="s1">&#39;km/h&#39;</span><span class="p">,</span> <span class="s1">&#39;deg&#39;</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%-20s</span><span class="s1"> </span><span class="si">%4s</span><span class="s1"> </span><span class="si">%2s</span><span class="s1"> </span><span class="si">%2s</span><span class="s1"> </span><span class="si">%2s</span><span class="s1"> </span><span class="si">%2s</span><span class="s1">   </span><span class="si">%4s</span><span class="s1"> </span><span class="si">%4s</span><span class="s1"> </span><span class="si">%5s</span><span class="s1"> </span><span class="si">%5s</span><span class="s1"> </span><span class="si">%4s</span><span class="s1"> </span><span class="si">%4s</span><span class="s1"> </span><span class="si">%4s</span><span class="s1">&#39;</span> <span class="o">%</span> \
+        <span class="p">(</span><span class="s1">&#39;--------&#39;</span><span class="p">,</span> <span class="s1">&#39;----&#39;</span><span class="p">,</span> <span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="s1">&#39;----&#39;</span><span class="p">,</span> <span class="s1">&#39;----&#39;</span><span class="p">,</span> <span class="s1">&#39;-----&#39;</span><span class="p">,</span> 
+         <span class="s1">&#39;-----&#39;</span><span class="p">,</span> <span class="s1">&#39;----&#39;</span><span class="p">,</span> <span class="s1">&#39;----&#39;</span><span class="p">,</span> <span class="s1">&#39;----&#39;</span><span class="p">))</span>
+
+    <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">fitsFiles</span><span class="p">)):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%-20s</span><span class="s1"> </span><span class="si">%4d</span><span class="s1"> </span><span class="si">%2d</span><span class="s1"> </span><span class="si">%2d</span><span class="s1"> </span><span class="si">%2d</span><span class="s1"> </span><span class="si">%2d</span><span class="s1">  &#39;</span> <span class="o">%</span> \
+            <span class="p">(</span><span class="n">fitsFiles</span><span class="p">[</span><span class="n">ii</span><span class="p">],</span> <span class="n">year</span><span class="p">[</span><span class="n">ii</span><span class="p">],</span> <span class="n">month</span><span class="p">[</span><span class="n">ii</span><span class="p">],</span> <span class="n">day</span><span class="p">[</span><span class="n">ii</span><span class="p">],</span> <span class="n">hour</span><span class="p">[</span><span class="n">ii</span><span class="p">],</span> <span class="n">minute</span><span class="p">[</span><span class="n">ii</span><span class="p">]),)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%4.2f</span><span class="s1"> </span><span class="si">%4.2f</span><span class="s1"> </span><span class="si">%5.1f</span><span class="s1"> </span><span class="si">%5.1f</span><span class="s1"> </span><span class="si">%4.1f</span><span class="s1"> </span><span class="si">%4.1f</span><span class="s1"> </span><span class="si">%4d</span><span class="s1">&#39;</span> <span class="o">%</span> \
+            <span class="p">(</span><span class="n">airmass</span><span class="p">[</span><span class="n">ii</span><span class="p">],</span> <span class="n">water_column</span><span class="p">[</span><span class="n">ii</span><span class="p">],</span> <span class="n">temperature</span><span class="p">[</span><span class="n">ii</span><span class="p">],</span> <span class="n">pressure</span><span class="p">[</span><span class="n">ii</span><span class="p">],</span>
+             <span class="n">humidity</span><span class="p">[</span><span class="n">ii</span><span class="p">],</span> <span class="n">wind_speed</span><span class="p">[</span><span class="n">ii</span><span class="p">],</span> <span class="n">wind_dir</span><span class="p">[</span><span class="n">ii</span><span class="p">]))</span>
+
+    <span class="c1"># Print out the average values</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%-20s</span><span class="s1"> </span><span class="si">%4s</span><span class="s1"> </span><span class="si">%2s</span><span class="s1"> </span><span class="si">%2s</span><span class="s1"> </span><span class="si">%2s</span><span class="s1"> </span><span class="si">%2s</span><span class="s1">   </span><span class="si">%4s</span><span class="s1"> </span><span class="si">%4s</span><span class="s1"> </span><span class="si">%5s</span><span class="s1"> </span><span class="si">%5s</span><span class="s1"> </span><span class="si">%4s</span><span class="s1"> </span><span class="si">%4s</span><span class="s1"> </span><span class="si">%4s</span><span class="s1">&#39;</span> <span class="o">%</span> \
+        <span class="p">(</span><span class="s1">&#39;--------&#39;</span><span class="p">,</span> <span class="s1">&#39;----&#39;</span><span class="p">,</span> <span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="s1">&#39;----&#39;</span><span class="p">,</span> <span class="s1">&#39;----&#39;</span><span class="p">,</span> <span class="s1">&#39;-----&#39;</span><span class="p">,</span> 
+         <span class="s1">&#39;-----&#39;</span><span class="p">,</span> <span class="s1">&#39;----&#39;</span><span class="p">,</span> <span class="s1">&#39;----&#39;</span><span class="p">,</span> <span class="s1">&#39;----&#39;</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%-20s</span><span class="s1"> </span><span class="si">%4d</span><span class="s1"> </span><span class="si">%2d</span><span class="s1"> </span><span class="si">%2d</span><span class="s1"> </span><span class="si">%2d</span><span class="s1"> </span><span class="si">%2d</span><span class="s1">  &#39;</span> <span class="o">%</span> \
+        <span class="p">(</span><span class="s1">&#39;Average&#39;</span><span class="p">,</span> <span class="n">year</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span> <span class="n">month</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span> <span class="n">day</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span> <span class="n">hour</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span> 
+         <span class="n">minute</span><span class="o">.</span><span class="n">mean</span><span class="p">()),)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%4.2f</span><span class="s1"> </span><span class="si">%4.2f</span><span class="s1"> </span><span class="si">%5.1f</span><span class="s1"> </span><span class="si">%5.1f</span><span class="s1"> </span><span class="si">%4.1f</span><span class="s1"> </span><span class="si">%4.1f</span><span class="s1"> </span><span class="si">%4d</span><span class="s1">&#39;</span> <span class="o">%</span> \
+        <span class="p">(</span><span class="n">airmass</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span> <span class="n">water_column</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span> <span class="n">temperature</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span> 
+         <span class="n">pressure</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span> <span class="n">humidity</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span> <span class="n">wind_speed</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span> <span class="n">wind_dir</span><span class="o">.</span><span class="n">mean</span><span class="p">()))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%-20s</span><span class="s1"> </span><span class="si">%4d</span><span class="s1"> </span><span class="si">%2d</span><span class="s1"> </span><span class="si">%2d</span><span class="s1"> </span><span class="si">%2d</span><span class="s1"> </span><span class="si">%2d</span><span class="s1">  &#39;</span> <span class="o">%</span> \
+        <span class="p">(</span><span class="s1">&#39;Std. Dev.&#39;</span><span class="p">,</span> <span class="n">year</span><span class="o">.</span><span class="n">std</span><span class="p">(),</span> <span class="n">month</span><span class="o">.</span><span class="n">std</span><span class="p">(),</span> <span class="n">day</span><span class="o">.</span><span class="n">std</span><span class="p">(),</span> <span class="n">hour</span><span class="o">.</span><span class="n">std</span><span class="p">(),</span> 
+         <span class="n">minute</span><span class="o">.</span><span class="n">std</span><span class="p">()),)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%4.2f</span><span class="s1"> </span><span class="si">%4.2f</span><span class="s1"> </span><span class="si">%5.1f</span><span class="s1"> </span><span class="si">%5.1f</span><span class="s1"> </span><span class="si">%4.1f</span><span class="s1"> </span><span class="si">%4.1f</span><span class="s1"> </span><span class="si">%4d</span><span class="s1">&#39;</span> <span class="o">%</span> \
+        <span class="p">(</span><span class="n">airmass</span><span class="o">.</span><span class="n">std</span><span class="p">(),</span> <span class="n">water_column</span><span class="o">.</span><span class="n">std</span><span class="p">(),</span> <span class="n">temperature</span><span class="o">.</span><span class="n">std</span><span class="p">(),</span> 
+         <span class="n">pressure</span><span class="o">.</span><span class="n">std</span><span class="p">(),</span> <span class="n">humidity</span><span class="o">.</span><span class="n">std</span><span class="p">(),</span> <span class="n">wind_speed</span><span class="o">.</span><span class="n">std</span><span class="p">(),</span> <span class="n">wind_dir</span><span class="o">.</span><span class="n">std</span><span class="p">()))</span></div>
+
+        
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, J. R. Lu, A. K. Gautam, T. Do.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

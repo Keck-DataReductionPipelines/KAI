@@ -1,0 +1,93 @@
+:py:mod:`kai.reduce.test_dar`
+=============================
+
+.. py:module:: kai.reduce.test_dar
+
+.. autoapi-nested-parse::
+
+   
+   ..
+       !! processed by numpydoc !!
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   kai.reduce.test_dar.diffDarOnOff
+   kai.reduce.test_dar.plotScalePosangOverNight
+   kai.reduce.test_dar.plotDarCoeffsVsZenith
+
+
+
+.. py:function:: diffDarOnOff(cleanDir1, cleanDir2)
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: plotScalePosangOverNight(alignRoot, imgDir)
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: plotDarCoeffsVsZenith()
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+

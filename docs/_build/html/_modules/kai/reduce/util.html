@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>kai.reduce.util &mdash; KAI  documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> KAI
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../autoapi/index.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">KAI</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      <li>kai.reduce.util</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for kai.reduce.util</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">astropy.table</span> <span class="kn">import</span> <span class="n">Table</span>
+<span class="kn">import</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">errno</span><span class="o">,</span> <span class="nn">shutil</span>
+<span class="kn">from</span> <span class="nn">astropy.io</span> <span class="kn">import</span> <span class="n">fits</span> <span class="k">as</span> <span class="n">pyfits</span>
+<span class="kn">import</span> <span class="nn">pdb</span>
+
+<span class="c1"># Load up directory aliases</span>
+<div class="viewcode-block" id="module_dir"><a class="viewcode-back" href="../../../autoapi/kai/reduce/util/index.html#kai.reduce.util.module_dir">[docs]</a><span class="n">module_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span></div>
+<div class="viewcode-block" id="dir_alias_file"><a class="viewcode-back" href="../../../autoapi/kai/reduce/util/index.html#kai.reduce.util.dir_alias_file">[docs]</a><span class="n">dir_alias_file</span> <span class="o">=</span> <span class="n">module_dir</span> <span class="o">+</span> <span class="s1">&#39;/../data/directory_aliases.txt&#39;</span></div>
+<div class="viewcode-block" id="dir_alias"><a class="viewcode-back" href="../../../autoapi/kai/reduce/util/index.html#kai.reduce.util.dir_alias">[docs]</a><span class="n">dir_alias</span> <span class="o">=</span> <span class="n">Table</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">dir_alias_file</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;ascii.fast_no_header&#39;</span><span class="p">)</span></div>
+<span class="n">dir_alias</span><span class="o">.</span><span class="n">rename_column</span><span class="p">(</span><span class="s1">&#39;col1&#39;</span><span class="p">,</span> <span class="s1">&#39;dir&#39;</span><span class="p">)</span>
+<span class="n">dir_alias</span><span class="o">.</span><span class="n">rename_column</span><span class="p">(</span><span class="s1">&#39;col2&#39;</span><span class="p">,</span> <span class="s1">&#39;alias&#39;</span><span class="p">)</span>
+    
+<div class="viewcode-block" id="rmall"><a class="viewcode-back" href="../../../autoapi/kai/reduce/util/index.html#kai.reduce.util.rmall">[docs]</a><span class="k">def</span> <span class="nf">rmall</span><span class="p">(</span><span class="n">files</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Remove list of files without confirmation.&quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">access</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">F_OK</span><span class="p">):</span> <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+            
+    <span class="k">return</span></div>
+
+<div class="viewcode-block" id="mkdir"><a class="viewcode-back" href="../../../autoapi/kai/reduce/util/index.html#kai.reduce.util.mkdir">[docs]</a><span class="k">def</span> <span class="nf">mkdir</span><span class="p">(</span><span class="nb">dir</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Make directory if it doesn&#39;t already exist.&quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span> 
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="nb">dir</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">exc</span><span class="o">.</span><span class="n">errno</span> <span class="o">==</span> <span class="n">errno</span><span class="o">.</span><span class="n">EEXIST</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span>
+
+    <span class="k">return</span></div>
+
+<div class="viewcode-block" id="getcwd"><a class="viewcode-back" href="../../../autoapi/kai/reduce/util/index.html#kai.reduce.util.getcwd">[docs]</a><span class="k">def</span> <span class="nf">getcwd</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    IRAF doesn&#39;t like long file names. This reduces them.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">curdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dir_alias</span><span class="p">)):</span>
+        <span class="n">curdir</span> <span class="o">=</span> <span class="n">curdir</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">dir_alias</span><span class="p">[</span><span class="s1">&#39;dir&#39;</span><span class="p">][</span><span class="n">ii</span><span class="p">],</span> <span class="n">dir_alias</span><span class="p">[</span><span class="s1">&#39;alias&#39;</span><span class="p">][</span><span class="n">ii</span><span class="p">])</span>
+    
+    <span class="n">curdir</span> <span class="o">+=</span> <span class="s1">&#39;/&#39;</span>
+
+    <span class="k">return</span> <span class="n">curdir</span></div>
+
+<div class="viewcode-block" id="trimdir"><a class="viewcode-back" href="../../../autoapi/kai/reduce/util/index.html#kai.reduce.util.trimdir">[docs]</a><span class="k">def</span> <span class="nf">trimdir</span><span class="p">(</span><span class="n">olddir</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    IRAF doesn&#39;t like long file names. This reduces them.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dir_alias</span><span class="p">)):</span>
+        <span class="n">olddir</span> <span class="o">=</span> <span class="n">olddir</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">dir_alias</span><span class="p">[</span><span class="s1">&#39;dir&#39;</span><span class="p">][</span><span class="n">ii</span><span class="p">],</span> <span class="n">dir_alias</span><span class="p">[</span><span class="s1">&#39;alias&#39;</span><span class="p">][</span><span class="n">ii</span><span class="p">])</span>
+    
+    <span class="k">return</span> <span class="n">olddir</span></div>
+
+<div class="viewcode-block" id="cp_change_prefix"><a class="viewcode-back" href="../../../autoapi/kai/reduce/util/index.html#kai.reduce.util.cp_change_prefix">[docs]</a><span class="k">def</span> <span class="nf">cp_change_prefix</span><span class="p">(</span><span class="n">arg1</span><span class="p">,</span><span class="n">arg2</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Takes files beginning with arg1 and replaces them with arg2</span>
+<span class="sd">    Must be in the directory where files live</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Find files in this directory beginning with arg1</span>
+    <span class="n">files</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
+    <span class="c1"># Ignore files beginning with &#39;.&#39;</span>
+    <span class="n">files</span><span class="o">=</span><span class="p">[</span><span class="n">filename</span> <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">files</span> <span class="k">if</span> <span class="n">filename</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;.&#39;</span><span class="p">]</span>
+
+    <span class="n">ln</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">arg1</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">ff</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">files</span><span class="p">)):</span>
+        <span class="n">pre</span> <span class="o">=</span> <span class="n">files</span><span class="p">[</span><span class="n">ff</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="n">ln</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">pre</span> <span class="o">==</span> <span class="n">arg1</span><span class="p">:</span>
+            <span class="n">suf</span> <span class="o">=</span> <span class="n">files</span><span class="p">[</span><span class="n">ff</span><span class="p">][</span><span class="nb">len</span><span class="p">(</span><span class="n">arg1</span><span class="p">):]</span>
+            <span class="n">newFile</span> <span class="o">=</span> <span class="n">arg2</span> <span class="o">+</span> <span class="n">suf</span>
+            <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">files</span><span class="p">[</span><span class="n">ff</span><span class="p">],</span> <span class="n">newFile</span><span class="p">)</span>
+
+    <span class="k">return</span></div>
+
+<div class="viewcode-block" id="cp_change_suffix"><a class="viewcode-back" href="../../../autoapi/kai/reduce/util/index.html#kai.reduce.util.cp_change_suffix">[docs]</a><span class="k">def</span> <span class="nf">cp_change_suffix</span><span class="p">(</span><span class="n">arg1</span><span class="p">,</span><span class="n">arg2</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Takes files ending with arg1 and replaces them with arg2</span>
+<span class="sd">    Must be in the directory where files live</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Find files in this directory ending with arg1</span>
+    <span class="n">files</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
+    <span class="c1"># Ignore files beginning with &#39;.&#39;</span>
+    <span class="n">files</span><span class="o">=</span><span class="p">[</span><span class="n">filename</span> <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">files</span> <span class="k">if</span> <span class="n">filename</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;.&#39;</span><span class="p">]</span>
+
+    <span class="n">ln</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">arg1</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">ff</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">files</span><span class="p">)):</span>
+        <span class="n">suf</span> <span class="o">=</span> <span class="n">files</span><span class="p">[</span><span class="n">ff</span><span class="p">][</span><span class="nb">len</span><span class="p">(</span><span class="n">files</span><span class="p">[</span><span class="n">ff</span><span class="p">])</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">arg1</span><span class="p">):]</span>
+        <span class="k">if</span> <span class="n">suf</span> <span class="o">==</span> <span class="n">arg1</span><span class="p">:</span>
+            <span class="n">pre</span> <span class="o">=</span> <span class="n">files</span><span class="p">[</span><span class="n">ff</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="nb">len</span><span class="p">(</span><span class="n">files</span><span class="p">[</span><span class="n">ff</span><span class="p">])</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">arg1</span><span class="p">)]</span>
+            <span class="n">newFile</span> <span class="o">=</span> <span class="n">pre</span> <span class="o">+</span> <span class="n">arg2</span> 
+            <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">files</span><span class="p">[</span><span class="n">ff</span><span class="p">],</span> <span class="n">newFile</span><span class="p">)</span>
+
+    <span class="k">return</span></div>
+
+<div class="viewcode-block" id="update_header_coords"><a class="viewcode-back" href="../../../autoapi/kai/reduce/util/index.html#kai.reduce.util.update_header_coords">[docs]</a><span class="k">def</span> <span class="nf">update_header_coords</span><span class="p">(</span><span class="n">fileList</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Updates coordinates in the header for XREF, YREF</span>
+<span class="sd">    and XSTREHL, and YSTREHL.</span>
+<span class="sd"> </span>
+<span class="sd">    fileList : list of files to update</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">_files</span> <span class="o">=</span> <span class="n">Table</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">fileList</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;ascii&#39;</span><span class="p">,</span> <span class="n">header_start</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">cols</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">_files</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+    <span class="n">files</span> <span class="o">=</span> <span class="n">_files</span><span class="p">[</span><span class="n">cols</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+    <span class="n">files</span> <span class="o">=</span> <span class="p">[</span><span class="n">files</span><span class="p">[</span><span class="n">ff</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">ff</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">files</span><span class="p">))]</span>
+    
+
+    <span class="k">for</span> <span class="n">ff</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">files</span><span class="p">)):</span>
+        <span class="c1"># Open .coo file and read 16C&#39;s coordinates</span>
+        <span class="n">coo</span> <span class="o">=</span> <span class="n">Table</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">files</span><span class="p">[</span><span class="n">ff</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;.coo&#39;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;ascii&#39;</span><span class="p">,</span> <span class="n">header_start</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">coo_cols</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">coo</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="n">xref</span> <span class="o">=</span> <span class="n">coo</span><span class="p">[</span><span class="n">coo_cols</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+        <span class="n">yref</span> <span class="o">=</span> <span class="n">coo</span><span class="p">[</span><span class="n">coo_cols</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+
+        <span class="c1"># Open .coord file and read strehl source&#39;s coordinates</span>
+        <span class="n">coord</span> <span class="o">=</span> <span class="n">Table</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">files</span><span class="p">[</span><span class="n">ff</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;.coord&#39;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;ascii&#39;</span><span class="p">,</span> <span class="n">header_start</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">coord_cols</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">coord</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="n">xstr</span> <span class="o">=</span> <span class="n">coord</span><span class="p">[</span><span class="n">coord_cols</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+        <span class="n">ystr</span> <span class="o">=</span> <span class="n">coord</span><span class="p">[</span><span class="n">coord_cols</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+ 
+        <span class="c1"># Open image and write reference star x,y to fits header</span>
+        <span class="n">fits</span> <span class="o">=</span> <span class="n">pyfits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">files</span><span class="p">[</span><span class="n">ff</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;.fits&#39;</span><span class="p">)</span>
+
+        <span class="n">fits</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="s1">&#39;XREF&#39;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">%.3f</span><span class="s2">&quot;</span> <span class="o">%</span><span class="n">xref</span><span class="p">,</span>
+                              <span class="s1">&#39;Cross Corr Reference Src x&#39;</span><span class="p">)</span>
+        <span class="n">fits</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="s1">&#39;YREF&#39;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">%.3f</span><span class="s2">&quot;</span> <span class="o">%</span><span class="n">yref</span><span class="p">,</span>
+                              <span class="s1">&#39;Cross Corr Reference Src y&#39;</span><span class="p">)</span>
+        <span class="n">fits</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="s1">&#39;XSTREHL&#39;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">%.3f</span><span class="s2">&quot;</span> <span class="o">%</span><span class="n">xstr</span><span class="p">,</span>
+                              <span class="s1">&#39;Strehl Reference Src x&#39;</span><span class="p">)</span>
+        <span class="n">fits</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="s1">&#39;YSTREHL&#39;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">%.3f</span><span class="s2">&quot;</span> <span class="o">%</span><span class="n">ystr</span><span class="p">,</span>
+                              <span class="s1">&#39;Strehl Reference Src y&#39;</span><span class="p">)</span>
+
+        <span class="c1"># Output fits file</span>
+        <span class="n">_out</span> <span class="o">=</span> <span class="s1">&#39;new_hdr/&#39;</span> <span class="o">+</span> <span class="n">files</span><span class="p">[</span><span class="n">ff</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span>
+        <span class="n">fits</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">writeto</span><span class="p">(</span><span class="n">_out</span><span class="p">,</span> <span class="n">output_verify</span><span class="o">=</span><span class="s1">&#39;silentfix&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, J. R. Lu, A. K. Gautam, T. Do.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

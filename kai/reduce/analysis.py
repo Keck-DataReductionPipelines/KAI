@@ -392,7 +392,8 @@ class Analysis(object):
                 with open(cur_coo_file, 'w') as out_coo_file:
                     out_coo_file.write(coo_output)
             
-            strehl.calc_strehl(psf_file_list, 'stf_psf_strehl.txt',
+            strehl.calc_strehl(psf_file_list,
+                               'stf_psf_strehl_{0}.txt'.format(self.filt),
                                instrument=self.instrument)
             
             os.chdir(self.dirStart)

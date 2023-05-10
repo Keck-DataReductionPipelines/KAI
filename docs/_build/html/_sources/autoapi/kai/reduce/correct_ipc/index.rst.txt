@@ -1,0 +1,70 @@
+:py:mod:`kai.reduce.correct_ipc`
+================================
+
+.. py:module:: kai.reduce.correct_ipc
+
+.. autoapi-nested-parse::
+
+   
+   ..
+       !! processed by numpydoc !!
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   kai.reduce.correct_ipc.correct_ipc
+   kai.reduce.correct_ipc.test_correct_ipc
+
+
+
+.. py:function:: correct_ipc(input_im, alpha, beta=None, strip_reference=0)
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: test_correct_ipc()
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+

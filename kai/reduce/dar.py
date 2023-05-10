@@ -18,6 +18,7 @@ from kai.reduce import util
 from kai.reduce import slalib
 from kai import instruments
 from astropy.table import Table
+from astropy.time import Time
 
 module_dir = os.path.dirname(__file__)
 
@@ -50,7 +51,6 @@ def get_atm_conditions(year):
     atmfile.close()
 
     splitAtmosphereCFHT(str(year))
-
 
 def keckDARcoeffs(lamda, year, month, day, hour, minute):
     """
@@ -91,7 +91,7 @@ def keckDARcoeffs(lamda, year, month, day, hour, minute):
     # Pull from atmosphere logs.
     logDir = module_dir + '/weather/'
     logFile = logDir +'cfht-wx.'+ str(year) +'.'+ str(month).zfill(2) +'.dat'
-    
+    print(logFile)
 
     _atm = Table.read(logFile, format='ascii', header_start=None)
     atmYear = _atm['col1']
@@ -133,7 +133,173 @@ def keckDARcoeffs(lamda, year, month, day, hour, minute):
     # print(hm, tdk, pmb, rh, lamda, phi, tlr, eps)
     return slalib.refco(hm, tdk, pmb, rh, lamda, phi, tlr, eps)
 
-def kaidar(fitsFile, instrument=instruments.default_inst):
+def download_koa_dat_files(date_str, telescope_str, param_name, download_loc='./'):
+    """
+    Download the KOA atmospheric condition file for given date and
+    specified parameter, and save at the download location
+    
+    Parameters
+    ----------
+    date_str : str
+        Date string for the night (e.g.: '20220525').
+    telescope_str : str
+        String to specify which Keck telescope's weather data to download.
+        Can be 'k1' or 'k2'.
+    param_name : str
+        Name of the parameter to download the conditions table
+        (e.g.: 'OutsideTemp')
+    download_loc : str, default = './'
+        Directory to store the downloaded atmospheric condition table file.
+    """
+    
+    url = 'https://koa.ipac.caltech.edu/data33/WEATHER/{0}/nightly2/{1}_{0}_{2}.dat'.format(
+        date_str, telescope_str, param_name)
+    
+    if p2: # Python 2 command, necessary for IRAF
+        _atm = urllib.urlopen(url)
+    else:
+        _atm = urllib.request.urlopen(url)
+    atm = _atm.read()
+    _atm.close()
+    
+    out_file_name = '{0}_{1}_{2}.dat'.format(telescope_str, date_str, param_name)
+    
+    if type(atm) == bytes:
+        # this is for python 3
+        atmfile = open(download_loc + '/' + out_file_name, 'wb')
+    else:
+        atmfile = open(download_loc + '/' + out_file_name,'w')
+    
+    atmfile.write(atm)
+    atmfile.close()
+
+def keckDARcoeffs_koa(lamda, year, month, day, hour, minute, second,
+        instrument=instruments.default_inst):
+    """
+    Calculate the differential atmospheric refraction
+    for two objects observed at Keck, using atmospheric conditions obtained
+    via the KOA.
+
+    Parameters
+    ----------
+    lamda : float
+        Effective wavelength (microns), assumed to be the same for both.
+    year : int
+        UTC year
+    month : int
+        UTC month
+    day : int
+        UTC date
+    hour : int
+        UTC hour
+    minute : int
+        UTC minute
+    second : int, float
+        UTC second
+    
+    Returns
+    -------
+    refA : float
+    refB : float
+    """
+    # Set up datetime object for image time
+    utc = datetime.datetime(year, month, day, hour, minute, second)
+    
+    # Setup all the parameters for the atmospheric refraction
+    # calculations. Typical values obtained from the Mauna Kea
+    # weather pages and from the web.
+    
+    # Temperature Lapse Rate (Kelvin/meter)
+    tlr = 0.0065
+    
+    # Precision required to terminate the iteration (radian)
+    eps = 1.0e-9
+    
+    # Following hard coded to remove iraf dependency
+    # Height above sea level (meters)
+    hm = 4160.0     #Keck height
+    
+    # Latitude of the observer (radian)
+    phi = math.radians(19.82833333333333)   #Keck latitude
+    
+    # Write out atm files
+    if not os.path.isdir('weather'):
+        os.mkdir('weather')
+    
+    # Generate telescope and date strings for the atm files
+    telescope_strs = {
+        'NIRC2': 'k2',
+        'OSIRIS': 'k1',
+    }
+    
+    telescope_str = telescope_strs[instrument.name]
+    
+    date_str = '{0}{1}{2}'.format(year, str(month).zfill(2), str(day).zfill(2))
+    
+    dat_file_root = './weather/{0}_{1}_'.format(telescope_str, date_str)
+    
+    # Check if necessary logs are pulled for the observation date
+    if not os.path.isfile(dat_file_root + 'OutsideTemp.dat'):
+        download_koa_dat_files(
+            date_str, telescope_str, 'OutsideTemp', './weather')
+    
+    if not os.path.isfile(dat_file_root + 'OutsideHumidity.dat'):
+        download_koa_dat_files(
+            date_str, telescope_str, 'OutsideHumidity', './weather')
+    
+    if not os.path.isfile(dat_file_root + 'Pressure.dat'):
+        download_koa_dat_files(
+            date_str, telescope_str, 'Pressure', './weather')
+    
+    # Read in tables and find closest rows to image time
+    # Temperature
+    temp_table = Table.read(dat_file_root + 'OutsideTemp.dat',
+                            format='ascii.basic', data_start=1, delimiter='\t',
+                            guess=False, fast_reader=False,
+                            header_start=None,
+                            names=['row', 'temp', 'timeinsecs',
+                                   'datetime_utc'],
+                           )
+    
+    temp_datetimes = Time(temp_table['datetime_utc'], format='iso').datetime
+    temp_closest_index = np.argmin(np.abs(temp_datetimes - utc))
+    
+    atm_temp = (temp_table[temp_closest_index])['temp'] + 272.15    # Kelvin
+    
+    # Humidity
+    hum_table = Table.read(dat_file_root + 'OutsideHumidity.dat',
+                            format='ascii.basic', data_start=1, delimiter='\t',
+                            guess=False, fast_reader=False,
+                            header_start=None,
+                            names=['row', 'humidity', 'timeinsecs',
+                                   'datetime_utc'],
+                           )
+    
+    hum_datetimes = Time(hum_table['datetime_utc'], format='iso').datetime
+    hum_closest_index = np.argmin(np.abs(hum_datetimes - utc))
+    
+    atm_hum = (hum_table[hum_closest_index])['humidity'] / 100.     # Percent
+    
+    # Pressure
+    pres_table = Table.read(dat_file_root + 'Pressure.dat',
+                            format='ascii.basic', data_start=1, delimiter='\t',
+                            guess=False, fast_reader=False,
+                            header_start=None,
+                            names=['row', 'pressure', 'timeinsecs',
+                                   'datetime_utc'],
+                           )
+    
+    pres_datetimes = Time(pres_table['datetime_utc'], format='iso').datetime
+    pres_closest_index = np.argmin(np.abs(pres_datetimes - utc))
+    
+    atm_pres = (pres_table[pres_closest_index])['pressure']     # millibar
+    
+    # Calculate refraction coefficients
+    print(hm, atm_temp, atm_pres, atm_hum, lamda, phi, tlr, eps)
+    return slalib.refco(hm, atm_temp, atm_pres, atm_hum, lamda, phi, tlr, eps)
+
+def kaidar(fitsFile, instrument=instruments.default_inst,
+        use_koa_weather=False):
     """
     Use the FITS header to extract date, time, wavelength,
     elevation, and image orientation information. This is everything
@@ -143,7 +309,7 @@ def kaidar(fitsFile, instrument=instruments.default_inst):
     This code calculates the predicted DAR using archived CFHT
     atmospheric data and the elevation and wavelength of the observations.
     Then the DAR correction is transformed into image coefficients that
-    can be applied in image coordinates. 
+    can be applied in image coordinates.
     """
     # Get header info
     img, hdr = pyfits.getdata(fitsFile, header=True)
@@ -166,9 +332,13 @@ def kaidar(fitsFile, instrument=instruments.default_inst):
     utc = datetime.datetime(year, month, day, hour, minute, second)
     utc2hst = datetime.timedelta(hours=-10)
     hst = utc + utc2hst
-
-    (refA, refB) = keckDARcoeffs(effWave, hst.year, hst.month, hst.day,
-                                 hst.hour, hst.minute)
+    
+    if use_koa_weather:
+        (refA, refB) = keckDARcoeffs_koa(effWave, utc.year, utc.month, utc.day,
+                                         utc.hour, utc.minute, utc.second)
+    else:
+        (refA, refB) = keckDARcoeffs(effWave, hst.year, hst.month, hst.day,
+                                     hst.hour, hst.minute)
 
     tanz = math.tan(math.radians(90.0 - elevation))
     tmp = 1.0 + tanz**2
@@ -205,7 +375,9 @@ def kaidar(fitsFile, instrument=instruments.default_inst):
 
     return (darCoeffL, darCoeffQ)
 
-def darPlusDistortion(inputFits, outputRoot, xgeoim=None, ygeoim=None, instrument=instruments.default_inst):
+def darPlusDistortion(inputFits, outputRoot, xgeoim=None, ygeoim=None,
+        instrument=instruments.default_inst,
+        use_koa_weather=False):
     """
     Create lookup tables (stored as FITS files) that can be used
     to correct DAR. Optionally, the shifts due to DAR can be added
@@ -232,7 +404,8 @@ def darPlusDistortion(inputFits, outputRoot, xgeoim=None, ygeoim=None, instrumen
     halfY = int(round(imgsizeY / 2.0))
 
     # First get the coefficients
-    (darCoeffL, darCoeffQ) = kaidar(inputFits, instrument=instrument)
+    (darCoeffL, darCoeffQ) = kaidar(inputFits, instrument=instrument,
+                                    use_koa_weather=use_koa_weather)
     # Convert DAR coefficients for use with units of NIRC2 pixels
     scale = instrument.get_plate_scale(hdr)
     darCoeffL *= 1.0                

@@ -46,6 +46,10 @@ def makesky(files, nite,
     redDir = util.trimdir(os.path.abspath(waveDir + '../') + '/')
     rootDir = util.trimdir(os.path.abspath(redDir + '../') + '/')
     skyDir = waveDir + 'sky_' + nite + '/'
+    print(waveDir)
+    print(redDir)
+    print(rootDir)
+              
     
     # Set location of raw data
     rawDir = rootDir + 'raw/'
@@ -55,8 +59,9 @@ def makesky(files, nite,
         rawDir = util.trimdir(os.path.abspath(raw_dir) + '/')
     
     util.mkdir(skyDir)
-    print('sky dir: ',skyDir)
-    print('wave dir: ',waveDir)
+    print('raw dir: ', rawDir)
+    print('sky dir: ', skyDir)
+    print('wave dir: ', waveDir)
 
     skylist = skyDir + 'skies_to_combine.lis'
     output = skyDir + 'sky_' + wave + '.fits'

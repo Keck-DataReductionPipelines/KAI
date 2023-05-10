@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>kai.reduce.slalib &mdash; KAI  documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> KAI
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../autoapi/index.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">KAI</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      <li>kai.reduce.slalib</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for kai.reduce.slalib</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">math</span>
+
+<div class="viewcode-block" id="refco"><a class="viewcode-back" href="../../../autoapi/kai/reduce/slalib/index.html#kai.reduce.slalib.refco">[docs]</a><span class="k">def</span> <span class="nf">refco</span><span class="p">(</span><span class="n">HM</span><span class="p">,</span> <span class="n">TDK</span><span class="p">,</span> <span class="n">PMB</span><span class="p">,</span> <span class="n">RH</span><span class="p">,</span> <span class="n">WL</span><span class="p">,</span> <span class="n">PHI</span><span class="p">,</span> <span class="n">TLR</span><span class="p">,</span> <span class="n">EPS</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Determine the constants A and B in the atmospheric refraction</span>
+<span class="sd">    model dZ = A tan Z + B tan**3 Z.</span>
+<span class="sd"> </span>
+<span class="sd">    Z is the &quot;observed&quot; zenith distance (i.e. affected by refraction)</span>
+<span class="sd">    and dZ is what to add to Z to give the &quot;topocentric&quot; (i.e. in vacuo)</span>
+<span class="sd">    zenith distance.</span>
+<span class="sd"> </span>
+<span class="sd">    Given:</span>
+<span class="sd">      HM      d     height of the observer above sea level (metre)</span>
+<span class="sd">      TDK     d     ambient temperature at the observer (deg K)</span>
+<span class="sd">      PMB     d     pressure at the observer (millibar)</span>
+<span class="sd">      RH      d     relative humidity at the observer (range 0-1)</span>
+<span class="sd">      WL      d     effective wavelength of the source (micrometre)</span>
+<span class="sd">      PHI     d     latitude of the observer (radian, astronomical)</span>
+<span class="sd">      TLR     d     temperature lapse rate in the troposphere (degK/metre)</span>
+<span class="sd">      EPS     d     precision required to terminate iteration (radian)</span>
+<span class="sd">      </span>
+<span class="sd">    Returned:</span>
+<span class="sd">      REFA    d     tan Z coefficient (radian)</span>
+<span class="sd">      REFB    d     tan**3 Z coefficient (radian)</span>
+
+<span class="sd">    Called:  refco</span>
+
+<span class="sd">    Notes:</span>
+
+<span class="sd">    1  Typical values for the TLR and EPS arguments might be 0.0065D0 and</span>
+<span class="sd">       1D-10 respectively.</span>
+
+<span class="sd">    2  The radio refraction is chosen by specifying WL &gt; 100 micrometres.</span>
+
+<span class="sd">    3  The routine is a slower but more accurate alternative to the</span>
+<span class="sd">       slRFCQ routine.  The constants it produces give perfect</span>
+<span class="sd">       agreement with slRFRO at zenith distances arctan(1) (45 deg)</span>
+<span class="sd">       and arctan(4) (about 76 deg).  It achieves 0.5 arcsec accuracy</span>
+<span class="sd">       for ZD &lt; 80 deg, 0.01 arcsec accuracy for ZD &lt; 60 deg, and</span>
+<span class="sd">       0.001 arcsec accuracy for ZD &lt; 45 deg.</span>
+
+<span class="sd">    P.T.Wallace   Starlink   3 June 1997</span>
+
+<span class="sd">    Copyright (C) 1997 Rutherford Appleton Laboratory</span>
+<span class="sd">    Copyright (C) 1995 Association of Universities for Research in Astronomy Inc.</span>
+<span class="sd">    </span>
+<span class="sd">    Migrated from SLALIB (fortran) to python:</span>
+<span class="sd">    J. R. Lu -- 2015-05-13</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Sample zenith distances: arctan(1) and arctan(4)</span>
+    <span class="n">atn1</span> <span class="o">=</span> <span class="mf">0.7853981633974483</span>
+    <span class="n">atn4</span> <span class="o">=</span> <span class="mf">1.325817663668033</span>
+
+    <span class="c1"># Determine refraction for the two sample zenith distances</span>
+    <span class="n">R1</span> <span class="o">=</span> <span class="n">refro</span><span class="p">(</span><span class="n">atn1</span><span class="p">,</span> <span class="n">HM</span><span class="p">,</span> <span class="n">TDK</span><span class="p">,</span> <span class="n">PMB</span><span class="p">,</span> <span class="n">RH</span><span class="p">,</span> <span class="n">WL</span><span class="p">,</span> <span class="n">PHI</span><span class="p">,</span> <span class="n">TLR</span><span class="p">,</span> <span class="n">EPS</span><span class="p">)</span>
+    <span class="n">R2</span> <span class="o">=</span> <span class="n">refro</span><span class="p">(</span><span class="n">atn4</span><span class="p">,</span> <span class="n">HM</span><span class="p">,</span> <span class="n">TDK</span><span class="p">,</span> <span class="n">PMB</span><span class="p">,</span> <span class="n">RH</span><span class="p">,</span> <span class="n">WL</span><span class="p">,</span> <span class="n">PHI</span><span class="p">,</span> <span class="n">TLR</span><span class="p">,</span> <span class="n">EPS</span><span class="p">)</span>
+
+    <span class="c1"># Solve for refraction constants</span>
+    <span class="n">refa</span> <span class="o">=</span> <span class="p">(</span><span class="mf">64.0</span> <span class="o">*</span> <span class="n">R1</span> <span class="o">-</span> <span class="n">R2</span><span class="p">)</span> <span class="o">/</span> <span class="mf">60.0</span>
+    <span class="n">refb</span> <span class="o">=</span> <span class="p">(</span><span class="n">R2</span> <span class="o">-</span> <span class="mf">4.0</span> <span class="o">*</span> <span class="n">R1</span><span class="p">)</span> <span class="o">/</span> <span class="mf">60.0</span>
+
+    <span class="k">return</span> <span class="n">refa</span><span class="p">,</span> <span class="n">refb</span></div>
+
+<div class="viewcode-block" id="refro"><a class="viewcode-back" href="../../../autoapi/kai/reduce/slalib/index.html#kai.reduce.slalib.refro">[docs]</a><span class="k">def</span> <span class="nf">refro</span><span class="p">(</span><span class="n">ZOBS</span><span class="p">,</span> <span class="n">HM</span><span class="p">,</span> <span class="n">TDK</span><span class="p">,</span> <span class="n">PMB</span><span class="p">,</span> <span class="n">RH</span><span class="p">,</span> <span class="n">WL</span><span class="p">,</span> <span class="n">PHI</span><span class="p">,</span> <span class="n">TLR</span><span class="p">,</span> <span class="n">EPS</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Atmospheric refraction for radio and optical/IR wavelengths.</span>
+<span class="sd">  </span>
+<span class="sd">    Given:</span>
+<span class="sd">      ZOBS    d  observed zenith distance of the source (radian)</span>
+<span class="sd">      HM      d  height of the observer above sea level (metre)</span>
+<span class="sd">      TDK     d  ambient temperature at the observer (deg K)</span>
+<span class="sd">      PMB     d  pressure at the observer (millibar)</span>
+<span class="sd">      RH      d  relative humidity at the observer (range 0-1)</span>
+<span class="sd">      WL      d  effective wavelength of the source (micrometre)</span>
+<span class="sd">      PHI     d  latitude of the observer (radian, astronomical)</span>
+<span class="sd">      TLR     d  temperature lapse rate in the troposphere (degK/metre)</span>
+<span class="sd">      EPS     d  precision required to terminate iteration (radian)</span>
+<span class="sd">  </span>
+<span class="sd">    Returned:</span>
+<span class="sd">      REF     d  refraction: in vacuo ZD minus observed ZD (radian)</span>
+<span class="sd">  </span>
+<span class="sd">    Notes:</span>
+<span class="sd">  </span>
+<span class="sd">    1  A suggested value for the TLR argument is 0.0065.  The</span>
+<span class="sd">       refraction is significantly affected by TLR, and if studies</span>
+<span class="sd">       of the local atmosphere have been carried out a better TLR</span>
+<span class="sd">       value may be available.</span>
+<span class="sd">  </span>
+<span class="sd">    2  A suggested value for the EPS argument is 1D-8.  The result is</span>
+<span class="sd">       usually at least two orders of magnitude more computationally</span>
+<span class="sd">       precise than the supplied EPS value.</span>
+<span class="sd">  </span>
+<span class="sd">    3  The routine computes the refraction for zenith distances up</span>
+<span class="sd">       to and a little beyond 90 deg using the method of Hohenkerk</span>
+<span class="sd">       and Sinclair (NAO Technical Notes 59 and 63, subsequently adopted</span>
+<span class="sd">       in the Explanatory Supplement, 1992 edition - see section 3.281).</span>
+<span class="sd">  </span>
+<span class="sd">    4  The code is a development of the optical/IR refraction subroutine</span>
+<span class="sd">       AREF of C.Hohenkerk (HMNAO, September 1984), with extensions to</span>
+<span class="sd">       support the radio case.  Apart from merely cosmetic changes, the</span>
+<span class="sd">       following modifications to the original HMNAO optical/IR refraction</span>
+<span class="sd">       code have been made:</span>
+<span class="sd">  </span>
+<span class="sd">       .  The angle arguments have been changed to radians.</span>
+<span class="sd">  </span>
+<span class="sd">       .  Any value of ZOBS is allowed (see note 6, below).</span>
+<span class="sd">  </span>
+<span class="sd">       .  Other argument values have been limited to safe values.</span>
+<span class="sd">  </span>
+<span class="sd">       .  Murray&#39;s values for the gas constants have been used</span>
+<span class="sd">          (Vectorial Astrometry, Adam Hilger, 1983).</span>
+<span class="sd">  </span>
+<span class="sd">       .  The numerical integration phase has been rearranged for</span>
+<span class="sd">          extra clarity.</span>
+<span class="sd">  </span>
+<span class="sd">       .  A better model for Ps(T) has been adopted (taken from</span>
+<span class="sd">          Gill, Atmosphere-Ocean Dynamics, Academic Press, 1982).</span>
+<span class="sd">  </span>
+<span class="sd">       .  More accurate expressions for Pwo have been adopted</span>
+<span class="sd">          (again from Gill 1982).</span>
+<span class="sd">  </span>
+<span class="sd">       .  Provision for radio wavelengths has been added using</span>
+<span class="sd">          expressions devised by A.T.Sinclair, RGO (private</span>
+<span class="sd">          communication 1989), based on the Essen &amp; Froome</span>
+<span class="sd">          refractivity formula adopted in Resolution 1 of the</span>
+<span class="sd">          13th International Geodesy Association General Assembly</span>
+<span class="sd">          (Bulletin Geodesique 70 p390, 1963).</span>
+<span class="sd">  </span>
+<span class="sd">       .  Various small changes have been made to gain speed.</span>
+<span class="sd">  </span>
+<span class="sd">       None of the changes significantly affects the optical/IR results</span>
+<span class="sd">       with respect to the algorithm given in the 1992 Explanatory</span>
+<span class="sd">       Supplement.  For example, at 70 deg zenith distance the present</span>
+<span class="sd">       routine agrees with the ES algorithm to better than 0.05 arcsec</span>
+<span class="sd">       for any reasonable combination of parameters.  However, the</span>
+<span class="sd">       improved water-vapour expressions do make a significant difference</span>
+<span class="sd">       in the radio band, at 70 deg zenith distance reaching almost</span>
+<span class="sd">       4 arcsec for a hot, humid, low-altitude site during a period of</span>
+<span class="sd">       low pressure.</span>
+<span class="sd">  </span>
+<span class="sd">    5  The radio refraction is chosen by specifying WL &gt; 100 micrometres.</span>
+<span class="sd">       Because the algorithm takes no account of the ionosphere, the</span>
+<span class="sd">       accuracy deteriorates at low frequencies, below about 30 MHz.</span>
+<span class="sd">  </span>
+<span class="sd">    6  Before use, the value of ZOBS is expressed in the range +/- pi.</span>
+<span class="sd">       If this ranged ZOBS is -ve, the result REF is computed from its</span>
+<span class="sd">       absolute value before being made -ve to match.  In addition, if</span>
+<span class="sd">       it has an absolute value greater than 93 deg, a fixed REF value</span>
+<span class="sd">       equal to the result for ZOBS = 93 deg is returned, appropriately</span>
+<span class="sd">       signed.</span>
+<span class="sd">  </span>
+<span class="sd">    7  As in the original Hohenkerk and Sinclair algorithm, fixed values</span>
+<span class="sd">       of the water vapour polytrope exponent, the height of the</span>
+<span class="sd">       tropopause, and the height at which refraction is negligible are</span>
+<span class="sd">       used.</span>
+<span class="sd">  </span>
+<span class="sd">    8  The radio refraction has been tested against work done by</span>
+<span class="sd">       Iain Coulson, JACH, (private communication 1995) for the</span>
+<span class="sd">       James Clerk Maxwell Telescope, Mauna Kea.  For typical conditions,</span>
+<span class="sd">       agreement at the 0.1 arcsec level is achieved for moderate ZD,</span>
+<span class="sd">       worsening to perhaps 0.5-1.0 arcsec at ZD 80 deg.  At hot and</span>
+<span class="sd">       humid sea-level sites the accuracy will not be as good.</span>
+<span class="sd">  </span>
+<span class="sd">    9  It should be noted that the relative humidity RH is formally</span>
+<span class="sd">       defined in terms of &quot;mixing ratio&quot; rather than pressures or</span>
+<span class="sd">       densities as is often stated.  It is the mass of water per unit</span>
+<span class="sd">       mass of dry air divided by that for saturated air at the same</span>
+<span class="sd">       temperature and pressure (see Gill 1982).</span>
+<span class="sd">  </span>
+<span class="sd">    Called:  slDA1P, slATMT, slATMS</span>
+<span class="sd">  </span>
+<span class="sd">    P.T.Wallace   Starlink   3 June 1997</span>
+<span class="sd">  </span>
+<span class="sd">    Copyright (C) 1997 Rutherford Appleton Laboratory</span>
+<span class="sd">    Copyright (C) 1995 Association of Universities for Research in Astronomy Inc.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Fixed parameters</span>
+    
+    <span class="c1"># 93 degrees in radians</span>
+    <span class="n">D93</span> <span class="o">=</span> <span class="mf">1.623156204</span>
+    <span class="c1"># Universal gas constant</span>
+    <span class="n">GCR</span> <span class="o">=</span> <span class="mf">8314.32</span>
+    <span class="c1"># Molecular weight of dry air</span>
+    <span class="n">DMD</span> <span class="o">=</span> <span class="mf">28.9644</span>
+    <span class="c1"># Molecular weight of water vapour</span>
+    <span class="n">DMW</span> <span class="o">=</span> <span class="mf">18.0152</span>
+    <span class="c1"># Mean Earth radius (metre)</span>
+    <span class="n">S</span> <span class="o">=</span> <span class="mf">6378120.0</span>
+    <span class="c1"># Exponent of temperature dependence of water vapour pressure</span>
+    <span class="n">DELTA</span> <span class="o">=</span> <span class="mf">18.36</span>
+    <span class="c1"># Height of tropopause (metre)</span>
+    <span class="n">HT</span> <span class="o">=</span> <span class="mf">11000.0</span>
+    <span class="c1"># Upper limit for refractive effects (metre)</span>
+    <span class="n">HS</span> <span class="o">=</span> <span class="mf">80000.0</span>
+    
+    <span class="c1"># The refraction integrand</span>
+    <span class="k">def</span> <span class="nf">refi</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">dn</span><span class="p">,</span> <span class="n">rdndr</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">rdndr</span> <span class="o">/</span> <span class="p">(</span><span class="n">dn</span> <span class="o">+</span> <span class="n">rdndr</span><span class="p">)</span>
+
+    <span class="c1"># Transform ZOBS into the normal range.</span>
+    <span class="n">ZOBS1</span> <span class="o">=</span> <span class="n">da1p</span><span class="p">(</span><span class="n">ZOBS</span><span class="p">)</span>
+    <span class="n">ZOBS2</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">ZOBS1</span><span class="p">),</span> <span class="mf">1.0e93</span><span class="p">)</span>
+
+    <span class="c1"># Keep other arguments within safe bounds.</span>
+    <span class="n">HMOK</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">HM</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0e3</span><span class="p">),</span> <span class="mf">10.0e3</span><span class="p">)</span>
+    <span class="n">TDKOK</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">TDK</span><span class="p">,</span> <span class="mf">100.0</span><span class="p">),</span> <span class="mf">500.0</span><span class="p">)</span>
+    <span class="n">PMBOK</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">PMB</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span> <span class="mf">10000.0</span><span class="p">)</span>
+    <span class="n">RHOK</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">RH</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span> <span class="mf">1.0</span><span class="p">)</span>
+    <span class="n">WLOK</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">WL</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)</span>
+    <span class="n">ALPHA</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">TLR</span><span class="p">),</span> <span class="mf">0.001</span><span class="p">),</span> <span class="mf">0.01</span><span class="p">)</span>
+
+    <span class="c1"># Tolerance for iteration.</span>
+    <span class="n">TOL</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">EPS</span><span class="p">),</span> <span class="mf">1.0e-12</span><span class="p">),</span> <span class="mf">0.1</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>
+
+    <span class="c1"># Decide whether optical/IR or radio case - switch at 100 microns.</span>
+    <span class="n">OPTIC</span> <span class="o">=</span> <span class="n">WLOK</span> <span class="o">&lt;=</span> <span class="mf">100.0</span>
+
+    <span class="c1"># Set up model atmosphere parameters defined at the observer.</span>
+    <span class="n">WLSQ</span> <span class="o">=</span> <span class="n">WLOK</span> <span class="o">*</span> <span class="n">WLOK</span>
+    <span class="n">GB</span> <span class="o">=</span> <span class="mf">9.784</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="mf">0.0026</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">PHI</span> <span class="o">+</span> <span class="n">PHI</span><span class="p">)</span> <span class="o">-</span> <span class="mf">0.00000028</span> <span class="o">*</span> <span class="n">HMOK</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">OPTIC</span><span class="p">:</span>
+        <span class="n">A</span> <span class="o">=</span> <span class="p">(</span><span class="mf">287.604</span> <span class="o">+</span> <span class="p">(</span><span class="mf">1.6288</span> <span class="o">+</span> <span class="mf">0.0136</span> <span class="o">/</span> <span class="n">WLSQ</span><span class="p">)</span> <span class="o">/</span> <span class="n">WLSQ</span><span class="p">)</span> <span class="o">*</span> <span class="mf">273.15e-6</span> <span class="o">/</span> <span class="mf">1013.25</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">A</span> <span class="o">=</span> <span class="mf">77.624e-6</span>
+    
+    <span class="n">GAMAL</span> <span class="o">=</span> <span class="p">(</span><span class="n">GB</span> <span class="o">*</span> <span class="n">DMD</span><span class="p">)</span> <span class="o">/</span> <span class="n">GCR</span>
+    <span class="n">GAMMA</span> <span class="o">=</span> <span class="n">GAMAL</span> <span class="o">/</span> <span class="n">ALPHA</span>
+    <span class="n">GAMM2</span> <span class="o">=</span> <span class="n">GAMMA</span> <span class="o">-</span> <span class="mf">2.0</span>
+    <span class="n">DELM2</span> <span class="o">=</span> <span class="n">DELTA</span> <span class="o">-</span> <span class="mf">2.0</span>
+    <span class="n">TDC</span> <span class="o">=</span> <span class="n">TDKOK</span> <span class="o">-</span> <span class="mf">273.15</span>
+    <span class="n">PSAT</span> <span class="o">=</span> <span class="mf">10.0</span><span class="o">**</span><span class="p">((</span><span class="mf">0.7859</span> <span class="o">+</span> <span class="mf">0.03477</span> <span class="o">*</span> <span class="n">TDC</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="mf">0.00412</span> <span class="o">*</span> <span class="n">TDC</span><span class="p">))</span>
+    <span class="n">PSAT</span> <span class="o">*=</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">PMBOK</span> <span class="o">*</span> <span class="p">(</span><span class="mf">4.5e-6</span> <span class="o">+</span> <span class="mf">6e-10</span> <span class="o">*</span> <span class="n">TDC</span> <span class="o">*</span> <span class="n">TDC</span><span class="p">))</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">PMBOK</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">):</span>
+        <span class="n">PWO</span> <span class="o">=</span> <span class="n">RHOK</span> <span class="o">*</span> <span class="n">PSAT</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">RHOK</span><span class="p">)</span> <span class="o">*</span> <span class="n">PSAT</span> <span class="o">/</span> <span class="n">PMBOK</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">PWO</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+    <span class="n">W</span> <span class="o">=</span> <span class="n">PWO</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">DMW</span> <span class="o">/</span> <span class="n">DMD</span><span class="p">)</span> <span class="o">*</span> <span class="n">GAMMA</span> <span class="o">/</span> <span class="p">(</span><span class="n">DELTA</span> <span class="o">-</span> <span class="n">GAMMA</span><span class="p">)</span>
+    <span class="n">C1</span> <span class="o">=</span> <span class="n">A</span> <span class="o">*</span> <span class="p">(</span><span class="n">PMBOK</span> <span class="o">+</span> <span class="n">W</span><span class="p">)</span> <span class="o">/</span> <span class="n">TDKOK</span>
+    <span class="k">if</span> <span class="n">OPTIC</span><span class="p">:</span>
+        <span class="n">C2</span> <span class="o">=</span> <span class="p">(</span><span class="n">A</span> <span class="o">*</span> <span class="n">W</span> <span class="o">+</span> <span class="mf">11.2684e-6</span> <span class="o">*</span> <span class="n">PWO</span><span class="p">)</span> <span class="o">/</span> <span class="n">TDKOK</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">C2</span> <span class="o">=</span> <span class="p">(</span><span class="n">A</span> <span class="o">*</span> <span class="n">W</span> <span class="o">+</span> <span class="mf">12.92e-6</span> <span class="o">*</span> <span class="n">PWO</span><span class="p">)</span> <span class="o">/</span> <span class="n">TDKOK</span>
+
+    <span class="n">C3</span> <span class="o">=</span> <span class="p">(</span><span class="n">GAMMA</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">ALPHA</span> <span class="o">*</span> <span class="n">C1</span> <span class="o">/</span> <span class="n">TDKOK</span>
+    <span class="n">C4</span> <span class="o">=</span> <span class="p">(</span><span class="n">DELTA</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">ALPHA</span> <span class="o">*</span> <span class="n">C2</span> <span class="o">/</span> <span class="n">TDKOK</span>
+    <span class="k">if</span> <span class="n">OPTIC</span><span class="p">:</span>
+        <span class="n">C5</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">C6</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">C5</span> <span class="o">=</span> <span class="mf">371897e-6</span> <span class="o">*</span> <span class="n">PWO</span> <span class="o">/</span> <span class="n">TDKOK</span>
+        <span class="n">C6</span> <span class="o">=</span> <span class="n">C5</span> <span class="o">*</span> <span class="n">DELM2</span> <span class="o">*</span> <span class="n">ALPHA</span> <span class="o">/</span> <span class="p">(</span><span class="n">TDKOK</span> <span class="o">*</span> <span class="n">TDKOK</span><span class="p">)</span>
+
+    <span class="c1"># Conditions at the observer.</span>
+    <span class="n">R0</span> <span class="o">=</span> <span class="n">S</span> <span class="o">+</span> <span class="n">HMOK</span>
+    <span class="n">TEMPO</span><span class="p">,</span> <span class="n">DN0</span><span class="p">,</span> <span class="n">RDNDR0</span> <span class="o">=</span> <span class="n">atmt</span><span class="p">(</span><span class="n">R0</span><span class="p">,</span> <span class="n">TDKOK</span><span class="p">,</span> <span class="n">ALPHA</span><span class="p">,</span> <span class="n">GAMM2</span><span class="p">,</span> <span class="n">DELM2</span><span class="p">,</span>
+                              <span class="n">C1</span><span class="p">,</span> <span class="n">C2</span><span class="p">,</span> <span class="n">C3</span><span class="p">,</span> <span class="n">C4</span><span class="p">,</span> <span class="n">C5</span><span class="p">,</span> <span class="n">C6</span><span class="p">,</span> <span class="n">R0</span><span class="p">)</span>
+                              
+    <span class="n">SK0</span> <span class="o">=</span> <span class="n">DN0</span> <span class="o">*</span> <span class="n">R0</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">ZOBS2</span><span class="p">)</span>
+    <span class="n">F0</span> <span class="o">=</span> <span class="n">refi</span><span class="p">(</span><span class="n">R0</span><span class="p">,</span> <span class="n">DN0</span><span class="p">,</span> <span class="n">RDNDR0</span><span class="p">)</span>
+
+    <span class="c1"># Conditions in the troposphere at the tropopause.</span>
+    <span class="n">RT</span> <span class="o">=</span> <span class="n">S</span> <span class="o">+</span> <span class="n">HT</span>
+    <span class="n">TT</span><span class="p">,</span> <span class="n">DNT</span><span class="p">,</span> <span class="n">RDNDRT</span> <span class="o">=</span> <span class="n">atmt</span><span class="p">(</span><span class="n">R0</span><span class="p">,</span> <span class="n">TDKOK</span><span class="p">,</span> <span class="n">ALPHA</span><span class="p">,</span> <span class="n">GAMM2</span><span class="p">,</span> <span class="n">DELM2</span><span class="p">,</span>
+                           <span class="n">C1</span><span class="p">,</span> <span class="n">C2</span><span class="p">,</span> <span class="n">C3</span><span class="p">,</span> <span class="n">C4</span><span class="p">,</span> <span class="n">C5</span><span class="p">,</span> <span class="n">C6</span><span class="p">,</span> <span class="n">RT</span><span class="p">)</span>
+    <span class="n">SINE</span> <span class="o">=</span> <span class="n">SK0</span> <span class="o">/</span> <span class="p">(</span><span class="n">RT</span> <span class="o">*</span> <span class="n">DNT</span><span class="p">)</span>
+    <span class="n">ZT</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="n">SINE</span><span class="p">,</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">SINE</span> <span class="o">*</span> <span class="n">SINE</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)))</span>
+    <span class="n">FT</span> <span class="o">=</span> <span class="n">refi</span><span class="p">(</span><span class="n">RT</span><span class="p">,</span> <span class="n">DNT</span><span class="p">,</span> <span class="n">RDNDRT</span><span class="p">)</span>
+
+    <span class="c1"># Conditions in the stratosphere at the tropopause.</span>
+    <span class="n">DNTS</span><span class="p">,</span> <span class="n">RDNDRP</span> <span class="o">=</span> <span class="n">atms</span><span class="p">(</span><span class="n">RT</span><span class="p">,</span> <span class="n">TT</span><span class="p">,</span> <span class="n">DNT</span><span class="p">,</span> <span class="n">GAMAL</span><span class="p">,</span> <span class="n">RT</span><span class="p">)</span>
+    <span class="n">SINE</span> <span class="o">=</span> <span class="n">SK0</span> <span class="o">/</span> <span class="p">(</span><span class="n">RT</span> <span class="o">*</span> <span class="n">DNTS</span><span class="p">)</span>
+    <span class="n">ZTS</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="n">SINE</span><span class="p">,</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">SINE</span> <span class="o">*</span> <span class="n">SINE</span><span class="p">,</span><span class="mf">0.0</span><span class="p">)))</span>
+    <span class="n">FTS</span> <span class="o">=</span> <span class="n">refi</span><span class="p">(</span><span class="n">RT</span><span class="p">,</span> <span class="n">DNTS</span><span class="p">,</span> <span class="n">RDNDRP</span><span class="p">)</span>
+
+    <span class="c1"># Conditions at the stratosphere limit.</span>
+    <span class="n">RS</span> <span class="o">=</span> <span class="n">S</span> <span class="o">+</span> <span class="n">HS</span>
+    <span class="n">DNS</span><span class="p">,</span> <span class="n">RDNDRS</span> <span class="o">=</span> <span class="n">atms</span><span class="p">(</span><span class="n">RT</span><span class="p">,</span> <span class="n">TT</span><span class="p">,</span> <span class="n">DNT</span><span class="p">,</span> <span class="n">GAMAL</span><span class="p">,</span> <span class="n">RS</span><span class="p">)</span>
+    <span class="n">SINE</span> <span class="o">=</span> <span class="n">SK0</span> <span class="o">/</span> <span class="p">(</span><span class="n">RS</span> <span class="o">*</span> <span class="n">DNS</span><span class="p">)</span>
+    <span class="n">ZS</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="n">SINE</span><span class="p">,</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">SINE</span> <span class="o">*</span> <span class="n">SINE</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)))</span>
+    <span class="n">FS</span> <span class="o">=</span> <span class="n">refi</span><span class="p">(</span><span class="n">RS</span><span class="p">,</span> <span class="n">DNS</span><span class="p">,</span> <span class="n">RDNDRS</span><span class="p">)</span>
+
+    <span class="c1"># Integrate the refraction integral in two parts;  first in the</span>
+    <span class="c1"># troposphere (K=1), then in the stratosphere (K=2).</span>
+
+    <span class="c1"># Initialize previous refraction to ensure at least two iterations.</span>
+    <span class="n">REFOLD</span> <span class="o">=</span> <span class="mf">1.0e6</span>
+
+    <span class="c1"># Start off with 8 strips for the troposphere integration, and then</span>
+    <span class="c1"># use the final troposphere value for the stratosphere integration,</span>
+    <span class="c1"># which tends to need more strips.</span>
+    <span class="n">IS</span> <span class="o">=</span> <span class="mi">8</span>
+
+    <span class="c1"># Troposphere then stratosphere.</span>
+    <span class="k">for</span> <span class="n">K</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">]:</span>
+        <span class="c1"># Start Z, Z range, and start and end values.</span>
+        <span class="k">if</span> <span class="n">K</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">Z0</span> <span class="o">=</span> <span class="n">ZOBS2</span>
+            <span class="n">ZRANGE</span> <span class="o">=</span> <span class="n">ZT</span> <span class="o">-</span> <span class="n">Z0</span>
+            <span class="n">FB</span> <span class="o">=</span> <span class="n">F0</span>
+            <span class="n">FF</span> <span class="o">=</span> <span class="n">FT</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">Z0</span> <span class="o">=</span> <span class="n">ZTS</span>
+            <span class="n">ZRANGE</span> <span class="o">=</span> <span class="n">ZS</span> <span class="o">-</span> <span class="n">Z0</span>
+            <span class="n">FB</span> <span class="o">=</span> <span class="n">FTS</span>
+            <span class="n">FF</span> <span class="o">=</span> <span class="n">FS</span>
+
+        <span class="c1"># Sums of odd and even values.</span>
+        <span class="n">FO</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">FE</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+        <span class="c1"># First time through the loop we have to do every point.</span>
+        <span class="n">N</span> <span class="o">=</span> <span class="mi">1</span>
+       
+        <span class="c1"># Start of iteration loop (terminates at specified precision).</span>
+        <span class="n">LOOP</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">while</span> <span class="n">LOOP</span><span class="p">:</span>
+            <span class="c1"># Strip width.</span>
+            <span class="n">H</span> <span class="o">=</span> <span class="n">ZRANGE</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">IS</span><span class="p">)</span>
+
+            <span class="c1"># Initialize distance from Earth centre for quadrature pass.</span>
+            <span class="k">if</span> <span class="n">K</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">R</span> <span class="o">=</span> <span class="n">R0</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">R</span> <span class="o">=</span> <span class="n">RT</span>
+
+            <span class="c1"># One pass (no need to compute evens after first time).</span>
+            <span class="k">for</span> <span class="n">I</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">IS</span><span class="p">,</span> <span class="n">N</span><span class="p">):</span>
+                <span class="c1"># Sine of observed zenith distance.</span>
+                <span class="n">SZ</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">Z0</span> <span class="o">+</span> <span class="n">H</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="n">I</span><span class="p">))</span>
+
+                <span class="c1"># Find R (to the nearest metre, maximum four iterations).</span>
+                <span class="k">if</span> <span class="n">SZ</span> <span class="o">&gt;</span> <span class="mf">1e-20</span><span class="p">:</span>
+                    <span class="n">W</span> <span class="o">=</span> <span class="n">SK0</span> <span class="o">/</span> <span class="n">SZ</span>
+                    <span class="n">RG</span> <span class="o">=</span> <span class="n">R</span>
+                    <span class="n">DR</span> <span class="o">=</span> <span class="mf">1e6</span>
+                    <span class="n">J</span> <span class="o">=</span> <span class="mi">0</span>
+                    
+                    <span class="k">while</span> <span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">DR</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1.0</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">J</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">):</span>
+                        <span class="n">J</span> <span class="o">=</span> <span class="n">J</span> <span class="o">+</span> <span class="mi">1</span>
+                        <span class="k">if</span> <span class="n">K</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                            <span class="n">TG</span><span class="p">,</span> <span class="n">DN</span><span class="p">,</span> <span class="n">RDNDR</span> <span class="o">=</span> <span class="n">atmt</span><span class="p">(</span><span class="n">R0</span><span class="p">,</span> <span class="n">TDKOK</span><span class="p">,</span> <span class="n">ALPHA</span><span class="p">,</span> <span class="n">GAMM2</span><span class="p">,</span> <span class="n">DELM2</span><span class="p">,</span>
+                                                 <span class="n">C1</span><span class="p">,</span> <span class="n">C2</span><span class="p">,</span> <span class="n">C3</span><span class="p">,</span> <span class="n">C4</span><span class="p">,</span> <span class="n">C5</span><span class="p">,</span> <span class="n">C6</span><span class="p">,</span> <span class="n">RG</span><span class="p">)</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">DN</span><span class="p">,</span> <span class="n">RDNDR</span> <span class="o">=</span> <span class="n">atms</span><span class="p">(</span><span class="n">RT</span><span class="p">,</span> <span class="n">TT</span><span class="p">,</span> <span class="n">DNT</span><span class="p">,</span> <span class="n">GAMAL</span><span class="p">,</span> <span class="n">RG</span><span class="p">)</span>
+
+                        <span class="n">DR</span> <span class="o">=</span> <span class="p">(</span><span class="n">RG</span> <span class="o">*</span> <span class="n">DN</span> <span class="o">-</span> <span class="n">W</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">DN</span> <span class="o">+</span> <span class="n">RDNDR</span><span class="p">)</span>
+                        <span class="n">RG</span> <span class="o">=</span> <span class="n">RG</span> <span class="o">-</span> <span class="n">DR</span>
+
+                    <span class="n">R</span> <span class="o">=</span> <span class="n">RG</span>
+
+                <span class="c1"># Find the refractive index and integrand at R.</span>
+                <span class="k">if</span> <span class="n">K</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">T</span><span class="p">,</span> <span class="n">DN</span><span class="p">,</span> <span class="n">RDNDR</span> <span class="o">=</span> <span class="n">atmt</span><span class="p">(</span><span class="n">R0</span><span class="p">,</span> <span class="n">TDKOK</span><span class="p">,</span> <span class="n">ALPHA</span><span class="p">,</span> <span class="n">GAMM2</span><span class="p">,</span> <span class="n">DELM2</span><span class="p">,</span>
+                                        <span class="n">C1</span><span class="p">,</span> <span class="n">C2</span><span class="p">,</span> <span class="n">C3</span><span class="p">,</span> <span class="n">C4</span><span class="p">,</span> <span class="n">C5</span><span class="p">,</span> <span class="n">C6</span><span class="p">,</span> <span class="n">R</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">DN</span><span class="p">,</span><span class="n">RDNDR</span> <span class="o">=</span> <span class="n">atms</span><span class="p">(</span><span class="n">RT</span><span class="p">,</span> <span class="n">TT</span><span class="p">,</span> <span class="n">DNT</span><span class="p">,</span> <span class="n">GAMAL</span><span class="p">,</span> <span class="n">R</span><span class="p">)</span>
+
+                <span class="n">F</span> <span class="o">=</span> <span class="n">refi</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="n">DN</span><span class="p">,</span> <span class="n">RDNDR</span><span class="p">)</span>
+
+                <span class="c1"># Accumulate odd and (first time only) even values.</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">N</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">and</span> <span class="p">((</span><span class="n">I</span> <span class="o">%</span> <span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
+                    <span class="n">FE</span> <span class="o">=</span> <span class="n">FE</span> <span class="o">+</span> <span class="n">F</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">FO</span> <span class="o">=</span> <span class="n">FO</span> <span class="o">+</span> <span class="n">F</span>
+
+            <span class="c1"># Evaluate the integrand using Simpson&#39;s Rule.</span>
+            <span class="n">REFP</span> <span class="o">=</span> <span class="n">H</span> <span class="o">*</span> <span class="p">(</span><span class="n">FB</span> <span class="o">+</span> <span class="mf">4.0</span> <span class="o">*</span> <span class="n">FO</span> <span class="o">+</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">FE</span> <span class="o">+</span> <span class="n">FF</span><span class="p">)</span> <span class="o">/</span> <span class="mf">3.0</span>
+
+            <span class="c1"># Has the required precision been achieved?</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">REFP</span> <span class="o">-</span> <span class="n">REFOLD</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">TOL</span><span class="p">):</span>
+
+                <span class="c1"># No: prepare for next iteration.</span>
+
+                <span class="c1"># Save current value for convergence test.</span>
+                <span class="n">REFOLD</span> <span class="o">=</span> <span class="n">REFP</span>
+
+                <span class="c1"># Double the number of strips.</span>
+                <span class="n">IS</span> <span class="o">=</span> <span class="n">IS</span> <span class="o">+</span> <span class="n">IS</span>
+
+                <span class="c1"># Sum of all current values = sum of next pass&#39;s even values.</span>
+                <span class="n">FE</span> <span class="o">=</span> <span class="n">FE</span> <span class="o">+</span> <span class="n">FO</span>
+
+                <span class="c1"># Prepare for new odd values.</span>
+                <span class="n">FO</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+                <span class="c1"># Skip even values next time.</span>
+                <span class="n">N</span> <span class="o">=</span> <span class="mi">2</span>
+                
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Yes: save troposphere component and terminate the loop.</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">K</span> <span class="o">==</span> <span class="mi">1</span><span class="p">):</span>
+                    <span class="n">REFT</span> <span class="o">=</span> <span class="n">REFP</span>
+
+                <span class="n">LOOP</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="c1"># END IF</span>
+        <span class="c1"># END FOR</span>
+    <span class="c1"># END WHILE</span>
+
+    <span class="c1"># Result.</span>
+    <span class="n">REF</span> <span class="o">=</span> <span class="n">REFT</span> <span class="o">+</span> <span class="n">REFP</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">ZOBS1</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">):</span>
+        <span class="n">REF</span> <span class="o">=</span> <span class="o">-</span><span class="n">REF</span>
+
+    <span class="k">return</span> <span class="n">REF</span></div>
+
+
+<div class="viewcode-block" id="atmt"><a class="viewcode-back" href="../../../autoapi/kai/reduce/slalib/index.html#kai.reduce.slalib.atmt">[docs]</a><span class="k">def</span> <span class="nf">atmt</span><span class="p">(</span><span class="n">R0</span><span class="p">,</span> <span class="n">T0</span><span class="p">,</span> <span class="n">ALPHA</span><span class="p">,</span> <span class="n">GAMM2</span><span class="p">,</span> <span class="n">DELM2</span><span class="p">,</span> <span class="n">C1</span><span class="p">,</span> <span class="n">C2</span><span class="p">,</span> <span class="n">C3</span><span class="p">,</span> <span class="n">C4</span><span class="p">,</span> <span class="n">C5</span><span class="p">,</span> <span class="n">C6</span><span class="p">,</span> <span class="n">R</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Internal routine used by REFRO</span>
+<span class="sd">  </span>
+<span class="sd">    Refractive index and derivative with respect to height for the</span>
+<span class="sd">    troposphere.</span>
+<span class="sd">  </span>
+<span class="sd">    Given:</span>
+<span class="sd">      R0      d    height of observer from centre of the Earth (metre)</span>
+<span class="sd">      T0      d    temperature at the observer (deg K)</span>
+<span class="sd">      ALPHA   d    alpha          )</span>
+<span class="sd">      GAMM2   d    gamma minus 2  ) see HMNAO paper</span>
+<span class="sd">      DELM2   d    delta minus 2  )</span>
+<span class="sd">      C1      d    useful term  )</span>
+<span class="sd">      C2      d    useful term  )</span>
+<span class="sd">      C3      d    useful term  ) see source</span>
+<span class="sd">      C4      d    useful term  ) of slRFRO</span>
+<span class="sd">      C5      d    useful term  )</span>
+<span class="sd">      C6      d    useful term  )</span>
+<span class="sd">      R       d    current distance from the centre of the Earth (metre)</span>
+<span class="sd">  </span>
+<span class="sd">    Returned:</span>
+<span class="sd">      T       d    temperature at R (deg K)</span>
+<span class="sd">      DN      d    refractive index at R</span>
+<span class="sd">      RDNDR   d    R    rate the refractive index is changing at R</span>
+<span class="sd">  </span>
+<span class="sd">    Note that in the optical case C5 and C6 are zero.</span>
+<span class="sd">  </span>
+<span class="sd">    P.T.Wallace   Starlink   30 May 1997</span>
+<span class="sd">  </span>
+<span class="sd">    Copyright (C) 1997 Rutherford Appleton Laboratory</span>
+<span class="sd">    Copyright (C) 1995 Association of Universities for Research in Astronomy Inc.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">T</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">T0</span> <span class="o">-</span> <span class="n">ALPHA</span> <span class="o">*</span> <span class="p">(</span><span class="n">R</span> <span class="o">-</span> <span class="n">R0</span><span class="p">),</span> <span class="mf">320.0</span><span class="p">),</span> <span class="mf">100.0</span><span class="p">)</span>
+    <span class="n">TT0</span> <span class="o">=</span> <span class="n">T</span> <span class="o">/</span> <span class="n">T0</span>
+    <span class="n">TT0GM2</span> <span class="o">=</span> <span class="n">TT0</span><span class="o">**</span><span class="n">GAMM2</span>
+    <span class="n">TT0DM2</span> <span class="o">=</span> <span class="n">TT0</span><span class="o">**</span><span class="n">DELM2</span>
+    <span class="n">DN</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">+</span> <span class="p">(</span><span class="n">C1</span> <span class="o">*</span> <span class="n">TT0GM2</span> <span class="o">-</span> <span class="p">(</span><span class="n">C2</span> <span class="o">-</span> <span class="n">C5</span> <span class="o">/</span> <span class="n">T</span><span class="p">)</span> <span class="o">*</span> <span class="n">TT0DM2</span><span class="p">)</span> <span class="o">*</span> <span class="n">TT0</span>
+    <span class="n">RDNDR</span> <span class="o">=</span> <span class="n">R</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="n">C3</span> <span class="o">*</span> <span class="n">TT0GM2</span> <span class="o">+</span> <span class="p">(</span><span class="n">C4</span> <span class="o">-</span> <span class="n">C6</span> <span class="o">/</span> <span class="n">TT0</span><span class="p">)</span> <span class="o">*</span> <span class="n">TT0DM2</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">T</span><span class="p">,</span> <span class="n">DN</span><span class="p">,</span> <span class="n">RDNDR</span></div>
+
+
+<div class="viewcode-block" id="atms"><a class="viewcode-back" href="../../../autoapi/kai/reduce/slalib/index.html#kai.reduce.slalib.atms">[docs]</a><span class="k">def</span> <span class="nf">atms</span><span class="p">(</span><span class="n">RT</span><span class="p">,</span> <span class="n">TT</span><span class="p">,</span> <span class="n">DNT</span><span class="p">,</span> <span class="n">GAMAL</span><span class="p">,</span> <span class="n">R</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  </span>
+<span class="sd">    Internal routine used by REFRO</span>
+<span class="sd">  </span>
+<span class="sd">    Refractive index and derivative with respect to height for the</span>
+<span class="sd">    stratosphere.</span>
+<span class="sd">  </span>
+<span class="sd">    Given:</span>
+<span class="sd">      RT      d    height of tropopause from centre of the Earth (metre)</span>
+<span class="sd">      TT      d    temperature at the tropopause (deg K)</span>
+<span class="sd">      DNT     d    refractive index at the tropopause</span>
+<span class="sd">      GAMAL   d    constant of the atmospheric model = G  MD/R</span>
+<span class="sd">      R       d    current distance from the centre of the Earth (metre)</span>
+<span class="sd">  </span>
+<span class="sd">    Returned:</span>
+<span class="sd">      DN      d    refractive index at R</span>
+<span class="sd">      RDNDR   d    R    rate the refractive index is changing at R</span>
+<span class="sd">  </span>
+<span class="sd">    P.T.Wallace   Starlink   14 July 1995</span>
+<span class="sd">  </span>
+<span class="sd">    Copyright (C) 1995 Rutherford Appleton Laboratory</span>
+<span class="sd">    Copyright (C) 1995 Association of Universities for Research in Astronomy Inc.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">B</span> <span class="o">=</span> <span class="n">GAMAL</span> <span class="o">/</span> <span class="n">TT</span>
+    <span class="n">W</span> <span class="o">=</span> <span class="p">(</span><span class="n">DNT</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">B</span> <span class="o">*</span> <span class="p">(</span><span class="n">R</span> <span class="o">-</span> <span class="n">RT</span><span class="p">))</span>
+    <span class="n">DN</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">+</span> <span class="n">W</span>
+    <span class="n">RDNDR</span> <span class="o">=</span> <span class="o">-</span><span class="n">R</span> <span class="o">*</span> <span class="n">B</span> <span class="o">*</span> <span class="n">W</span>
+
+    <span class="k">return</span> <span class="n">DN</span><span class="p">,</span> <span class="n">RDNDR</span></div>
+        
+
+<div class="viewcode-block" id="da1p"><a class="viewcode-back" href="../../../autoapi/kai/reduce/slalib/index.html#kai.reduce.slalib.da1p">[docs]</a><span class="k">def</span> <span class="nf">da1p</span><span class="p">(</span><span class="n">ANGLE</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Normalize angle into range +/- pi  (double precision)</span>
+<span class="sd">  </span>
+<span class="sd">    Given:</span>
+<span class="sd">       ANGLE     dp      the angle in radians</span>
+<span class="sd">  </span>
+<span class="sd">    The result (double precision) is ANGLE expressed in the range +/- pi.</span>
+<span class="sd">  </span>
+<span class="sd">    P.T.Wallace   Starlink   23 November 1995</span>
+<span class="sd">  </span>
+<span class="sd">    Copyright (C) 1995 Rutherford Appleton Laboratory</span>
+<span class="sd">    Copyright (C) 1995 Association of Universities for Research in Astronomy Inc.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">DPI</span> <span class="o">=</span> <span class="mf">3.141592653589793238462643</span>
+    <span class="n">D2PI</span> <span class="o">=</span> <span class="mf">6.283185307179586476925287</span>
+
+    <span class="n">slDA1P</span> <span class="o">=</span> <span class="n">ANGLE</span> <span class="o">%</span> <span class="n">D2PI</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">slDA1P</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">DPI</span><span class="p">):</span>
+        <span class="n">slDA1P</span> <span class="o">=</span> <span class="n">slDA1P</span> <span class="o">-</span> <span class="n">math</span><span class="o">.</span><span class="n">copysign</span><span class="p">(</span><span class="n">D2PI</span><span class="p">,</span> <span class="n">ANGLE</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">slDA1P</span></div>
+    
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, J. R. Lu, A. K. Gautam, T. Do.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,13 @@
+name: iraf27
+channels:
+  - http://ssb.stsci.edu/astroconda
+  - defaults
+dependencies:
+  - iraf-all
+  - pyraf-all
+  - stsci
+  - python=2.7
+  - pydrizzle
+  - stsci.tools=3.4.1
+  - pip:
+    - stsci-tools==3.4

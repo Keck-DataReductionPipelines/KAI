@@ -1,0 +1,260 @@
+:py:mod:`kai.reduce.calib`
+==========================
+
+.. py:module:: kai.reduce.calib
+
+.. autoapi-nested-parse::
+
+   
+   ..
+       !! processed by numpydoc !!
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   kai.reduce.calib.makedark
+   kai.reduce.calib.makeflat
+   kai.reduce.calib.makemask
+   kai.reduce.calib.make_instrument_mask
+   kai.reduce.calib.analyzeDarkCalib
+
+
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   kai.reduce.calib.module_dir
+
+
+.. py:data:: module_dir
+   
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: makedark(files, output, raw_dir=None, instrument=instruments.default_inst)
+
+   
+   Make dark image for imaging data. Makes a calib/ directory
+   and stores all output there. All output and temporary files
+   will be created in a darks/ subdirectory.
+
+
+   :Parameters:
+
+       **files** : list of int
+           Integer list of the files. Does not require padded zeros.
+
+       **output** : str
+           Output file name. Include the .fits extension.
+
+       **raw_dir** : str, optional
+           Directory where raw files are stored. By default,
+           assumes that raw files are stored in '../raw'
+
+       **instrument** : instruments object, optional
+           Instrument of data. Default is `instruments.default_inst`
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: makeflat(onFiles, offFiles, output, normalizeFirst=False, raw_dir=None, instrument=instruments.default_inst)
+
+   
+   Make flat field image for imaging data. Makes a calib/ directory
+   and stores all output there. All output and temporary files
+   will be created in a flats/ subdirectory.
+
+   If only twilight flats were taken (as in 05jullgs), use these flats as
+   the onFiles, and use 0,0 for offFiles. So the reduce.py file should look
+   something like this: onFiles = range(22, 26+1) and offFiles = range(0,0)
+   The flat will then be made by doing a median combine using just the
+   twilight flats.
+
+   :Parameters:
+
+       **onFiles** : list of int
+           Integer list of lamps ON files. Does not require padded zeros.
+
+       **offFiles** : list of int
+           Integer list of lamps OFF files. Does not require padded zeros.
+
+       **output** : str
+           Output file name. Include the .fits extension.
+
+       **normalizeFirst** : bool, default=False
+           If the individual flats should be normalized first,
+           such as in the case of twilight flats.
+
+       **raw_dir** : str, optional
+           Directory where raw files are stored. By default,
+           assumes that raw files are stored in '../raw'
+
+       **instrument** : instruments object, optional
+           Instrument of data. Default is `instruments.default_inst`
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: makemask(dark, flat, output, instrument=instruments.default_inst)
+
+   
+   Make bad pixel mask for imaging data. Makes a calib/ directory
+   and stores all output there. All output and temporary files
+   will be created in a masks/ subdirectory.
+
+
+   :Parameters:
+
+       **dark** : str
+           The filename of the dark file (must be in the
+           calib/darks/ directory). This is used to
+           construct a hot pixel mask. Use a long (t>20sec) exposure dark.
+
+       **flat** : str
+           The filename of a flat file  (must be in the
+           calib/flats/ directory). This is used to
+           construct a dead pixel mask. The flat should be normalized.
+
+       **output** : str
+           The output file name. This will be created in the masks/
+           subdirectory.
+
+       **instrument** : instruments object, optional
+           Instrument of data. Default is `instruments.default_inst`
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: make_instrument_mask(dark, flat, outDir, instrument=instruments.default_inst)
+
+   
+   Make the static bad pixel mask for the instrument. This only needs to be
+   run once. This creates a file called nirc2mask.fits or osiris_img_mask.fits
+   which is subsequently used throughout the pipeline. The dark should be a long
+   integration dark.
+
+
+   :Parameters:
+
+       **dark** : str
+           The full absolute path to a medianed dark file. This is
+           used to construct a hot pixel mask (4 sigma detection thresh).
+
+       **flat** : str
+           The full absolute path to a medianed flat file. This is
+           used to construct a dead pixel mask.
+
+       **outDir** : str
+           full path to output directory with '/' at the end.
+
+       **instrument** : instruments object, optional
+           Instrument of data. Default is `instruments.default_inst`
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: analyzeDarkCalib(firstFrame, skipcombo=False)
+
+   
+   Reduce data from the dark_calib script that should be run once
+   a summer in order to test the dark current and readnoise.
+
+   This should be run in the reduce/calib/ directory for a particular
+   run.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+

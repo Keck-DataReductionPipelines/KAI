@@ -83,14 +83,14 @@ def mmm(sky_vector, highbad=None, readnoise=None, integer=False,
 
     if nsky < minsky:
         if not silent:
-            print 'ERROR Input vector must contain at least %d elements' % \
-                minsky
+            print('ERROR Input vector must contain at least %d elements' % \
+                minsky)
         return
 
     nlast = nsky - 1    # Subscript of last pixel in the sky array
 
     if debug:
-        print 'Processing %d element array', nsky
+        print('Processing %d element array', nsky)
 
     sz_sky = sky_vector.shape
     
@@ -112,7 +112,7 @@ def mmm(sky_vector, highbad=None, readnoise=None, integer=False,
     
     if len(good) == 0:
         if not silent:
-            print 'ERROR No sky values fall within %d and %d' % (cut1, cut2)
+            print('ERROR No sky values fall within %d and %d' % (cut1, cut2))
         return
 
     # Subtract the median to improve arithmetic accuracy
@@ -147,13 +147,13 @@ def mmm(sky_vector, highbad=None, readnoise=None, integer=False,
         
         if niter > mxiter:
             if not silent:
-                print 'ERROR Too many (%d) iterations, unable to compute sky' %\
-                    niter
+                print('ERROR Too many (%d) iterations, unable to compute sky' %\
+                    niter)
             return
 
         if (maximm - minimm < minsky):
             if not silent:
-                print 'ERROR Too few (%d) valid sky elements, unable to compute sky' % (maximm - minimm)
+                print('ERROR Too few (%d) valid sky elements, unable to compute sky' % (maximm - minimm))
             return
 
         # compute Chauvenet rejection criterion
@@ -228,7 +228,7 @@ def mmm(sky_vector, highbad=None, readnoise=None, integer=False,
         nsky = maximm - minimm
         if nsky < minsky:
             if not silent:
-                print 'ERROR Outlier rejection left too few sky elements.'
+                print('ERROR Outlier rejection left too few sky elements.')
             return
 
         skymn = sum / nsky
@@ -281,9 +281,9 @@ def mmm(sky_vector, highbad=None, readnoise=None, integer=False,
     nsky = maximm - minimm
         
     if debug:
-        print 'MMM: Number of unrejected sky elements: %d' % nsky
-        print 'MMM: Number of iterations: %d' % niter
-        print 'MMM: Mode, Sigma, Skew of sky vector: ', skymode, sigma, skew
+        print('MMM: Number of unrejected sky elements: %d' % nsky)
+        print('MMM: Number of iterations: %d' % niter)
+        print('MMM: Mode, Sigma, Skew of sky vector: ', skymode, sigma, skew)
         
     # outputs:
     # sky, skymod, sigma, skew, Nsky
