@@ -223,10 +223,12 @@ class OSIRIS(Instrument):
         """
         Return the plate scale in arcsec/pix.
         """
-        scale = 0.00995
-        # scale = 0.0099418
-        # scale = 0.0099576
-        
+        # scale = 0.00995
+        date = hdr['DATE-OBS']
+        if (float(date[0:4]+date[5:7]+date[8:10]) < 20201116):
+            scale = 0.0099418
+        elif (float(date[0:4]+date[5:7]+date[8:10]) >= 20201116):
+            scale = 0.0099576
         return scale
     
     def get_position_angle(self, hdr):
@@ -238,12 +240,12 @@ class OSIRIS(Instrument):
         
         #if in PCU mode, read the PCU rotation angle instead
         if 'PCUZ' in hdr.keys:
-            if hdr['PCUZ'] > 10:  
-                pcu_angle = hdr['PCUR']
+            if hdr['PCUZ'] > 20:  
+                pcu_angle = float(hdr['PCUR'])
                 pinhole_angle = 65.703 #the angle at which the pihole mask is installed
                 # rotator_angle = hdr['ROTPPOSN']
                 # default_rotator_angle = 90
-`               pa = pcu_angle - pinhole_angle       
+                pa = pcu_angle - pinhole_angle       
         return pa
     
     def get_instrument_angle(self, hdr):
