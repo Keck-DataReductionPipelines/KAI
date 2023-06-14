@@ -231,6 +231,20 @@ class OSIRIS(Instrument):
             scale = 0.0099576
         return scale
     
+    def get_pcu_scale(self,hdr):
+        """
+        The scale on the PCU pinhole mask, in mm (at the front focus) per pixel
+        """
+        scale = 1/138.5
+        return scale
+
+    def get_pcuxyRef(self,hdr):
+        """
+        The reference position, when the PCU is on-axis
+        """
+        pcuxyRef = [90,185]       
+        return pcuxyRef
+
     def get_position_angle(self, hdr):
         """
         Get the sky PA in degrees East of North. 
@@ -242,7 +256,7 @@ class OSIRIS(Instrument):
         if 'PCUZ' in hdr.keys:
             if hdr['PCUZ'] > 20:  
                 pcu_angle = float(hdr['PCUR'])
-                pinhole_angle = 65.703 #the angle at which the pihole mask is installed
+                pinhole_angle = 65.703 #the angle at which the pihole mask is horizontal.
                 # rotator_angle = hdr['ROTPPOSN']
                 # default_rotator_angle = 90
                 pa = pcu_angle - pinhole_angle       
