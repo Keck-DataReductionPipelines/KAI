@@ -1,6 +1,7 @@
 from astropy.io import fits
 import numpy as np
 from kai import instruments
+import copy
 
 def lin_correction(file, instrument=instruments.default_inst):
     """
@@ -8,13 +9,11 @@ def lin_correction(file, instrument=instruments.default_inst):
     
     x = (FITS_orig) / (No. of coadds)
     
-    norm = coeffs[0] + coeffs[1] * x + coeffs[2] * x^2
+    Normalization is defined as a polynomial in the following way:
+    norm = coeffs[0] + (coeffs[1] * x) + (coeffs[2] * x^2) + ... + (coeffs[n] * x^n)
     
     FITS_corrected = FITS_orig / norm
-    
-    From Stanimir Metchev's linearity correction code
-    (http://www.astro.sunysb.edu/metchev/ao.html)
-    
+        
     Parameters
     ----------
     file : str
@@ -34,17 +33,26 @@ def lin_correction(file, instrument=instruments.default_inst):
     x = im_data / num_coadds
     coeffs = instrument.get_linearity_correction_coeffs()
     
-    # Generalize to arbitrary polynomial order
+    # Determine order of polynomial correction
+    norm_poly_order = len(coeffs)
     
+    # Construct normalization from polynomial
+    norm = coeffs[0]
     
-    norm = coeffs[0] + (coeffs[1] * x) + (coeffs[2] * x**2.0)
-    
+    for cur_poly_order in range(1, norm_poly_order):
+        norm = norm + (coeffs[cur_poly_order] * (x ** float(cur_poly_order)))
     
     # Perform correction
-    # Only to positive pixel values
     
+    # Only want to perform correction on positive pixel values
+    # Generate filter for positive pixel values
+    positive_filter = np.where(im_data > 0)
     
-    im_data_corrected = im_data / norm
+    # Perform correction
+    im_data_corrected = copy.deepcopy(im_data)
+    
+    im_data_corrected[positive_filter] =\
+        im_data_corrected[positive_filter] / norm
     
     # Write out corrected image data to file
     hdul[0].data = im_data_corrected
