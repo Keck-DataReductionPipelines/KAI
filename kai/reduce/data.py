@@ -95,7 +95,7 @@ def clean(
     refSrc : [float, float]
         x and y coordinates for the reference source, provided as a list of two
         float coordinates.
-    refSrc : [float, float]
+    strSrc : [float, float]
         x and y coordinates for the Strehl source, provided as a list of two
         float coordinates.
     dark_frame : str, default=None
