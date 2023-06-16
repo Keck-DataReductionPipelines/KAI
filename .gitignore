@@ -160,3 +160,8 @@ ENV/
 # Emacs aux files
 *.py~
 *.py#
+
+# Our test epoch data is hosted on GitHub.
+kai/data/test_epoch/
+
+
