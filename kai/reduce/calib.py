@@ -193,14 +193,14 @@ def makeflat(
                     ignore_missing_end=True) as cur_flat:
                 cur_flat[0].data = cur_flat[0].data - dark_data
                 
-                cur_flat.flush()   # Update the flat file in place
+                cur_flat.flush(output_verify = 'ignore')   # Update the flat file in place
         
         for i in range(len(lampsoff_copied)):
             with fits.open(lampsoff_copied[i], mode='update',
                     ignore_missing_end=True) as cur_flat:
                 cur_flat[0].data = cur_flat[0].data - dark_data
                 
-                cur_flat.flush()   # Update the flat file in place
+                cur_flat.flush(output_verify = 'ignore')   # Update the flat file in place
     else:
         warning_message = 'Dark frame not provided for makesky().'
         warning_message += '\nUsing flat frames without dark subtraction.'

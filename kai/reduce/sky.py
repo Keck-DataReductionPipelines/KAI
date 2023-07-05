@@ -103,7 +103,7 @@ def makesky(
                     ignore_missing_end=True) as cur_sky:
                 cur_sky[0].data = cur_sky[0].data - dark_data
                 
-                cur_sky.flush()   # Update the sky file in place
+                cur_sky.flush(output_verify = 'ignore')   # Update the sky file in place
     else:
         warning_message = 'Dark frame not provided for makesky().'
         warning_message += '\nUsing sky frames without dark subtraction.'
@@ -277,7 +277,7 @@ def makesky_lp(
                     ignore_missing_end=True) as cur_sky:
                 cur_sky[0].data = cur_sky[0].data - dark_data
                 
-                cur_sky.flush()   # Update the sky file in place
+                cur_sky.flush(output_verify = 'ignore')   # Update the sky file in place
     else:
         warning_message = 'Dark frame not provided for makesky_lp().'
         warning_message += '\nUsing sky frames without dark subtraction.'

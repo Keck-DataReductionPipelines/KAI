@@ -283,7 +283,7 @@ def clean(
                         ignore_missing_end=True) as cur_frame:
                     cur_frame[0].data = cur_frame[0].data - dark_data
                 
-                    cur_frame.flush()   # Update the current frame in place
+                    cur_frame.flush(output_verify = 'ignore')   # Update the current frame in place
             
             # Linearity correction
             lin_correction.lin_correction(_cp, instrument=instrument)
