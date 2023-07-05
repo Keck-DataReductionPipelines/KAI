@@ -184,9 +184,6 @@ class NIRC2(Instrument):
         Set to the 95% saturation threshold in DN.
         """
         return 12000.0
-        
-        # Update to non-linearity correction
-        hard_saturation 
     
     def get_linearity_correction_coeffs(self):
         """
@@ -232,8 +229,8 @@ class OSIRIS(Instrument):
         self.bad_pixel_mask = 'osiris_img_mask.fits'
 
         self.distCoef = ''
-        self.distXgeoim = None
-        self.distYgeoim = None
+        self.distXgeoim = module_dir + '/reduce/distortion/OSIRIS_im_x_2021.fits'
+        self.distYgeoim = module_dir + '/reduce/distortion/OSIRIS_im_y_2021.fits'
 
         self.telescope = 'Keck'
         self.telescope_diam = 10.5 # telescope diameter in meters
@@ -291,15 +288,16 @@ class OSIRIS(Instrument):
                      'Kp': 2.12,
                      'Kp-sHex': 2.12,
                      'Kn3': 2.12,
+                     'Kn3-sHex': 2.12,
                      'Hbb': 1.65,
                      'Hbb-LAnn':1.65,
                      'Hn3': 1.635,
                      'Hcont':1.5832,
                      'BrGamma':2.169,
-                     'BrGamma-sAnn':2.169
-                         }
+                     'BrGamma-sAnn':2.169,
+                    }
         if filt_name not in wave_dict.keys():
-            print('NO information available on this filter' + filt_name)
+            print('NO information available on this filter: ' + filt_name)
             return 2.12
         else:
             return wave_dict[filt_name]
@@ -360,10 +358,21 @@ class OSIRIS(Instrument):
         return new_img
 
     def get_distortion_maps(self, hdr):
-        distXgeoim = None
-        distYgeoim = None
+        """
+        Inputs
+        ----------
+        date : str
+            Date in string format such as '2015-10-02'.
+        """
+        date = hdr['DATE-OBS']
+        if (float(date[0:4]+date[5:7]+date[8:10]) < 20201116):
+            self.distXgeoim = module_dir + '/reduce/distortion/OSIRIS_im_x_2020.fits'
+            self.distYgeoim = module_dir + '/reduce/distortion/OSIRIS_im_y_2020.fits'
+        elif (float(date[0:4]+date[5:7]+date[8:10]) >= 20201116):
+            self.distXgeoim = module_dir + '/reduce/distortion/OSIRIS_im_x_2021.fits'
+            self.distYgeoim = module_dir + '/reduce/distortion/OSIRIS_im_y_2021.fits'
+        return self.distXgeoim, self.distYgeoim
 
-        return distXgeoim, distYgeoim
 
     def get_align_type(self, hdr, errors=False):
         atype = 14

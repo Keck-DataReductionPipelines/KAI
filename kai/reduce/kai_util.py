@@ -17,7 +17,8 @@ def kailog(directory):
 
     return
 
-def makelog(directory, outfile='image_log.txt', instrument=instruments.default_inst):
+def makelog(directory, outfile='image_log.txt',
+            instrument=instruments.default_inst):
     """Make an electronic log for all the FITS files in the 
     specified directory.
 
@@ -180,21 +181,23 @@ def aotsxy2pix(aotsxy, scale, aotsxyRef, inst_angle=0.0):
     
     x = aotsxy[0]
     y = aotsxy[1]
-
+    x_ref = aotsxyRef[0]
+    y_ref = aotsxyRef[1]
+    
     # AOTSX,Y are in units of mm. Conversion is 0.727 mm/arcsec
-    d_x = (x - aotsxyRef[0]) / 0.727
-    d_y = (y - aotsxyRef[1]) / 0.727
+    d_x = (x - x_ref) / 0.727
+    d_y = (y - y_ref) / 0.727
     d_x = d_x * (1.0/scale)
     d_y = d_y * (1.0/scale)
-
+    
     # Rotate to the instrument PA
     cosa = np.cos(np.radians(-inst_angle))
     sina = np.sin(np.radians(-inst_angle))
-
+    
     rot_matrix = np.array([[cosa, sina], [-sina, cosa]])
     coo_ao = np.array([d_x, d_y])
     coo_inst = rot_matrix.dot(coo_ao)
-
+    
     d_x = coo_inst[0]
     d_y = coo_inst[1]
     

@@ -208,15 +208,13 @@ def makeflat(
         warnings.warn(warning_message)
     
     # Perform linearity correction
-    if lin_corr:
-        for i in range(len(lampson_copied)):
-            lin_correction.lin_correction(lampson_copied[i],
-                                          instrument=instrument)
-        
-        for i in range(len(lampsoff_copied)):
-            lin_correction.lin_correction(lampsoff_copied[i],
-                                          instrument=instrument)
+    for i in range(len(lampson_copied)):
+        lin_correction.lin_correction(lampson_copied[i],
+                                      instrument=instrument)
     
+    for i in range(len(lampsoff_copied)):
+        lin_correction.lin_correction(lampsoff_copied[i],
+                                      instrument=instrument)
     
     if (len(offFiles) != 0):
         f_on = open(_onlis, 'w')

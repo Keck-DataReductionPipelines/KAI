@@ -22,27 +22,8 @@ from datetime import datetime
 
 module_dir = os.path.dirname(__file__)
 
-# Remember to change these if you are going to use the wide camera.
-# You can change them in your reduce.py file after importing data.py
-# Narrow Camera
-distCoef = ''
-# distXgeoim = module_dir + '/distortion/nirc2_narrow_xgeoim.fits'
-# distYgeoim = module_dir + '/distortion/nirc2_narrow_ygeoim.fits'
-#changing to test new distortion solutions right now
-#distXgeoim = '/g/lu/data/m53/2015may/dist_sol/Leg_6r9_may_X.fits'
-#distYgeoim = '/g/lu/data/m53/2015may/dist_sol/Leg_6r9_may_Y.fits'
-# Wide Camera
-#distCoef = module_dir + '/distortion/coeffs/nirc2_cubic_wide'
-#distXgeoim = ''
-#distYgeoim = ''
-# Wide Camera Hai Fu
-#distCoef = ' '
-#distXgeoim = module_dir + '/distortion/nirc2_wide_X_distortion.fits'
-#distYgeoim = module_dir + '/distortion/nirc2_wide_Y_distortion.fits'
-
 supermaskName = 'supermask.fits'
 outputVerify = 'ignore'
-
 
 def clean(
         files, nite, wave, refSrc, strSrc,
@@ -52,6 +33,7 @@ def clean(
         fixDAR=True, use_koa_weather=False,
         raw_dir=None, clean_dir=None,
         instrument=instruments.default_inst, check_ref_loc=True,
+        ref_offset_method='aotsxy'
     ):
     """
     Clean near infrared NIRC2 or OSIRIS images.
@@ -95,7 +77,7 @@ def clean(
     refSrc : [float, float]
         x and y coordinates for the reference source, provided as a list of two
         float coordinates.
-    refSrc : [float, float]
+    strSrc : [float, float]
         x and y coordinates for the Strehl source, provided as a list of two
         float coordinates.
     dark_frame : str, default=None
@@ -135,6 +117,11 @@ def clean(
         assumes that clean files will be stored in '../clean'
     instrument : instruments object, optional
         Instrument of data. Default is `instruments.default_inst`
+    ref_offset_method : str, default='aotsxy'
+        Method to calculate offsets from reference image.
+        Options are 'aotsxy' or 'radec'.
+        In images where 'aotsxy' keywords aren't reliable, 'radec' calculated
+        offsets may work better.
     """
     
     # Make sure directory for current passband exists and switch into it
@@ -148,7 +135,7 @@ def clean(
     
     sciDir = waveDir + '/sci_' + nite + '/'
     util.mkdir(sciDir)
-    ir.cd(sciDir)
+    os.chdir(sciDir)
 
     # Set location of raw data
     rawDir = rootDir + 'raw/'
@@ -346,7 +333,7 @@ def clean(
 
             clean_makecoo(_ce, _cc, refSrc, strSrc, aotsxyRef, radecRef,
                           instrument=instrument, check_loc=check_ref_loc,
-                          cent_box=cent_box)
+                          cent_box=cent_box, offset_method=ref_offset_method)
 
             ### Move to the clean directory ###
             util.rmall([clean + _cc, clean + _coo, clean + _rcoo,
@@ -368,10 +355,10 @@ def clean(
     finally:
         # Move back up to the original directory
         #skyObj.close()
-        ir.cd('../')
+        os.chdir(redDir)
 
     # Change back to original directory
-    os.chdir('../')
+    os.chdir(redDir)
 
 def clean_get_supermask(_statmask, _supermask, badColumns):
     """
@@ -779,7 +766,7 @@ def combine(files, wave, outroot, field=None, outSuffix=None,
         util.rmall([_rcoo])
     
     # Change back to original directory
-    os.chdir('../')
+    os.chdir(redDir)
 
 def rot_img(root, phi, cleanDir):
     """Rotate images to PA=0 if they have a different PA from one
@@ -934,7 +921,7 @@ def calcStrehl(files, wave,
                            droppedFiles)
     
     # Switch back to parent directory
-    os.chdir('../')
+    os.chdir(redDir)
 
 def weight_by_strehl(roots, strehls):
     """
@@ -1213,8 +1200,6 @@ def combine_drizzle(imgsize, cleanDir, roots, outroot, weights, shifts,
                               'rotator user position')
 
     # Add keyword with distortion image information
-    fits_f[0].header.set('DISTCOEF', "%s" % distCoef,
-                          'Distortion Coefficients File')
     fits_f[0].header.set('DISTORTX', "%s" % distXgeoim,
                           'X Distortion Image')
     fits_f[0].header.set('DISTORTY', "%s" % distYgeoim,
@@ -1943,8 +1928,9 @@ def clean_bkgsubtract(_ff_f, _bp):
     return bkg
 
 def clean_makecoo(_ce, _cc, refSrc, strSrc, aotsxyRef, radecRef,
-                  instrument=instruments.default_inst, check_loc=True,
-                  update_fits=True,cent_box=12):
+        instrument=instruments.default_inst, check_loc=True,
+        update_fits=True,cent_box=12,
+        offset_method='aotsxy'):
     """Make the *.coo file for this science image. Use the difference
     between the AOTSX/Y keywords from a reference image and each science
     image to tell how the positions of the two frames are related.
@@ -1964,10 +1950,19 @@ def clean_makecoo(_ce, _cc, refSrc, strSrc, aotsxyRef, radecRef,
     @param radecRef: The RA/DEC header values from the reference image.
     @type radecRef: array of floats with length=2 [x, y]
 
-    check_loc (bool):  If True the reference source is recentered for this frame.
-                     Use False if the offsets are large enough to move the reference source off of the image
-    update_fits : update the fits files with the reference pixel values
-    cent_box : box size to center the source (default: 12)
+    check_loc : bool, default=True
+        If True the reference source is recentered for this frame.
+        Use False if the offsets are large enough to move the reference source
+        off of the image.
+    update_fits : bool, default=True
+        Update the fits files with the reference pixel values
+    cent_box : float, default: 12
+        Box size to center the source
+    offset_method : str, default='aotsxy'
+        Method to calculate offsets from reference image.
+        Options are 'aotsxy' or 'radec'.
+        In images where 'aotsxy' keywords aren't reliable, 'radec' calculated
+        offsets may work better.
     """
 
     hdr = fits.getheader(_ce, ignore_missing_end=True)
@@ -1983,10 +1978,14 @@ def clean_makecoo(_ce, _cc, refSrc, strSrc, aotsxyRef, radecRef,
     inst_angle = instrument.get_instrument_angle(hdr)
 
     # Calculate the pixel offsets from the reference image
-    # We've been using aotsxy2pix, but the keywords are wrong
-    # for 07maylgs and 07junlgs
-    #d_xy = kai_util.radec2pix(radec, phi, scale, radecRef)
-    d_xy = kai_util.aotsxy2pix(aotsxy, scale, aotsxyRef, inst_angle=inst_angle)
+    if offset_method == 'radec':
+        d_xy = kai_util.radec2pix(radec, phi, scale, radecRef)
+    elif offset_method == 'aotsxy':
+        d_xy = kai_util.aotsxy2pix(aotsxy, scale, aotsxyRef,
+                                   inst_angle=inst_angle)
+    else:
+        d_xy = kai_util.aotsxy2pix(aotsxy, scale, aotsxyRef,
+                                   inst_angle=inst_angle)
 
     # In the new image, find the REF and STRL coords
     xref = refSrc[0] + d_xy[0]
