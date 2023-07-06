@@ -191,16 +191,40 @@ def makeflat(
         for i in range(len(lampson_copied)):
             with fits.open(lampson_copied[i], mode='update',
                     ignore_missing_end=True) as cur_flat:
-                cur_flat[0].data = cur_flat[0].data - dark_data
-                
-                cur_flat.flush(output_verify = 'ignore')   # Update the flat file in place
+                    flat_data = cur_flat[0].data
+                    flat_header = cur_flat[0].header
+            
+                flat_data = flat_data - dark_data
+            
+                flat_hdu = fits.PrimaryHDU(
+                    data=flat_data,
+                    header=flat_header,
+                )
+            
+                flat_hdu.writeto(
+                    lampson_copied[i],
+                    output_verify='ignore',
+                    overwrite=True,
+                )
         
         for i in range(len(lampsoff_copied)):
             with fits.open(lampsoff_copied[i], mode='update',
                     ignore_missing_end=True) as cur_flat:
-                cur_flat[0].data = cur_flat[0].data - dark_data
-                
-                cur_flat.flush(output_verify = 'ignore')   # Update the flat file in place
+                    flat_data = cur_flat[0].data
+                    flat_header = cur_flat[0].header
+            
+                flat_data = flat_data - dark_data
+            
+                flat_hdu = fits.PrimaryHDU(
+                    data=flat_data,
+                    header=flat_header,
+                )
+            
+                flat_hdu.writeto(
+                    lampsoff_copied[i],
+                    output_verify='ignore',
+                    overwrite=True,
+                )
     else:
         warning_message = 'Dark frame not provided for makesky().'
         warning_message += '\nUsing flat frames without dark subtraction.'
