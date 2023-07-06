@@ -45,14 +45,16 @@ def lin_correction(file, instrument=instruments.default_inst):
     # Perform correction
     
     # Only want to perform correction on positive pixel values
-    # Generate filter for positive pixel values
-    positive_filter = np.where(im_data > 0)
+    negative_filter = np.where(im_data < 0)
     
     # Perform correction
     im_data_corrected = copy.deepcopy(im_data)
     
-    im_data_corrected[positive_filter] =\
-        im_data_corrected[positive_filter] / norm
+    im_data_corrected =\
+        im_data_corrected / norm
+    
+    # Set back values for negative pixels back to original value
+    im_data_corrected[negative_filter] = im_data[negative_filter]
     
     # Write out corrected image data to file
     hdul[0].data = im_data_corrected
