@@ -268,22 +268,9 @@ def clean(
             if dark_frame is not None:
                 with fits.open(_cp, mode='update',
                         ignore_missing_end=True) as cur_frame:
+                    cur_frame[0].data = cur_frame[0].data - dark_data
                 
-                        frame_data = cur_frame[0].data
-                        frame_header = cur_frame[0].header
-            
-                    frame_data = frame_data - dark_data
-            
-                    frame_hdu = fits.PrimaryHDU(
-                        data=frame_data,
-                        header=frame_header,
-                    )
-            
-                    frame_hdu.writeto(
-                        _cp,
-                        output_verify='ignore',
-                        overwrite=True,
-                    )
+                    cur_frame.flush(output_verify = 'ignore')   # Update the current frame in place
             
             # Linearity correction
             lin_correction.lin_correction(_cp, instrument=instrument)
