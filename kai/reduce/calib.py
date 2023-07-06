@@ -231,7 +231,6 @@ def makeflat(
                 output_verify='ignore',
                 overwrite=True,
             )
-        
     else:
         warning_message = 'Dark frame not provided for makesky().'
         warning_message += '\nUsing flat frames without dark subtraction.'
