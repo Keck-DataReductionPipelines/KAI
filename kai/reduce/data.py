@@ -135,7 +135,7 @@ def clean(
     
     sciDir = waveDir + '/sci_' + nite + '/'
     util.mkdir(sciDir)
-    os.chdir(sciDir)
+    ir.cd(sciDir)
 
     # Set location of raw data
     rawDir = rootDir + 'raw/'
@@ -266,23 +266,16 @@ def clean(
             
             # Dark correction
             if dark_frame is not None:
-                with fits.open(_cp, mode='update',
-                        ignore_missing_end=True) as cur_frame:
-                        frame_data = cur_frame[0].data
-                        frame_header = cur_frame[0].header
-            
-                    frame_data = frame_data - dark_data
-            
-                    frame_hdu = fits.PrimaryHDU(
-                        data=frame_data,
-                        header=frame_header,
-                    )
-            
-                    frame_hdu.writeto(
-                        _cp,
-                        output_verify='ignore',
-                        overwrite=True,
-                    )
+                with fits.open(_cp, mode='readonly', output_verify = 'ignore', 
+                ignore_missing_end=True) as cur_frame:
+                    frame_data = cur_frame[0].data
+                    frame_header = cur_frame[0].header
+                frame_data = frame_data - dark_data
+                frame_hdu = fits.PrimaryHDU(data=frame_data, 
+                header=frame_header)
+                frame_hdu.writeto(_cp, 
+                output_verify='ignore', 
+                overwrite=True)
             
             # Linearity correction
             lin_correction.lin_correction(_cp, instrument=instrument)

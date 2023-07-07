@@ -104,23 +104,17 @@ def makesky(
         
         # Go through each sky file
         for i in range(len(skies)):        
-            with fits.open(nn[i], mode='update',
-                    ignore_missing_end=True) as cur_sky:
-                    sky_data = cur_sky[0].data
-                    sky_header = cur_sky[0].header
-            
-                sky_data = sky_data - dark_data
-            
-                sky_hdu = fits.PrimaryHDU(
-                    data=sky_data,
-                    header=sky_header,
-                )
-            
-                sky_hdu.writeto(
-                    nn[i],
-                    output_verify='ignore',
-                    overwrite=True,
-                )
+            with fits.open(nn[i], mode='readonly', output_verify = 'ignore', 
+            ignore_missing_end=True) as cur_sky:
+                sky_data = cur_sky[0].data
+                sky_header = cur_sky[0].header
+            sky_data = sky_data - dark_data
+            sky_hdu = fits.PrimaryHDU(
+                data=sky_data,
+                header=sky_header)
+            sky_hdu.writeto(nn[i], output_verify='ignore',
+            overwrite=True)
+    else:
         warning_message = 'Dark frame not provided for makesky().'
         warning_message += '\nUsing sky frames without dark subtraction.'
         
@@ -289,23 +283,18 @@ def makesky_lp(
         
         # Go through each sky file
         for i in range(len(skies)):        
-            with fits.open(skies[i], mode='update',
-                    ignore_missing_end=True) as cur_sky:
-                    sky_data = cur_sky[0].data
-                    sky_header = cur_sky[0].header
-            
-                sky_data = sky_data - dark_data
-            
-                sky_hdu = fits.PrimaryHDU(
-                    data=sky_data,
-                    header=sky_header,
-                )
-            
-                sky_hdu.writeto(
-                    skies[i],
-                    output_verify='ignore',
-                    overwrite=True,
-                )
+            with fits.open(skies[i], mode='readonly', output_verify = 'ignore', 
+            ignore_missing_end=True) as cur_sky:
+                sky_data = cur_sky[0].data
+                sky_header = cur_sky[0].header
+            sky_data = sky_data - dark_data
+            sky_hdu = fits.PrimaryHDU(
+            data=sky_data, 
+            header=sky_header)
+            sky_hdu.writeto(skies[i], 
+            output_verify='ignore', 
+            overwrite=True)
+    else:
         warning_message = 'Dark frame not provided for makesky_lp().'
         warning_message += '\nUsing sky frames without dark subtraction.'
         
