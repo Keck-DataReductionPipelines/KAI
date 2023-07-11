@@ -271,8 +271,8 @@ def makesky_lp(
     open(_nlis, 'w').write('\n'.join(skies)+'\n')
     
     print('makesky_lp: Getting raw files')
-    ir.imcopy('@' + _rawlis, '@' + _nlis, verbose='no')
-    ir.hselect('@' + _nlis, "$I,ROTPPOSN", 'yes', Stdout=_skyRot) 
+
+    write_sky_rot_file(_rawlis, _nlis, _skyRot)
     
     # If dark frame is provided, carry out dark correction
     if dark_frame is not None:
@@ -408,8 +408,8 @@ def makesky_lp2(files, nite, wave):
     open(_nlis, 'w').write('\n'.join(skies)+'\n')
 
     print('makesky_lp: Getting raw files')
-    ir.imcopy('@' + _rawlis, '@' + _nlis, verbose='no')
-    ir.hselect('@' + _nlis, "$I,ROTPPOSN", 'yes', Stdout=_skyRot) 
+    
+    write_sky_rot_file(_rawlis, _nlis, _skyRot)
 
     # Read in the list of files and rotation angles
     files, angles = read_sky_rot_file(_skyRot)
@@ -576,6 +576,7 @@ def makesky_lp_fromsci(files, nite, wave, number=3, rejectHsigma=None):
     ir.imarith('@'+_rawlis, '/', flat, '@'+_nlis)
     #ir.imcopy('@' + _rawlis, '@' + _nlis, verbose='no')
     ir.hselect('@' + _nlis, "$I,ROTPPOSN", 'yes', Stdout=_skyRot) 
+    #write_sky_rot_file(_rawlis, _nlis, _skyRot)
 
     # Read in the list of files and rotation angles
     files, angles = read_sky_rot_file(_skyRot)
@@ -654,11 +655,35 @@ def makesky_lp_fromsci(files, nite, wave, number=3, rejectHsigma=None):
 
 def read_sky_rot_file(sky_rot_file):
     """Read in the list of files and rotation angles."""
-    
     rotTab = Table.read(sky_rot_file, format='ascii', header_start=None)
     cols = list(rotTab.columns.keys())
     files = rotTab[cols[0]]
     angles = rotTab[cols[1]]
 
     return files, angles
+    
+def write_sky_rot_file(rawlis, nlis, skyRot):
+    """Write the list of files and rotation angles in Lp.
+    Created to avoid using pyraf which causes issues when dealing
+    with non-fits conforming headers."""
+    # 1. Copy file
+    shutil.copyfile(rawlis, nlis)
+    # 2. Loop through files to obtain ROTPPOSN header and append to list
+    with open(nlis) as file:
+        contents = file.read().split('\n')
+    rot = []
+    for fit in contents:
+        try:
+            with fits.open(fit, mode='readonly', output_verify = 'ignore', 
+                           ignore_missing_end = True) as rot_hdu:
+                rot_header = rot_hdu[0].header
+                rot.append(rot_header['ROTPPOSN'])
+        except:
+            continue
+    # 3. Write in skyRot the name of the file and the header values
+    with open(skyRot, 'at') as edit:
+        for jj, ii in enumerate(rot):
+            edit.write(contents[jj] + '\t' + str(ii) + '\n')
+
+    
     
