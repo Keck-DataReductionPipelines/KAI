@@ -253,7 +253,7 @@ class OSIRIS(Instrument):
         pa = hdr['PA_IMAG']
         
         #if in PCU mode, read the PCU rotation angle instead
-        if 'PCUZ' in hdr.keys:
+        if 'PCUZ' in hdr.keys():
             if hdr['PCUZ'] > 20:  
                 pcu_angle = float(hdr['PCUR'])
                 pinhole_angle = 65.703 #the angle at which the pihole mask is horizontal.
