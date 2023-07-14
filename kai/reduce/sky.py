@@ -245,8 +245,13 @@ def makesky_lp(
     print('sky dir: ',skyDir)
     print('wave dir: ',waveDir)
     
-    raw = instrument.make_filenames(files, rootDir=rawDir)
+    # Copy over the raw sky files into the sky directory
     skies = instrument.make_filenames(files, rootDir=skyDir)
+    raw = instrument.make_filenames(files, rootDir=rawDir)
+
+    for ii in range(len(skies)):
+        if os.path.exists(skies[ii]): os.remove(skies[ii])
+        shutil.copy(raw[ii], skies[ii])
     
     # Write out the sources of the sky files
     data_sources_file = open(redDir + 'data_sources.txt', 'a')
