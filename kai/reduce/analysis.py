@@ -76,8 +76,10 @@ class Analysis(object):
         # We need this to get things like plate scale, etc.
         self.instrument = instrument
         
-        self.calStars = ['irs16NW', 'S3-22', 'S1-17', 'S1-34', 'S4-3', 'S1-1',
-                         'S1-21', 'S3-370', 'S3-88', 'S3-36', 'S2-63']
+        self.calStars = [
+            'irs16NW', 'S3-22', 'S2-22', 'S4-3', 'S1-1', 'S1-21', 'S1-12',
+            'S2-2', 'S3-88', 'S2-75', 'S3-36', 'S1-33',
+        ]
         self.calFlags = '-f 1 -R '
         self.mapFilter2Cal = {'kp': 'Kp', 'h': 'H', 'lp': 'Lp_o1', 'ms': 'Ms_o1'}
         if 'kp' in filt:
