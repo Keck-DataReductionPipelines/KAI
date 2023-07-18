@@ -27,6 +27,7 @@ Functions
 
 .. py:class:: Analysis(epoch, rootDir='/g/lu/data/orion/', filt='kp', clean_dir=None, combo_dir=None, combo_stf_dir=None, epochDirSuffix=None, imgSuffix=None, stfDir=None, useDistorted=False, cleanList='c.lis', airopa_mode='single', stf_version=None, instrument=instruments.default_inst)
 
+
    Bases: :py:obj:`object`
 
    

@@ -11,6 +11,8 @@
     <script src="../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
         <script src="../../../_static/doctools.js"></script>
         <script src="../../../_static/sphinx_highlight.js"></script>
@@ -146,8 +148,10 @@
         <span class="c1"># We need this to get things like plate scale, etc.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">instrument</span> <span class="o">=</span> <span class="n">instrument</span>
         
-        <span class="bp">self</span><span class="o">.</span><span class="n">calStars</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;irs16NW&#39;</span><span class="p">,</span> <span class="s1">&#39;S3-22&#39;</span><span class="p">,</span> <span class="s1">&#39;S1-17&#39;</span><span class="p">,</span> <span class="s1">&#39;S1-34&#39;</span><span class="p">,</span> <span class="s1">&#39;S4-3&#39;</span><span class="p">,</span> <span class="s1">&#39;S1-1&#39;</span><span class="p">,</span>
-                         <span class="s1">&#39;S1-21&#39;</span><span class="p">,</span> <span class="s1">&#39;S3-370&#39;</span><span class="p">,</span> <span class="s1">&#39;S3-88&#39;</span><span class="p">,</span> <span class="s1">&#39;S3-36&#39;</span><span class="p">,</span> <span class="s1">&#39;S2-63&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">calStars</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s1">&#39;irs16NW&#39;</span><span class="p">,</span> <span class="s1">&#39;S3-22&#39;</span><span class="p">,</span> <span class="s1">&#39;S2-22&#39;</span><span class="p">,</span> <span class="s1">&#39;S4-3&#39;</span><span class="p">,</span> <span class="s1">&#39;S1-1&#39;</span><span class="p">,</span> <span class="s1">&#39;S1-21&#39;</span><span class="p">,</span> <span class="s1">&#39;S1-12&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;S2-2&#39;</span><span class="p">,</span> <span class="s1">&#39;S3-88&#39;</span><span class="p">,</span> <span class="s1">&#39;S2-75&#39;</span><span class="p">,</span> <span class="s1">&#39;S3-36&#39;</span><span class="p">,</span> <span class="s1">&#39;S1-33&#39;</span><span class="p">,</span>
+        <span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">calFlags</span> <span class="o">=</span> <span class="s1">&#39;-f 1 -R &#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mapFilter2Cal</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;kp&#39;</span><span class="p">:</span> <span class="s1">&#39;Kp&#39;</span><span class="p">,</span> <span class="s1">&#39;h&#39;</span><span class="p">:</span> <span class="s1">&#39;H&#39;</span><span class="p">,</span> <span class="s1">&#39;lp&#39;</span><span class="p">:</span> <span class="s1">&#39;Lp_o1&#39;</span><span class="p">,</span> <span class="s1">&#39;ms&#39;</span><span class="p">:</span> <span class="s1">&#39;Ms_o1&#39;</span><span class="p">}</span>
         <span class="k">if</span> <span class="s1">&#39;kp&#39;</span> <span class="ow">in</span> <span class="n">filt</span><span class="p">:</span>

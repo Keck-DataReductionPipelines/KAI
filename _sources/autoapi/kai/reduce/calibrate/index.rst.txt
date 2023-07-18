@@ -48,6 +48,7 @@ Attributes
 
 .. py:class:: IndentedHelpFormatterWithNL(indent_increment=2, max_help_position=24, width=None, short_first=1)
 
+
    Bases: :py:obj:`optparse.IndentedHelpFormatter`
 
    
@@ -221,6 +222,7 @@ Attributes
        !! processed by numpydoc !!
 
 .. py:class:: Starlist
+
 
    Bases: :py:obj:`object`
 

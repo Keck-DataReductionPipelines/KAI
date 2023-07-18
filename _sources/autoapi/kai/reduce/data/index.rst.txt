@@ -981,6 +981,7 @@ Attributes
 
 .. py:class:: Sky(sciDir, skyDir, wave, scale=1, skyfile='', angleOffset=0.0, instrument=instruments.default_inst)
 
+
    Bases: :py:obj:`object`
 
    .. py:method:: __initLp__()
