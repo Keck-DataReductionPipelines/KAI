@@ -94,7 +94,8 @@ class Analysis(object):
 
         self.deblend = None
 
-        self.alignFlags = '-R 3 -v -p -a 0'
+        #self.alignFlags = '-R 3 -v -p -a 0'
+        self.alignFlags = '-R 3 -p -a 0'
 
         self.numSubMaps = 3
         self.minSubMaps = 3
@@ -687,7 +688,8 @@ class Analysis(object):
 
             # Make a named/labeled version
             cmd = 'java -Xmx1024m align %s ' % (self.alignFlags)
-            cmd += '-N %s ' % self.labellist
+            #cmd += '-N %s ' % self.labellist
+            cmd += '-accel_file %s ' % self.labellist
             if (self.orbitlist != None) and (self.orbitlist != ''):
                 cmd += '-o %s ' % self.orbitlist
             cmd += '-r align%s%s_%3.1f_named ' % (self.imgSuffix, file_ext, self.corrMain)
