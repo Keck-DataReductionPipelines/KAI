@@ -168,7 +168,8 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">deblend</span> <span class="o">=</span> <span class="kc">None</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">alignFlags</span> <span class="o">=</span> <span class="s1">&#39;-R 3 -v -p -a 0&#39;</span>
+        <span class="c1">#self.alignFlags = &#39;-R 3 -v -p -a 0&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alignFlags</span> <span class="o">=</span> <span class="s1">&#39;-R 3 -p -a 0&#39;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">numSubMaps</span> <span class="o">=</span> <span class="mi">3</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">minSubMaps</span> <span class="o">=</span> <span class="mi">3</span>
@@ -761,7 +762,8 @@
 
             <span class="c1"># Make a named/labeled version</span>
             <span class="n">cmd</span> <span class="o">=</span> <span class="s1">&#39;java -Xmx1024m align </span><span class="si">%s</span><span class="s1"> &#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">alignFlags</span><span class="p">)</span>
-            <span class="n">cmd</span> <span class="o">+=</span> <span class="s1">&#39;-N </span><span class="si">%s</span><span class="s1"> &#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">labellist</span>
+            <span class="c1">#cmd += &#39;-N %s &#39; % self.labellist</span>
+            <span class="n">cmd</span> <span class="o">+=</span> <span class="s1">&#39;-accel_file </span><span class="si">%s</span><span class="s1"> &#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">labellist</span>
             <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">orbitlist</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">orbitlist</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span><span class="p">):</span>
                 <span class="n">cmd</span> <span class="o">+=</span> <span class="s1">&#39;-o </span><span class="si">%s</span><span class="s1"> &#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">orbitlist</span>
             <span class="n">cmd</span> <span class="o">+=</span> <span class="s1">&#39;-r align</span><span class="si">%s%s</span><span class="s1">_</span><span class="si">%3.1f</span><span class="s1">_named &#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">imgSuffix</span><span class="p">,</span> <span class="n">file_ext</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">corrMain</span><span class="p">)</span>
