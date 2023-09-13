@@ -11,11 +11,11 @@
     <script src="../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/sphinx_highlight.js"></script>
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -82,9 +82,14 @@
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
 <span class="kn">from</span> <span class="nn">pkg_resources</span> <span class="kn">import</span> <span class="n">parse_version</span>
 
-<div class="viewcode-block" id="module_dir"><a class="viewcode-back" href="../../../autoapi/kai/reduce/calib/index.html#kai.reduce.calib.module_dir">[docs]</a><span class="n">module_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span></div>
+<div class="viewcode-block" id="module_dir">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/calib/index.html#kai.reduce.calib.module_dir">[docs]</a>
+<span class="n">module_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="makedark"><a class="viewcode-back" href="../../../autoapi/kai/reduce/calib/index.html#kai.reduce.calib.makedark">[docs]</a><span class="k">def</span> <span class="nf">makedark</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span>
+
+<div class="viewcode-block" id="makedark">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/calib/index.html#kai.reduce.calib.makedark">[docs]</a>
+<span class="k">def</span> <span class="nf">makedark</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span>
              <span class="n">raw_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
              <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -147,7 +152,10 @@
     <span class="n">ir</span><span class="o">.</span><span class="n">imcombine</span><span class="p">(</span><span class="s1">&#39;@&#39;</span> <span class="o">+</span> <span class="n">_outlis</span><span class="p">,</span> <span class="n">_out</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="makeflat"><a class="viewcode-back" href="../../../autoapi/kai/reduce/calib/index.html#kai.reduce.calib.makeflat">[docs]</a><span class="k">def</span> <span class="nf">makeflat</span><span class="p">(</span><span class="n">onFiles</span><span class="p">,</span> <span class="n">offFiles</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">normalizeFirst</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+
+<div class="viewcode-block" id="makeflat">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/calib/index.html#kai.reduce.calib.makeflat">[docs]</a>
+<span class="k">def</span> <span class="nf">makeflat</span><span class="p">(</span><span class="n">onFiles</span><span class="p">,</span> <span class="n">offFiles</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">normalizeFirst</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
              <span class="n">raw_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
              <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -299,7 +307,10 @@
         <span class="n">flatRegion</span> <span class="o">=</span> <span class="s1">&#39;[100:900,513:950]&#39;</span>
         <span class="n">ir</span><span class="o">.</span><span class="n">normflat</span><span class="p">(</span><span class="n">_norm</span><span class="p">,</span> <span class="n">_out</span><span class="p">,</span> <span class="n">sample</span><span class="o">=</span><span class="n">flatRegion</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="makemask"><a class="viewcode-back" href="../../../autoapi/kai/reduce/calib/index.html#kai.reduce.calib.makemask">[docs]</a><span class="k">def</span> <span class="nf">makemask</span><span class="p">(</span><span class="n">dark</span><span class="p">,</span> <span class="n">flat</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">):</span>
+
+<div class="viewcode-block" id="makemask">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/calib/index.html#kai.reduce.calib.makemask">[docs]</a>
+<span class="k">def</span> <span class="nf">makemask</span><span class="p">(</span><span class="n">dark</span><span class="p">,</span> <span class="n">flat</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Make bad pixel mask for imaging data. Makes a calib/ directory</span>
 <span class="sd">    and stores all output there. All output and temporary files</span>
@@ -402,7 +413,10 @@
     <span class="k">return</span></div>
 
 
-<div class="viewcode-block" id="make_instrument_mask"><a class="viewcode-back" href="../../../autoapi/kai/reduce/calib/index.html#kai.reduce.calib.make_instrument_mask">[docs]</a><span class="k">def</span> <span class="nf">make_instrument_mask</span><span class="p">(</span><span class="n">dark</span><span class="p">,</span> <span class="n">flat</span><span class="p">,</span> <span class="n">outDir</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">):</span>
+
+<div class="viewcode-block" id="make_instrument_mask">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/calib/index.html#kai.reduce.calib.make_instrument_mask">[docs]</a>
+<span class="k">def</span> <span class="nf">make_instrument_mask</span><span class="p">(</span><span class="n">dark</span><span class="p">,</span> <span class="n">flat</span><span class="p">,</span> <span class="n">outDir</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Make the static bad pixel mask for the instrument. This only needs to be</span>
 <span class="sd">    run once. This creates a file called nirc2mask.fits or osiris_img_mask.fits</span>
 <span class="sd">    which is subsequently used throughout the pipeline. The dark should be a long</span>
@@ -481,7 +495,10 @@
     <span class="n">new_file</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">new_file</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">writeto</span><span class="p">(</span><span class="n">_out</span><span class="p">,</span> <span class="n">output_verify</span><span class="o">=</span><span class="s1">&#39;silentfix&#39;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="analyzeDarkCalib"><a class="viewcode-back" href="../../../autoapi/kai/reduce/calib/index.html#kai.reduce.calib.analyzeDarkCalib">[docs]</a><span class="k">def</span> <span class="nf">analyzeDarkCalib</span><span class="p">(</span><span class="n">firstFrame</span><span class="p">,</span> <span class="n">skipcombo</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+
+<div class="viewcode-block" id="analyzeDarkCalib">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/calib/index.html#kai.reduce.calib.analyzeDarkCalib">[docs]</a>
+<span class="k">def</span> <span class="nf">analyzeDarkCalib</span><span class="p">(</span><span class="n">firstFrame</span><span class="p">,</span> <span class="n">skipcombo</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Reduce data from the dark_calib script that should be run once</span>
 <span class="sd">    a summer in order to test the dark current and readnoise.</span>
@@ -581,6 +598,7 @@
     <span class="n">_out</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
     <span class="k">return</span></div>
+
 </pre></div>
 
            </div>

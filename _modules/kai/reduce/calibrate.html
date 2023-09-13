@@ -11,11 +11,11 @@
     <script src="../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/sphinx_highlight.js"></script>
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -82,7 +82,9 @@
 <span class="kn">import</span> <span class="nn">pdb</span>
 
 <span class="c1"># Map of the possible plate scales</span>
-<div class="viewcode-block" id="all_scales"><a class="viewcode-back" href="../../../autoapi/kai/reduce/calibrate/index.html#kai.reduce.calibrate.all_scales">[docs]</a><span class="n">all_scales</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">1.0</span><span class="p">,</span> <span class="s1">&#39;No scaling&#39;</span><span class="p">],</span>
+<div class="viewcode-block" id="all_scales">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/calibrate/index.html#kai.reduce.calibrate.all_scales">[docs]</a>
+<span class="n">all_scales</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">1.0</span><span class="p">,</span> <span class="s1">&#39;No scaling&#39;</span><span class="p">],</span>
               <span class="p">[</span><span class="mf">0.0102</span><span class="p">,</span> <span class="s1">&#39;Speckle&#39;</span><span class="p">],</span>
               <span class="p">[</span><span class="mf">0.0087</span><span class="p">,</span> <span class="s1">&#39;KCAM-AO&#39;</span><span class="p">],</span>
               <span class="p">[</span><span class="mf">0.0085</span><span class="p">,</span> <span class="s1">&#39;SCAM-AO&#39;</span><span class="p">],</span>
@@ -99,14 +101,19 @@
               <span class="p">[</span><span class="mf">0.050</span><span class="p">,</span> <span class="s1">&#39;ACS-WFC&#39;</span><span class="p">],</span>
               <span class="p">[</span><span class="mf">0.01</span><span class="p">,</span>  <span class="s1">&#39;OSIRIS-imag&#39;</span><span class="p">]]</span></div>
 
+
 <span class="c1">##################################################</span>
 <span class="c1"># </span>
 <span class="c1"># Help formatter for command line arguments. </span>
 <span class="c1"># This is very generic... skip over for main code.</span>
 <span class="c1">#</span>
 <span class="c1">##################################################</span>
-<div class="viewcode-block" id="IndentedHelpFormatterWithNL"><a class="viewcode-back" href="../../../autoapi/kai/reduce/calibrate/index.html#kai.reduce.calibrate.IndentedHelpFormatterWithNL">[docs]</a><span class="k">class</span> <span class="nc">IndentedHelpFormatterWithNL</span><span class="p">(</span><span class="n">optparse</span><span class="o">.</span><span class="n">IndentedHelpFormatter</span><span class="p">):</span>
-<div class="viewcode-block" id="IndentedHelpFormatterWithNL.format_description"><a class="viewcode-back" href="../../../autoapi/kai/reduce/calibrate/index.html#kai.reduce.calibrate.IndentedHelpFormatterWithNL.format_description">[docs]</a>    <span class="k">def</span> <span class="nf">format_description</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">description</span><span class="p">):</span>
+<div class="viewcode-block" id="IndentedHelpFormatterWithNL">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/calibrate/index.html#kai.reduce.calibrate.IndentedHelpFormatterWithNL">[docs]</a>
+<span class="k">class</span> <span class="nc">IndentedHelpFormatterWithNL</span><span class="p">(</span><span class="n">optparse</span><span class="o">.</span><span class="n">IndentedHelpFormatter</span><span class="p">):</span>
+<div class="viewcode-block" id="IndentedHelpFormatterWithNL.format_description">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/calibrate/index.html#kai.reduce.calibrate.IndentedHelpFormatterWithNL.format_description">[docs]</a>
+    <span class="k">def</span> <span class="nf">format_description</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">description</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">description</span><span class="p">:</span> <span class="k">return</span> <span class="s2">&quot;&quot;</span>
         <span class="n">desc_width</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">width</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_indent</span>
         <span class="n">indent</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">current_indent</span>
@@ -121,7 +128,10 @@
         <span class="n">result</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">formatted_bits</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="k">return</span> <span class="n">result</span></div>
 
-<div class="viewcode-block" id="IndentedHelpFormatterWithNL.format_option"><a class="viewcode-back" href="../../../autoapi/kai/reduce/calibrate/index.html#kai.reduce.calibrate.IndentedHelpFormatterWithNL.format_option">[docs]</a>    <span class="k">def</span> <span class="nf">format_option</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">option</span><span class="p">):</span>
+
+<div class="viewcode-block" id="IndentedHelpFormatterWithNL.format_option">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/calibrate/index.html#kai.reduce.calibrate.IndentedHelpFormatterWithNL.format_option">[docs]</a>
+    <span class="k">def</span> <span class="nf">format_option</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">option</span><span class="p">):</span>
         <span class="c1"># The help for each option consists of two parts:</span>
         <span class="c1">#   * the opt strings and metavars</span>
         <span class="c1">#   eg. (&quot;-x&quot;, or &quot;-fFILENAME, --file=FILENAME&quot;)</span>
@@ -159,7 +169,9 @@
                            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">help_lines</span><span class="p">[</span><span class="mi">1</span><span class="p">:]])</span>
         <span class="k">elif</span> <span class="n">opts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">:</span>
             <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">result</span><span class="p">)</span></div></div>
+        <span class="k">return</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">result</span><span class="p">)</span></div>
+</div>
+
 
 
 
@@ -168,7 +180,9 @@
 <span class="c1"># Main body of calibrate code.</span>
 <span class="c1">#</span>
 <span class="c1">##################################################</span>
-<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../../autoapi/kai/reduce/calibrate/index.html#kai.reduce.calibrate.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">argv</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="main">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/calibrate/index.html#kai.reduce.calibrate.main">[docs]</a>
+<span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">argv</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">argv</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">argv</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
 
@@ -191,9 +205,12 @@
 
     <span class="c1"># Write out the output files</span>
     <span class="n">output_new</span><span class="p">(</span><span class="n">zeropt</span><span class="p">,</span> <span class="n">zeropt_err</span><span class="p">,</span> <span class="n">calibs</span><span class="p">,</span> <span class="n">stars</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span></div>
+
   
     
-<div class="viewcode-block" id="read_command_line"><a class="viewcode-back" href="../../../autoapi/kai/reduce/calibrate/index.html#kai.reduce.calibrate.read_command_line">[docs]</a><span class="k">def</span> <span class="nf">read_command_line</span><span class="p">(</span><span class="n">argv</span><span class="p">):</span>
+<div class="viewcode-block" id="read_command_line">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/calibrate/index.html#kai.reduce.calibrate.read_command_line">[docs]</a>
+<span class="k">def</span> <span class="nf">read_command_line</span><span class="p">(</span><span class="n">argv</span><span class="p">):</span>
     <span class="n">p</span> <span class="o">=</span> <span class="n">optparse</span><span class="o">.</span><span class="n">OptionParser</span><span class="p">(</span><span class="n">usage</span><span class="o">=</span><span class="s1">&#39;usage: %prog [options] [starlist]&#39;</span><span class="p">,</span>
                               <span class="n">formatter</span><span class="o">=</span><span class="n">IndentedHelpFormatterWithNL</span><span class="p">())</span>
 
@@ -335,7 +352,10 @@
     <span class="k">return</span> <span class="n">options</span></div>
 
 
-<div class="viewcode-block" id="read_photo_calib_file"><a class="viewcode-back" href="../../../autoapi/kai/reduce/calibrate/index.html#kai.reduce.calibrate.read_photo_calib_file">[docs]</a><span class="k">def</span> <span class="nf">read_photo_calib_file</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+
+<div class="viewcode-block" id="read_photo_calib_file">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/calibrate/index.html#kai.reduce.calibrate.read_photo_calib_file">[docs]</a>
+<span class="k">def</span> <span class="nf">read_photo_calib_file</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="c1"># Read in filter information from photo_calib file header</span>
     <span class="n">f_calib</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">calib_file</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
     
@@ -514,8 +534,11 @@
                 <span class="nb">print</span><span class="p">(</span> <span class="s1">&#39;Found calibrator: &#39;</span><span class="p">,</span> <span class="n">name_col</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="n">calib_stars_search</span><span class="p">[</span><span class="n">calib_search_index</span><span class="p">]</span> <span class="p">)</span>
     
     <span class="k">return</span> <span class="n">calibs</span></div>
+
     
-<div class="viewcode-block" id="input_data"><a class="viewcode-back" href="../../../autoapi/kai/reduce/calibrate/index.html#kai.reduce.calibrate.input_data">[docs]</a><span class="k">def</span> <span class="nf">input_data</span><span class="p">(</span><span class="n">options</span><span class="p">):</span>
+<div class="viewcode-block" id="input_data">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/calibrate/index.html#kai.reduce.calibrate.input_data">[docs]</a>
+<span class="k">def</span> <span class="nf">input_data</span><span class="p">(</span><span class="n">options</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Read in a starlist and return a starlist object</span>
 <span class="sd">    with the following hanging off:</span>
@@ -595,8 +618,11 @@
     <span class="n">starlist</span><span class="o">.</span><span class="n">fwhm</span> <span class="o">=</span> <span class="n">fwhm</span>
 
     <span class="k">return</span> <span class="n">starlist</span></div>
+
     
-<div class="viewcode-block" id="find_cal_stars"><a class="viewcode-back" href="../../../autoapi/kai/reduce/calibrate/index.html#kai.reduce.calibrate.find_cal_stars">[docs]</a><span class="k">def</span> <span class="nf">find_cal_stars</span><span class="p">(</span><span class="n">calibs</span><span class="p">,</span> <span class="n">stars</span><span class="p">,</span> <span class="n">options</span><span class="p">):</span>
+<div class="viewcode-block" id="find_cal_stars">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/calibrate/index.html#kai.reduce.calibrate.find_cal_stars">[docs]</a>
+<span class="k">def</span> <span class="nf">find_cal_stars</span><span class="p">(</span><span class="n">calibs</span><span class="p">,</span> <span class="n">stars</span><span class="p">,</span> <span class="n">options</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Returns an array of indices which holds the index of the </span>
 <span class="sd">    matching star in the starlist. Non-matches have an index of -1. </span>
@@ -693,7 +719,10 @@
     
     <span class="k">return</span> <span class="n">index</span></div>
 
-<div class="viewcode-block" id="calc_zeropt"><a class="viewcode-back" href="../../../autoapi/kai/reduce/calibrate/index.html#kai.reduce.calibrate.calc_zeropt">[docs]</a><span class="k">def</span> <span class="nf">calc_zeropt</span><span class="p">(</span><span class="n">calibs</span><span class="p">,</span> <span class="n">stars</span><span class="p">,</span> <span class="n">options</span><span class="p">):</span>
+
+<div class="viewcode-block" id="calc_zeropt">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/calibrate/index.html#kai.reduce.calibrate.calc_zeropt">[docs]</a>
+<span class="k">def</span> <span class="nf">calc_zeropt</span><span class="p">(</span><span class="n">calibs</span><span class="p">,</span> <span class="n">stars</span><span class="p">,</span> <span class="n">options</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate the average zeropoints from all the</span>
 <span class="sd">    calibrator stars specified by the user (or defaults).</span>
@@ -759,7 +788,10 @@
     <span class="k">return</span> <span class="p">(</span><span class="n">zeropt</span><span class="p">,</span> <span class="n">zeropt_err</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="output_new"><a class="viewcode-back" href="../../../autoapi/kai/reduce/calibrate/index.html#kai.reduce.calibrate.output_new">[docs]</a><span class="k">def</span> <span class="nf">output_new</span><span class="p">(</span><span class="n">zeropt</span><span class="p">,</span> <span class="n">zeropt_err</span><span class="p">,</span> <span class="n">calibs</span><span class="p">,</span> <span class="n">stars</span><span class="p">,</span> <span class="n">options</span><span class="p">):</span>
+
+<div class="viewcode-block" id="output_new">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/calibrate/index.html#kai.reduce.calibrate.output_new">[docs]</a>
+<span class="k">def</span> <span class="nf">output_new</span><span class="p">(</span><span class="n">zeropt</span><span class="p">,</span> <span class="n">zeropt_err</span><span class="p">,</span> <span class="n">calibs</span><span class="p">,</span> <span class="n">stars</span><span class="p">,</span> <span class="n">options</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Write out a calibrated starlist and a *.zer file with </span>
 <span class="sd">    the calculated zeropoints.</span>
@@ -881,8 +913,11 @@
                     <span class="n">stars</span><span class="o">.</span><span class="n">nframes</span><span class="p">[</span><span class="n">ff</span><span class="p">],</span> <span class="n">stars</span><span class="o">.</span><span class="n">fwhm</span><span class="p">[</span><span class="n">ff</span><span class="p">]))</span>
 
     <span class="n">_out</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
     
-<div class="viewcode-block" id="get_camera_type"><a class="viewcode-back" href="../../../autoapi/kai/reduce/calibrate/index.html#kai.reduce.calibrate.get_camera_type">[docs]</a><span class="k">def</span> <span class="nf">get_camera_type</span><span class="p">(</span><span class="n">fitsfile</span><span class="p">):</span>
+<div class="viewcode-block" id="get_camera_type">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/calibrate/index.html#kai.reduce.calibrate.get_camera_type">[docs]</a>
+<span class="k">def</span> <span class="nf">get_camera_type</span><span class="p">(</span><span class="n">fitsfile</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Helper class to get the calibrate camera type from the</span>
 <span class="sd">    FITS header.</span>
@@ -945,10 +980,14 @@
     <span class="k">return</span> <span class="n">camera</span></div>
 
 
-<div class="viewcode-block" id="Starlist"><a class="viewcode-back" href="../../../autoapi/kai/reduce/calibrate/index.html#kai.reduce.calibrate.Starlist">[docs]</a><span class="k">class</span> <span class="nc">Starlist</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Starlist">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/calibrate/index.html#kai.reduce.calibrate.Starlist">[docs]</a>
+<span class="k">class</span> <span class="nc">Starlist</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Use this to keep all the lists associated with</span>
 <span class="sd">    our input starlist.&quot;&quot;&quot;</span>
     <span class="k">pass</span></div>
+
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
     <span class="n">main</span><span class="p">()</span>

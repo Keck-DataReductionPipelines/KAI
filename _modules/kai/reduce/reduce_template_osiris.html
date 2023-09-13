@@ -11,11 +11,11 @@
     <script src="../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/sphinx_highlight.js"></script>
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -109,14 +109,22 @@
 <span class="c1">##########</span>
 <span class="c1"># Change the epoch, instrument, and distortion solution.</span>
 <span class="c1">##########</span>
-<div class="viewcode-block" id="epoch"><a class="viewcode-back" href="../../../autoapi/kai/reduce/reduce_template_osiris/index.html#kai.reduce.reduce_template_osiris.epoch">[docs]</a><span class="n">epoch</span> <span class="o">=</span> <span class="s1">&#39;20aug22os&#39;</span></div>
-<div class="viewcode-block" id="osiris"><a class="viewcode-back" href="../../../autoapi/kai/reduce/reduce_template_osiris/index.html#kai.reduce.reduce_template_osiris.osiris">[docs]</a><span class="n">osiris</span> <span class="o">=</span> <span class="n">instruments</span><span class="o">.</span><span class="n">OSIRIS</span><span class="p">()</span></div>
+<div class="viewcode-block" id="epoch">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/reduce_template_osiris/index.html#kai.reduce.reduce_template_osiris.epoch">[docs]</a>
+<span class="n">epoch</span> <span class="o">=</span> <span class="s1">&#39;20aug22os&#39;</span></div>
+
+<div class="viewcode-block" id="osiris">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/reduce_template_osiris/index.html#kai.reduce.reduce_template_osiris.osiris">[docs]</a>
+<span class="n">osiris</span> <span class="o">=</span> <span class="n">instruments</span><span class="o">.</span><span class="n">OSIRIS</span><span class="p">()</span></div>
+
 
 <span class="c1">##########</span>
 <span class="c1"># Make electronic logs</span>
 <span class="c1">#    - run this first thing for a new observing run.</span>
 <span class="c1">##########</span>
-<div class="viewcode-block" id="makelog_and_prep_images"><a class="viewcode-back" href="../../../autoapi/kai/reduce/reduce_template_osiris/index.html#kai.reduce.reduce_template_osiris.makelog_and_prep_images">[docs]</a><span class="k">def</span> <span class="nf">makelog_and_prep_images</span><span class="p">():</span>
+<div class="viewcode-block" id="makelog_and_prep_images">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/reduce_template_osiris/index.html#kai.reduce.reduce_template_osiris.makelog_and_prep_images">[docs]</a>
+<span class="k">def</span> <span class="nf">makelog_and_prep_images</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Make an electronic log from all the files in the ../raw/ directory.</span>
 <span class="sd">    The file will be called kai.log and stored in the same directory.</span>
 
@@ -133,6 +141,7 @@
     <span class="n">dar</span><span class="o">.</span><span class="n">get_atm_conditions</span><span class="p">(</span><span class="s1">&#39;2020&#39;</span><span class="p">)</span>
 
     <span class="k">return</span></div>
+
     
 
 <span class="c1">###############</span>
@@ -152,7 +161,9 @@
 <span class="c1">##########</span>
 <span class="c1"># Reduce</span>
 <span class="c1">##########</span>
-<div class="viewcode-block" id="go_calib"><a class="viewcode-back" href="../../../autoapi/kai/reduce/reduce_template_osiris/index.html#kai.reduce.reduce_template_osiris.go_calib">[docs]</a><span class="k">def</span> <span class="nf">go_calib</span><span class="p">():</span>
+<div class="viewcode-block" id="go_calib">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/reduce_template_osiris/index.html#kai.reduce.reduce_template_osiris.go_calib">[docs]</a>
+<span class="k">def</span> <span class="nf">go_calib</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Do the calibration reduction.</span>
 
 <span class="sd">    @author Jessica Lu</span>
@@ -191,7 +202,10 @@
     <span class="n">calib</span><span class="o">.</span><span class="n">makemask</span><span class="p">(</span><span class="s1">&#39;dark_39.832s_1ca_6rd.fits&#39;</span><span class="p">,</span> <span class="s1">&#39;flat_kp_tdOpen.fits&#39;</span><span class="p">,</span>
                    <span class="s1">&#39;supermask.fits&#39;</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">osiris</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="go"><a class="viewcode-back" href="../../../autoapi/kai/reduce/reduce_template_osiris/index.html#kai.reduce.reduce_template_osiris.go">[docs]</a><span class="k">def</span> <span class="nf">go</span><span class="p">():</span>
+
+<div class="viewcode-block" id="go">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/reduce_template_osiris/index.html#kai.reduce.reduce_template_osiris.go">[docs]</a>
+<span class="k">def</span> <span class="nf">go</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Do the full data reduction.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -247,10 +261,13 @@
     <span class="n">data</span><span class="o">.</span><span class="n">combine</span><span class="p">(</span><span class="n">sci_files</span><span class="p">,</span> <span class="s1">&#39;kp_tdOpen&#39;</span><span class="p">,</span> <span class="n">epoch</span><span class="p">,</span> <span class="n">field</span><span class="o">=</span><span class="n">target</span><span class="p">,</span>
                      <span class="n">trim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="s1">&#39;strehl&#39;</span><span class="p">,</span> <span class="n">submaps</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">osiris</span><span class="p">)</span></div>
 
+
 <span class="c1">############</span>
 <span class="c1"># Jackknife</span>
 <span class="c1">############</span>
-<div class="viewcode-block" id="jackknife"><a class="viewcode-back" href="../../../autoapi/kai/reduce/reduce_template_osiris/index.html#kai.reduce.reduce_template_osiris.jackknife">[docs]</a><span class="k">def</span> <span class="nf">jackknife</span><span class="p">():</span>
+<div class="viewcode-block" id="jackknife">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/reduce_template_osiris/index.html#kai.reduce.reduce_template_osiris.jackknife">[docs]</a>
+<span class="k">def</span> <span class="nf">jackknife</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Perform the Jackknife data reduction. The methodology is as follows:</span>
 <span class="sd">    For N total images, there are N stacked images created by data.combine(),</span>
@@ -296,6 +313,7 @@
         <span class="n">data</span><span class="o">.</span><span class="n">combine</span><span class="p">(</span><span class="n">jack_list</span><span class="p">,</span> <span class="s1">&#39;kp_tdOpen&#39;</span><span class="p">,</span> <span class="n">epoch</span><span class="p">,</span> <span class="n">field</span><span class="o">=</span><span class="n">target</span><span class="p">,</span>
                      <span class="n">trim</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="s1">&#39;strehl&#39;</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">osiris</span><span class="p">,</span> <span class="n">outSuffix</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
         <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="s1">&#39;reduce&#39;</span><span class="p">)</span></div>
+
 </pre></div>
 
            </div>

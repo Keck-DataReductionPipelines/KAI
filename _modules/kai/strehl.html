@@ -11,11 +11,11 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -83,7 +83,9 @@
 <span class="kn">import</span> <span class="nn">math</span>
 <span class="kn">import</span> <span class="nn">pdb</span>
 
-<div class="viewcode-block" id="calc_strehl"><a class="viewcode-back" href="../../autoapi/kai/strehl/index.html#kai.strehl.calc_strehl">[docs]</a><span class="k">def</span> <span class="nf">calc_strehl</span><span class="p">(</span><span class="n">file_list</span><span class="p">,</span> <span class="n">out_file</span><span class="p">,</span> <span class="n">apersize</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">):</span>
+<div class="viewcode-block" id="calc_strehl">
+<a class="viewcode-back" href="../../autoapi/kai/strehl/index.html#kai.strehl.calc_strehl">[docs]</a>
+<span class="k">def</span> <span class="nf">calc_strehl</span><span class="p">(</span><span class="n">file_list</span><span class="p">,</span> <span class="n">out_file</span><span class="p">,</span> <span class="n">apersize</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate the Strehl, FWHM, and RMS WFE for each image in a </span>
 <span class="sd">    list of files. The output is stored into the specified &lt;out_file&gt;</span>
@@ -190,7 +192,10 @@
     
     <span class="k">return</span></div>
 
-<div class="viewcode-block" id="calc_strehl_single"><a class="viewcode-back" href="../../autoapi/kai/strehl/index.html#kai.strehl.calc_strehl_single">[docs]</a><span class="k">def</span> <span class="nf">calc_strehl_single</span><span class="p">(</span><span class="n">img_file</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">dl_peak_flux_ratio</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">):</span>
+
+<div class="viewcode-block" id="calc_strehl_single">
+<a class="viewcode-back" href="../../autoapi/kai/strehl/index.html#kai.strehl.calc_strehl_single">[docs]</a>
+<span class="k">def</span> <span class="nf">calc_strehl_single</span><span class="p">(</span><span class="n">img_file</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">dl_peak_flux_ratio</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">):</span>
     <span class="c1"># Read in the image and header.</span>
     <span class="n">img</span><span class="p">,</span> <span class="n">hdr</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getdata</span><span class="p">(</span><span class="n">img_file</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">wavelength</span> <span class="o">=</span> <span class="n">instrument</span><span class="o">.</span><span class="n">get_central_wavelength</span><span class="p">(</span><span class="n">hdr</span><span class="p">)</span> <span class="c1"># microns</span>
@@ -274,7 +279,10 @@
     
     <span class="k">return</span> <span class="n">strehl</span><span class="p">,</span> <span class="n">fwhm</span><span class="p">,</span> <span class="n">rms_wfe</span></div>
 
-<div class="viewcode-block" id="calc_peak_flux_ratio"><a class="viewcode-back" href="../../autoapi/kai/strehl/index.html#kai.strehl.calc_peak_flux_ratio">[docs]</a><span class="k">def</span> <span class="nf">calc_peak_flux_ratio</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">coords</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">skysub</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+
+<div class="viewcode-block" id="calc_peak_flux_ratio">
+<a class="viewcode-back" href="../../autoapi/kai/strehl/index.html#kai.strehl.calc_peak_flux_ratio">[docs]</a>
+<span class="k">def</span> <span class="nf">calc_peak_flux_ratio</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">coords</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">skysub</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    img : 2D numpy array</span>
 <span class="sd">        The image on which to calculate the flux ratio of the peak to a </span>
@@ -317,7 +325,10 @@
     
     <span class="k">return</span> <span class="n">peak_flux_ratio</span></div>
 
-<div class="viewcode-block" id="fit_gaussian2d"><a class="viewcode-back" href="../../autoapi/kai/strehl/index.html#kai.strehl.fit_gaussian2d">[docs]</a><span class="k">def</span> <span class="nf">fit_gaussian2d</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">coords</span><span class="p">,</span> <span class="n">boxsize</span><span class="p">,</span> <span class="n">plot</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+
+<div class="viewcode-block" id="fit_gaussian2d">
+<a class="viewcode-back" href="../../autoapi/kai/strehl/index.html#kai.strehl.fit_gaussian2d">[docs]</a>
+<span class="k">def</span> <span class="nf">fit_gaussian2d</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">coords</span><span class="p">,</span> <span class="n">boxsize</span><span class="p">,</span> <span class="n">plot</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                        <span class="n">fwhm_min</span><span class="o">=</span><span class="mf">1.7</span><span class="p">,</span> <span class="n">fwhm_max</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">pos_delta_max</span><span class="o">=</span><span class="mf">1.7</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate the FWHM of an objected located at the pixel</span>
@@ -413,12 +424,19 @@
     <span class="n">g2d</span><span class="o">.</span><span class="n">y_mean_0</span> <span class="o">=</span> <span class="n">origin_pos</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
     
     <span class="k">return</span> <span class="n">g2d</span></div>
+
     
-<div class="viewcode-block" id="fwhm_to_stddev"><a class="viewcode-back" href="../../autoapi/kai/strehl/index.html#kai.strehl.fwhm_to_stddev">[docs]</a><span class="k">def</span> <span class="nf">fwhm_to_stddev</span><span class="p">(</span><span class="n">fwhm</span><span class="p">):</span>
+<div class="viewcode-block" id="fwhm_to_stddev">
+<a class="viewcode-back" href="../../autoapi/kai/strehl/index.html#kai.strehl.fwhm_to_stddev">[docs]</a>
+<span class="k">def</span> <span class="nf">fwhm_to_stddev</span><span class="p">(</span><span class="n">fwhm</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">fwhm</span> <span class="o">/</span> <span class="mf">2.355</span></div>
 
-<div class="viewcode-block" id="stddev_to_fwhm"><a class="viewcode-back" href="../../autoapi/kai/strehl/index.html#kai.strehl.stddev_to_fwhm">[docs]</a><span class="k">def</span> <span class="nf">stddev_to_fwhm</span><span class="p">(</span><span class="n">stddev</span><span class="p">):</span>
+
+<div class="viewcode-block" id="stddev_to_fwhm">
+<a class="viewcode-back" href="../../autoapi/kai/strehl/index.html#kai.strehl.stddev_to_fwhm">[docs]</a>
+<span class="k">def</span> <span class="nf">stddev_to_fwhm</span><span class="p">(</span><span class="n">stddev</span><span class="p">):</span>
     <span class="k">return</span> <span class="mf">2.355</span> <span class="o">*</span> <span class="n">stddev</span></div>
+
     
 <span class="c1"># def quick_aper_phot(image, aper_radius, xc, yc, sky_radius_in, sky_radius_out):</span>
 <span class="c1">#     image,apers,xc,yc,insky,outsky,skyout=skyout,maskkcam=maskkcam,crad=crad,avsky=avsky,skyval=skyval,draw=draw,clip=clip</span>

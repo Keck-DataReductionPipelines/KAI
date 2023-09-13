@@ -19,6 +19,7 @@ Functions
    kai.reduce.kai_util.pix2radec
    kai.reduce.kai_util.radec2pix
    kai.reduce.kai_util.aotsxy2pix
+   kai.reduce.kai_util.pcuxy2pix
    kai.reduce.kai_util.pix2xyarcsec
    kai.reduce.kai_util.xyarcsec2pix
    kai.reduce.kai_util.rotate_coo
@@ -109,6 +110,37 @@ Attributes
 
 .. py:function:: aotsxy2pix(aotsxy, scale, aotsxyRef, inst_angle=0.0)
 
+
+.. py:function:: pcuxy2pix(pcuxy, phi, scale, pcuxyRef)
+
+   
+   Determine pixel shifts from true RA and Dec positions.
+
+   @param pcuxy: a 2-element list containing the PCU x and y in mm.
+   @type pcuxy: float list
+   @param phi: position angle (E of N) in degrees.
+   @type phi: float
+   @param scale: mm per pixel.
+   @type scale: float
+   @param pcuxyRef: 2-element list containing the  PCU x, y positions (in mm) in the reference position.
+   @type pcuxyRef: float list
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
 
 .. py:function:: pix2xyarcsec(xypix, phi, scale, sgra)
 

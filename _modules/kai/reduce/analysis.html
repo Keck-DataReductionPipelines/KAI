@@ -11,11 +11,11 @@
     <script src="../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/sphinx_highlight.js"></script>
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -86,7 +86,9 @@
 <span class="kn">import</span> <span class="nn">pylab</span> <span class="k">as</span> <span class="nn">py</span>
 <span class="kn">import</span> <span class="nn">pdb</span>
 
-<div class="viewcode-block" id="Analysis"><a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis">[docs]</a><span class="k">class</span> <span class="nc">Analysis</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="Analysis">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis">[docs]</a>
+<span class="k">class</span> <span class="nc">Analysis</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Object that will perform our standard post-data-reduction analysis.</span>
 <span class="sd">    This includes running starfinder, calibrating, and extracting positional</span>
@@ -260,7 +262,9 @@
         <span class="c1"># Set the default magnitude cut for plotPosError</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">plotPosMagCut</span> <span class="o">=</span> <span class="mf">15.0</span>
         
-<div class="viewcode-block" id="Analysis.prepStarfinder"><a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.prepStarfinder">[docs]</a>    <span class="k">def</span> <span class="nf">prepStarfinder</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">targetName</span><span class="p">,</span> <span class="n">targetCoords</span><span class="p">,</span> <span class="n">psfStars</span><span class="p">,</span> <span class="n">filterName</span><span class="p">):</span>
+<div class="viewcode-block" id="Analysis.prepStarfinder">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.prepStarfinder">[docs]</a>
+    <span class="k">def</span> <span class="nf">prepStarfinder</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">targetName</span><span class="p">,</span> <span class="n">targetCoords</span><span class="p">,</span> <span class="n">psfStars</span><span class="p">,</span> <span class="n">filterName</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Creates a _psf.list file and saves it in the source_list/ directory.&quot;&quot;&quot;</span>
         
         <span class="c1"># Covering possible variable inputs and initializing</span>
@@ -296,18 +300,27 @@
                     <span class="n">delimiter</span> <span class="o">=</span> <span class="s1">&#39;  &#39;</span><span class="p">,</span> 
                     <span class="n">bookend</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> 
                     <span class="n">overwrite</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span></div>
+
     
-<div class="viewcode-block" id="Analysis.analyzeCombo"><a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.analyzeCombo">[docs]</a>    <span class="k">def</span> <span class="nf">analyzeCombo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Analysis.analyzeCombo">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.analyzeCombo">[docs]</a>
+    <span class="k">def</span> <span class="nf">analyzeCombo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">starfinderCombo</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">calibrateCombo</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">alignCombo</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="Analysis.analyzeClean"><a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.analyzeClean">[docs]</a>    <span class="k">def</span> <span class="nf">analyzeClean</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Analysis.analyzeClean">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.analyzeClean">[docs]</a>
+    <span class="k">def</span> <span class="nf">analyzeClean</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">starfinderClean</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">calibrateClean</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">alignClean</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="Analysis.analyzeComboClean"><a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.analyzeComboClean">[docs]</a>    <span class="k">def</span> <span class="nf">analyzeComboClean</span><span class="p">():</span>
+
+<div class="viewcode-block" id="Analysis.analyzeComboClean">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.analyzeComboClean">[docs]</a>
+    <span class="k">def</span> <span class="nf">analyzeComboClean</span><span class="p">():</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">starfinderCombo</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">starfinderClean</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">calibrateCombo</span><span class="p">()</span>
@@ -316,7 +329,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">alignClean</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="Analysis.starfinderCombo"><a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.starfinderCombo">[docs]</a>    <span class="k">def</span> <span class="nf">starfinderCombo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">oldPsf</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Analysis.starfinderCombo">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.starfinderCombo">[docs]</a>
+    <span class="k">def</span> <span class="nf">starfinderCombo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">oldPsf</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;COMBO starfinder&#39;</span><span class="p">)</span>
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Coo Star: &#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">cooStar</span><span class="p">)</span>
@@ -475,9 +491,12 @@
         <span class="k">except</span><span class="p">:</span>
             <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dirStart</span><span class="p">)</span>
             <span class="k">raise</span></div>
+
             
         
-<div class="viewcode-block" id="Analysis.starfinderClean"><a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.starfinderClean">[docs]</a>    <span class="k">def</span> <span class="nf">starfinderClean</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Analysis.starfinderClean">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.starfinderClean">[docs]</a>
+    <span class="k">def</span> <span class="nf">starfinderClean</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;CLEAN starfinder&#39;</span><span class="p">)</span>
             
@@ -525,7 +544,10 @@
             <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dirStart</span><span class="p">)</span>
             <span class="k">raise</span></div>
 
-<div class="viewcode-block" id="Analysis.starfinderCleanLoop"><a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.starfinderCleanLoop">[docs]</a>    <span class="k">def</span> <span class="nf">starfinderCleanLoop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Analysis.starfinderCleanLoop">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.starfinderCleanLoop">[docs]</a>
+    <span class="k">def</span> <span class="nf">starfinderCleanLoop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;CLEAN starfinder loop&#39;</span><span class="p">)</span>
             <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dirCleanStf</span><span class="p">)</span>
@@ -571,7 +593,10 @@
             <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dirStart</span><span class="p">)</span>
             <span class="k">raise</span></div>
 
-<div class="viewcode-block" id="Analysis.calibrateCombo"><a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.calibrateCombo">[docs]</a>    <span class="k">def</span> <span class="nf">calibrateCombo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Analysis.calibrateCombo">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.calibrateCombo">[docs]</a>
+    <span class="k">def</span> <span class="nf">calibrateCombo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;COMBO calibrate&#39;</span><span class="p">)</span>
             
@@ -656,7 +681,10 @@
             <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dirStart</span><span class="p">)</span>
             <span class="k">raise</span></div>
 
-<div class="viewcode-block" id="Analysis.calibrateClean"><a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.calibrateClean">[docs]</a>    <span class="k">def</span> <span class="nf">calibrateClean</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Analysis.calibrateClean">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.calibrateClean">[docs]</a>
+    <span class="k">def</span> <span class="nf">calibrateClean</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="c1"># Calibrate each file</span>
             <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dirCleanStf</span><span class="p">)</span>
@@ -705,7 +733,10 @@
             <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dirStart</span><span class="p">)</span>
             <span class="k">raise</span></div>
 
-<div class="viewcode-block" id="Analysis.alignCombo"><a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.alignCombo">[docs]</a>    <span class="k">def</span> <span class="nf">alignCombo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Analysis.alignCombo">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.alignCombo">[docs]</a>
+    <span class="k">def</span> <span class="nf">alignCombo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;ALIGN_RMS combo&#39;</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s1">&#39;ao&#39;</span><span class="p">:</span>
@@ -814,8 +845,11 @@
             <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dirStart</span><span class="p">)</span>
             <span class="k">raise</span></div>
 
+
     
-<div class="viewcode-block" id="Analysis.alignClean"><a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.alignClean">[docs]</a>    <span class="k">def</span> <span class="nf">alignClean</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Analysis.alignClean">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.alignClean">[docs]</a>
+    <span class="k">def</span> <span class="nf">alignClean</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dirClean</span><span class="p">)</span>
 
@@ -864,10 +898,14 @@
             <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dirStart</span><span class="p">)</span>
         <span class="k">except</span><span class="p">:</span>
             <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dirStart</span><span class="p">)</span>
-            <span class="k">raise</span></div></div>
+            <span class="k">raise</span></div>
+</div>
 
 
-<div class="viewcode-block" id="plotPosError"><a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.plotPosError">[docs]</a><span class="k">def</span> <span class="nf">plotPosError</span><span class="p">(</span><span class="n">starlist</span><span class="p">,</span> <span class="n">raw</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">magCutOff</span><span class="o">=</span><span class="mf">15.0</span><span class="p">,</span>
+
+<div class="viewcode-block" id="plotPosError">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.plotPosError">[docs]</a>
+<span class="k">def</span> <span class="nf">plotPosError</span><span class="p">(</span><span class="n">starlist</span><span class="p">,</span> <span class="n">raw</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">magCutOff</span><span class="o">=</span><span class="mf">15.0</span><span class="p">,</span>
                  <span class="n">title</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Make three standard figures that show the data quality </span>
@@ -1051,6 +1089,7 @@
           <span class="p">(</span><span class="n">magCutOff</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">numInMedian</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">merr</span><span class="p">[</span><span class="n">idx</span><span class="p">])))</span>
     <span class="n">out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;Turnover mag = </span><span class="si">%4.1f</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">maxBin</span><span class="p">))</span>
     <span class="n">out</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
     
 
 

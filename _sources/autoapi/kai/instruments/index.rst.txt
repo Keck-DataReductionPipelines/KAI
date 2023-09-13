@@ -285,6 +285,52 @@ Attributes
       ..
           !! processed by numpydoc !!
 
+   .. py:method:: get_pcu_scale(hdr)
+
+      
+      The scale on the PCU pinhole mask, in mm (at the front focus) per pixel
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: get_pcuxyRef(hdr)
+
+      
+      The reference position, when the PCU is on-axis
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
    .. py:method:: get_position_angle(hdr)
 
       

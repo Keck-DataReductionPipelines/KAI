@@ -140,7 +140,7 @@ Functions
    ..
        !! processed by numpydoc !!
 
-.. py:function:: makesky_fromsci(files, nite, wave)
+.. py:function:: makesky_fromsci(files, nite, wave, instrument=instruments.default_inst)
 
    
    Make short wavelength (not L-band or longer) skies.

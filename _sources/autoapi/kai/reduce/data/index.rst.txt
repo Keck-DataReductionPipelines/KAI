@@ -895,7 +895,7 @@ Attributes
    ..
        !! processed by numpydoc !!
 
-.. py:function:: clean_makecoo(_ce, _cc, refSrc, strSrc, aotsxyRef, radecRef, instrument=instruments.default_inst, check_loc=True, update_fits=True, cent_box=12, offset_method='aotsxy')
+.. py:function:: clean_makecoo(_ce, _cc, refSrc, strSrc, aotsxyRef, radecRef, instrument=instruments.default_inst, check_loc=True, update_fits=True, cent_box=12, offset_method='aotsxy', pcuxyRef=None)
 
    
    Make the *.coo file for this science image. Use the difference

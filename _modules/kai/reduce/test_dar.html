@@ -11,11 +11,11 @@
     <script src="../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/sphinx_highlight.js"></script>
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -79,7 +79,9 @@
 <span class="kn">from</span> <span class="nn">gcwork</span> <span class="kn">import</span> <span class="n">objects</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">dar</span>
 
-<div class="viewcode-block" id="diffDarOnOff"><a class="viewcode-back" href="../../../autoapi/kai/reduce/test_dar/index.html#kai.reduce.test_dar.diffDarOnOff">[docs]</a><span class="k">def</span> <span class="nf">diffDarOnOff</span><span class="p">(</span><span class="n">cleanDir1</span><span class="p">,</span> <span class="n">cleanDir2</span><span class="p">):</span>
+<div class="viewcode-block" id="diffDarOnOff">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/test_dar/index.html#kai.reduce.test_dar.diffDarOnOff">[docs]</a>
+<span class="k">def</span> <span class="nf">diffDarOnOff</span><span class="p">(</span><span class="n">cleanDir1</span><span class="p">,</span> <span class="n">cleanDir2</span><span class="p">):</span>
     <span class="n">files1tmp</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">cleanDir1</span> <span class="o">+</span> <span class="s1">&#39;/c????.fits&#39;</span><span class="p">)</span>
     <span class="n">files2tmp</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">cleanDir2</span> <span class="o">+</span> <span class="s1">&#39;/c????.fits&#39;</span><span class="p">)</span>
 
@@ -96,9 +98,12 @@
                 <span class="k">if</span> <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">outname</span><span class="p">)):</span>
                     <span class="n">iraf</span><span class="o">.</span><span class="n">imdelete</span><span class="p">(</span><span class="n">outname</span><span class="p">)</span>
                 <span class="n">iraf</span><span class="o">.</span><span class="n">imarith</span><span class="p">(</span><span class="n">f1</span><span class="p">,</span> <span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="n">f2</span><span class="p">,</span> <span class="n">outname</span><span class="p">)</span></div>
+
             
         
-<div class="viewcode-block" id="plotScalePosangOverNight"><a class="viewcode-back" href="../../../autoapi/kai/reduce/test_dar/index.html#kai.reduce.test_dar.plotScalePosangOverNight">[docs]</a><span class="k">def</span> <span class="nf">plotScalePosangOverNight</span><span class="p">(</span><span class="n">alignRoot</span><span class="p">,</span> <span class="n">imgDir</span><span class="p">):</span>
+<div class="viewcode-block" id="plotScalePosangOverNight">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/test_dar/index.html#kai.reduce.test_dar.plotScalePosangOverNight">[docs]</a>
+<span class="k">def</span> <span class="nf">plotScalePosangOverNight</span><span class="p">(</span><span class="n">alignRoot</span><span class="p">,</span> <span class="n">imgDir</span><span class="p">):</span>
     <span class="c1"># Read in the list of images used in the alignment</span>
     <span class="n">listFile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">alignRoot</span><span class="o">+</span><span class="s1">&#39;.list&#39;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
     
@@ -156,7 +161,10 @@
     <span class="n">py</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;plots/scale_pa_vs_parang.png&#39;</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="plotDarCoeffsVsZenith"><a class="viewcode-back" href="../../../autoapi/kai/reduce/test_dar/index.html#kai.reduce.test_dar.plotDarCoeffsVsZenith">[docs]</a><span class="k">def</span> <span class="nf">plotDarCoeffsVsZenith</span><span class="p">():</span>
+
+<div class="viewcode-block" id="plotDarCoeffsVsZenith">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/test_dar/index.html#kai.reduce.test_dar.plotDarCoeffsVsZenith">[docs]</a>
+<span class="k">def</span> <span class="nf">plotDarCoeffsVsZenith</span><span class="p">():</span>
     <span class="n">effWave</span> <span class="o">=</span> <span class="mf">2.12</span> <span class="c1"># microns</span>
     <span class="n">utc</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2008</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
     <span class="n">utc2hst</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=-</span><span class="mi">10</span><span class="p">)</span>
@@ -211,6 +219,7 @@
 
     <span class="n">py</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;dar_linear_vs_quad_terms.png&#39;</span><span class="p">)</span>
     <span class="n">py</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;dar_linear_vs_quad_terms.eps&#39;</span><span class="p">)</span></div>
+
 
 </pre></div>
 

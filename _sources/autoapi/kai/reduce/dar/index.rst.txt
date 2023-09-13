@@ -20,6 +20,7 @@ Functions
    kai.reduce.dar.kaidar
    kai.reduce.dar.darPlusDistortion
    kai.reduce.dar.applyDAR
+   kai.reduce.dar.removeDAR
    kai.reduce.dar.splitAtmosphereCFHT
    kai.reduce.dar.test_darPlusDistortion
 
@@ -275,6 +276,39 @@ Attributes
    applied in this code.
 
    returns spaceStarlist with updated 'x0' and 'y0'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: removeDAR(inputFits, groundStarlist, plot=False, instrument=instruments.default_inst, plotdir='./')
+
+   
+   inputFits: (str) name of fits file associated with this starlist
+
+   groundStarlist: (astropy table) must include columns 'x' and 'y'.
+
+   The inverse of applyDAR(). Takes a starlist in x and y pixels taken from
+   the ground and removes differential atmospheric refraction (DAR). The amount
+   of DAR that is applied depends on the header information in the input fits
+   file. The resulting output starlist should contain what would be observed above the atmosphere.
+   Distortion should be applied before this function. Only achromatic DAR is 
+   applied in this code.
+
+   returns groundStarlist with updated 'x0' and 'y0'
 
 
 
