@@ -394,12 +394,16 @@ def makesky_lp2(files, nite, wave):
 
     #ir.imdelete('@' + _nlis)
 
-def makesky_fromsci(files, nite, wave):
+def makesky_fromsci(files, nite, wave, instrument=instruments.default_inst):
     """Make short wavelength (not L-band or longer) skies."""
+
+    util.mkdir(wave)
+    os.chdir(wave)
 
     # Start out in something like '06maylgs1/reduce/kp/'
     waveDir = os.getcwd() + '/'
     redDir = util.trimdir(os.path.abspath(waveDir + '../') + '/')
+    # redDir = waveDir #I'm running in /reduce. manually move wavedir afterwards? - Matthew
     rootDir = util.trimdir(os.path.abspath(redDir + '../') + '/')
     skyDir = waveDir + 'sky_' + nite + '/'
     rawDir = rootDir + 'raw/'
@@ -407,6 +411,8 @@ def makesky_fromsci(files, nite, wave):
     util.mkdir(skyDir)
     print('sky dir: ',skyDir)
     print('wave dir: ',waveDir)
+    # print('raw dir: ',rawDir)
+    # print('red dir: ',redDir)
 
     skylist = skyDir + 'skies_to_combine.lis'
     output = skyDir + 'sky_' + wave + '.fits'
@@ -435,7 +441,7 @@ def makesky_fromsci(files, nite, wave):
     sky_std = np.zeros([len(skies)], dtype=float)
 
     for ii in range(len(nn)):
-        img_sky = fits.getdata(nn[i], ignore_missing_end=True)
+        img_sky = fits.getdata(nn[ii], ignore_missing_end=True)
         if parse_version(astropy.__version__) < parse_version('3.0'):
             sky_stats = stats.sigma_clipped_stats(img_sky,
                                                   sigma_lower=10, sigma_upper=3,
@@ -463,6 +469,9 @@ def makesky_fromsci(files, nite, wave):
     ir.imcombine.hthreshold = hthreshold
 
     ir.imcombine('@' + skylist, output)
+   
+    # Change back to original directory
+    os.chdir('../')
 
 def makesky_lp_fromsci(files, nite, wave, number=3, rejectHsigma=None):
     """Make L' skies by carefully treating the ROTPPOSN angle

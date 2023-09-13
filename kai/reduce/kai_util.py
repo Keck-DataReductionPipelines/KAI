@@ -52,6 +52,7 @@ def makelog(directory, outfile='image_log.txt',
             # End of this line
             f.write('\n')
         else:
+            print(file)
             # First column is frame number
             frame = (hdr[ihk['filename']].strip())[:-5]
             f.write('%16s  ' % frame)
@@ -201,6 +202,25 @@ def aotsxy2pix(aotsxy, scale, aotsxyRef, inst_angle=0.0):
     d_x = coo_inst[0]
     d_y = coo_inst[1]
     
+    return [d_x, d_y]
+
+def pcuxy2pix(pcuxy, phi, scale, pcuxyRef):
+    """Determine pixel shifts from true RA and Dec positions.
+
+    @param pcuxy: a 2-element list containing the PCU x and y in mm.
+    @type pcuxy: float list
+    @param phi: position angle (E of N) in degrees.
+    @type phi: float
+    @param scale: mm per pixel.
+    @type scale: float
+    @param pcuxyRef: 2-element list containing the  PCU x, y positions (in mm) in the reference position.
+    @type pcuxyRef: float list
+    """
+    
+    # Since our reference point is the centre of the pinhole mask, which is the rotation axis, the position angle has no effect, there is just translation.
+    d_x = (pcuxy[0]-pcuxyRef[0])/scale #positive x mm = positive pixels
+    d_y = -(pcuxy[1]-pcuxyRef[1])/scale #positive y mm = negative pixels (after OSIRIS flip)
+
     return [d_x, d_y]
 
 def pix2xyarcsec(xypix, phi, scale, sgra):
