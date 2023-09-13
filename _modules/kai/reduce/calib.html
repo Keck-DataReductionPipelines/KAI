@@ -70,8 +70,8 @@
            <div itemprop="articleBody">
              
   <h1>Source code for kai.reduce.calib</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">sys</span>
-<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">util</span>
+<span></span><span class="kn">import</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">sys</span><span class="o">,</span> <span class="nn">shutil</span>
+<span class="kn">from</span> <span class="nn">kai.reduce</span> <span class="kn">import</span> <span class="n">util</span><span class="p">,</span> <span class="n">lin_correction</span>
 <span class="kn">from</span> <span class="nn">astropy.io</span> <span class="kn">import</span> <span class="n">fits</span>
 <span class="kn">from</span> <span class="nn">astropy</span> <span class="kn">import</span> <span class="n">stats</span>
 <span class="kn">from</span> <span class="nn">pyraf</span> <span class="kn">import</span> <span class="n">iraf</span> <span class="k">as</span> <span class="n">ir</span>
@@ -81,6 +81,7 @@
 <span class="kn">import</span> <span class="nn">astropy</span>
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
 <span class="kn">from</span> <span class="nn">pkg_resources</span> <span class="kn">import</span> <span class="n">parse_version</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
 
 <div class="viewcode-block" id="module_dir">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/calib/index.html#kai.reduce.calib.module_dir">[docs]</a>
@@ -127,23 +128,29 @@
     <span class="n">_outlis</span> <span class="o">=</span> <span class="n">darkDir</span> <span class="o">+</span> <span class="s1">&#39;dark.lis&#39;</span>
     <span class="n">util</span><span class="o">.</span><span class="n">rmall</span><span class="p">([</span><span class="n">_out</span><span class="p">,</span> <span class="n">_outlis</span><span class="p">])</span>
 
-    <span class="n">darks</span> <span class="o">=</span> <span class="n">instrument</span><span class="o">.</span><span class="n">make_filenames</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="n">rootDir</span><span class="o">=</span><span class="n">rawDir</span><span class="p">)</span>
+    <span class="n">darks_orig</span> <span class="o">=</span> <span class="n">instrument</span><span class="o">.</span><span class="n">make_filenames</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="n">rootDir</span><span class="o">=</span><span class="n">rawDir</span><span class="p">)</span>
+    <span class="n">darks_copied</span> <span class="o">=</span> <span class="n">instrument</span><span class="o">.</span><span class="n">make_filenames</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="n">rootDir</span><span class="o">=</span><span class="n">darkDir</span><span class="p">)</span>
+    
+    <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">darks_copied</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">darks_copied</span><span class="p">[</span><span class="n">ii</span><span class="p">]):</span> <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">darks_copied</span><span class="p">[</span><span class="n">ii</span><span class="p">])</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">darks_orig</span><span class="p">[</span><span class="n">ii</span><span class="p">],</span> <span class="n">darks_copied</span><span class="p">[</span><span class="n">ii</span><span class="p">])</span>
     
     <span class="c1"># Write out the sources of the dark files</span>
     <span class="n">data_sources_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">redDir</span> <span class="o">+</span> <span class="s1">&#39;data_sources.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">)</span>
     <span class="n">data_sources_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
         <span class="s1">&#39;---</span><span class="se">\n</span><span class="s1"># Dark Files for </span><span class="si">{0}</span><span class="s1"> </span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">output</span><span class="p">))</span>
     
-    <span class="k">for</span> <span class="n">cur_file</span> <span class="ow">in</span> <span class="n">darks</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">cur_file</span> <span class="ow">in</span> <span class="n">darks_orig</span><span class="p">:</span>
         <span class="n">out_line</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{0}</span><span class="s1"> (</span><span class="si">{1}</span><span class="s1">)</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cur_file</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">())</span>
         <span class="n">data_sources_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">out_line</span><span class="p">)</span>
     
     <span class="n">data_sources_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
     
+    <span class="c1"># Create a combined dark</span>
     <span class="n">f_on</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">_outlis</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
-    <span class="n">f_on</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">darks</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">f_on</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">darks_copied</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
     <span class="n">f_on</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-
+    
     <span class="n">ir</span><span class="o">.</span><span class="n">unlearn</span><span class="p">(</span><span class="s1">&#39;imcombine&#39;</span><span class="p">)</span>
     <span class="n">ir</span><span class="o">.</span><span class="n">imcombine</span><span class="o">.</span><span class="n">combine</span> <span class="o">=</span> <span class="s1">&#39;median&#39;</span>
     <span class="n">ir</span><span class="o">.</span><span class="n">imcombine</span><span class="o">.</span><span class="n">reject</span> <span class="o">=</span> <span class="s1">&#39;sigclip&#39;</span>
@@ -155,9 +162,13 @@
 
 <div class="viewcode-block" id="makeflat">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/calib/index.html#kai.reduce.calib.makeflat">[docs]</a>
-<span class="k">def</span> <span class="nf">makeflat</span><span class="p">(</span><span class="n">onFiles</span><span class="p">,</span> <span class="n">offFiles</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">normalizeFirst</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-             <span class="n">raw_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-             <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">makeflat</span><span class="p">(</span>
+        <span class="n">onFiles</span><span class="p">,</span> <span class="n">offFiles</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span>
+        <span class="n">dark_frame</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">normalizeFirst</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">raw_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">,</span>
+    <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Make flat field image for imaging data. Makes a calib/ directory</span>
 <span class="sd">    and stores all output there. All output and temporary files</span>
@@ -177,6 +188,10 @@
 <span class="sd">        Integer list of lamps OFF files. Does not require padded zeros.</span>
 <span class="sd">    output : str</span>
 <span class="sd">        Output file name. Include the .fits extension.</span>
+<span class="sd">    dark_frame : str, default=None</span>
+<span class="sd">        File name for the dark frame in order to carry out dark correction.</span>
+<span class="sd">        If not provided, dark frame is not subtracted and a warning is thrown.</span>
+<span class="sd">        Assumes dark file is located under ./calib/darks/</span>
 <span class="sd">    normalizeFirst : bool, default=False</span>
 <span class="sd">        If the individual flats should be normalized first,</span>
 <span class="sd">        such as in the case of twilight flats.</span>
@@ -212,10 +227,23 @@
 
     <span class="n">lampson</span> <span class="o">=</span> <span class="n">instrument</span><span class="o">.</span><span class="n">make_filenames</span><span class="p">(</span><span class="n">onFiles</span><span class="p">,</span> <span class="n">rootDir</span><span class="o">=</span><span class="n">rawDir</span><span class="p">)</span>
     <span class="n">lampsoff</span> <span class="o">=</span> <span class="n">instrument</span><span class="o">.</span><span class="n">make_filenames</span><span class="p">(</span><span class="n">offFiles</span><span class="p">,</span> <span class="n">rootDir</span><span class="o">=</span><span class="n">rawDir</span><span class="p">)</span>
+    
+    <span class="n">lampson_copied</span> <span class="o">=</span> <span class="n">instrument</span><span class="o">.</span><span class="n">make_filenames</span><span class="p">(</span><span class="n">onFiles</span><span class="p">,</span> <span class="n">rootDir</span><span class="o">=</span><span class="n">flatDir</span><span class="p">)</span>
+    <span class="n">lampsoff_copied</span> <span class="o">=</span> <span class="n">instrument</span><span class="o">.</span><span class="n">make_filenames</span><span class="p">(</span><span class="n">offFiles</span><span class="p">,</span> <span class="n">rootDir</span><span class="o">=</span><span class="n">flatDir</span><span class="p">)</span>
+    
     <span class="n">lampsonNorm</span> <span class="o">=</span> <span class="n">instrument</span><span class="o">.</span><span class="n">make_filenames</span><span class="p">(</span><span class="n">onFiles</span><span class="p">,</span> <span class="n">rootDir</span><span class="o">=</span><span class="n">flatDir</span> <span class="o">+</span> <span class="s1">&#39;norm&#39;</span><span class="p">)</span>
     <span class="n">util</span><span class="o">.</span><span class="n">rmall</span><span class="p">(</span><span class="n">lampsonNorm</span><span class="p">)</span>
     
-    <span class="c1"># Write out the sources of the dark files</span>
+    <span class="c1"># Copy files</span>
+    <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">lampson_copied</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">lampson_copied</span><span class="p">[</span><span class="n">ii</span><span class="p">]):</span> <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">lampson_copied</span><span class="p">[</span><span class="n">ii</span><span class="p">])</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">lampson</span><span class="p">[</span><span class="n">ii</span><span class="p">],</span> <span class="n">lampson_copied</span><span class="p">[</span><span class="n">ii</span><span class="p">])</span>
+    
+    <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">lampsoff_copied</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">lampsoff_copied</span><span class="p">[</span><span class="n">ii</span><span class="p">]):</span> <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">lampsoff_copied</span><span class="p">[</span><span class="n">ii</span><span class="p">])</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">lampsoff</span><span class="p">[</span><span class="n">ii</span><span class="p">],</span> <span class="n">lampsoff_copied</span><span class="p">[</span><span class="n">ii</span><span class="p">])</span>
+    
+    <span class="c1"># Write out the sources of the flat files</span>
     <span class="n">data_sources_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">redDir</span> <span class="o">+</span> <span class="s1">&#39;data_sources.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">)</span>
     
     <span class="n">data_sources_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
@@ -232,12 +260,66 @@
     
     <span class="n">data_sources_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
     
+    <span class="c1"># If dark frame is provided, carry out dark correction</span>
+    <span class="k">if</span> <span class="n">dark_frame</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">dark_file</span> <span class="o">=</span> <span class="n">redDir</span> <span class="o">+</span> <span class="s1">&#39;/calib/darks/&#39;</span> <span class="o">+</span> <span class="n">dark_frame</span>
+        
+        <span class="c1"># Read in dark frame data</span>
+        <span class="n">dark_data</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getdata</span><span class="p">(</span><span class="n">dark_file</span><span class="p">,</span> <span class="n">ignore_missing_end</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        
+        <span class="c1"># Go through each flat file</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">lampson_copied</span><span class="p">)):</span>            
+            <span class="k">with</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">lampson_copied</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;readonly&#39;</span><span class="p">,</span>
+                    <span class="n">ignore_missing_end</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="n">output_verify</span> <span class="o">=</span> <span class="s1">&#39;ignore&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">cur_flat</span><span class="p">:</span>
+                <span class="n">flat_data</span> <span class="o">=</span> <span class="n">cur_flat</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span>
+                <span class="n">flat_header</span> <span class="o">=</span> <span class="n">cur_flat</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span>
+            <span class="n">flat_data</span> <span class="o">=</span> <span class="n">flat_data</span> <span class="o">-</span> <span class="n">dark_data</span>
+            <span class="n">flat_hdu</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">PrimaryHDU</span><span class="p">(</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">flat_data</span><span class="p">,</span>
+                <span class="n">header</span><span class="o">=</span><span class="n">flat_header</span><span class="p">)</span>
+            
+            <span class="n">flat_hdu</span><span class="o">.</span><span class="n">writeto</span><span class="p">(</span>
+                <span class="n">lampson_copied</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                <span class="n">output_verify</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">,</span>
+                <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">lampsoff_copied</span><span class="p">)):</span>            
+            <span class="k">with</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">lampsoff_copied</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;readonly&#39;</span><span class="p">,</span>
+                    <span class="n">ignore_missing_end</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="n">output_verify</span> <span class="o">=</span> <span class="s1">&#39;ignore&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">cur_flat</span><span class="p">:</span>
+                <span class="n">flat_data</span> <span class="o">=</span> <span class="n">cur_flat</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span>
+                <span class="n">flat_header</span> <span class="o">=</span> <span class="n">cur_flat</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span>
+            
+            <span class="n">flat_data</span> <span class="o">=</span> <span class="n">flat_data</span> <span class="o">-</span> <span class="n">dark_data</span>
+            <span class="n">flat_hdu</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">PrimaryHDU</span><span class="p">(</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">flat_data</span><span class="p">,</span>
+                <span class="n">header</span><span class="o">=</span><span class="n">flat_header</span><span class="p">)</span>
+            <span class="n">flat_hdu</span><span class="o">.</span><span class="n">writeto</span><span class="p">(</span>
+                <span class="n">lampsoff_copied</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                <span class="n">output_verify</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">,</span>
+                <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">warning_message</span> <span class="o">=</span> <span class="s1">&#39;Dark frame not provided for makesky().&#39;</span>
+        <span class="n">warning_message</span> <span class="o">+=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Using flat frames without dark subtraction.&#39;</span>
+        
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">warning_message</span><span class="p">)</span>
+    
+    <span class="c1"># Perform linearity correction</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">lampson_copied</span><span class="p">)):</span>
+        <span class="n">lin_correction</span><span class="o">.</span><span class="n">lin_correction</span><span class="p">(</span><span class="n">lampson_copied</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                                      <span class="n">instrument</span><span class="o">=</span><span class="n">instrument</span><span class="p">)</span>
+    
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">lampsoff_copied</span><span class="p">)):</span>
+        <span class="n">lin_correction</span><span class="o">.</span><span class="n">lin_correction</span><span class="p">(</span><span class="n">lampsoff_copied</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                                      <span class="n">instrument</span><span class="o">=</span><span class="n">instrument</span><span class="p">)</span>
+    
     <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">offFiles</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">):</span>
         <span class="n">f_on</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">_onlis</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
-        <span class="n">f_on</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lampson</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">f_on</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lampson_copied</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
         <span class="n">f_on</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="n">f_on</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">_offlis</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
-        <span class="n">f_on</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lampsoff</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">f_on</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lampsoff_copied</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
         <span class="n">f_on</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="n">f_onn</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">_onNormLis</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
         <span class="n">f_onn</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lampsonNorm</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
@@ -286,7 +368,7 @@
 
     <span class="k">else</span><span class="p">:</span>
         <span class="n">f_on</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">_onlis</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
-        <span class="n">f_on</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lampson</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">f_on</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lampson_copied</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
         <span class="n">f_on</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
         <span class="c1"># Combine twilight flats</span>

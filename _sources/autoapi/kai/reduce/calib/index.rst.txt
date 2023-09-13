@@ -72,7 +72,7 @@ Attributes
    ..
        !! processed by numpydoc !!
 
-.. py:function:: makeflat(onFiles, offFiles, output, normalizeFirst=False, raw_dir=None, instrument=instruments.default_inst)
+.. py:function:: makeflat(onFiles, offFiles, output, dark_frame=None, normalizeFirst=False, raw_dir=None, instrument=instruments.default_inst)
 
    
    Make flat field image for imaging data. Makes a calib/ directory
@@ -95,6 +95,11 @@ Attributes
 
        **output** : str
            Output file name. Include the .fits extension.
+
+       **dark_frame** : str, default=None
+           File name for the dark frame in order to carry out dark correction.
+           If not provided, dark frame is not subtracted and a warning is thrown.
+           Assumes dark file is located under ./calib/darks/
 
        **normalizeFirst** : bool, default=False
            If the individual flats should be normalized first,

@@ -166,7 +166,14 @@
 <a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.Instrument.get_saturation_level">[docs]</a>
     <span class="k">def</span> <span class="nf">get_saturation_level</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">pass</span></div>
+
+    
+<div class="viewcode-block" id="Instrument.get_lin_corr_coeffs">
+<a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.Instrument.get_lin_corr_coeffs">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_lin_corr_coeffs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span></div>
 </div>
+
 
     
 <div class="viewcode-block" id="NIRC2">
@@ -328,9 +335,30 @@
 <span class="sd">        Set to the 95% saturation threshold in DN.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="mf">12000.0</span></div>
+
+    
+<div class="viewcode-block" id="NIRC2.get_linearity_correction_coeffs">
+<a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.NIRC2.get_linearity_correction_coeffs">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_linearity_correction_coeffs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns coefficients (`coeffs`, as defined below)</span>
+<span class="sd">        in order to perform linearity correction</span>
+<span class="sd">        </span>
+<span class="sd">        x = (FITS_orig) / (No. of coadds)</span>
+<span class="sd">        </span>
+<span class="sd">        norm = coeffs[0] + coeffs[1] * x + coeffs[2] * x^2</span>
+<span class="sd">        </span>
+<span class="sd">        FITS_corrected = FITS_orig / norm</span>
+<span class="sd">        </span>
+<span class="sd">        From Stanimir Metchev&#39;s linearity correction code</span>
+<span class="sd">        (http://www.astro.sunysb.edu/metchev/ao.html)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="n">lin_corr_coeffs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.001</span><span class="p">,</span> <span class="o">-</span><span class="mf">6.9e-6</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.70e-10</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">lin_corr_coeffs</span></div>
 </div>
 
-
+        
 
 
 <div class="viewcode-block" id="OSIRIS">

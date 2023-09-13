@@ -19,6 +19,7 @@ Submodules
    dar/index.rst
    data/index.rst
    kai_util/index.rst
+   lin_correction/index.rst
    prep_analysis/index.rst
    reduce_template/index.rst
    reduce_template_osiris/index.rst

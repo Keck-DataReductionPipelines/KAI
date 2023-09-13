@@ -19,10 +19,11 @@ Functions
    kai.reduce.sky.makesky_fromsci
    kai.reduce.sky.makesky_lp_fromsci
    kai.reduce.sky.read_sky_rot_file
+   kai.reduce.sky.write_sky_rot_file
 
 
 
-.. py:function:: makesky(files, nite, wave, skyscale=True, raw_dir=None, instrument=instruments.default_inst)
+.. py:function:: makesky(files, nite, wave, dark_frame=None, skyscale=True, raw_dir=None, instrument=instruments.default_inst)
 
    
    Make short wavelength (not L-band or longer) skies.
@@ -39,6 +40,11 @@ Functions
 
        **wave** : str
            Name for the observation passband (e.g.: "kp")
+
+       **dark_frame** : str, default=None
+           File name for the dark frame in order to carry out dark correction.
+           If not provided, dark frame is not subtracted and a warning is thrown.
+           Assumes dark file is located under ./calib/darks/
 
        **skyscale** : bool, default=True
            Whether or not to scale the sky files to the common median.
@@ -67,7 +73,7 @@ Functions
    ..
        !! processed by numpydoc !!
 
-.. py:function:: makesky_lp(files, nite, wave, number=3, rejectHsigma=None, raw_dir=None, instrument=instruments.default_inst)
+.. py:function:: makesky_lp(files, nite, wave, dark_frame=None, number=3, rejectHsigma=None, raw_dir=None, instrument=instruments.default_inst)
 
    
    Make L' skies by carefully treating the ROTPPOSN angle
@@ -85,6 +91,11 @@ Functions
 
        **wave** : str
            Name for the observation passband (e.g.: "lp")
+
+       **dark_frame** : str, default=None
+           File name for the dark frame in order to carry out dark correction.
+           If not provided, dark frame is not subtracted and a warning is thrown.
+           Assumes dark file is located under ./calib/darks/
 
        **number** : int, default=3
            Number of skies to be combined
@@ -191,6 +202,31 @@ Functions
 
    
    Read in the list of files and rotation angles.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: write_sky_rot_file(rawlis, nlis, skyRot)
+
+   
+   Write the list of files and rotation angles in Lp.
+   Created to avoid using pyraf which causes issues when dealing
+   with non-fits conforming headers.
 
 
 

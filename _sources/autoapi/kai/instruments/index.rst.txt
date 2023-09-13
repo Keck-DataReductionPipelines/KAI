@@ -73,6 +73,9 @@ Attributes
    .. py:method:: get_saturation_level()
 
 
+   .. py:method:: get_lin_corr_coeffs()
+
+
 
 .. py:class:: NIRC2
 
@@ -215,6 +218,38 @@ Attributes
       
       Set to the 95% saturation threshold in DN.
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: get_linearity_correction_coeffs()
+
+      
+      Returns coefficients (`coeffs`, as defined below)
+      in order to perform linearity correction
+
+      x = (FITS_orig) / (No. of coadds)
+
+      norm = coeffs[0] + coeffs[1] * x + coeffs[2] * x^2
+
+      FITS_corrected = FITS_orig / norm
+
+      From Stanimir Metchev's linearity correction code
+      (http://www.astro.sunysb.edu/metchev/ao.html)
 
 
 

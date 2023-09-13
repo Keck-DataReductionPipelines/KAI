@@ -78,7 +78,7 @@
 <span class="kn">import</span> <span class="nn">math</span>
 <span class="kn">from</span> <span class="nn">pyraf</span> <span class="kn">import</span> <span class="n">iraf</span> <span class="k">as</span> <span class="n">ir</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">kai_util</span>
-<span class="kn">from</span> <span class="nn">kai.reduce</span> <span class="kn">import</span> <span class="n">util</span>
+<span class="kn">from</span> <span class="nn">kai.reduce</span> <span class="kn">import</span> <span class="n">util</span><span class="p">,</span> <span class="n">lin_correction</span>
 <span class="kn">from</span> <span class="nn">kai</span> <span class="kn">import</span> <span class="n">instruments</span>
 <span class="kn">from</span> <span class="nn">kai</span> <span class="kn">import</span> <span class="n">strehl</span>
 <span class="kn">import</span> <span class="nn">time</span>
@@ -89,6 +89,7 @@
 <span class="kn">import</span> <span class="nn">subprocess</span>
 <span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
 
 <div class="viewcode-block" id="module_dir">
@@ -107,12 +108,16 @@
 
 <div class="viewcode-block" id="clean">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/data/index.html#kai.reduce.data.clean">[docs]</a>
-<span class="k">def</span> <span class="nf">clean</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="n">nite</span><span class="p">,</span> <span class="n">wave</span><span class="p">,</span> <span class="n">refSrc</span><span class="p">,</span> <span class="n">strSrc</span><span class="p">,</span> <span class="n">badColumns</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">field</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-          <span class="n">skyscale</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">skyfile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">angOff</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">cent_box</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
-          <span class="n">fixDAR</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">use_koa_weather</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-          <span class="n">raw_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">clean_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-          <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">,</span> <span class="n">check_ref_loc</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-          <span class="n">ref_offset_method</span><span class="o">=</span><span class="s1">&#39;aotsxy&#39;</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">clean</span><span class="p">(</span>
+        <span class="n">files</span><span class="p">,</span> <span class="n">nite</span><span class="p">,</span> <span class="n">wave</span><span class="p">,</span> <span class="n">refSrc</span><span class="p">,</span> <span class="n">strSrc</span><span class="p">,</span>
+        <span class="n">dark_frame</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">badColumns</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">field</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">skyscale</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">skyfile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">angOff</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">cent_box</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
+        <span class="n">fixDAR</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">use_koa_weather</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">raw_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">clean_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">,</span> <span class="n">check_ref_loc</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">ref_offset_method</span><span class="o">=</span><span class="s1">&#39;aotsxy&#39;</span>
+    <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Clean near infrared NIRC2 or OSIRIS images.</span>
 
@@ -152,6 +157,16 @@
 <span class="sd">    wave : str</span>
 <span class="sd">        Name for the observation passband (e.g.: &quot;kp&quot;), used as</span>
 <span class="sd">        a wavelength suffix</span>
+<span class="sd">    refSrc : [float, float]</span>
+<span class="sd">        x and y coordinates for the reference source, provided as a list of two</span>
+<span class="sd">        float coordinates.</span>
+<span class="sd">    strSrc : [float, float]</span>
+<span class="sd">        x and y coordinates for the Strehl source, provided as a list of two</span>
+<span class="sd">        float coordinates.</span>
+<span class="sd">    dark_frame : str, default=None</span>
+<span class="sd">        File name for the dark frame in order to carry out dark correction.</span>
+<span class="sd">        If not provided, dark frame is not subtracted and a warning is thrown.</span>
+<span class="sd">        Assumes dark file is located under ./calib/darks/</span>
 <span class="sd">    field : str, default=None</span>
 <span class="sd">        Optional prefix for clean directory and final</span>
 <span class="sd">        combining. All clean files will be put into &lt;field_&gt;&lt;wave&gt;. You</span>
@@ -203,7 +218,7 @@
     
     <span class="n">sciDir</span> <span class="o">=</span> <span class="n">waveDir</span> <span class="o">+</span> <span class="s1">&#39;/sci_&#39;</span> <span class="o">+</span> <span class="n">nite</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span>
     <span class="n">util</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">sciDir</span><span class="p">)</span>
-    <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">sciDir</span><span class="p">)</span>
+    <span class="n">ir</span><span class="o">.</span><span class="n">cd</span><span class="p">(</span><span class="n">sciDir</span><span class="p">)</span>
 
     <span class="c1"># Set location of raw data</span>
     <span class="n">rawDir</span> <span class="o">=</span> <span class="n">rootDir</span> <span class="o">+</span> <span class="s1">&#39;raw/&#39;</span>
@@ -254,6 +269,7 @@
         <span class="n">hdr1</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getheader</span><span class="p">(</span><span class="n">firstFile</span><span class="p">,</span> <span class="n">ignore_missing_end</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">radecRef</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">hdr1</span><span class="p">[</span><span class="s1">&#39;RA&#39;</span><span class="p">]),</span> <span class="nb">float</span><span class="p">(</span><span class="n">hdr1</span><span class="p">[</span><span class="s1">&#39;DEC&#39;</span><span class="p">])]</span>
         <span class="n">aotsxyRef</span> <span class="o">=</span> <span class="n">kai_util</span><span class="o">.</span><span class="n">getAotsxy</span><span class="p">(</span><span class="n">hdr1</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="n">ref_offset_method</span> <span class="o">==</span> <span class="s1">&#39;pcu&#39;</span><span class="p">:</span>
             <span class="n">pcuxyRef</span> <span class="o">=</span> <span class="n">instrument</span><span class="o">.</span><span class="n">get_pcuxyRef</span><span class="p">(</span><span class="n">hdr1</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -278,7 +294,20 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">imgsize</span> <span class="o">=</span> <span class="n">imgsizeY</span>
         <span class="n">setup_drizzle</span><span class="p">(</span><span class="n">imgsize</span><span class="p">)</span>
-
+        
+        <span class="c1"># Read in dark frame data</span>
+        <span class="c1"># Throw warning if dark frame not provided for dark correction</span>
+        <span class="k">if</span> <span class="n">dark_frame</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">dark_file</span> <span class="o">=</span> <span class="n">redDir</span> <span class="o">+</span> <span class="s1">&#39;/calib/darks/&#39;</span> <span class="o">+</span> <span class="n">dark_frame</span>
+            
+            <span class="c1"># Read in dark frame data</span>
+            <span class="n">dark_data</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getdata</span><span class="p">(</span><span class="n">dark_file</span><span class="p">,</span> <span class="n">ignore_missing_end</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">warning_message</span> <span class="o">=</span> <span class="s1">&#39;Dark frame not provided for clean().&#39;</span>
+            <span class="n">warning_message</span> <span class="o">+=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Cleaning without dark subtraction.&#39;</span>
+        
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">warning_message</span><span class="p">)</span>
+        
         <span class="c1">##########</span>
         <span class="c1"># Loop through the list of images</span>
         <span class="c1">##########</span>
@@ -310,8 +339,11 @@
             <span class="n">data_sources_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">out_line</span><span class="p">)</span>
 
             <span class="c1"># Clean up if these files previously existed</span>
-            <span class="n">util</span><span class="o">.</span><span class="n">rmall</span><span class="p">([</span><span class="n">_cp</span><span class="p">,</span> <span class="n">_ss</span><span class="p">,</span> <span class="n">_ff</span><span class="p">,</span> <span class="n">_ff_f</span><span class="p">,</span> <span class="n">_ff_s</span><span class="p">,</span> <span class="n">_bp</span><span class="p">,</span> <span class="n">_cd</span><span class="p">,</span> <span class="n">_ce</span><span class="p">,</span> <span class="n">_cc</span><span class="p">,</span>
-                        <span class="n">_wgt</span><span class="p">,</span> <span class="n">_statmask</span><span class="p">,</span> <span class="n">_crmask</span><span class="p">,</span> <span class="n">_mask</span><span class="p">,</span> <span class="n">_pers</span><span class="p">,</span> <span class="n">_max</span><span class="p">,</span> <span class="n">_coo</span><span class="p">,</span> <span class="n">_rcoo</span><span class="p">,</span> <span class="n">_dlog</span><span class="p">])</span>
+            <span class="n">util</span><span class="o">.</span><span class="n">rmall</span><span class="p">([</span>
+                <span class="n">_cp</span><span class="p">,</span> <span class="n">_ss</span><span class="p">,</span> <span class="n">_ff</span><span class="p">,</span> <span class="n">_ff_f</span><span class="p">,</span> <span class="n">_ff_s</span><span class="p">,</span> <span class="n">_bp</span><span class="p">,</span> <span class="n">_cd</span><span class="p">,</span> <span class="n">_ce</span><span class="p">,</span> <span class="n">_cc</span><span class="p">,</span>
+                <span class="n">_wgt</span><span class="p">,</span> <span class="n">_statmask</span><span class="p">,</span> <span class="n">_crmask</span><span class="p">,</span> <span class="n">_mask</span><span class="p">,</span> <span class="n">_pers</span><span class="p">,</span> <span class="n">_max</span><span class="p">,</span> <span class="n">_coo</span><span class="p">,</span>
+                <span class="n">_rcoo</span><span class="p">,</span> <span class="n">_dlog</span><span class="p">,</span>
+            <span class="p">])</span>
 
             <span class="c1">### Copy the raw file to local directory ###</span>
             <span class="n">ir</span><span class="o">.</span><span class="n">imcopy</span><span class="p">(</span><span class="n">_raw</span><span class="p">,</span> <span class="n">_cp</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="s1">&#39;no&#39;</span><span class="p">)</span>
@@ -319,7 +351,23 @@
             <span class="c1">### Make persistance mask ###</span>
             <span class="c1"># - Checked images, this doesn&#39;t appear to be a large effect.</span>
             <span class="c1">#clean_persistance(_cp, _pers, instrument=instrument)</span>
-
+            
+            <span class="c1"># Dark correction</span>
+            <span class="k">if</span> <span class="n">dark_frame</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">with</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">_cp</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;readonly&#39;</span><span class="p">,</span> <span class="n">output_verify</span> <span class="o">=</span> <span class="s1">&#39;ignore&#39;</span><span class="p">,</span> 
+                <span class="n">ignore_missing_end</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">as</span> <span class="n">cur_frame</span><span class="p">:</span>
+                    <span class="n">frame_data</span> <span class="o">=</span> <span class="n">cur_frame</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span>
+                    <span class="n">frame_header</span> <span class="o">=</span> <span class="n">cur_frame</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span>
+                <span class="n">frame_data</span> <span class="o">=</span> <span class="n">frame_data</span> <span class="o">-</span> <span class="n">dark_data</span>
+                <span class="n">frame_hdu</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">PrimaryHDU</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">frame_data</span><span class="p">,</span> 
+                <span class="n">header</span><span class="o">=</span><span class="n">frame_header</span><span class="p">)</span>
+                <span class="n">frame_hdu</span><span class="o">.</span><span class="n">writeto</span><span class="p">(</span><span class="n">_cp</span><span class="p">,</span> 
+                <span class="n">output_verify</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">,</span> 
+                <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            
+            <span class="c1"># Linearity correction</span>
+            <span class="n">lin_correction</span><span class="o">.</span><span class="n">lin_correction</span><span class="p">(</span><span class="n">_cp</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">instrument</span><span class="p">)</span>
+            
             <span class="c1">### Sky subtract ###</span>
             <span class="c1"># Get the proper sky for this science frame.</span>
             <span class="c1"># It might be scaled or there might be a specific one for L&#39;.</span>
@@ -1297,10 +1345,16 @@
     <span class="n">mjd_weightedMean</span> <span class="o">=</span> <span class="n">mjd_weightedSum</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
     <span class="n">time_obs</span> <span class="o">=</span> <span class="n">Time</span><span class="p">(</span><span class="n">mjd_weightedMean</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;mjd&#39;</span><span class="p">)</span>
     
-    <span class="n">fits_f</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s1">&#39;MJD-OBS&#39;</span><span class="p">,</span> <span class="n">mjd_weightedMean</span><span class="p">,</span> <span class="s1">&#39;Weighted modified julian date of combined observations&#39;</span><span class="p">)</span>
+    <span class="n">fits_f</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
+        <span class="s1">&#39;MJD-OBS&#39;</span><span class="p">,</span> <span class="n">mjd_weightedMean</span><span class="p">,</span>
+        <span class="s1">&#39;Weighted modified julian date of combined observations&#39;</span>
+    <span class="p">)</span>
     
     <span class="c1">## Also update date field in header</span>
-    <span class="n">fits_f</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s1">&#39;DATE&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{0}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">time_obs</span><span class="o">.</span><span class="n">fits</span><span class="p">),</span> <span class="s1">&#39;Weighted observation date&#39;</span><span class="p">)</span>
+    <span class="n">fits_f</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
+        <span class="s1">&#39;DATE&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{0}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">time_obs</span><span class="o">.</span><span class="n">fits</span><span class="p">),</span>
+        <span class="s1">&#39;Weighted observation date&#39;</span>
+    <span class="p">)</span>
     
     
     <span class="c1"># Save to final fits file.</span>

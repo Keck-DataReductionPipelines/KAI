@@ -193,6 +193,11 @@
 <span class="sig-name descname"><span class="pre">get_saturation_level</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#Instrument.get_saturation_level"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.Instrument.get_saturation_level" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="kai.instruments.Instrument.get_lin_corr_coeffs">
+<span class="sig-name descname"><span class="pre">get_lin_corr_coeffs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#Instrument.get_lin_corr_coeffs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.Instrument.get_lin_corr_coeffs" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
@@ -258,6 +263,18 @@ this observation in microns.</p>
 <dt class="sig sig-object py" id="kai.instruments.NIRC2.get_saturation_level">
 <span class="sig-name descname"><span class="pre">get_saturation_level</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#NIRC2.get_saturation_level"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.NIRC2.get_saturation_level" title="Link to this definition"></a></dt>
 <dd><p>Set to the 95% saturation threshold in DN.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kai.instruments.NIRC2.get_linearity_correction_coeffs">
+<span class="sig-name descname"><span class="pre">get_linearity_correction_coeffs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#NIRC2.get_linearity_correction_coeffs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.NIRC2.get_linearity_correction_coeffs" title="Link to this definition"></a></dt>
+<dd><p>Returns coefficients (<cite>coeffs</cite>, as defined below)
+in order to perform linearity correction</p>
+<p>x = (FITS_orig) / (No. of coadds)</p>
+<p>norm = coeffs[0] + coeffs[1] * x + coeffs[2] * x^2</p>
+<p>FITS_corrected = FITS_orig / norm</p>
+<p>From Stanimir Metchev’s linearity correction code
+(<a class="reference external" href="http://www.astro.sunysb.edu/metchev/ao.html">http://www.astro.sunysb.edu/metchev/ao.html</a>)</p>
 </dd></dl>
 
 </dd></dl>

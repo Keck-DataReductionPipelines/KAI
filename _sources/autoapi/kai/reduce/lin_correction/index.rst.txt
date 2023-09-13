@@ -1,0 +1,55 @@
+:py:mod:`kai.reduce.lin_correction`
+===================================
+
+.. py:module:: kai.reduce.lin_correction
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   kai.reduce.lin_correction.lin_correction
+
+
+
+.. py:function:: lin_correction(file, instrument=instruments.default_inst)
+
+   
+   Perform linearity correction on input file, as defined below
+
+   x = (FITS_orig) / (No. of coadds)
+
+   Normalization is defined as a polynomial in the following way:
+   norm = coeffs[0] + (coeffs[1] * x) + (coeffs[2] * x^2) + ... + (coeffs[n] * x^n)
+
+   FITS_corrected = FITS_orig / norm
+
+   :Parameters:
+
+       **file** : str
+           File path of FITS file to perform linearity correction
+
+       **instrument** : instruments object, optional
+           Instrument of data. Default is `instruments.default_inst`
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+

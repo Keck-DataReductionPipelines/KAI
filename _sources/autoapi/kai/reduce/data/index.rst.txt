@@ -82,7 +82,7 @@ Attributes
 
    
 
-.. py:function:: clean(files, nite, wave, refSrc, strSrc, badColumns=None, field=None, skyscale=False, skyfile=None, angOff=0.0, cent_box=12, fixDAR=True, use_koa_weather=False, raw_dir=None, clean_dir=None, instrument=instruments.default_inst, check_ref_loc=True, ref_offset_method='aotsxy')
+.. py:function:: clean(files, nite, wave, refSrc, strSrc, dark_frame=None, badColumns=None, field=None, skyscale=False, skyfile=None, angOff=0.0, cent_box=12, fixDAR=True, use_koa_weather=False, raw_dir=None, clean_dir=None, instrument=instruments.default_inst, check_ref_loc=True, ref_offset_method='aotsxy')
 
    
    Clean near infrared NIRC2 or OSIRIS images.
@@ -125,6 +125,19 @@ Attributes
        **wave** : str
            Name for the observation passband (e.g.: "kp"), used as
            a wavelength suffix
+
+       **refSrc** : [float, float]
+           x and y coordinates for the reference source, provided as a list of two
+           float coordinates.
+
+       **strSrc** : [float, float]
+           x and y coordinates for the Strehl source, provided as a list of two
+           float coordinates.
+
+       **dark_frame** : str, default=None
+           File name for the dark frame in order to carry out dark correction.
+           If not provided, dark frame is not subtracted and a warning is thrown.
+           Assumes dark file is located under ./calib/darks/
 
        **field** : str, default=None
            Optional prefix for clean directory and final
