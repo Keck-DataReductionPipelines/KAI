@@ -186,7 +186,12 @@ def clean(
         hdr1 = fits.getheader(firstFile, ignore_missing_end=True)
         radecRef = [float(hdr1['RA']), float(hdr1['DEC'])]
         aotsxyRef = kai_util.getAotsxy(hdr1)
-        
+
+        if ref_offset_method == 'pcu':
+            pcuxyRef = instrument.get_pcuxyRef(hdr1)
+        else:
+            pcuxyRef = None
+
         # Setup a Sky object that will figure out the sky subtraction
         skyDir = waveDir + 'sky_' + nite + '/'
         skyObj = Sky(sciDir, skyDir, wave, scale=skyscale,
@@ -289,7 +294,7 @@ def clean(
 
             ### Flat field ###
             ir.imarith(_ss, '/', flat, _ff)
-
+            
             ### Make a static bad pixel mask ###
             # _statmask = supermask + bad columns
             clean_get_supermask(_statmask, _supermask, badColumns)
@@ -338,7 +343,7 @@ def clean(
 
             clean_makecoo(_ce, _cc, refSrc, strSrc, aotsxyRef, radecRef,
                           instrument=instrument, check_loc=check_ref_loc,
-                          cent_box=cent_box, offset_method=ref_offset_method)
+                          cent_box=cent_box, offset_method=ref_offset_method,pcuxyRef=pcuxyRef)
 
             ### Move to the clean directory ###
             util.rmall([clean + _cc, clean + _coo, clean + _rcoo,
@@ -1935,7 +1940,7 @@ def clean_bkgsubtract(_ff_f, _bp):
 def clean_makecoo(_ce, _cc, refSrc, strSrc, aotsxyRef, radecRef,
         instrument=instruments.default_inst, check_loc=True,
         update_fits=True,cent_box=12,
-        offset_method='aotsxy'):
+        offset_method='aotsxy',pcuxyRef=None):
     """Make the *.coo file for this science image. Use the difference
     between the AOTSX/Y keywords from a reference image and each science
     image to tell how the positions of the two frames are related.
@@ -1974,6 +1979,9 @@ def clean_makecoo(_ce, _cc, refSrc, strSrc, aotsxyRef, radecRef,
 
     radec = [float(hdr['RA']), float(hdr['DEC'])]
     aotsxy = kai_util.getAotsxy(hdr)
+    if offset_method == 'pcu':
+        pcuxy = [float(hdr['PCSFX']), float(hdr['PCSFY'])]  #New version may be PCUX and PCUY
+        pcu_scale = instrument.get_pcu_scale(hdr)
 
     # Determine the image's PA and plate scale
     phi = instrument.get_position_angle(hdr)
@@ -1988,6 +1996,8 @@ def clean_makecoo(_ce, _cc, refSrc, strSrc, aotsxyRef, radecRef,
     elif offset_method == 'aotsxy':
         d_xy = kai_util.aotsxy2pix(aotsxy, scale, aotsxyRef,
                                    inst_angle=inst_angle)
+    elif offset_method == 'pcu':
+            d_xy = kai_util.pcuxy2pix(pcuxy, phi, pcu_scale, pcuxyRef)
     else:
         d_xy = kai_util.aotsxy2pix(aotsxy, scale, aotsxyRef,
                                    inst_angle=inst_angle)

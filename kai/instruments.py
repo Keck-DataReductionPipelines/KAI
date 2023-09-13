@@ -245,15 +245,43 @@ class OSIRIS(Instrument):
         """
         Return the plate scale in arcsec/pix.
         """
-        scale = 0.00995
-        
+        # scale = 0.00995
+        date = hdr['DATE-OBS']
+        if (float(date[0:4]+date[5:7]+date[8:10]) < 20201116):
+            scale = 0.0099418
+        elif (float(date[0:4]+date[5:7]+date[8:10]) >= 20201116):
+            scale = 0.0099576
         return scale
     
+    def get_pcu_scale(self,hdr):
+        """
+        The scale on the PCU pinhole mask, in mm (at the front focus) per pixel
+        """
+        scale = 1/138.5
+        return scale
+
+    def get_pcuxyRef(self,hdr):
+        """
+        The reference position, when the PCU is on-axis
+        """
+        pcuxyRef = [90,185]       
+        return pcuxyRef
+
     def get_position_angle(self, hdr):
         """
         Get the sky PA in degrees East of North. 
         """
-        pa = float(hdr['ROTPOSN']) - self.get_instrument_angle(hdr)
+        # pa = float(hdr['ROTPOSN']) - self.get_instrument_angle(hdr)
+        pa = hdr['PA_IMAG']
+        
+        #if in PCU mode, read the PCU rotation angle instead
+        if 'PCUZ' in hdr.keys():
+            if hdr['PCUZ'] > 20:  
+                pcu_angle = float(hdr['PCUR'])
+                pinhole_angle = 65.703 #the angle at which the pihole mask is horizontal.
+                # rotator_angle = hdr['ROTPPOSN']
+                # default_rotator_angle = 90
+                pa = pcu_angle - pinhole_angle       
         return pa
     
     def get_instrument_angle(self, hdr):
@@ -386,7 +414,7 @@ class OSIRIS(Instrument):
         """
         Set to the 95% saturation threshold in DN.
         """
-        return 20000.0
+        return 17000.0
     
 
 ##################################################
