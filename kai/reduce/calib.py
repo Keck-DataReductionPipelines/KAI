@@ -1,5 +1,5 @@
-import os, sys
-from . import util
+import os, sys, shutil
+from kai.reduce import util, lin_correction
 from astropy.io import fits
 from astropy import stats
 from pyraf import iraf as ir
@@ -9,6 +9,7 @@ from astropy import stats
 import astropy
 from datetime import datetime
 from pkg_resources import parse_version
+import warnings
 
 module_dir = os.path.dirname(__file__)
 
@@ -50,23 +51,29 @@ def makedark(files, output,
     _outlis = darkDir + 'dark.lis'
     util.rmall([_out, _outlis])
 
-    darks = instrument.make_filenames(files, rootDir=rawDir)
+    darks_orig = instrument.make_filenames(files, rootDir=rawDir)
+    darks_copied = instrument.make_filenames(files, rootDir=darkDir)
+    
+    for ii in range(len(darks_copied)):
+        if os.path.exists(darks_copied[ii]): os.remove(darks_copied[ii])
+        shutil.copy(darks_orig[ii], darks_copied[ii])
     
     # Write out the sources of the dark files
     data_sources_file = open(redDir + 'data_sources.txt', 'a')
     data_sources_file.write(
         '---\n# Dark Files for {0} \n'.format(output))
     
-    for cur_file in darks:
+    for cur_file in darks_orig:
         out_line = '{0} ({1})\n'.format(cur_file, datetime.now())
         data_sources_file.write(out_line)
     
     data_sources_file.close()
     
+    # Create a combined dark
     f_on = open(_outlis, 'w')
-    f_on.write('\n'.join(darks) + '\n')
+    f_on.write('\n'.join(darks_copied) + '\n')
     f_on.close()
-
+    
     ir.unlearn('imcombine')
     ir.imcombine.combine = 'median'
     ir.imcombine.reject = 'sigclip'
@@ -75,9 +82,13 @@ def makedark(files, output,
     ir.imcombine('@' + _outlis, _out)
 
 
-def makeflat(onFiles, offFiles, output, normalizeFirst=False,
-             raw_dir=None,
-             instrument=instruments.default_inst):
+def makeflat(
+        onFiles, offFiles, output,
+        dark_frame=None,
+        normalizeFirst=False,
+        raw_dir=None,
+        instrument=instruments.default_inst,
+    ):
     """
     Make flat field image for imaging data. Makes a calib/ directory
     and stores all output there. All output and temporary files
@@ -97,6 +108,10 @@ def makeflat(onFiles, offFiles, output, normalizeFirst=False,
         Integer list of lamps OFF files. Does not require padded zeros.
     output : str
         Output file name. Include the .fits extension.
+    dark_frame : str, default=None
+        File name for the dark frame in order to carry out dark correction.
+        If not provided, dark frame is not subtracted and a warning is thrown.
+        Assumes dark file is located under ./calib/darks/
     normalizeFirst : bool, default=False
         If the individual flats should be normalized first,
         such as in the case of twilight flats.
@@ -132,10 +147,23 @@ def makeflat(onFiles, offFiles, output, normalizeFirst=False,
 
     lampson = instrument.make_filenames(onFiles, rootDir=rawDir)
     lampsoff = instrument.make_filenames(offFiles, rootDir=rawDir)
+    
+    lampson_copied = instrument.make_filenames(onFiles, rootDir=flatDir)
+    lampsoff_copied = instrument.make_filenames(offFiles, rootDir=flatDir)
+    
     lampsonNorm = instrument.make_filenames(onFiles, rootDir=flatDir + 'norm')
     util.rmall(lampsonNorm)
     
-    # Write out the sources of the dark files
+    # Copy files
+    for ii in range(len(lampson_copied)):
+        if os.path.exists(lampson_copied[ii]): os.remove(lampson_copied[ii])
+        shutil.copy(lampson[ii], lampson_copied[ii])
+    
+    for ii in range(len(lampsoff_copied)):
+        if os.path.exists(lampsoff_copied[ii]): os.remove(lampsoff_copied[ii])
+        shutil.copy(lampsoff[ii], lampsoff_copied[ii])
+    
+    # Write out the sources of the flat files
     data_sources_file = open(redDir + 'data_sources.txt', 'a')
     
     data_sources_file.write(
@@ -152,12 +180,66 @@ def makeflat(onFiles, offFiles, output, normalizeFirst=False,
     
     data_sources_file.close()
     
+    # If dark frame is provided, carry out dark correction
+    if dark_frame is not None:
+        dark_file = redDir + '/calib/darks/' + dark_frame
+        
+        # Read in dark frame data
+        dark_data = fits.getdata(dark_file, ignore_missing_end=True)
+        
+        # Go through each flat file
+        for i in range(len(lampson_copied)):            
+            with fits.open(lampson_copied[i], mode='readonly',
+                    ignore_missing_end=True,
+                    output_verify = 'ignore') as cur_flat:
+                flat_data = cur_flat[0].data
+                flat_header = cur_flat[0].header
+            flat_data = flat_data - dark_data
+            flat_hdu = fits.PrimaryHDU(
+                data=flat_data,
+                header=flat_header)
+            
+            flat_hdu.writeto(
+                lampson_copied[i],
+                output_verify='ignore',
+                overwrite=True)
+        
+        for i in range(len(lampsoff_copied)):            
+            with fits.open(lampsoff_copied[i], mode='readonly',
+                    ignore_missing_end=True,
+                    output_verify = 'ignore') as cur_flat:
+                flat_data = cur_flat[0].data
+                flat_header = cur_flat[0].header
+            
+            flat_data = flat_data - dark_data
+            flat_hdu = fits.PrimaryHDU(
+                data=flat_data,
+                header=flat_header)
+            flat_hdu.writeto(
+                lampsoff_copied[i],
+                output_verify='ignore',
+                overwrite=True)
+    else:
+        warning_message = 'Dark frame not provided for makesky().'
+        warning_message += '\nUsing flat frames without dark subtraction.'
+        
+        warnings.warn(warning_message)
+    
+    # Perform linearity correction
+    for i in range(len(lampson_copied)):
+        lin_correction.lin_correction(lampson_copied[i],
+                                      instrument=instrument)
+    
+    for i in range(len(lampsoff_copied)):
+        lin_correction.lin_correction(lampsoff_copied[i],
+                                      instrument=instrument)
+    
     if (len(offFiles) != 0):
         f_on = open(_onlis, 'w')
-        f_on.write('\n'.join(lampson) + '\n')
+        f_on.write('\n'.join(lampson_copied) + '\n')
         f_on.close()
         f_on = open(_offlis, 'w')
-        f_on.write('\n'.join(lampsoff) + '\n')
+        f_on.write('\n'.join(lampsoff_copied) + '\n')
         f_on.close()
         f_onn = open(_onNormLis, 'w')
         f_onn.write('\n'.join(lampsonNorm) + '\n')
@@ -206,7 +288,7 @@ def makeflat(onFiles, offFiles, output, normalizeFirst=False,
 
     else:
         f_on = open(_onlis, 'w')
-        f_on.write('\n'.join(lampson) + '\n')
+        f_on.write('\n'.join(lampson_copied) + '\n')
         f_on.close()
 
         # Combine twilight flats

@@ -130,7 +130,7 @@ def keckDARcoeffs(lamda, year, month, day, hour, minute):
     # Relative humidity (%)
     # Should be around 0.1 %
     rh = atmHumidity[sdx[0]] / 100.0 #relative humidity should be between 0 and 1
-    print(hm, tdk, pmb, rh, lamda, phi, tlr, eps)
+    # print(hm, tdk, pmb, rh, lamda, phi, tlr, eps)
     return slalib.refco(hm, tdk, pmb, rh, lamda, phi, tlr, eps)
 
 def download_koa_dat_files(date_str, telescope_str, param_name, download_loc='./'):
@@ -599,23 +599,103 @@ def applyDAR(inputFits, spaceStarlist, plot=False, instrument=instruments.defaul
     #     py.show()
         
     if (plot==True):
-        plt.close('all')
+        # plt.close('all')
+        # plt.plot(figsize=(4,4))
         q = plt.quiver(x, y, xnew - x, ynew - y, scale=0.02)
-        plt.xlabel('RA (arcsec)')
-        plt.ylabel('DEC (arcsec)')
-        plt.xlabel(r'$\Delta$ RA * cos(DEC) (arcsec)')
-        plt.ylabel(r'$\Delta$ DEC (arcsec)')
+        # plt.xlabel('RA (arcsec)')
+        # plt.ylabel('DEC (arcsec)')
+        plt.xlabel(r'$\Delta$ RA * cos(Dec) (arcsec)')
+        plt.ylabel(r'$\Delta$ Dec (arcsec)')
         plt.figtext(0.15,0.85,'q =' + str(round(math.degrees(pa))))
+        plt.axis('equal')
         quiv_label = '1 mas'
         quiv_label_val = 0.001
-        plt.quiverkey(q, 0.80, 0.85, quiv_label_val, quiv_label, coordinates='figure', labelpos='E', color='green')     
-        plt.savefig(plotdir+ inputFits[-26:-5] + '.jpg', bbox_inches='tight')
+        plt.quiverkey(q, 0.78, 0.85, quiv_label_val, quiv_label, coordinates='figure', labelpos='E', color='green')     
+        plt.savefig(plotdir+ inputFits[-26:-5] + '.pdf', bbox_inches='tight')
         # plt.show()
 
     spaceStarlist['x0'] = xnew
     spaceStarlist['y0'] = ynew 
 
     return spaceStarlist
+
+
+def removeDAR(inputFits, groundStarlist, plot=False, instrument=instruments.default_inst, plotdir = './'):
+    """
+
+    inputFits: (str) name of fits file associated with this starlist
+
+    groundStarlist: (astropy table) must include columns 'x' and 'y'.
+
+    The inverse of applyDAR(). Takes a starlist in x and y pixels taken from
+    the ground and removes differential atmospheric refraction (DAR). The amount
+    of DAR that is applied depends on the header information in the input fits
+    file. The resulting output starlist should contain what would be observed above the atmosphere.
+    Distortion should be applied before this function. Only achromatic DAR is 
+    applied in this code.
+
+    returns groundStarlist with updated 'x0' and 'y0'
+    """
+
+    (darCoeffL, darCoeffQ) = kaidar(inputFits, instrument=instrument)
+    hdr = pyfits.getheader(inputFits)
+
+    imgsizeX = int(hdr['NAXIS1'])
+    imgsizeY = int(hdr['NAXIS2'])
+    halfX = int(round(imgsizeX / 2.0))
+    halfY = int(round(imgsizeY / 2.0))
+
+    scale = instrument.get_plate_scale(hdr)
+    darCoeffL *= 1.0                
+    darCoeffQ *= 1.0 * scale #/ 206265.0   
+    pa = math.radians(instrument.get_parallactic_angle(hdr) + instrument.get_position_angle(hdr))
+  
+    x = groundStarlist['x']     # in pixels, x increasing to west?
+    y = groundStarlist['y']
+
+    xnew1 = x - halfX
+    ynew1 = y - halfY
+
+    # Rotate coordinates clockwise by PA so that zenith is along +ynew2
+    # PA = parallactic angle (angle from +y to zenith going CCW)
+    sina = math.sin(pa)
+    cosa = math.cos(pa)
+
+    xnew2 = xnew1 * cosa + ynew1 * sina
+    ynew2 = -xnew1 * sina + ynew1 * cosa
+
+    # Apply DAR correction along the y axis
+    xnew3 = xnew2
+    ynew3 = ynew2*(1 + darCoeffL) + ynew2*np.abs(ynew2)*darCoeffQ
+
+    # Rotate coordinates counter-clockwise by PA back to original
+    xnew4 = xnew3 * cosa - ynew3 * sina
+    ynew4 = xnew3 * sina + ynew3 * cosa
+
+    xnew = xnew4 + halfX
+    ynew = ynew4 + halfY
+
+
+    if (plot==True):
+        # plt.close('all')
+        plt.figure(figsize=(6,6))
+        q = plt.quiver(x, y, xnew - x, ynew - y, scale=2.0)
+        plt.xlabel('x (pixels)')
+        plt.ylabel('y (pixels)')
+        # plt.xlabel(r'$\Delta$ RA * cos(DEC) (arcsec)')
+        # plt.ylabel(r'$\Delta$ DEC (arcsec)')
+        plt.figtext(0.15,0.85,'q =' + str(round(math.degrees(pa))))
+        quiv_label = '0.1 pix'
+        quiv_label_val = 0.1
+        plt.quiverkey(q, 0.80, 0.85, quiv_label_val, quiv_label, coordinates='figure', labelpos='E', color='green')     
+        plt.savefig(plotdir+ inputFits[-26:-5] + '.jpg', bbox_inches='tight')
+        # plt.show()
+
+
+    groundStarlist['x'] = xnew
+    groundStarlist['y'] = ynew 
+
+    return groundStarlist  
 
 def splitAtmosphereCFHT(year):
     """

@@ -2,7 +2,7 @@ from astropy.io import fits
 from astropy.table import Table
 from astropy import stats
 import os, sys, shutil
-from kai.reduce import util
+from kai.reduce import util, lin_correction
 #import util
 import numpy as np
 from pyraf import iraf as ir
@@ -10,12 +10,16 @@ from kai import instruments
 from datetime import datetime
 import pdb
 import astropy
+import warnings
 from pkg_resources import parse_version
 
-def makesky(files, nite,
-            wave, skyscale=True,
-            raw_dir=None,
-            instrument=instruments.default_inst):
+def makesky(
+        files, nite,
+        wave, dark_frame=None,
+        skyscale=True,
+        raw_dir=None,
+        instrument=instruments.default_inst,
+    ):
     """
     Make short wavelength (not L-band or longer) skies.
     
@@ -28,6 +32,10 @@ def makesky(files, nite,
         inside the reduce sub-directories.
     wave : str
         Name for the observation passband (e.g.: "kp")
+    dark_frame : str, default=None
+        File name for the dark frame in order to carry out dark correction.
+        If not provided, dark frame is not subtracted and a warning is thrown.
+        Assumes dark file is located under ./calib/darks/
     skyscale : bool, default=True
         Whether or not to scale the sky files to the common median.
         Turn on for scaling skies before subtraction.
@@ -86,6 +94,36 @@ def makesky(files, nite,
         data_sources_file.write(out_line)
     
     data_sources_file.close()
+    
+    # If dark frame is provided, carry out dark correction
+    if dark_frame is not None:
+        dark_file = redDir + '/calib/darks/' + dark_frame
+        
+        # Read in dark frame data
+        dark_data = fits.getdata(dark_file, ignore_missing_end=True)
+        
+        # Go through each sky file
+        for i in range(len(skies)):        
+            with fits.open(nn[i], mode='readonly', output_verify = 'ignore', 
+            ignore_missing_end=True) as cur_sky:
+                sky_data = cur_sky[0].data
+                sky_header = cur_sky[0].header
+            sky_data = sky_data - dark_data
+            sky_hdu = fits.PrimaryHDU(
+                data=sky_data,
+                header=sky_header)
+            sky_hdu.writeto(nn[i], output_verify='ignore',
+            overwrite=True)
+    else:
+        warning_message = 'Dark frame not provided for makesky().'
+        warning_message += '\nUsing sky frames without dark subtraction.'
+        
+        warnings.warn(warning_message)
+    
+    
+    # Perform linearity correction
+    for i in range(len(skies)):
+        lin_correction.lin_correction(nn[i], instrument=instrument)
     
     # scale skies to common median
     if skyscale:
@@ -151,9 +189,13 @@ def makesky(files, nite,
     os.chdir('../')
 
 
-def makesky_lp(files, nite, wave, number=3, rejectHsigma=None,
-               raw_dir=None,
-               instrument=instruments.default_inst):
+def makesky_lp(
+        files, nite,
+        wave, dark_frame=None,
+        number=3, rejectHsigma=None,
+        raw_dir=None,
+        instrument=instruments.default_inst,
+    ):
     """
     Make L' skies by carefully treating the ROTPPOSN angle
     of the K-mirror. Uses 3 skies combined (set by number keyword).
@@ -167,6 +209,10 @@ def makesky_lp(files, nite, wave, number=3, rejectHsigma=None,
         inside the reduce sub-directories.
     wave : str
         Name for the observation passband (e.g.: "lp")
+    dark_frame : str, default=None
+        File name for the dark frame in order to carry out dark correction.
+        If not provided, dark frame is not subtracted and a warning is thrown.
+        Assumes dark file is located under ./calib/darks/
     number : int, default=3
         Number of skies to be combined
     rejectHsigma : int, default:None
@@ -199,19 +245,23 @@ def makesky_lp(files, nite, wave, number=3, rejectHsigma=None,
     print('sky dir: ',skyDir)
     print('wave dir: ',waveDir)
     
-    raw = instrument.make_filenames(files, rootDir=rawDir)
+    # Copy over the raw sky files into the sky directory
     skies = instrument.make_filenames(files, rootDir=skyDir)
+    raw = instrument.make_filenames(files, rootDir=rawDir)
+
+    for ii in range(len(skies)):
+        if os.path.exists(skies[ii]): os.remove(skies[ii])
+        shutil.copy(raw[ii], skies[ii])
     
     # Write out the sources of the sky files
     data_sources_file = open(redDir + 'data_sources.txt', 'a')
     data_sources_file.write('---\n# Sky Files ({0})\n'.format(wave))
     
-    for cur_file in skies:
+    for cur_file in raw:
         out_line = '{0} ({1})\n'.format(cur_file, datetime.now())
         data_sources_file.write(out_line)
     
     data_sources_file.close()
-    
     
     _rawlis = skyDir + 'raw.lis'
     _nlis = skyDir + 'n.lis'
@@ -224,11 +274,41 @@ def makesky_lp(files, nite, wave, number=3, rejectHsigma=None,
 
     open(_rawlis, 'w').write('\n'.join(raw)+'\n')
     open(_nlis, 'w').write('\n'.join(skies)+'\n')
-
+    
     print('makesky_lp: Getting raw files')
-    ir.imcopy('@' + _rawlis, '@' + _nlis, verbose='no')
-    ir.hselect('@' + _nlis, "$I,ROTPPOSN", 'yes', Stdout=_skyRot) 
 
+    write_sky_rot_file(_rawlis, _nlis, _skyRot)
+    
+    # If dark frame is provided, carry out dark correction
+    if dark_frame is not None:
+        dark_file = redDir + '/calib/darks/' + dark_frame
+        
+        # Read in dark frame data
+        dark_data = fits.getdata(dark_file, ignore_missing_end=True)
+        
+        # Go through each sky file
+        for i in range(len(skies)):        
+            with fits.open(skies[i], mode='readonly', output_verify = 'ignore', 
+            ignore_missing_end=True) as cur_sky:
+                sky_data = cur_sky[0].data
+                sky_header = cur_sky[0].header
+            sky_data = sky_data - dark_data
+            sky_hdu = fits.PrimaryHDU(
+            data=sky_data, 
+            header=sky_header)
+            sky_hdu.writeto(skies[i], 
+            output_verify='ignore', 
+            overwrite=True)
+    else:
+        warning_message = 'Dark frame not provided for makesky_lp().'
+        warning_message += '\nUsing sky frames without dark subtraction.'
+        
+        warnings.warn(warning_message)
+    
+    # Perform linearity correction
+    for i in range(len(skies)):
+        lin_correction.lin_correction(skies[i], instrument=instrument)
+    
     # Read in the list of files and rotation angles
     files, angles = read_sky_rot_file(_skyRot)
 
@@ -333,8 +413,8 @@ def makesky_lp2(files, nite, wave):
     open(_nlis, 'w').write('\n'.join(skies)+'\n')
 
     print('makesky_lp: Getting raw files')
-    ir.imcopy('@' + _rawlis, '@' + _nlis, verbose='no')
-    ir.hselect('@' + _nlis, "$I,ROTPPOSN", 'yes', Stdout=_skyRot) 
+    
+    write_sky_rot_file(_rawlis, _nlis, _skyRot)
 
     # Read in the list of files and rotation angles
     files, angles = read_sky_rot_file(_skyRot)
@@ -394,12 +474,16 @@ def makesky_lp2(files, nite, wave):
 
     #ir.imdelete('@' + _nlis)
 
-def makesky_fromsci(files, nite, wave):
+def makesky_fromsci(files, nite, wave, instrument=instruments.default_inst):
     """Make short wavelength (not L-band or longer) skies."""
+
+    util.mkdir(wave)
+    os.chdir(wave)
 
     # Start out in something like '06maylgs1/reduce/kp/'
     waveDir = os.getcwd() + '/'
     redDir = util.trimdir(os.path.abspath(waveDir + '../') + '/')
+    # redDir = waveDir #I'm running in /reduce. manually move wavedir afterwards? - Matthew
     rootDir = util.trimdir(os.path.abspath(redDir + '../') + '/')
     skyDir = waveDir + 'sky_' + nite + '/'
     rawDir = rootDir + 'raw/'
@@ -407,6 +491,8 @@ def makesky_fromsci(files, nite, wave):
     util.mkdir(skyDir)
     print('sky dir: ',skyDir)
     print('wave dir: ',waveDir)
+    # print('raw dir: ',rawDir)
+    # print('red dir: ',redDir)
 
     skylist = skyDir + 'skies_to_combine.lis'
     output = skyDir + 'sky_' + wave + '.fits'
@@ -435,7 +521,7 @@ def makesky_fromsci(files, nite, wave):
     sky_std = np.zeros([len(skies)], dtype=float)
 
     for ii in range(len(nn)):
-        img_sky = fits.getdata(nn[i], ignore_missing_end=True)
+        img_sky = fits.getdata(nn[ii], ignore_missing_end=True)
         if parse_version(astropy.__version__) < parse_version('3.0'):
             sky_stats = stats.sigma_clipped_stats(img_sky,
                                                   sigma_lower=10, sigma_upper=3,
@@ -463,6 +549,9 @@ def makesky_fromsci(files, nite, wave):
     ir.imcombine.hthreshold = hthreshold
 
     ir.imcombine('@' + skylist, output)
+   
+    # Change back to original directory
+    os.chdir('../')
 
 def makesky_lp_fromsci(files, nite, wave, number=3, rejectHsigma=None):
     """Make L' skies by carefully treating the ROTPPOSN angle
@@ -501,6 +590,7 @@ def makesky_lp_fromsci(files, nite, wave, number=3, rejectHsigma=None):
     ir.imarith('@'+_rawlis, '/', flat, '@'+_nlis)
     #ir.imcopy('@' + _rawlis, '@' + _nlis, verbose='no')
     ir.hselect('@' + _nlis, "$I,ROTPPOSN", 'yes', Stdout=_skyRot) 
+    #write_sky_rot_file(_rawlis, _nlis, _skyRot)
 
     # Read in the list of files and rotation angles
     files, angles = read_sky_rot_file(_skyRot)
@@ -579,11 +669,35 @@ def makesky_lp_fromsci(files, nite, wave, number=3, rejectHsigma=None):
 
 def read_sky_rot_file(sky_rot_file):
     """Read in the list of files and rotation angles."""
-    
     rotTab = Table.read(sky_rot_file, format='ascii', header_start=None)
     cols = list(rotTab.columns.keys())
     files = rotTab[cols[0]]
     angles = rotTab[cols[1]]
 
     return files, angles
+    
+def write_sky_rot_file(rawlis, nlis, skyRot):
+    """Write the list of files and rotation angles in Lp.
+    Created to avoid using pyraf which causes issues when dealing
+    with non-fits conforming headers."""
+    # 1. Copy file
+    shutil.copyfile(rawlis, nlis)
+    # 2. Loop through files to obtain ROTPPOSN header and append to list
+    with open(nlis) as file:
+        contents = file.read().split('\n')
+    rot = []
+    for fit in contents:
+        try:
+            with fits.open(fit, mode='readonly', output_verify = 'ignore', 
+                           ignore_missing_end = True) as rot_hdu:
+                rot_header = rot_hdu[0].header
+                rot.append(rot_header['ROTPPOSN'])
+        except:
+            continue
+    # 3. Write in skyRot the name of the file and the header values
+    with open(skyRot, 'at') as edit:
+        for jj, ii in enumerate(rot):
+            edit.write(contents[jj] + '\t' + str(ii) + '\n')
+
+    
     
