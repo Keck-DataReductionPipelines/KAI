@@ -122,8 +122,9 @@ def makesky(
     
     
     # Perform linearity correction
-    for i in range(len(skies)):
-        lin_correction.lin_correction(nn[i], instrument=instrument)
+    if instrument is 'NIRC2':
+        for i in range(len(skies)):
+            lin_correction.lin_correction(nn[i], instrument=instrument)
     
     # scale skies to common median
     if skyscale:
@@ -306,8 +307,9 @@ def makesky_lp(
         warnings.warn(warning_message)
     
     # Perform linearity correction
-    for i in range(len(skies)):
-        lin_correction.lin_correction(skies[i], instrument=instrument)
+    if instrument is 'NIRC2':
+        for i in range(len(skies)):
+            lin_correction.lin_correction(skies[i], instrument=instrument)
     
     # Read in the list of files and rotation angles
     files, angles = read_sky_rot_file(_skyRot)
