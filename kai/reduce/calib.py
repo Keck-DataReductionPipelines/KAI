@@ -10,6 +10,7 @@ import astropy
 from datetime import datetime
 from pkg_resources import parse_version
 import warnings
+import pdb
 
 module_dir = os.path.dirname(__file__)
 
@@ -225,14 +226,15 @@ def makeflat(
         
         warnings.warn(warning_message)
     
-    # Perform linearity correction
-    for i in range(len(lampson_copied)):
-        lin_correction.lin_correction(lampson_copied[i],
-                                      instrument=instrument)
-    
-    for i in range(len(lampsoff_copied)):
-        lin_correction.lin_correction(lampsoff_copied[i],
-                                      instrument=instrument)
+    # Perform linearity correction [only NIRC2]
+    if instrument is 'NIRC2':
+        for i in range(len(lampson_copied)):
+            lin_correction.lin_correction(lampson_copied[i],
+                instrument=instrument)
+
+        for i in range(len(lampsoff_copied)):
+            lin_correction.lin_correction(lampsoff_copied[i],
+                instrument=instrument)
     
     if (len(offFiles) != 0):
         f_on = open(_onlis, 'w')
