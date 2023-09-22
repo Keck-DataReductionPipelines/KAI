@@ -196,8 +196,9 @@
     
     
     <span class="c1"># Perform linearity correction</span>
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">skies</span><span class="p">)):</span>
-        <span class="n">lin_correction</span><span class="o">.</span><span class="n">lin_correction</span><span class="p">(</span><span class="n">nn</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">instrument</span><span class="o">=</span><span class="n">instrument</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">instrument</span> <span class="ow">is</span> <span class="s1">&#39;NIRC2&#39;</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">skies</span><span class="p">)):</span>
+            <span class="n">lin_correction</span><span class="o">.</span><span class="n">lin_correction</span><span class="p">(</span><span class="n">nn</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">instrument</span><span class="o">=</span><span class="n">instrument</span><span class="p">)</span>
     
     <span class="c1"># scale skies to common median</span>
     <span class="k">if</span> <span class="n">skyscale</span><span class="p">:</span>
@@ -383,8 +384,9 @@
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">warning_message</span><span class="p">)</span>
     
     <span class="c1"># Perform linearity correction</span>
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">skies</span><span class="p">)):</span>
-        <span class="n">lin_correction</span><span class="o">.</span><span class="n">lin_correction</span><span class="p">(</span><span class="n">skies</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">instrument</span><span class="o">=</span><span class="n">instrument</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">instrument</span> <span class="ow">is</span> <span class="s1">&#39;NIRC2&#39;</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">skies</span><span class="p">)):</span>
+            <span class="n">lin_correction</span><span class="o">.</span><span class="n">lin_correction</span><span class="p">(</span><span class="n">skies</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">instrument</span><span class="o">=</span><span class="n">instrument</span><span class="p">)</span>
     
     <span class="c1"># Read in the list of files and rotation angles</span>
     <span class="n">files</span><span class="p">,</span> <span class="n">angles</span> <span class="o">=</span> <span class="n">read_sky_rot_file</span><span class="p">(</span><span class="n">_skyRot</span><span class="p">)</span>

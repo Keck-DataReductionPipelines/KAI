@@ -366,7 +366,8 @@
                 <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
             
             <span class="c1"># Linearity correction</span>
-            <span class="n">lin_correction</span><span class="o">.</span><span class="n">lin_correction</span><span class="p">(</span><span class="n">_cp</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">instrument</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">instrument</span> <span class="ow">is</span> <span class="s1">&#39;NIRC2&#39;</span><span class="p">:</span>
+                <span class="n">lin_correction</span><span class="o">.</span><span class="n">lin_correction</span><span class="p">(</span><span class="n">_cp</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">instrument</span><span class="p">)</span>
             
             <span class="c1">### Sky subtract ###</span>
             <span class="c1"># Get the proper sky for this science frame.</span>
