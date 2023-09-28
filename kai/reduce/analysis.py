@@ -13,6 +13,26 @@ from datetime import datetime
 import subprocess
 import pylab as py
 import pdb
+from multiprocessing import Pool
+
+def idl_process_run(batch_file):
+    """
+    Function to help run parallel processes for IDL, used for StarFinder
+    
+    Parameters
+    ----------
+    batch_file : str
+        Path of the bath file containing the IDL command to run
+    """
+    
+    batch_file_log = batch_file + '.log'
+    
+    cmd = 'idl < ' + batch_file + ' >& ' + batch_file_log            
+    #os.system(cmd)
+    subp = subprocess.Popen(cmd, shell=True, executable="/bin/tcsh")
+    tmp = subp.communicate()
+    
+    return
 
 class Analysis(object):
     """
@@ -26,7 +46,8 @@ class Analysis(object):
                  combo_stf_dir = None,
                  epochDirSuffix=None, imgSuffix=None, stfDir=None,
                  useDistorted=False, cleanList='c.lis',
-                 airopa_mode='single', stf_version=None,
+                 airopa_mode='single', stf_version=None, stf_debug=False,
+                 stf_parallelize=False,
                  instrument=instruments.default_inst):
         """
         Set up Analysis object.
@@ -56,6 +77,12 @@ class Analysis(object):
             (e.g.: 'v3_1')
         instrument : instruments object, optional
             Instrument of data. Default is `instruments.default_inst`
+        stf_debug : boolean, default=False
+            Keyword to specify if starfinder should be run in debug mode
+        stf_parallelize : boolean, default=True
+            Keyword to specify if starfinder runs on main map and sub maps
+            should be run in parallel.
+            By default, runs in parallel (all 4 run together).
         """
         # Setup default parameters
         self.type = 'ao'
@@ -66,6 +93,8 @@ class Analysis(object):
         self.airopa_mode = airopa_mode
         self.trimfake = 1
         self.stfFlags = ''
+        self.stf_debug = stf_debug
+        self.stf_parallelize = stf_parallelize
 
         self.starlist = rootDir + 'source_list/psf_central.dat'
         self.labellist = rootDir+ 'source_list/label.dat'
@@ -251,40 +280,92 @@ class Analysis(object):
             
             os.chdir(self.dirComboStf)
             if self.type == 'ao':
-                # Write an IDL batch file
-                fileIDLbatch = 'idlbatch_combo_' + self.filt
-                fileIDLlog = fileIDLbatch + '.log'
-                util.rmall([fileIDLlog, fileIDLbatch])
-
-                _batch = open(fileIDLbatch, 'w')
-                _batch.write("find_stf_new, ")
-                _batch.write("'" + self.epoch + "', ")
-                _batch.write("'" + self.filt + "', ")
-                _batch.write("corr_main=%3.1f, " % self.corrMain)
-                _batch.write("corr_subs=%3.1f, " % self.corrSub)
-                # Only send in the deblend flag if using it!
-                if self.deblend != None:
-                    _batch.write("deblend=" + str(self.deblend) + ", ")
-                _batch.write("cooStar='" + self.cooStar + "', ")
-                _batch.write("suffixEpoch='" + self.suffix + "', ")
-                _batch.write("imgSuffix='" + self.imgSuffix + "', ")
-                _batch.write("starlist='" + self.starlist + "', ")
-                if self.airopa_mode == 'legacy':
-                    _batch.write("/legacy, ")
-                if self.airopa_mode == 'variable':
-                    _batch.write("/aoopt, ")
-                _batch.write("trimfake=" + str(self.trimfake) + ", ")
-                if not oldPsf:
-                    _batch.write("/makePsf, ")
+                # Write an IDL batch file for the main map and each submap
+                batch_files = []
+                batch_file_logs = []
                 
-                _batch.write("rootDir='" + self.rootDir + "'")
-
-                # Support for arbitrary starfinder flags.
-                _batch.write(self.stfFlags)
+                combos = ['main', '1', '2', '3']
                 
-                _batch.write("\n")
-                _batch.write("exit\n")
-                _batch.close()
+                for cur_combo in combos:
+                    batch_file = 'idlbatch_main_' + self.filt
+                    batch_file_log = batch_file + '.log'
+                    
+                    if cur_combo != 'main':
+                        batch_file = 'idlbatch_sm{0}_{1}'.format(cur_combo, self.filt)
+                        batch_file_log = batch_file + '.log'
+                    
+                    util.rmall([batch_file, batch_file_log])
+                
+                    batch_out = ""
+                    
+                    combo_file_path = "{0}/mag{1}_{2}.fits".format(
+                        self.dirCombo, self.epoch, self.filt,
+                    )
+                    
+                    if cur_combo != 'main':
+                        combo_file_path = "{0}/m{1}_{2}_{3}.fits".format(
+                            self.dirCombo, self.epoch, self.filt, cur_combo,
+                        )
+                    
+                    batch_out += "find_stf, "
+                    batch_out += "'{0}', ".format(combo_file_path)
+                    
+                    if cur_combo == 'main':
+                        batch_out += "{0:3.1f}, ".format(self.corrMain)
+                    else:
+                        batch_out += "{0:3.1f}, ".format(self.corrSub)
+                    
+                    batch_out += "ttStar='TTstar', gsStar='', "
+                
+                    # Add deblend flag if using it
+                    if self.deblend != None:
+                        batch_out += "deblend={0}, ".format(self.deblend)
+                
+                    if not oldPsf:
+                        batch_out += "/makePsf, "
+                
+                    batch_out += "makeRes=1, "
+                    batch_out += "makeStars=1, "
+                    
+                    if self.airopa_mode == 'legacy':
+                        batch_out += "/legacy, "
+                
+                    if self.airopa_mode == 'variable':
+                        batch_out += "/aoopt, "
+                
+                    batch_out += "cooStar='{0}', ".format(self.cooStar)
+                    batch_out += "starlist='{0}', ".format(self.starlist)
+                    batch_out += "trimfake={0}, ".format(self.trimfake)
+                
+                    if self.stf_debug:
+                        batch_out += "/debug, "
+                
+                    batch_out += "fixPsf=1, "
+                    batch_out += "backboxFWHM=25, "
+                    batch_out += "flat=1, "
+                    batch_out += "subtract=1"
+                    
+                    # Support for arbitrary starfinder flags.
+                    batch_out += self.stfFlags
+                
+                    batch_out += "\n"
+                    batch_out += "exit\n"
+                    
+                    # Write out the current batch file's contents
+                    with open(batch_file, 'w') as out_file:
+                        out_file.write(batch_out)
+                    
+                    batch_files.append(batch_file)
+                    batch_file_logs.append(batch_file_log)
+                
+                if self.stf_parallelize:
+                    stf_pool = Pool(processes=4)
+                    
+                    stf_pool.map(idl_process_run, batch_files)
+                else:
+                    for batch_file in batch_files:
+                        idl_process_run(batch_file)
+                
             elif self.type == 'speckle':
                 fileIDLbatch = 'idlbatch_combo' 
                 fileIDLlog = fileIDLbatch + '.log'
@@ -311,11 +392,11 @@ class Analysis(object):
                 _batch.write("\n")
                 _batch.write("exit\n")
                 _batch.close()
-            
-            cmd = 'idl < ' + fileIDLbatch + ' >& ' + fileIDLlog            
-            #os.system(cmd)
-            subp = subprocess.Popen(cmd, shell=True, executable="/bin/tcsh")
-            tmp = subp.communicate()
+                
+                cmd = 'idl < ' + fileIDLbatch + ' >& ' + fileIDLlog            
+                #os.system(cmd)
+                subp = subprocess.Popen(cmd, shell=True, executable="/bin/tcsh")
+                tmp = subp.communicate()
             
             # Write data_sources file
             data_sources_file = open(self.dirComboStf + '/data_sources.txt', 'w')
