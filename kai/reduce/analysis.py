@@ -47,7 +47,7 @@ class Analysis(object):
                  epochDirSuffix=None, imgSuffix=None, stfDir=None,
                  useDistorted=False, cleanList='c.lis',
                  airopa_mode='single', stf_version=None, stf_debug=False,
-                 stf_parallelize=False,
+                 stf_parallelize=True,
                  instrument=instruments.default_inst):
         """
         Set up Analysis object.
