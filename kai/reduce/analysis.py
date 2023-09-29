@@ -366,6 +366,14 @@ class Analysis(object):
                     for batch_file in batch_files:
                         idl_process_run(batch_file)
                 
+                # Combine all log files into one combo log file
+                # (to preserve backward compatibility for code that reads log files)
+                fileIDLlog = 'idlbatch_combo_' + self.filt + '.log'
+                with open(fileIDLlog, 'wb') as out_file:
+                    for log_file in batch_file_logs:
+                        with open(log_file, 'rb') as in_file:
+                            out_file.write(in_file.read())
+                
             elif self.type == 'speckle':
                 fileIDLbatch = 'idlbatch_combo' 
                 fileIDLlog = fileIDLbatch + '.log'
