@@ -86,9 +86,9 @@ class Analysis(object):
         """
         # Setup default parameters
         self.type = 'ao'
-        self.corrMain = 0.8
-        self.corrSub = 0.6
-        self.corrClean = 0.7
+        self.corrMain = [0.8]
+        self.corrSub = [0.6]
+        self.corrClean = [0.7]
         # airopa mode can be "legacy", "single", or "variable"
         self.airopa_mode = airopa_mode
         self.trimfake = 1
@@ -311,9 +311,9 @@ class Analysis(object):
                     batch_out += "'{0}', ".format(combo_file_path)
                     
                     if cur_combo == 'main':
-                        batch_out += "{0:3.1f}, ".format(self.corrMain)
+                        batch_out += "{0}, ".format(self.corrMain)
                     else:
-                        batch_out += "{0:3.1f}, ".format(self.corrSub)
+                        batch_out += "{0}, ".format(self.corrSub)
                     
                     batch_out += "ttStar='TTstar', gsStar='', "
                 
@@ -346,7 +346,7 @@ class Analysis(object):
                     batch_out += "subtract=1"
                     
                     # Support for arbitrary starfinder flags.
-                    batch_out += self.stfFlags
+                    batch_out += ", {}".format(self.stfFlags)
                 
                     batch_out += "\n"
                     batch_out += "exit\n"
@@ -382,8 +382,8 @@ class Analysis(object):
                 _batch = open(fileIDLbatch, 'w')
                 _batch.write("find_new_speck, ")
                 _batch.write("'" + self.epoch + "', ")
-                _batch.write("corr_main=%3.1f, " % self.corrMain)
-                _batch.write("corr_subs=%3.1f, " % self.corrSub)
+                _batch.write("corr_main={0}, " % self.corrMain)
+                _batch.write("corr_subs={0}, " % self.corrSub)
                 _batch.write("starlist='" + self.starlist + "', ")
                 if self.airopa_mode == 'legacy':
                     _batch.write("/legacy, ")
@@ -653,14 +653,14 @@ class Analysis(object):
             for ss in range(self.numSubMaps):
                 if self.type == 'speckle':
                     fileSub = 'm%s_%d_%3.1f_stf.lis' % \
-                        (self.epoch, ss+1, self.corrSub)
+                        (self.epoch, ss+1, self.corrSub[0])
                 else:
                     if self.deblend == 1:
                         fileSub = 'm%s%s_%s_%d_%3.1fd_stf.lis' % \
-                        (self.epoch, self.imgSuffix, self.filt, ss+1, self.corrSub)
+                        (self.epoch, self.imgSuffix, self.filt, ss+1, self.corrSub[0])
                     else:
                         fileSub = 'm%s%s_%s_%d_%3.1f_stf.lis' % \
-                        (self.epoch, self.imgSuffix, self.filt, ss+1, self.corrSub)
+                        (self.epoch, self.imgSuffix, self.filt, ss+1, self.corrSub[0])
 
                 print(cmd + fileSub)
                 
@@ -744,8 +744,8 @@ class Analysis(object):
             os.chdir(self.dirComboAln)
 
             # Put the files in to the align*.list file
-            alnList1 = 'align%s%s_%3.1f.list' % (self.imgSuffix, file_ext, self.corrMain)
-            alnList2 = 'align%s%s_%3.1f_named.list' % (self.imgSuffix, file_ext, self.corrMain)
+            alnList1 = 'align%s%s_%3.1f.list' % (self.imgSuffix, file_ext, self.corrMain[0])
+            alnList2 = 'align%s%s_%3.1f_named.list' % (self.imgSuffix, file_ext, self.corrMain[0])
 
 
             _list = open(alnList1, 'w')
@@ -758,10 +758,10 @@ class Analysis(object):
             for ss in range(self.numSubMaps):
                 if self.deblend == 1:
                     _list.write('../m%s%s%s_%d_%3.1fd_stf_cal.lis %d\n' %
-                                (self.epoch, self.imgSuffix, file_ext, ss+1, self.corrSub, alignType))
+                                (self.epoch, self.imgSuffix, file_ext, ss+1, self.corrSub[0], alignType))
                 else:
                     _list.write('../m%s%s%s_%d_%3.1f_stf_cal.lis %d\n' %
-                                (self.epoch, self.imgSuffix, file_ext, ss+1, self.corrSub, alignType))
+                                (self.epoch, self.imgSuffix, file_ext, ss+1, self.corrSub[0], alignType))
 
                     
             _list.close()
