@@ -47,7 +47,7 @@ def clean(files, nite, wave, refSrc, strSrc, badColumns=None, field=None,
           skyscale=False, skyfile=None, angOff=0.0, cent_box=12,
           fixDAR=True, use_koa_weather=False,
           raw_dir=None, clean_dir=None,
-          instrument=instruments.default_inst, check_ref_loc=True):
+          instrument=instruments.default_inst, check_ref_loc=True, update_from_AO = True):
     """
     Clean near infrared NIRC2 or OSIRIS images.
 
@@ -1939,7 +1939,10 @@ def clean_makecoo(_ce, _cc, refSrc, strSrc, aotsxyRef, radecRef,
     # We've been using aotsxy2pix, but the keywords are wrong
     # for 07maylgs and 07junlgs
     #d_xy = kai_util.radec2pix(radec, phi, scale, radecRef)
-    d_xy = kai_util.aotsxy2pix(aotsxy, scale, aotsxyRef, inst_angle=inst_angle)
+    if update_from_AO:
+        d_xy = kai_util.aotsxy2pix(aotsxy, scale, aotsxyRef, inst_angle=inst_angle)
+    else:
+        d_xy = [0, 0]
 
     # In the new image, find the REF and STRL coords
     xref = refSrc[0] + d_xy[0]
