@@ -32,7 +32,7 @@ def clean(
         skyscale=False, skyfile=None, angOff=0.0, cent_box=12,
         fixDAR=True, use_koa_weather=False,
         raw_dir=None, clean_dir=None,
-        instrument=instruments.default_inst, check_ref_loc=True,
+        instrument=instruments.default_inst, check_ref_loc=True, update_from_AO = True,
         ref_offset_method='aotsxy'
     ):
     """
@@ -2001,6 +2001,10 @@ def clean_makecoo(_ce, _cc, refSrc, strSrc, aotsxyRef, radecRef,
     else:
         d_xy = kai_util.aotsxy2pix(aotsxy, scale, aotsxyRef,
                                    inst_angle=inst_angle)
+    if update_from_AO:
+        d_xy = kai_util.aotsxy2pix(aotsxy, scale, aotsxyRef, inst_angle = inst_angle)
+    else:
+        d_xy = [0,0]
 
     # In the new image, find the REF and STRL coords
     xref = refSrc[0] + d_xy[0]
