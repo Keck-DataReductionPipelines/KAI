@@ -2001,7 +2001,7 @@ def clean_makecoo(_ce, _cc, refSrc, strSrc, aotsxyRef, radecRef,
     else:
         d_xy = kai_util.aotsxy2pix(aotsxy, scale, aotsxyRef,
                                    inst_angle=inst_angle)
-    if update_from_AO:
+    if update_from_AO == True:
         d_xy = kai_util.aotsxy2pix(aotsxy, scale, aotsxyRef, inst_angle = inst_angle)
     else:
         d_xy = [0,0]
