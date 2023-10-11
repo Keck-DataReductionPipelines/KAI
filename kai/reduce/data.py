@@ -304,7 +304,7 @@ def clean(files, nite, wave, refSrc, strSrc, badColumns=None, field=None,
 
             clean_makecoo(_ce, _cc, refSrc, strSrc, aotsxyRef, radecRef,
                           instrument=instrument, check_loc=check_ref_loc,
-                          cent_box=cent_box)
+                          cent_box=cent_box,update_from_AO=update_from_AO)
 
             ### Move to the clean directory ###
             util.rmall([clean + _cc, clean + _coo, clean + _rcoo,
@@ -1897,7 +1897,7 @@ def clean_bkgsubtract(_ff_f, _bp):
 
 def clean_makecoo(_ce, _cc, refSrc, strSrc, aotsxyRef, radecRef,
                   instrument=instruments.default_inst, check_loc=True,
-                  update_fits=True,cent_box=12):
+                  update_fits=True,cent_box=12, update_from_AO=None):
     """Make the *.coo file for this science image. Use the difference
     between the AOTSX/Y keywords from a reference image and each science
     image to tell how the positions of the two frames are related.
