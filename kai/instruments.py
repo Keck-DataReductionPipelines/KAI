@@ -415,7 +415,6 @@ class OSIRIS(Instrument):
         Set to the 95% saturation threshold in DN.
         """
         return 17000.0
-    
 
 ##################################################
 #
