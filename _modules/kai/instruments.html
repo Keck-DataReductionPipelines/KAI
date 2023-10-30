@@ -445,7 +445,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># pa = float(hdr[&#39;ROTPOSN&#39;]) - self.get_instrument_angle(hdr)</span>
         <span class="n">pa</span> <span class="o">=</span> <span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;PA_IMAG&#39;</span><span class="p">]</span>
-        
+
         <span class="c1">#if in PCU mode, read the PCU rotation angle instead</span>
         <span class="k">if</span> <span class="s1">&#39;PCUZ&#39;</span> <span class="ow">in</span> <span class="n">hdr</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
             <span class="k">if</span> <span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;PCUZ&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">20</span><span class="p">:</span>  
@@ -555,6 +555,10 @@
                     <span class="c1"># else:</span>
                     <span class="c1">#     hdu_list[hh].data = new_data[::-1, :]</span>
                     <span class="n">hdu_list</span><span class="p">[</span><span class="n">hh</span><span class="p">]</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">new_data</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span>
+
+            <span class="c1"># Need to modify PA_IMAG to account for the flip. Added 2023-10-30 by J. Lu.</span>
+            <span class="n">pa_orig</span> <span class="o">=</span> <span class="n">hdu_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;PA_IMAG&#39;</span><span class="p">]</span>
+            <span class="n">hdu_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;PA_IMAG&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">360.0</span> <span class="o">-</span> <span class="n">pa_orig</span>
 
             <span class="n">hdu_list</span><span class="o">.</span><span class="n">writeto</span><span class="p">(</span><span class="n">new_file</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
