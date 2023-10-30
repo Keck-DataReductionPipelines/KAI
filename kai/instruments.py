@@ -273,7 +273,7 @@ class OSIRIS(Instrument):
         """
         # pa = float(hdr['ROTPOSN']) - self.get_instrument_angle(hdr)
         pa = hdr['PA_IMAG']
-        
+
         #if in PCU mode, read the PCU rotation angle instead
         if 'PCUZ' in hdr.keys():
             if hdr['PCUZ'] > 20:  
@@ -365,6 +365,10 @@ class OSIRIS(Instrument):
                     # else:
                     #     hdu_list[hh].data = new_data[::-1, :]
                     hdu_list[hh].data = new_data[::-1, :]
+
+            # Need to modify PA_IMAG to account for the flip. Added 2023-10-30 by J. Lu.
+            pa_orig = hdu_list[0].header['PA_IMAG']
+            hdu_list[0].header['PA_IMAG'] = 360.0 - pa_orig
 
             hdu_list.writeto(new_file, overwrite=True)
 
