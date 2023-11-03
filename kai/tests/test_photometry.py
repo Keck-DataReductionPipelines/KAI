@@ -2,18 +2,6 @@ from kai import photometry as phot
 import os
 
 
-def test_run_phot_iraf():
-    mod_path = os.path.dirname(os.path.abspath(phot.__file__))
-
-    img = mod_path + '/data/test_epoch/17may21/combo/mag17may21_ob150029_kp_psf.fits'
-    image_root = img.replace('.fits', '')
-
-    (radius, flux, mag, merr) = phot.run_phot_iraf(image_root, silent=False,
-                                              apertures=[25, 50, 75, 100, 125, 150, 175, 200],
-                                              sky_annulus=200, sky_dannulus=50, zmag=0)
-
-    return
-
 def test_run_phot():
     mod_path = os.path.dirname(os.path.abspath(phot.__file__))
 
