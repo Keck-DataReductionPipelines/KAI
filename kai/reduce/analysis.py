@@ -346,7 +346,8 @@ class Analysis(object):
                     batch_out += "subtract=1"
                     
                     # Support for arbitrary starfinder flags.
-                    batch_out += ", {}".format(self.stfFlags)
+                    if self.stfFlags != '': 
+                        batch_out += ", {0}".format(self.stfFlags)
                 
                     batch_out += "\n"
                     batch_out += "exit\n"
