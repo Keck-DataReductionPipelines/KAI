@@ -16,7 +16,7 @@ module_dir = os.path.dirname(__file__)
 
 def makedark(files, output,
              raw_dir=None,
-             epoch_dir=None,
+             reduce_dir=None,
              instrument=instruments.default_inst):
     """
     Make dark image for imaging data. Makes a calib/ directory
@@ -32,28 +32,27 @@ def makedark(files, output,
     raw_dir : str, optional
         Directory where raw files are stored. By default,
         assumes that raw files are stored in '../raw'
-    epoch_dir : str, optional
-        Directory where combo/, clean/, reduce/, reduce/calib/
-        directories live. Files will be output into
-        epoch_dir + calib/darks/. If epoch_dir is None, then
-        use the current working directory.
+    reduce_dir : str, optional
+        Directory such as <epoch>/reduce/ with contents including
+        the calib/, calib/darks/, etc. directories live.
+        Files will be output into reduce_dir + calib/darks/.
+        If epoch_dir is None, then use the current working directory.
     instrument : instruments object, optional
         Instrument of data. Default is `instruments.default_inst`
     """
-    if epoch_dir is None:
+    if reduce_dir is None:
         redDir = os.getcwd() + '/'  # Reduce directory.
     else:
-        redDir = util.trimdir(os.path.abspath(epoch_dir) + '/reduce/')
+        redDir = util.trimdir(os.path.abspath(reduce_dir) + '/')
 
     curDir = redDir + 'calib/'
     darkDir = util.trimdir(curDir + 'darks/')
 
     # Set location of raw data
-    rawDir = util.trimdir(os.path.abspath(redDir + '../raw') + '/')
-
-    # Check if user has specified a specific raw directory
     if raw_dir is not None:
         rawDir = util.trimdir(os.path.abspath(raw_dir) + '/')
+    else:
+        rawDir = util.trimdir(os.path.abspath(redDir + '../raw') + '/')
 
     util.mkdir(curDir)
     util.mkdir(darkDir)
@@ -102,7 +101,7 @@ def makedark(files, output,
 
 def makeflat(onFiles, offFiles, output,
              dark_frame=None, normalizeFirst=False,
-             raw_dir=None, epoch_dir=None,
+             raw_dir=None, reduce_dir=None,
              instrument=instruments.default_inst):
     """
     Make flat field image for imaging data. Makes a calib/ directory
@@ -133,28 +132,27 @@ def makeflat(onFiles, offFiles, output,
     raw_dir : str, optional
         Directory where raw files are stored. By default,
         assumes that raw files are stored in '../raw'
-    epoch_dir : str, optional
-        Directory where combo/, clean/, reduce/, reduce/calib/
-        directories live. Files will be output into
-        epoch_dir + calib/darks/. If epoch_dir is None, then
-        use the current working directory.
+    reduce_dir : str, optional
+        Directory such as <epoch>/reduce/ with contents including
+        the calib/, calib/darks/, etc. directories live.
+        Files will be output into reduce_dir + calib/darks/.
+        If epoch_dir is None, then use the current working directory.
     instrument : instruments object, optional
         Instrument of data. Default is `instruments.default_inst`
     """
-    if epoch_dir is None:
+    if reduce_dir is None:
         redDir = os.getcwd() + '/'  # Reduce directory.
     else:
-        redDir = util.trimdir(os.path.abspath(epoch_dir) + '/reduce/')
+        redDir = util.trimdir(os.path.abspath(reduce_dir) + '/')
 
     curDir = redDir + 'calib/'
     flatDir = util.trimdir(curDir + 'flats/')
 
     # Set location of raw data
-    rawDir = util.trimdir(os.path.abspath(redDir + '../raw') + '/')
-
-    # Check if user has specified a specific raw directory
     if raw_dir is not None:
         rawDir = util.trimdir(os.path.abspath(raw_dir) + '/')
+    else:
+        rawDir = util.trimdir(os.path.abspath(redDir + '../raw') + '/')
 
     util.mkdir(curDir)
     util.mkdir(flatDir)
@@ -313,7 +311,7 @@ def makeflat(onFiles, offFiles, output,
     return
 
 
-def makemask(dark, flat, output, instrument=instruments.default_inst):
+def makemask(dark, flat, output, reduce_dir=None, instrument=instruments.default_inst):
     """
     Make bad pixel mask for imaging data. Makes a calib/ directory
     and stores all output there. All output and temporary files
@@ -332,10 +330,19 @@ def makemask(dark, flat, output, instrument=instruments.default_inst):
     output : str
         The output file name. This will be created in the masks/
         subdirectory.
+    reduce_dir : str, optional
+        Directory such as <epoch>/reduce/ with contents including
+        the calib/, calib/darks/, etc. directories live.
+        Files will be output into reduce_dir + calib/darks/.
+        If epoch_dir is None, then use the current working directory.
     instrument : instruments object, optional
         Instrument of data. Default is `instruments.default_inst`
     """
-    redDir = os.getcwd() + '/'
+    if reduce_dir is None:
+        redDir = os.getcwd() + '/'  # Reduce directory.
+    else:
+        redDir = util.trimdir(os.path.abspath(reduce_dir) + '/')
+
     calDir = redDir + 'calib/'
     maskDir = util.trimdir(calDir + 'masks/')
     flatDir = util.trimdir(calDir + 'flats/')
@@ -496,18 +503,41 @@ def make_instrument_mask(dark, flat, outDir, instrument=instruments.default_inst
     new_file[0].writeto(_out, output_verify='silentfix')
 
 
-def analyzeDarkCalib(firstFrame, skipcombo=False):
+def analyzeDarkCalib(firstFrame, raw_dir=None, reduce_dir=None, skipcombo=False):
     """
     Reduce data from the dark_calib script that should be run once
     a summer in order to test the dark current and readnoise.
 
     This should be run in the reduce/calib/ directory for a particular
     run.
+
+    Parameters
+    ------
+    firstFrame : float
+        Number of the first frame.
+    raw_dir : str, optional
+        Directory where raw files are stored. By default,
+        assumes that raw files are stored in '../raw'
+    reduce_dir : str, optional
+        Directory such as <epoch>/reduce/ with contents including
+        the calib/, calib/darks/, etc. directories live.
+        Files will be output into reduce_dir + calib/darks/.
+        If epoch_dir is None, then use the current working directory.
     """
-    redDir = os.getcwd() + '/'  # Reduce directory.
+    if reduce_dir is None:
+        redDir = os.getcwd() + '/'  # Reduce directory.
+    else:
+        redDir = util.trimdir(os.path.abspath(reduce_dir) + '/')
+
     curDir = redDir + 'calib/'
     darkDir = util.trimdir(curDir + 'darks/')
-    rawDir = util.trimdir(os.path.abspath(redDir + '../raw') + '/')
+
+    # Check if user has specified a specific raw directory
+    if raw_dir is not None:
+        rawDir = util.trimdir(os.path.abspath(raw_dir) + '/')
+    else:
+        rawDir = util.trimdir(os.path.abspath(redDir + '../raw') + '/')
+
 
     util.mkdir(curDir)
     util.mkdir(darkDir)

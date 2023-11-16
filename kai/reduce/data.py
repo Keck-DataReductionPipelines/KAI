@@ -25,16 +25,14 @@ module_dir = os.path.dirname(__file__)
 supermaskName = 'supermask.fits'
 outputVerify = 'ignore'
 
-def clean(
-        files, nite, wave, refSrc, strSrc,
+def clean(files, nite, wave, refSrc, strSrc,
         dark_frame=None,
         badColumns=None, field=None,
         skyscale=False, skyfile=None, angOff=0.0, cent_box=12,
         fixDAR=True, use_koa_weather=False,
         raw_dir=None, clean_dir=None,
         instrument=instruments.default_inst, check_ref_loc=True,
-        ref_offset_method='aotsxy'
-    ):
+        ref_offset_method='aotsxy'):
     """
     Clean near infrared NIRC2 or OSIRIS images.
 
@@ -263,8 +261,10 @@ def clean(
             ])
 
             ### Copy the raw file to local directory ###
-            ir.imcopy(_raw, _cp, verbose='no')
-            
+            for ii in range(len(_raw)):
+                if os.path.exists(_cp[ii]): os.remove(_cp[ii])
+                shutil.copy(_raw[ii], _cp[ii])
+
             ### Make persistance mask ###
             # - Checked images, this doesn't appear to be a large effect.
             #clean_persistance(_cp, _pers, instrument=instrument)
@@ -1108,7 +1108,7 @@ def combine_drizzle(imgsize, cleanDir, roots, outroot, weights, shifts,
         util.rmall([_cdwt])
 
         # Multiply each distorted image by it's weight
-        ir.imarith(_cd_ir, '*', weights[i], _cdwt_ir)
+        util.imarith(_cd_ir, '*', weights[i], _cdwt_ir)
 
         # Fix the ITIME header keyword so that it matches (weighted).
         # Drizzle will add all the ITIMEs together, just as it adds the flux.

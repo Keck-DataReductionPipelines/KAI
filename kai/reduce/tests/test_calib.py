@@ -12,19 +12,20 @@ class TestMakeDarks(unittest.TestCase):
         mod_path = os.path.dirname(os.path.abspath(calib.__file__))
 
         epoch_dir = mod_path + '/../data/test_epoch/17may21/'
+        reduce_dir = epoch_dir + 'reduce/'
         raw_dir = epoch_dir + 'raw/'
 
         dark_files = range(214, 223 + 1)
         dark_out = 'dark_30.0s_1ca.fits'
-        dark_out_full_path = epoch_dir + 'reduce/calib/darks/' + dark_out  # only use for testing
+        dark_out_full_path = reduce_dir + 'calib/darks/' + dark_out  # only use for testing
 
         # If file exists, delete it.
         if os.path.isfile(dark_out_full_path):
             os.remove(dark_out_full_path)
 
         calib.makedark(dark_files, dark_out,
-                       raw_dir = raw_dir,
-                       epoch_dir = epoch_dir,
+                       raw_dir=raw_dir,
+                       reduce_dir=reduce_dir,
                        instrument=nirc2)
 
         # Check that file was created.
@@ -44,6 +45,7 @@ class TestMakeFlats(unittest.TestCase):
         mod_path = os.path.dirname(os.path.abspath(calib.__file__))
 
         epoch_dir = mod_path + '/../data/test_epoch/17may21/'
+        reduce_dir = epoch_dir + 'reduce/'
         raw_dir = epoch_dir + 'raw/'
 
         off_files = range(184, 202 + 1, 2)
@@ -57,7 +59,7 @@ class TestMakeFlats(unittest.TestCase):
 
         calib.makeflat(on_files, off_files, flat_out,
                        raw_dir=raw_dir,
-                       epoch_dir=epoch_dir,
+                       reduce_dir=reduce_dir,
                        instrument=nirc2)
 
         # Check that file was created.
