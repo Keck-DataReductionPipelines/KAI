@@ -38,6 +38,35 @@ class TestMakeSky(unittest.TestCase):
 
         return
 
+    def test_makesky_lp(self):
+        nirc2 = instruments.NIRC2()
+
+        mod_path = os.path.dirname(os.path.abspath(sky.__file__))
+
+        epoch_dir = mod_path + '/../data/test_epoch/17may21/'
+        reduce_dir = epoch_dir + 'reduce/'
+        raw_dir = epoch_dir + 'raw/'
+
+        sky_files = range(143, 151 + 1)
+
+        sky.makesky_lp(sky_files, 'ob170095', 'lp',
+                    dark_frame=None, number=3,
+                    raw_dir=raw_dir,
+                    reduce_dir=reduce_dir,
+                    instrument=nirc2)
+
+        # Check that file was created.
+        self.assertTrue(os.path.exists(reduce_dir + 'lp/sky_ob170095/sky50.8.fits'))
+        self.assertTrue(os.path.exists(reduce_dir + 'lp/sky_ob170095/sky51.0.fits'))
+        self.assertTrue(os.path.exists(reduce_dir + 'lp/sky_ob170095/sky51.2.fits'))
+        self.assertTrue(os.path.exists(reduce_dir + 'lp/sky_ob170095/sky51.4.fits'))
+
+        # Check the shape is right.
+        sk_img = fits.getdata(reduce_dir + 'lp/sky_ob170095/sky50.8.fits')
+        self.assertEqual(sk_img.shape, (1024, 1024))
+
+        return
+
 
 if __name__ == '__main__':
     unittest.main()
