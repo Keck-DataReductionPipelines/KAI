@@ -53,8 +53,6 @@ def makesky(files, nite, wave,
 
     # Make new directory for the current passband and switch into it
     util.mkdir(wave)
-    os.chdir(wave)
-
     util.mkdir(skyDir)
     print('raw dir: ', rawDir)
     print('sky dir: ', skyDir)
@@ -182,9 +180,6 @@ def makesky(files, nite, wave,
 
     # Save to an output file. Use first header.
     fits.writeto(output, sk_med, header=hdr_stack[0], overwrite=True)
-
-    # Change back to original directory
-    os.chdir('../')
 
     return
 

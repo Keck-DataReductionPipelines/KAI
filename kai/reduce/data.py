@@ -4,7 +4,6 @@ from astropy.table import Table
 from astropy.time import Time
 from astropy import stats
 import math
-from pyraf import iraf as ir
 from . import kai_util
 from kai.reduce import util, lin_correction
 from kai import instruments
@@ -121,34 +120,40 @@ def clean(files, nite, wave, refSrc, strSrc,
         In images where 'aotsxy' keywords aren't reliable, 'radec' calculated
         offsets may work better.
     """
-    
+    from pyraf import iraf as ir
+
+    # Determine directory locatons
+    redDir = os.getcwd() + '/'
+    rootDir = util.trimdir(os.path.abspath(redDir + '../') + '/')
+
+    # Set location of raw data
+    rawDir = rootDir + 'raw/'
+    # Check if user has specified a specific raw directory
+    if raw_dir is not None:
+        if raw_dir.startswith('/'):
+            rawDir = util.trimdir(os.path.abspath(raw_dir) + '/')
+        else:
+            rawDir = util.trimdir(os.path.abspath(redDir + raw_dir) + '/')
+
+    waveDir = util.trimdir(os.path.abspath(redDir + wave) + '/')
+    sciDir = util.trimdir(os.path.abspath(waveDir + '/sci_' + nite) + '/')
+
     # Make sure directory for current passband exists and switch into it
     util.mkdir(wave)
     os.chdir(wave)
     
-    # Determine directory locatons
-    waveDir = os.getcwd() + '/'
-    redDir = util.trimdir(os.path.abspath(waveDir + '../') + '/')
-    rootDir = util.trimdir(os.path.abspath(redDir + '../') + '/')
-    
-    sciDir = waveDir + '/sci_' + nite + '/'
     util.mkdir(sciDir)
-    ir.cd(sciDir)
+    os.chdir(sciDir)
 
-    # Set location of raw data
-    rawDir = rootDir + 'raw/'
-    
-    # Check if user has specified a specific raw directory
-    if raw_dir is not None:
-        rawDir = util.trimdir(os.path.abspath(raw_dir) + '/')
-    
     # Setup the clean directory
     cleanRoot = rootDir + 'clean/'
-    
     # Check if user has specified a specific clean directory
     if clean_dir is not None:
-        cleanRoot = util.trimdir(os.path.abspath(clean_dir) + '/')
-    
+        if clean_dir.startswith('/'):
+            cleanRoot = util.trimdir(os.path.abspath(clean_dir) + '/')
+        else:
+            cleanRoot = util.trimdir(os.path.abspath(redDir + clean_dir) + '/')
+
     if field is not None:
         clean = cleanRoot + field + '_' + wave + '/'
     else:
@@ -261,9 +266,8 @@ def clean(files, nite, wave, refSrc, strSrc,
             ])
 
             ### Copy the raw file to local directory ###
-            for ii in range(len(_raw)):
-                if os.path.exists(_cp[ii]): os.remove(_cp[ii])
-                shutil.copy(_raw[ii], _cp[ii])
+            if os.path.exists(_cp): os.remove(_cp)
+            shutil.copy(_raw, _cp)
 
             ### Make persistance mask ###
             # - Checked images, this doesn't appear to be a large effect.
@@ -283,7 +287,7 @@ def clean(files, nite, wave, refSrc, strSrc,
                 overwrite=True)
             
             # Linearity correction
-            if instrument is 'NIRC2':
+            if instrument == 'NIRC2':
                 lin_correction.lin_correction(_cp, instrument=instrument)
             
             ### Sky subtract ###
@@ -291,10 +295,10 @@ def clean(files, nite, wave, refSrc, strSrc,
             # It might be scaled or there might be a specific one for L'.
             sky = skyObj.getSky(_cp)
 
-            ir.imarith(_cp, '-', sky, _ss)
+            util.imarith(_cp, '-', sky, _ss)
 
             ### Flat field ###
-            ir.imarith(_ss, '/', flat, _ff)
+            util.imarith(_ss, '/', flat, _ff)
             
             ### Make a static bad pixel mask ###
             # _statmask = supermask + bad columns
@@ -334,7 +338,7 @@ def clean(files, nite, wave, refSrc, strSrc,
             file(_max, 'w').write(str(satLevel))
 
             ### Rename and clean up files ###
-            ir.imrename(_bp, _cd)
+            shutil.move(_bp, _cd)
             # util.rmall([_cp, _ss, _ff, _ff_f])
 
             ### Make the *.coo file and update headers ###
@@ -712,7 +716,7 @@ def combine(files, wave, outroot, field=None, outSuffix=None,
     if weight == 'strehl':
         weights = weight_by_strehl(roots, strehls)
 
-    if ((weight is not None) and (weight is not 'strehl')):
+    if ((weight != None) and (weight != 'strehl')):
         # Assume weight is set to a filename
         if not os.path.exists(weight):
             raise ValueError('Weights file does not exist, %s' % weight)
@@ -784,6 +788,8 @@ def rot_img(root, phi, cleanDir):
     another. If the entire data set is taken at a single PA, leave
     it as is. Do this only if set includes various PAs.
     """
+    from pyraf import iraf as ir
+
     pa = str(phi)
     ir.unlearn('rotate')
     ir.rotate.verbose = 'no'
@@ -1059,6 +1065,8 @@ def combine_drizzle(imgsize, cleanDir, roots, outroot, weights, shifts,
                     wave, diffPA, fixDAR=True, use_koa_weather=False,
                     mask=True, instrument=instruments.default_inst,
                    ):
+    from pyraf import iraf as ir
+
     _fits = outroot + '.fits'
     _tmpfits = outroot + '_tmp.fits'
     _wgt = outroot + '_sig.fits'
@@ -1084,7 +1092,13 @@ def combine_drizzle(imgsize, cleanDir, roots, outroot, weights, shifts,
 
     # Set a cleanDir variable in IRAF. This avoids the long-filename problem.
     ir.set(cleanDir=cleanDir)
-    
+
+    # Set a comboDir variable in IRAF. This avoids the long-filename problem.
+    comboDir = os.path.dirname(_tmpfits) + '/'
+    ir.set(comboDir=comboDir)
+    _tmpfits_ir = _tmpfits.replace(comboDir, 'comboDir$')
+    _wgt_ir = _wgt.replace(comboDir, 'comboDir$')
+
     # Variable to store weighted sum of MJDs
     mjd_weightedSum = 0.0
 
@@ -1108,13 +1122,17 @@ def combine_drizzle(imgsize, cleanDir, roots, outroot, weights, shifts,
         util.rmall([_cdwt])
 
         # Multiply each distorted image by it's weight
-        util.imarith(_cd_ir, '*', weights[i], _cdwt_ir)
+        fits_cd = fits.open(_cd)
+        fits_cd[0].data *= weights[i]
+        fits_cd[0].header[instrument.hdr_keys['itime']] *= weights[i]
+        fits_cd.writeto(_cdwt, output_verify=outputVerify)
+        #util.imarith(_cd_ir, '*', weights[i], _cdwt_ir)
 
         # Fix the ITIME header keyword so that it matches (weighted).
         # Drizzle will add all the ITIMEs together, just as it adds the flux.
-        itime = fits.getval(_cdwt, instrument.hdr_keys['itime'])
-        itime *= weights[i]
-        fits.setval(_cdwt, instrument.hdr_keys['itime'], value=itime)
+        #itime = fits.getval(_cdwt, instrument.hdr_keys['itime'])
+        #itime *= weights[i]
+        #fits.setval(_cdwt, instrument.hdr_keys['itime'], value=itime)
 
         # Get pixel shifts
         xsh = shifts[i][1]
@@ -1156,7 +1174,7 @@ def combine_drizzle(imgsize, cleanDir, roots, outroot, weights, shifts,
         else:
             _mask = ''
         ir.drizzle.in_mask = _mask
-        ir.drizzle.outweig = _wgt
+        ir.drizzle.outweig = _wgt_ir
         ir.drizzle.xsh = xsh
         ir.drizzle.ysh = ysh
         ir.drizzle.outnx = imgsize
@@ -1167,7 +1185,7 @@ def combine_drizzle(imgsize, cleanDir, roots, outroot, weights, shifts,
         print('     ysh = {0:8.2f}'.format( ysh ))
         print('  weight = {0:8.2f}'.format( weights[i] ))
         print('   outnx = {0:8d}'.format( imgsize ))
-        ir.drizzle(_cdwt_ir, _tmpfits, Stdout=f_dlog)
+        ir.drizzle(_cdwt_ir, _tmpfits_ir, Stdout=f_dlog)
 
         # Read .max file with saturation level for final combined image
         # by weighting each individual satLevel and summing.
@@ -1182,6 +1200,9 @@ def combine_drizzle(imgsize, cleanDir, roots, outroot, weights, shifts,
         satLvl_combo += satLvl_wt
 
     f_dlog.close()
+    print(_cdwt_ir)
+    print(_tmpfits)
+    print(_tmpfits_ir)
 
     print('satLevel for combo image = ', satLvl_combo)
     # Write the combo saturation level to a file
@@ -1255,6 +1276,8 @@ def combine_submaps(
           Starfinder can't deal with.
     """
 
+    from pyraf import iraf as ir
+
     extend = ['_1', '_2', '_3']
     _out = [outroot + end for end in extend]
     _fits = [o + '.fits' for o in _out]
@@ -1289,6 +1312,19 @@ def combine_submaps(
     # Set a cleanDir variable in IRAF. This avoids the long-filename problem.
     ir.set(cleanDir=cleanDir)
 
+    # Set a comboDir variable in IRAF. This avoids the long-filename problem.
+    comboDir = os.path.dirname(_fits[0]) + '/'
+    ir.set(comboDir=comboDir)
+
+    # these are the "shortened" alias filenames that will go into drizzle
+    _tmp_ir = copy.copy(_tmp)
+    _wgt_ir = copy.copy(_wgt)
+
+    for ff in range(len(_tmp)):
+        _tmp_ir[ff] = _tmp[ff].replace(comboDir, 'comboDir$')
+        _wgt_ir[ff] = _wgt[ff].replace(comboDir, 'comboDir$')
+
+
     for i in range(len(roots)):
         # Cleaned image
         _c = cleanDir + 'c' + roots[i] + '.fits'
@@ -1303,13 +1339,17 @@ def combine_submaps(
         # Multiply each distorted image by it's weight
         util.rmall([cdwt])
 
-        ir.imarith(_cd, '*', weights[i], _cdwt_ir)
+        fits_cd = fits.open(_cd)
+        fits_cd[0].data *= weights[i]
+        fits_cd[0].header[instrument.hdr_keys['itime']] *= weights[i]
+        fits_cd.writeto(cdwt, output_verify=outputVerify)
+        #util.imarith(_cd, '*', weights[i], _cdwt_ir)
         
         # Fix the ITIME header keyword so that it matches (weighted).
         # Drizzle will add all the ITIMEs together, just as it adds the flux.
-        itime = fits.getval(cdwt, instrument.hdr_keys['itime'])
-        itime *= weights[i]
-        fits.setval(cdwt, instrument.hdr_keys['itime'], value=itime)
+        #itime = fits.getval(cdwt, instrument.hdr_keys['itime'])
+        #itime *= weights[i]
+        #fits.setval(cdwt, instrument.hdr_keys['itime'], value=itime)
         
         # Get pixel shifts
         xsh = shifts[i][1]
@@ -1318,7 +1358,9 @@ def combine_submaps(
         # Determine which submap we should be drizzling to.
         sub = int(i % submaps)
         fits_im = _tmp[sub]
+        fits_im_ir = _tmp_ir[sub]
         wgt = _wgt[sub]
+        wgt_ir = _wgt_ir[sub]
         log = f_log[sub]
         
         # Read in PA of each file to feed into drizzle for rotation
@@ -1373,11 +1415,11 @@ def combine_submaps(
         else:
             _mask = ''
         ir.drizzle.in_mask = _mask
-        ir.drizzle.outweig = wgt
+        ir.drizzle.outweig = wgt_ir
         ir.drizzle.xsh = xsh
         ir.drizzle.ysh = ysh
 
-        ir.drizzle(_cdwt_ir, fits_im, Stdout=log)
+        ir.drizzle(_cdwt_ir, fits_im_ir, Stdout=log)
     
     # Calculate weighted MJDs for each submap
     mjd_weightedMeans = mjd_weightedSums / weightsTot
@@ -1596,6 +1638,8 @@ def combine_lis(outfile, cleanDir, roots, diffPA):
         f_lis.close()
 
 def combine_register(outroot, refImage, diffPA):
+    from pyraf import iraf as ir
+
     shiftFile = outroot + '.shifts'
     util.rmall([shiftFile])
 
@@ -1743,6 +1787,8 @@ def setup_drizzle(imgsize):
     drizzle.
     @param type: str
     """
+    from pyraf import iraf as ir
+
     # Setup the drizzle parameters we will use
     ir.module.load('stsdas', doprint=0, hush=1)
     ir.module.load('analysis', doprint=0, hush=1)
@@ -1766,6 +1812,8 @@ def setup_drizzle(imgsize):
 def clean_drizzle(xgeoim, ygeoim, _bp, _cd, _wgt, _dlog,
         fixDAR=True, instrument=instruments.default_inst,
         use_koa_weather=False):
+    from pyraf import iraf as ir
+
     # Get the distortion maps for this instrument.
     hdr = fits.getheader(_bp)
     distXgeoim, distYgeoim = instrument.get_distortion_maps(hdr)
@@ -1800,6 +1848,8 @@ def clean_cosmicrays(_ff, _mask, wave):
         is used to determine different thresholds for CR rejection.
     @type wave: string
     """
+    from pyraf import iraf as ir
+
     # Determine the threshold at which we should start looking
     # for cosmicrays. Need to figure out the mean level of the
     # background.
@@ -1975,6 +2025,7 @@ def clean_makecoo(_ce, _cc, refSrc, strSrc, aotsxyRef, radecRef,
         In images where 'aotsxy' keywords aren't reliable, 'radec' calculated
         offsets may work better.
     """
+    from pyraf import iraf as ir
 
     hdr = fits.getheader(_ce, ignore_missing_end=True)
 
@@ -2164,6 +2215,8 @@ class Sky(object):
         self.f_skylog = f_skylog
 
     def getSky(self, _n):
+        from pyraf import iraf as ir
+
         if (self.wave == 'lp' or self.wave == 'ms'):
             sky = self.getSkyLp(_n)
         else:
@@ -2188,6 +2241,8 @@ class Sky(object):
         @param _sky: name of sky frame
         @type _sky: string
         """
+        from pyraf import iraf as ir
+
         util.rmall([self.skyName])
 
         # scale sky to science frame
@@ -2208,7 +2263,11 @@ class Sky(object):
             fact = sci_mean/sky_mean
             #print 'scaleSky: factor = %5f  sci_mean = %5f  sky_mean = %5f' % \
             #      (fact, sci_mean, sky_mean)
-            ir.imarith(_sky, '*', fact, self.skyName)
+            fits_sky = fits.open(_sky)
+            fits_sky[0].data *= fact
+            fits_sky.writeto(self.skyName, output_verify=outputVerify)
+
+            #util.imarith(_sky, '*', fact, self.skyName)
         else:
             ir.imcopy(_sky, self.skyName)
 
@@ -2224,6 +2283,8 @@ class Sky(object):
         @returns sky: name of sky file to use.
         @rtype sky: string
         """
+        from pyraf import iraf as ir
+
         # Sky subtract
         # determine the best angle for sky or use manual file
 
@@ -2464,6 +2525,8 @@ def mosaic_register(outroot, refImage, diffPA):
     @param refImage: The name of the reference image.
     @type refImage: string
     """
+    from pyraf import iraf as ir
+
     shiftFile = outroot + '.shifts'
     util.rmall([shiftFile])
 

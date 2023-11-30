@@ -40,19 +40,9 @@ def makedark(files, output,
     instrument : instruments object, optional
         Instrument of data. Default is `instruments.default_inst`
     """
-    if reduce_dir is None:
-        redDir = os.getcwd() + '/'  # Reduce directory.
-    else:
-        redDir = util.trimdir(os.path.abspath(reduce_dir) + '/')
-
+    rawDir, redDir = get_raw_reduce_directories(raw_dir, reduce_dir)
     curDir = redDir + 'calib/'
     darkDir = util.trimdir(curDir + 'darks/')
-
-    # Set location of raw data
-    if raw_dir is not None:
-        rawDir = util.trimdir(os.path.abspath(raw_dir) + '/')
-    else:
-        rawDir = util.trimdir(os.path.abspath(redDir + '../raw') + '/')
 
     util.mkdir(curDir)
     util.mkdir(darkDir)
@@ -80,7 +70,10 @@ def makedark(files, output,
 
     img_stack = []
     hdr_stack = []
+
+    print(f'makedark: Making dark {_out} with the following images:')
     for ii in range(len(darks_orig)):
+        print(f'\t{darks_orig[ii]}')
         img, hdr = fits.getdata(darks_orig[ii], header=True)
         img_stack.append(img)
         hdr_stack.append(hdr)
@@ -140,19 +133,9 @@ def makeflat(onFiles, offFiles, output,
     instrument : instruments object, optional
         Instrument of data. Default is `instruments.default_inst`
     """
-    if reduce_dir is None:
-        redDir = os.getcwd() + '/'  # Reduce directory.
-    else:
-        redDir = util.trimdir(os.path.abspath(reduce_dir) + '/')
-
+    rawDir, redDir = get_raw_reduce_directories(raw_dir, reduce_dir)
     curDir = redDir + 'calib/'
     flatDir = util.trimdir(curDir + 'flats/')
-
-    # Set location of raw data
-    if raw_dir is not None:
-        rawDir = util.trimdir(os.path.abspath(raw_dir) + '/')
-    else:
-        rawDir = util.trimdir(os.path.abspath(redDir + '../raw') + '/')
 
     util.mkdir(curDir)
     util.mkdir(flatDir)
@@ -209,7 +192,10 @@ def makeflat(onFiles, offFiles, output,
         warnings.warn(warning_message)
 
     # Go through each flat file and subtract dark, linearity correct (inline, overwrite copied file).
+    print(f'makeflat: Making flat lamps on with the following images:')
     for i in range(len(lampson_copied)):
+        print(f'\t{lampson_copied[i]}')
+
         # Dark subtraction
         if dark_frame is not None:
             cur_flat = fits.open(lampson_copied[i], mode='update', ignore_missing_end=True, output_verify='ignore')
@@ -220,7 +206,10 @@ def makeflat(onFiles, offFiles, output,
         # Linearity correction
         lin_correction.lin_correction(lampson_copied[i], instrument=instrument)
 
+    print(f'makeflat: Making flat lamps on with the following images:')
     for i in range(len(lampsoff_copied)):
+        print(f'\t{lampson_copied[i]}')
+
         # Dark subtraction
         if dark_frame is not None:
             cur_flat = fits.open(lampsoff_copied[i], mode='update', ignore_missing_end=True, output_verify='ignore')
@@ -338,11 +327,7 @@ def makemask(dark, flat, output, reduce_dir=None, instrument=instruments.default
     instrument : instruments object, optional
         Instrument of data. Default is `instruments.default_inst`
     """
-    if reduce_dir is None:
-        redDir = os.getcwd() + '/'  # Reduce directory.
-    else:
-        redDir = util.trimdir(os.path.abspath(reduce_dir) + '/')
-
+    rawDir, redDir = get_raw_reduce_directories(None, reduce_dir)
     calDir = redDir + 'calib/'
     maskDir = util.trimdir(calDir + 'masks/')
     flatDir = util.trimdir(calDir + 'flats/')
@@ -363,6 +348,9 @@ def makemask(dark, flat, output, reduce_dir=None, instrument=instruments.default
     ##########
     whatDir = redDir + dark
     print(whatDir)
+    print(f'makemask: Making mask {_out} with the following:')
+    print(f'\t{_dark}')
+    print(f'\t{_flat}')
 
     # Get the sigma-clipped mean and stddev on the dark
     img_dk = fits.getdata(_dark)
@@ -524,20 +512,9 @@ def analyzeDarkCalib(firstFrame, raw_dir=None, reduce_dir=None, skipcombo=False)
         Files will be output into reduce_dir + calib/darks/.
         If epoch_dir is None, then use the current working directory.
     """
-    if reduce_dir is None:
-        redDir = os.getcwd() + '/'  # Reduce directory.
-    else:
-        redDir = util.trimdir(os.path.abspath(reduce_dir) + '/')
-
+    rawDir, redDir = get_raw_reduce_directories(raw_dir, reduce_dir)
     curDir = redDir + 'calib/'
     darkDir = util.trimdir(curDir + 'darks/')
-
-    # Check if user has specified a specific raw directory
-    if raw_dir is not None:
-        rawDir = util.trimdir(os.path.abspath(raw_dir) + '/')
-    else:
-        rawDir = util.trimdir(os.path.abspath(redDir + '../raw') + '/')
-
 
     util.mkdir(curDir)
     util.mkdir(darkDir)
@@ -626,3 +603,18 @@ def analyzeDarkCalib(firstFrame, raw_dir=None, reduce_dir=None, skipcombo=False)
     _out.close()
 
     return
+
+def get_raw_reduce_directories(raw_dir, reduce_dir):
+    # Determine directory locations
+    if reduce_dir is None:
+        redDir = os.getcwd() + '/'  # Reduce directory.
+    else:
+        redDir = util.trimdir(os.path.abspath(reduce_dir) + '/')
+    # Set location of raw data
+    if raw_dir is not None:
+        rawDir = util.trimdir(os.path.abspath(raw_dir) + '/')
+    else:
+        rawDir = util.trimdir(os.path.abspath(redDir + '../raw') + '/')
+    return rawDir, redDir
+
+

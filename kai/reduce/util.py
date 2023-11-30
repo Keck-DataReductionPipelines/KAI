@@ -179,16 +179,16 @@ def imarith(img_list1, operator, img_list2, out_list):
     lo = len(out_list)
 
     if l1 > 1 and l2 > 1 and l1 != l2:
-        msg = f'Mis-matched lengths of file lists: img_list1 = {l1}, img_list2 = {l2}'
+        msg = 'Mis-matched lengths of file lists: img_list1 = %d, img_list2 = %d'.format(l1, l2)
         raise RuntimeError(msg)
     if l1 > 1 and lo > 1 and l1 != lo:
-        msg = f'Mis-matched lengths of file lists: img_list1 = {l1}, out_list = {lo}'
+        msg = 'Mis-matched lengths of file lists: img_list1 = %d, out_list = %d'.format(l1, lo)
         raise RuntimeError(msg)
     if lo > 1 and l2 > 1 and lo != l2:
-        msg = f'Mis-matched lengths of file lists: out_list = {lo}, img_list2 = {l2}'
+        msg = 'Mis-matched lengths of file lists: out_list = %d, img_list2 = %d'.format(lo, l2)
         raise RuntimeError(msg)
     if lo != np.max([l1, l2]):
-        msg = f'Mis-matched lengths of file lists: out_list = {lo}, img_list1 = {l1}, img_list2 = {l2}'
+        msg = 'Mis-matched lengths of file lists: out_list = %d, img_list1 = %d, img_list2 = %d'.format(lo, l1, l2)
         raise RuntimeError(msg)
 
     # Loop through files and apply the operations.
