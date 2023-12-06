@@ -3,8 +3,15 @@ from astropy.io import fits
 from astropy.table import Table
 from astropy.time import Time
 from astropy import stats
+from astropy import wcs
+from astropy.nddata.utils import Cutout2D
+from astropy.nddata import CCDData
+from astropy.nddata import block_replicate
+from astropy import units as u
+import ccdproc as ccdp
 import math
-from pyraf import iraf as ir
+from drizzle import drizzle
+#from pyraf import iraf as ir
 from . import kai_util
 from kai.reduce import util
 from kai import instruments
@@ -133,7 +140,7 @@ def clean(files, nite, wave, refSrc, strSrc, badColumns=None, field=None,
     
     sciDir = waveDir + '/sci_' + nite + '/'
     util.mkdir(sciDir)
-    ir.cd(sciDir)
+    os.chdir(sciDir)
 
     # Set location of raw data
     rawDir = rootDir + 'raw/'
@@ -240,7 +247,8 @@ def clean(files, nite, wave, refSrc, strSrc, badColumns=None, field=None,
                         _wgt, _statmask, _crmask, _mask, _pers, _max, _coo, _rcoo, _dlog])
 
             ### Copy the raw file to local directory ###
-            ir.imcopy(_raw, _cp, verbose='no')
+            #ir.imcopy(_raw, _cp, verbose='no')
+            _cp = _raw
             
             ### Make persistance mask ###
             # - Checked images, this doesn't appear to be a large effect.
@@ -251,10 +259,12 @@ def clean(files, nite, wave, refSrc, strSrc, badColumns=None, field=None,
             # It might be scaled or there might be a specific one for L'.
             sky = skyObj.getSky(_cp)
 
-            ir.imarith(_cp, '-', sky, _ss)
+            #ir.imarith(_cp, '-', sky, _ss)
+            util.imarith(_cp, '-', sky, _ss)
 
             ### Flat field ###
-            ir.imarith(_ss, '/', flat, _ff)
+            #ir.imarith(_ss, '/', flat, _ff)
+            util.imarith(_ss, '/', flat, _ff)
 
             ### Make a static bad pixel mask ###
             # _statmask = supermask + bad columns
@@ -326,7 +336,7 @@ def clean(files, nite, wave, refSrc, strSrc, badColumns=None, field=None,
     finally:
         # Move back up to the original directory
         #skyObj.close()
-        ir.cd('../')
+        os.chdir('../')
 
     # Change back to original directory
     os.chdir('../')
@@ -673,7 +683,7 @@ def combine(files, wave, outroot, field=None, outSuffix=None,
     if weight == 'strehl':
         weights = weight_by_strehl(roots, strehls)
 
-    if ((weight is not None) and (weight is not 'strehl')):
+    if ((weight != None) and (weight != 'strehl')):
         # Assume weight is set to a filename
         if not os.path.exists(weight):
             raise ValueError('Weights file does not exist, %s' % weight)
@@ -1069,7 +1079,8 @@ def combine_drizzle(imgsize, cleanDir, roots, outroot, weights, shifts,
         util.rmall([_cdwt])
 
         # Multiply each distorted image by it's weight
-        ir.imarith(_cd_ir, '*', weights[i], _cdwt_ir)
+        #ir.imarith(_cd_ir, '*', weights[i], _cdwt_ir)
+        util.imarith(_cd_ir, '*', weights[i], _cdwt_ir)
 
         # Fix the ITIME header keyword so that it matches (weighted).
         # Drizzle will add all the ITIMEs together, just as it adds the flux.
@@ -1157,7 +1168,7 @@ def combine_drizzle(imgsize, cleanDir, roots, outroot, weights, shifts,
     
     tmp_stats = stats.sigma_clipped_stats(fits_f[0].data,
                                           sigma_upper=1, sigma_lower=10,
-                                          iters=5)
+                                          maxiters=5)
     sci_mean = tmp_stats[0]
     sci_stddev = tmp_stats[2]
 
@@ -1260,7 +1271,8 @@ def combine_submaps(
         # Multiply each distorted image by it's weight
         util.rmall([cdwt])
 
-        ir.imarith(_cd, '*', weights[i], _cdwt_ir)
+        #ir.imarith(_cd, '*', weights[i], _cdwt_ir)
+        util.imarith(_cd, '*', weights[i], _cdwt_ir)
         
         # Fix the ITIME header keyword so that it matches (weighted).
         # Drizzle will add all the ITIMEs together, just as it adds the flux.
@@ -1358,7 +1370,7 @@ def combine_submaps(
         # and if all goes well...don't ever correct negative pixels to zero.
         tmp_stats = stats.sigma_clipped_stats(fits_f[0].data,
                                           sigma_upper=1, sigma_lower=10,
-                                          iters=5)
+                                          maxiters=5)
         sci_mean = tmp_stats[0]
         sci_stddev = tmp_stats[2]
 
@@ -1701,29 +1713,30 @@ def setup_drizzle(imgsize):
     @param type: str
     """
     # Setup the drizzle parameters we will use
-    ir.module.load('stsdas', doprint=0, hush=1)
-    ir.module.load('analysis', doprint=0, hush=1)
-    ir.module.load('dither', doprint=0, hush=1)
-    ir.unlearn('drizzle')
-    ir.drizzle.outweig = ''
-    ir.drizzle.in_mask = ''
-    ir.drizzle.wt_scl = 1
-    ir.drizzle.outnx = imgsize
-    ir.drizzle.outny = imgsize
-    ir.drizzle.pixfrac = 1
-    ir.drizzle.kernel = 'lanczos3'
-    ir.drizzle.scale = 1
-    ir.drizzle.shft_un = 'input'
-    ir.drizzle.shft_fr = 'output'
-    ir.drizzle.align = 'center'
-    ir.drizzle.expkey = 'ITIME'
-    ir.drizzle.in_un = 'counts'
-    ir.drizzle.out_un = 'counts'
+    #ir.module.load('stsdas', doprint=0, hush=1)
+    #ir.module.load('analysis', doprint=0, hush=1)
+    #ir.module.load('dither', doprint=0, hush=1)
+    #ir.unlearn('drizzle')
+    drizzle.outweig = ''
+    drizzle.in_mask = ''
+    drizzle.wt_scl = 1
+    drizzle.outnx = imgsize
+    drizzle.outny = imgsize
+    drizzle.pixfrac = 1
+    drizzle.kernel = 'lanczos3'
+    drizzle.scale = 1
+    drizzle.shft_un = 'input'
+    drizzle.shft_fr = 'output'
+    drizzle.align = 'center'
+    drizzle.expkey = 'ITIME'
+    drizzle.in_un = 'counts'
+    drizzle.out_un = 'counts'
 
 def clean_drizzle(xgeoim, ygeoim, _bp, _cd, _wgt, _dlog,
         fixDAR=True, instrument=instruments.default_inst,
         use_koa_weather=False):
     # Get the distortion maps for this instrument.
+    pdb.set_trace()
     hdr = fits.getheader(_bp)
     distXgeoim, distYgeoim = instrument.get_distortion_maps(hdr)
     
@@ -1763,7 +1776,7 @@ def clean_cosmicrays(_ff, _mask, wave):
     ff_img = fits.getdata(_ff)
     tmp_stats = stats.sigma_clipped_stats(ff_img,
                                           sigma_upper=2, sigma_lower=5,
-                                          iters=5)
+                                          maxiters=5)
     mean = tmp_stats[0]
     stddev = tmp_stats[2]
 
@@ -1781,17 +1794,31 @@ def clean_cosmicrays(_ff, _mask, wave):
     if 'ms' in wave:
         fluxray = 10.0
 
-    ir.module.load('noao', doprint=0, hush=1)
-    ir.module.load('imred', doprint=0, hush=1)
-    ir.module.load('crutil', doprint=0, hush=1)
-    ir.unlearn('cosmicrays')
+    #ir.module.load('noao', doprint=0, hush=1)
+    #ir.module.load('imred', doprint=0, hush=1)
+    #ir.module.load('crutil', doprint=0, hush=1)
+    #ir.unlearn('cosmicrays')
 
-    ir.cosmicrays(_ff, ' ', crmasks=_mask, thresho=crthreshold,
-                  fluxrat=fluxray, npasses=10., window=7,
-                  interac='no', train='no', answer='NO')
+    #pdb.set_trace()
+    #ir.cosmicrays(_ff, ' ', crmasks=_mask, thresho=crthreshold,
+    #              fluxrat=fluxray, npasses=10., window=7,
+    #              interac='no', train='no', answer='NO')
 
-    ir.imcopy(_mask+'.pl', _mask, verbose='no')
-    if os.path.exists(_mask + '.pl'): os.remove(_mask + '.pl')
+    hdulist = fits.open(_ff)
+    img = hdulist[0].data
+    #crmask = ccdp.cosmicray_lacosmic(img, readnoise=4, sigclip=2, verbose=True)
+    newdata, crmask = ccdp.cosmicray_median(img, thresh=5, mbox=7, rbox=5) 
+    #np.savetxt('mask.dat', crmask, fmt='%s')
+    crmask = crmask.astype(int)
+
+    #ir.imcopy(_mask+'.pl', _mask, verbose='no')
+    #pdb.set_trace()
+    #iraf.imcopy(_mask+'.pl', _mask, verbose='no')
+    #_mask = _mask+'.pl'
+    #if os.path.exists(_mask + '.pl'): os.remove(_mask + '.pl')
+
+    # Save to a temporary file.
+    fits.writeto(_mask, crmask, output_verify=outputVerify)
 
 def clean_cosmicrays2(_ff, _ff_cr, _mask, wave,
                       instrument=instruments.default_inst):
@@ -1869,7 +1896,7 @@ def clean_bkgsubtract(_ff_f, _bp):
     # Calculate mean and STD for science image
     tmp_stats = stats.sigma_clipped_stats(fits_f[0].data,
                                           sigma_upper=1, sigma_lower=10,
-                                          iters=5)
+                                          maxiters=5)
     sci_mean = tmp_stats[0]
     sci_stddev = tmp_stats[2]
 
@@ -2113,7 +2140,8 @@ class Sky(object):
         # Edit the science image to contain the
         # original sky name that will be subtracted.
         skyOrigName = sky[sky.rfind('/')+1:]
-        ir.hedit(_n, 'SKYSUB', skyOrigName, add='yes', show='no', verify='no')
+        #ir.hedit(_n, 'SKYSUB', skyOrigName, add='yes', show='no', verify='no')
+
 
         # Now scale the sky to the science image
         skyScale = self.scaleSky(_n, sky)
@@ -2149,9 +2177,11 @@ class Sky(object):
             fact = sci_mean/sky_mean
             #print 'scaleSky: factor = %5f  sci_mean = %5f  sky_mean = %5f' % \
             #      (fact, sci_mean, sky_mean)
-            ir.imarith(_sky, '*', fact, self.skyName)
+            #ir.imarith(_sky, '*', fact, self.skyName)
+            util.imarith(_sky, '*', fact, self.skyName)
         else:
-            ir.imcopy(_sky, self.skyName)
+            #ir.imcopy(_sky, self.skyName)
+            self.skyName = _sky
 
         return self.skyName
 
