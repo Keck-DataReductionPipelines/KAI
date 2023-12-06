@@ -13,7 +13,7 @@ import math
 from drizzle import drizzle
 #from pyraf import iraf as ir
 from . import kai_util
-from kai.reduce import util
+from kai.reduce import util, lin_correction
 from kai import instruments
 from kai import strehl
 import time
@@ -24,37 +24,33 @@ from . import bfixpix
 import subprocess
 import copy
 import shutil
+import warnings
 from datetime import datetime
 
 module_dir = os.path.dirname(__file__)
 
-# Remember to change these if you are going to use the wide camera.
-# You can change them in your reduce.py file after importing data.py
-# Narrow Camera
-distCoef = ''
-# distXgeoim = module_dir + '/distortion/nirc2_narrow_xgeoim.fits'
-# distYgeoim = module_dir + '/distortion/nirc2_narrow_ygeoim.fits'
-#changing to test new distortion solutions right now
-#distXgeoim = '/g/lu/data/m53/2015may/dist_sol/Leg_6r9_may_X.fits'
-#distYgeoim = '/g/lu/data/m53/2015may/dist_sol/Leg_6r9_may_Y.fits'
-# Wide Camera
-#distCoef = module_dir + '/distortion/coeffs/nirc2_cubic_wide'
-#distXgeoim = ''
-#distYgeoim = ''
-# Wide Camera Hai Fu
-#distCoef = ' '
-#distXgeoim = module_dir + '/distortion/nirc2_wide_X_distortion.fits'
-#distYgeoim = module_dir + '/distortion/nirc2_wide_Y_distortion.fits'
-
 supermaskName = 'supermask.fits'
 outputVerify = 'ignore'
 
+<<<<<<< HEAD
 
 def clean(files, nite, wave, refSrc, strSrc, badColumns=None, field=None,
           skyscale=False, skyfile=None, angOff=0.0, cent_box=12,
           fixDAR=True, use_koa_weather=False,
           raw_dir=None, clean_dir=None,
           instrument=instruments.default_inst, check_ref_loc=True, update_from_AO = True):
+=======
+def clean(
+        files, nite, wave, refSrc, strSrc,
+        dark_frame=None,
+        badColumns=None, field=None,
+        skyscale=False, skyfile=None, angOff=0.0, cent_box=12,
+        fixDAR=True, use_koa_weather=False,
+        raw_dir=None, clean_dir=None,
+        instrument=instruments.default_inst, check_ref_loc=True,
+        ref_offset_method='aotsxy'
+    ):
+>>>>>>> dev
     """
     Clean near infrared NIRC2 or OSIRIS images.
 
@@ -94,6 +90,16 @@ def clean(files, nite, wave, refSrc, strSrc, badColumns=None, field=None,
     wave : str
         Name for the observation passband (e.g.: "kp"), used as
         a wavelength suffix
+    refSrc : [float, float]
+        x and y coordinates for the reference source, provided as a list of two
+        float coordinates.
+    strSrc : [float, float]
+        x and y coordinates for the Strehl source, provided as a list of two
+        float coordinates.
+    dark_frame : str, default=None
+        File name for the dark frame in order to carry out dark correction.
+        If not provided, dark frame is not subtracted and a warning is thrown.
+        Assumes dark file is located under ./calib/darks/
     field : str, default=None
         Optional prefix for clean directory and final
         combining. All clean files will be put into <field_><wave>. You
@@ -127,6 +133,11 @@ def clean(files, nite, wave, refSrc, strSrc, badColumns=None, field=None,
         assumes that clean files will be stored in '../clean'
     instrument : instruments object, optional
         Instrument of data. Default is `instruments.default_inst`
+    ref_offset_method : str, default='aotsxy'
+        Method to calculate offsets from reference image.
+        Options are 'aotsxy' or 'radec'.
+        In images where 'aotsxy' keywords aren't reliable, 'radec' calculated
+        offsets may work better.
     """
     
     # Make sure directory for current passband exists and switch into it
@@ -192,6 +203,11 @@ def clean(files, nite, wave, refSrc, strSrc, badColumns=None, field=None,
         radecRef = [float(hdr1['RA']), float(hdr1['DEC'])]
         aotsxyRef = kai_util.getAotsxy(hdr1)
 
+        if ref_offset_method == 'pcu':
+            pcuxyRef = instrument.get_pcuxyRef(hdr1)
+        else:
+            pcuxyRef = None
+
         # Setup a Sky object that will figure out the sky subtraction
         skyDir = waveDir + 'sky_' + nite + '/'
         skyObj = Sky(sciDir, skyDir, wave, scale=skyscale,
@@ -211,7 +227,20 @@ def clean(files, nite, wave, refSrc, strSrc, badColumns=None, field=None,
         else:
             imgsize = imgsizeY
         setup_drizzle(imgsize)
-
+        
+        # Read in dark frame data
+        # Throw warning if dark frame not provided for dark correction
+        if dark_frame is not None:
+            dark_file = redDir + '/calib/darks/' + dark_frame
+            
+            # Read in dark frame data
+            dark_data = fits.getdata(dark_file, ignore_missing_end=True)
+        else:
+            warning_message = 'Dark frame not provided for clean().'
+            warning_message += '\nCleaning without dark subtraction.'
+        
+            warnings.warn(warning_message)
+        
         ##########
         # Loop through the list of images
         ##########
@@ -243,8 +272,11 @@ def clean(files, nite, wave, refSrc, strSrc, badColumns=None, field=None,
             data_sources_file.write(out_line)
 
             # Clean up if these files previously existed
-            util.rmall([_cp, _ss, _ff, _ff_f, _ff_s, _bp, _cd, _ce, _cc,
-                        _wgt, _statmask, _crmask, _mask, _pers, _max, _coo, _rcoo, _dlog])
+            util.rmall([
+                _cp, _ss, _ff, _ff_f, _ff_s, _bp, _cd, _ce, _cc,
+                _wgt, _statmask, _crmask, _mask, _pers, _max, _coo,
+                _rcoo, _dlog,
+            ])
 
             ### Copy the raw file to local directory ###
             #ir.imcopy(_raw, _cp, verbose='no')
@@ -253,7 +285,24 @@ def clean(files, nite, wave, refSrc, strSrc, badColumns=None, field=None,
             ### Make persistance mask ###
             # - Checked images, this doesn't appear to be a large effect.
             #clean_persistance(_cp, _pers, instrument=instrument)
-
+            
+            # Dark correction
+            if dark_frame is not None:
+                with fits.open(_cp, mode='readonly', output_verify = 'ignore', 
+                ignore_missing_end=True) as cur_frame:
+                    frame_data = cur_frame[0].data
+                    frame_header = cur_frame[0].header
+                frame_data = frame_data - dark_data
+                frame_hdu = fits.PrimaryHDU(data=frame_data, 
+                header=frame_header)
+                frame_hdu.writeto(_cp, 
+                output_verify='ignore', 
+                overwrite=True)
+            
+            # Linearity correction
+            if instrument is 'NIRC2':
+                lin_correction.lin_correction(_cp, instrument=instrument)
+            
             ### Sky subtract ###
             # Get the proper sky for this science frame.
             # It might be scaled or there might be a specific one for L'.
@@ -263,9 +312,14 @@ def clean(files, nite, wave, refSrc, strSrc, badColumns=None, field=None,
             util.imarith(_cp, '-', sky, _ss)
 
             ### Flat field ###
+<<<<<<< HEAD
             #ir.imarith(_ss, '/', flat, _ff)
             util.imarith(_ss, '/', flat, _ff)
 
+=======
+            ir.imarith(_ss, '/', flat, _ff)
+            
+>>>>>>> dev
             ### Make a static bad pixel mask ###
             # _statmask = supermask + bad columns
             clean_get_supermask(_statmask, _supermask, badColumns)
@@ -314,7 +368,11 @@ def clean(files, nite, wave, refSrc, strSrc, badColumns=None, field=None,
 
             clean_makecoo(_ce, _cc, refSrc, strSrc, aotsxyRef, radecRef,
                           instrument=instrument, check_loc=check_ref_loc,
+<<<<<<< HEAD
                           cent_box=cent_box,update_from_AO=update_from_AO)
+=======
+                          cent_box=cent_box, offset_method=ref_offset_method,pcuxyRef=pcuxyRef)
+>>>>>>> dev
 
             ### Move to the clean directory ###
             util.rmall([clean + _cc, clean + _coo, clean + _rcoo,
@@ -336,10 +394,14 @@ def clean(files, nite, wave, refSrc, strSrc, badColumns=None, field=None,
     finally:
         # Move back up to the original directory
         #skyObj.close()
+<<<<<<< HEAD
         os.chdir('../')
+=======
+        os.chdir(redDir)
+>>>>>>> dev
 
     # Change back to original directory
-    os.chdir('../')
+    os.chdir(redDir)
 
 def clean_get_supermask(_statmask, _supermask, badColumns):
     """
@@ -748,7 +810,7 @@ def combine(files, wave, outroot, field=None, outSuffix=None,
         util.rmall([_rcoo])
     
     # Change back to original directory
-    os.chdir('../')
+    os.chdir(redDir)
 
 def rot_img(root, phi, cleanDir):
     """Rotate images to PA=0 if they have a different PA from one
@@ -903,7 +965,7 @@ def calcStrehl(files, wave,
                            droppedFiles)
     
     # Switch back to parent directory
-    os.chdir('../')
+    os.chdir(redDir)
 
 def weight_by_strehl(roots, strehls):
     """
@@ -1183,8 +1245,6 @@ def combine_drizzle(imgsize, cleanDir, roots, outroot, weights, shifts,
                               'rotator user position')
 
     # Add keyword with distortion image information
-    fits_f[0].header.set('DISTCOEF', "%s" % distCoef,
-                          'Distortion Coefficients File')
     fits_f[0].header.set('DISTORTX', "%s" % distXgeoim,
                           'X Distortion Image')
     fits_f[0].header.set('DISTORTY', "%s" % distYgeoim,
@@ -1198,10 +1258,16 @@ def combine_drizzle(imgsize, cleanDir, roots, outroot, weights, shifts,
     mjd_weightedMean = mjd_weightedSum / np.sum(weights)
     time_obs = Time(mjd_weightedMean, format='mjd')
     
-    fits_f[0].header.set('MJD-OBS', mjd_weightedMean, 'Weighted modified julian date of combined observations')
+    fits_f[0].header.set(
+        'MJD-OBS', mjd_weightedMean,
+        'Weighted modified julian date of combined observations'
+    )
     
     ## Also update date field in header
-    fits_f[0].header.set('DATE', '{0}'.format(time_obs.fits), 'Weighted observation date')
+    fits_f[0].header.set(
+        'DATE', '{0}'.format(time_obs.fits),
+        'Weighted observation date'
+    )
     
     
     # Save to final fits file.
@@ -1923,8 +1989,14 @@ def clean_bkgsubtract(_ff_f, _bp):
     return bkg
 
 def clean_makecoo(_ce, _cc, refSrc, strSrc, aotsxyRef, radecRef,
+<<<<<<< HEAD
                   instrument=instruments.default_inst, check_loc=True,
                   update_fits=True,cent_box=12, update_from_AO=None):
+=======
+        instrument=instruments.default_inst, check_loc=True,
+        update_fits=True,cent_box=12,
+        offset_method='aotsxy',pcuxyRef=None):
+>>>>>>> dev
     """Make the *.coo file for this science image. Use the difference
     between the AOTSX/Y keywords from a reference image and each science
     image to tell how the positions of the two frames are related.
@@ -1944,16 +2016,28 @@ def clean_makecoo(_ce, _cc, refSrc, strSrc, aotsxyRef, radecRef,
     @param radecRef: The RA/DEC header values from the reference image.
     @type radecRef: array of floats with length=2 [x, y]
 
-    check_loc (bool):  If True the reference source is recentered for this frame.
-                     Use False if the offsets are large enough to move the reference source off of the image
-    update_fits : update the fits files with the reference pixel values
-    cent_box : box size to center the source (default: 12)
+    check_loc : bool, default=True
+        If True the reference source is recentered for this frame.
+        Use False if the offsets are large enough to move the reference source
+        off of the image.
+    update_fits : bool, default=True
+        Update the fits files with the reference pixel values
+    cent_box : float, default: 12
+        Box size to center the source
+    offset_method : str, default='aotsxy'
+        Method to calculate offsets from reference image.
+        Options are 'aotsxy' or 'radec'.
+        In images where 'aotsxy' keywords aren't reliable, 'radec' calculated
+        offsets may work better.
     """
 
     hdr = fits.getheader(_ce, ignore_missing_end=True)
 
     radec = [float(hdr['RA']), float(hdr['DEC'])]
     aotsxy = kai_util.getAotsxy(hdr)
+    if offset_method == 'pcu':
+        pcuxy = [float(hdr['PCSFX']), float(hdr['PCSFY'])]  #New version may be PCUX and PCUY
+        pcu_scale = instrument.get_pcu_scale(hdr)
 
     # Determine the image's PA and plate scale
     phi = instrument.get_position_angle(hdr)
@@ -1963,6 +2047,7 @@ def clean_makecoo(_ce, _cc, refSrc, strSrc, aotsxyRef, radecRef,
     inst_angle = instrument.get_instrument_angle(hdr)
 
     # Calculate the pixel offsets from the reference image
+<<<<<<< HEAD
     # We've been using aotsxy2pix, but the keywords are wrong
     # for 07maylgs and 07junlgs
     #d_xy = kai_util.radec2pix(radec, phi, scale, radecRef)
@@ -1970,6 +2055,18 @@ def clean_makecoo(_ce, _cc, refSrc, strSrc, aotsxyRef, radecRef,
         d_xy = kai_util.aotsxy2pix(aotsxy, scale, aotsxyRef, inst_angle=inst_angle)
     else:
         d_xy = [0, 0]
+=======
+    if offset_method == 'radec':
+        d_xy = kai_util.radec2pix(radec, phi, scale, radecRef)
+    elif offset_method == 'aotsxy':
+        d_xy = kai_util.aotsxy2pix(aotsxy, scale, aotsxyRef,
+                                   inst_angle=inst_angle)
+    elif offset_method == 'pcu':
+            d_xy = kai_util.pcuxy2pix(pcuxy, phi, pcu_scale, pcuxyRef)
+    else:
+        d_xy = kai_util.aotsxy2pix(aotsxy, scale, aotsxyRef,
+                                   inst_angle=inst_angle)
+>>>>>>> dev
 
     # In the new image, find the REF and STRL coords
     xref = refSrc[0] + d_xy[0]

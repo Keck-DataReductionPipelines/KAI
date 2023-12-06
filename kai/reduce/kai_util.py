@@ -17,7 +17,8 @@ def kailog(directory):
 
     return
 
-def makelog(directory, outfile='image_log.txt', instrument=instruments.default_inst):
+def makelog(directory, outfile='image_log.txt',
+            instrument=instruments.default_inst):
     """Make an electronic log for all the FITS files in the 
     specified directory.
 
@@ -51,6 +52,7 @@ def makelog(directory, outfile='image_log.txt', instrument=instruments.default_i
             # End of this line
             f.write('\n')
         else:
+            print(file)
             # First column is frame number
             frame = (hdr[ihk['filename']].strip())[:-5]
             f.write('%16s  ' % frame)
@@ -180,24 +182,45 @@ def aotsxy2pix(aotsxy, scale, aotsxyRef, inst_angle=0.0):
     
     x = aotsxy[0]
     y = aotsxy[1]
-
+    x_ref = aotsxyRef[0]
+    y_ref = aotsxyRef[1]
+    
     # AOTSX,Y are in units of mm. Conversion is 0.727 mm/arcsec
-    d_x = (x - aotsxyRef[0]) / 0.727
-    d_y = (y - aotsxyRef[1]) / 0.727
+    d_x = (x - x_ref) / 0.727
+    d_y = (y - y_ref) / 0.727
     d_x = d_x * (1.0/scale)
     d_y = d_y * (1.0/scale)
-
+    
     # Rotate to the instrument PA
     cosa = np.cos(np.radians(-inst_angle))
     sina = np.sin(np.radians(-inst_angle))
-
+    
     rot_matrix = np.array([[cosa, sina], [-sina, cosa]])
     coo_ao = np.array([d_x, d_y])
     coo_inst = rot_matrix.dot(coo_ao)
-
+    
     d_x = coo_inst[0]
     d_y = coo_inst[1]
     
+    return [d_x, d_y]
+
+def pcuxy2pix(pcuxy, phi, scale, pcuxyRef):
+    """Determine pixel shifts from true RA and Dec positions.
+
+    @param pcuxy: a 2-element list containing the PCU x and y in mm.
+    @type pcuxy: float list
+    @param phi: position angle (E of N) in degrees.
+    @type phi: float
+    @param scale: mm per pixel.
+    @type scale: float
+    @param pcuxyRef: 2-element list containing the  PCU x, y positions (in mm) in the reference position.
+    @type pcuxyRef: float list
+    """
+    
+    # Since our reference point is the centre of the pinhole mask, which is the rotation axis, the position angle has no effect, there is just translation.
+    d_x = (pcuxy[0]-pcuxyRef[0])/scale #positive x mm = positive pixels
+    d_y = -(pcuxy[1]-pcuxyRef[1])/scale #positive y mm = negative pixels (after OSIRIS flip)
+
     return [d_x, d_y]
 
 def pix2xyarcsec(xypix, phi, scale, sgra):

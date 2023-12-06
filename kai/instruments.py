@@ -55,6 +55,10 @@ class Instrument(object):
     def get_saturation_level(self):
         pass
     
+    def get_lin_corr_coeffs(self):
+        pass
+
+    
 class NIRC2(Instrument):
     def __init__(self):
         self.name = 'NIRC2'
@@ -180,7 +184,25 @@ class NIRC2(Instrument):
         Set to the 95% saturation threshold in DN.
         """
         return 12000.0
-
+    
+    def get_linearity_correction_coeffs(self):
+        """
+        Returns coefficients (`coeffs`, as defined below)
+        in order to perform linearity correction
+        
+        x = (FITS_orig) / (No. of coadds)
+        
+        norm = coeffs[0] + coeffs[1] * x + coeffs[2] * x^2
+        
+        FITS_corrected = FITS_orig / norm
+        
+        From Stanimir Metchev's linearity correction code
+        (http://www.astro.sunysb.edu/metchev/ao.html)
+        """
+        
+        lin_corr_coeffs = np.array([1.001, -6.9e-6, -0.70e-10])
+        return lin_corr_coeffs
+        
 
 
 class OSIRIS(Instrument):
@@ -207,8 +229,8 @@ class OSIRIS(Instrument):
         self.bad_pixel_mask = 'osiris_img_mask.fits'
 
         self.distCoef = ''
-        self.distXgeoim = None
-        self.distYgeoim = None
+        self.distXgeoim = module_dir + '/reduce/distortion/OSIRIS_im_x_2021.fits'
+        self.distYgeoim = module_dir + '/reduce/distortion/OSIRIS_im_y_2021.fits'
 
         self.telescope = 'Keck'
         self.telescope_diam = 10.5 # telescope diameter in meters
@@ -223,15 +245,43 @@ class OSIRIS(Instrument):
         """
         Return the plate scale in arcsec/pix.
         """
-        scale = 0.00995
-        
+        # scale = 0.00995
+        date = hdr['DATE-OBS']
+        if (float(date[0:4]+date[5:7]+date[8:10]) < 20201116):
+            scale = 0.0099418
+        elif (float(date[0:4]+date[5:7]+date[8:10]) >= 20201116):
+            scale = 0.0099576
         return scale
     
+    def get_pcu_scale(self,hdr):
+        """
+        The scale on the PCU pinhole mask, in mm (at the front focus) per pixel
+        """
+        scale = 1/138.5
+        return scale
+
+    def get_pcuxyRef(self,hdr):
+        """
+        The reference position, when the PCU is on-axis
+        """
+        pcuxyRef = [90,185]       
+        return pcuxyRef
+
     def get_position_angle(self, hdr):
         """
         Get the sky PA in degrees East of North. 
         """
-        pa = float(hdr['ROTPOSN']) - self.get_instrument_angle(hdr)
+        # pa = float(hdr['ROTPOSN']) - self.get_instrument_angle(hdr)
+        pa = hdr['PA_IMAG']
+
+        #if in PCU mode, read the PCU rotation angle instead
+        if 'PCUZ' in hdr.keys():
+            if hdr['PCUZ'] > 20:  
+                pcu_angle = float(hdr['PCUR'])
+                pinhole_angle = 65.703 #the angle at which the pihole mask is horizontal.
+                # rotator_angle = hdr['ROTPPOSN']
+                # default_rotator_angle = 90
+                pa = pcu_angle - pinhole_angle       
         return pa
     
     def get_instrument_angle(self, hdr):
@@ -266,15 +316,16 @@ class OSIRIS(Instrument):
                      'Kp': 2.12,
                      'Kp-sHex': 2.12,
                      'Kn3': 2.12,
+                     'Kn3-sHex': 2.12,
                      'Hbb': 1.65,
                      'Hbb-LAnn':1.65,
                      'Hn3': 1.635,
                      'Hcont':1.5832,
                      'BrGamma':2.169,
-                     'BrGamma-sAnn':2.169
-                         }
+                     'BrGamma-sAnn':2.169,
+                    }
         if filt_name not in wave_dict.keys():
-            print('NO information available on this filter' + filt_name)
+            print('NO information available on this filter: ' + filt_name)
             return 2.12
         else:
             return wave_dict[filt_name]
@@ -315,6 +366,10 @@ class OSIRIS(Instrument):
                     #     hdu_list[hh].data = new_data[::-1, :]
                     hdu_list[hh].data = new_data[::-1, :]
 
+            # Need to modify PA_IMAG to account for the flip. Added 2023-10-30 by J. Lu.
+            pa_orig = hdu_list[0].header['PA_IMAG']
+            hdu_list[0].header['PA_IMAG'] = 360.0 - pa_orig
+
             hdu_list.writeto(new_file, overwrite=True)
 
             # Add header values. 
@@ -335,10 +390,21 @@ class OSIRIS(Instrument):
         return new_img
 
     def get_distortion_maps(self, hdr):
-        distXgeoim = None
-        distYgeoim = None
+        """
+        Inputs
+        ----------
+        date : str
+            Date in string format such as '2015-10-02'.
+        """
+        date = hdr['DATE-OBS']
+        if (float(date[0:4]+date[5:7]+date[8:10]) < 20201116):
+            self.distXgeoim = module_dir + '/reduce/distortion/OSIRIS_im_x_2020.fits'
+            self.distYgeoim = module_dir + '/reduce/distortion/OSIRIS_im_y_2020.fits'
+        elif (float(date[0:4]+date[5:7]+date[8:10]) >= 20201116):
+            self.distXgeoim = module_dir + '/reduce/distortion/OSIRIS_im_x_2021.fits'
+            self.distYgeoim = module_dir + '/reduce/distortion/OSIRIS_im_y_2021.fits'
+        return self.distXgeoim, self.distYgeoim
 
-        return distXgeoim, distYgeoim
 
     def get_align_type(self, hdr, errors=False):
         atype = 14
@@ -352,8 +418,7 @@ class OSIRIS(Instrument):
         """
         Set to the 95% saturation threshold in DN.
         """
-        return 20000.0
-    
+        return 17000.0
 
 ##################################################
 #

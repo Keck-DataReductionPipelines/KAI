@@ -2,7 +2,6 @@
 import optparse
 import textwrap
 import numpy as np
-import pylab as py
 from astropy.table import Table
 import math
 import sys
