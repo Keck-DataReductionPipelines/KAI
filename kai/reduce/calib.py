@@ -2,7 +2,6 @@ import os, sys, shutil
 from kai.reduce import util, lin_correction
 from astropy.io import fits
 from astropy import stats
-from pyraf import iraf as ir
 from kai import instruments
 import numpy as np
 from astropy import stats
@@ -14,14 +13,16 @@ import pdb
 
 module_dir = os.path.dirname(__file__)
 
+
 def makedark(files, output,
              raw_dir=None,
+             reduce_dir=None,
              instrument=instruments.default_inst):
     """
     Make dark image for imaging data. Makes a calib/ directory
     and stores all output there. All output and temporary files
     will be created in a darks/ subdirectory.
-    
+
     Parameters
     ----------
     files : list of int
@@ -31,65 +32,70 @@ def makedark(files, output,
     raw_dir : str, optional
         Directory where raw files are stored. By default,
         assumes that raw files are stored in '../raw'
+    reduce_dir : str, optional
+        Directory such as <epoch>/reduce/ with contents including
+        the calib/, calib/darks/, etc. directories live.
+        Files will be output into reduce_dir + calib/darks/.
+        If epoch_dir is None, then use the current working directory.
     instrument : instruments object, optional
         Instrument of data. Default is `instruments.default_inst`
     """
-    redDir = os.getcwd() + '/'  # Reduce directory.
+    rawDir, redDir = get_raw_reduce_directories(raw_dir, reduce_dir)
     curDir = redDir + 'calib/'
     darkDir = util.trimdir(curDir + 'darks/')
-    
-    # Set location of raw data
-    rawDir = util.trimdir(os.path.abspath(redDir + '../raw') + '/')
-    
-    # Check if user has specified a specific raw directory
-    if raw_dir is not None:
-        rawDir = util.trimdir(os.path.abspath(raw_dir) + '/')
-    
+
     util.mkdir(curDir)
     util.mkdir(darkDir)
-    
+
     _out = darkDir + output
-    _outlis = darkDir + 'dark.lis'
+    _outlis = _out.replace('.fits', '.lis')
     util.rmall([_out, _outlis])
 
     darks_orig = instrument.make_filenames(files, rootDir=rawDir)
-    darks_copied = instrument.make_filenames(files, rootDir=darkDir)
-    
-    for ii in range(len(darks_copied)):
-        if os.path.exists(darks_copied[ii]): os.remove(darks_copied[ii])
-        shutil.copy(darks_orig[ii], darks_copied[ii])
-    
+
     # Write out the sources of the dark files
     data_sources_file = open(redDir + 'data_sources.txt', 'a')
-    data_sources_file.write(
-        '---\n# Dark Files for {0} \n'.format(output))
-    
+    data_sources_file.write('---\n# Dark Files for {0} \n'.format(output))
+
     for cur_file in darks_orig:
         out_line = '{0} ({1})\n'.format(cur_file, datetime.now())
         data_sources_file.write(out_line)
-    
+
     data_sources_file.close()
-    
-    # Create a combined dark
+
+    # Create a file with the list of images that go into the dark
     f_on = open(_outlis, 'w')
-    f_on.write('\n'.join(darks_copied) + '\n')
+    f_on.write('\n'.join(darks_orig) + '\n')
     f_on.close()
-    
-    ir.unlearn('imcombine')
-    ir.imcombine.combine = 'median'
-    ir.imcombine.reject = 'sigclip'
-    ir.imcombine.nlow = 1
-    ir.imcombine.nhigh = 1
-    ir.imcombine('@' + _outlis, _out)
+
+    img_stack = []
+    hdr_stack = []
+
+    print(f'makedark: Making dark {_out} with the following images:')
+    for ii in range(len(darks_orig)):
+        print(f'\t{darks_orig[ii]}')
+        img, hdr = fits.getdata(darks_orig[ii], header=True)
+        img_stack.append(img)
+        hdr_stack.append(hdr)
+    img_stack = np.array(img_stack)
+
+    # Stack the darks with sigma clipping, median combine.
+    dk_avg, dk_med, dk_std = astropy.stats.sigma_clipped_stats(img_stack,
+                                                               cenfunc='median',
+                                                               sigma_lower=3,
+                                                               sigma_upper=3,
+                                                               axis=0)
+
+    # Save to an output file.
+    fits.writeto(_out, dk_med, header=hdr_stack[0])
+
+    return
 
 
-def makeflat(
-        onFiles, offFiles, output,
-        dark_frame=None,
-        normalizeFirst=False,
-        raw_dir=None,
-        instrument=instruments.default_inst,
-    ):
+def makeflat(onFiles, offFiles, output,
+             dark_frame=None, normalizeFirst=False,
+             raw_dir=None, reduce_dir=None,
+             instrument=instruments.default_inst):
     """
     Make flat field image for imaging data. Makes a calib/ directory
     and stores all output there. All output and temporary files
@@ -100,7 +106,7 @@ def makeflat(
     something like this: onFiles = range(22, 26+1) and offFiles = range(0,0)
     The flat will then be made by doing a median combine using just the
     twilight flats.
-                 
+
     Parameters
     ----------
     onFiles : list of int
@@ -119,199 +125,182 @@ def makeflat(
     raw_dir : str, optional
         Directory where raw files are stored. By default,
         assumes that raw files are stored in '../raw'
+    reduce_dir : str, optional
+        Directory such as <epoch>/reduce/ with contents including
+        the calib/, calib/darks/, etc. directories live.
+        Files will be output into reduce_dir + calib/darks/.
+        If epoch_dir is None, then use the current working directory.
     instrument : instruments object, optional
         Instrument of data. Default is `instruments.default_inst`
     """
-    redDir = os.getcwd() + '/'
+    rawDir, redDir = get_raw_reduce_directories(raw_dir, reduce_dir)
     curDir = redDir + 'calib/'
     flatDir = util.trimdir(curDir + 'flats/')
-    
-    # Set location of raw data
-    rawDir = util.trimdir(os.path.abspath(redDir + '../raw') + '/')
-    
-    # Check if user has specified a specific raw directory
-    if raw_dir is not None:
-        rawDir = util.trimdir(os.path.abspath(raw_dir) + '/')
-    
+
     util.mkdir(curDir)
     util.mkdir(flatDir)
 
     _on = flatDir + 'lampsOn.fits'
     _off = flatDir + 'lampsOff.fits'
-    _norm = flatDir + 'flatNotNorm.fits'
     _out = flatDir + output
     _onlis = flatDir + 'on.lis'
     _offlis = flatDir + 'off.lis'
-    _onNormLis = flatDir + 'onNorm.lis'
 
-    util.rmall([_on, _off, _norm, _out, _onlis, _offlis, _onNormLis])
+    util.rmall([_on, _off, _out, _onlis, _offlis])
 
     lampson = instrument.make_filenames(onFiles, rootDir=rawDir)
     lampsoff = instrument.make_filenames(offFiles, rootDir=rawDir)
-    
+
     lampson_copied = instrument.make_filenames(onFiles, rootDir=flatDir)
     lampsoff_copied = instrument.make_filenames(offFiles, rootDir=flatDir)
-    
-    lampsonNorm = instrument.make_filenames(onFiles, rootDir=flatDir + 'norm')
-    util.rmall(lampsonNorm)
-    
-    # Copy files
+
+    # Copy files - we will modify these in place.
     for ii in range(len(lampson_copied)):
         if os.path.exists(lampson_copied[ii]): os.remove(lampson_copied[ii])
         shutil.copy(lampson[ii], lampson_copied[ii])
-    
+
     for ii in range(len(lampsoff_copied)):
         if os.path.exists(lampsoff_copied[ii]): os.remove(lampsoff_copied[ii])
         shutil.copy(lampsoff[ii], lampsoff_copied[ii])
-    
+
     # Write out the sources of the flat files
     data_sources_file = open(redDir + 'data_sources.txt', 'a')
-    
+
     data_sources_file.write(
         '---\n# Flat Files for {0}, Lamps On\n'.format(output))
     for cur_file in lampson:
         out_line = '{0} ({1})\n'.format(cur_file, datetime.now())
         data_sources_file.write(out_line)
-    
+
     data_sources_file.write(
         '---\n# Flat Files for {0}, Lamps Off\n'.format(output))
     for cur_file in lampsoff:
         out_line = '{0} ({1})\n'.format(cur_file, datetime.now())
         data_sources_file.write(out_line)
-    
+
     data_sources_file.close()
-    
-    # If dark frame is provided, carry out dark correction
+
+    # If dark frame is provided, load it up.
     if dark_frame is not None:
         dark_file = redDir + '/calib/darks/' + dark_frame
-        
+
         # Read in dark frame data
         dark_data = fits.getdata(dark_file, ignore_missing_end=True)
-        
-        # Go through each flat file
-        for i in range(len(lampson_copied)):            
-            with fits.open(lampson_copied[i], mode='readonly',
-                    ignore_missing_end=True,
-                    output_verify = 'ignore') as cur_flat:
-                flat_data = cur_flat[0].data
-                flat_header = cur_flat[0].header
-            flat_data = flat_data - dark_data
-            flat_hdu = fits.PrimaryHDU(
-                data=flat_data,
-                header=flat_header)
-            
-            flat_hdu.writeto(
-                lampson_copied[i],
-                output_verify='ignore',
-                overwrite=True)
-        
-        for i in range(len(lampsoff_copied)):            
-            with fits.open(lampsoff_copied[i], mode='readonly',
-                    ignore_missing_end=True,
-                    output_verify = 'ignore') as cur_flat:
-                flat_data = cur_flat[0].data
-                flat_header = cur_flat[0].header
-            
-            flat_data = flat_data - dark_data
-            flat_hdu = fits.PrimaryHDU(
-                data=flat_data,
-                header=flat_header)
-            flat_hdu.writeto(
-                lampsoff_copied[i],
-                output_verify='ignore',
-                overwrite=True)
     else:
-        warning_message = 'Dark frame not provided for makesky().'
+        warning_message = 'Dark frame not provided for makeflat().'
         warning_message += '\nUsing flat frames without dark subtraction.'
-        
         warnings.warn(warning_message)
-    
-    # Perform linearity correction [only NIRC2]
-    if instrument is 'NIRC2':
-        for i in range(len(lampson_copied)):
-            lin_correction.lin_correction(lampson_copied[i],
-                instrument=instrument)
 
-        for i in range(len(lampsoff_copied)):
-            lin_correction.lin_correction(lampsoff_copied[i],
-                instrument=instrument)
-    
-    if (len(offFiles) != 0):
-        f_on = open(_onlis, 'w')
-        f_on.write('\n'.join(lampson_copied) + '\n')
-        f_on.close()
-        f_on = open(_offlis, 'w')
-        f_on.write('\n'.join(lampsoff_copied) + '\n')
-        f_on.close()
-        f_onn = open(_onNormLis, 'w')
-        f_onn.write('\n'.join(lampsonNorm) + '\n')
-        f_onn.close()
+    # Go through each flat file and subtract dark, linearity correct (inline, overwrite copied file).
+    print(f'makeflat: Making flat lamps on with the following images:')
+    for i in range(len(lampson_copied)):
+        print(f'\t{lampson_copied[i]}')
 
-        # Combine to make a lamps on and lamps off
-        ir.unlearn('imcombine')
-        ir.imcombine.combine = 'median'
-        ir.imcombine.reject = 'sigclip'
-        ir.imcombine.nlow = 1
-        ir.imcombine.nhigh = 1
-        ir.imcombine('@' + _offlis, _off)
+        # Dark subtraction
+        if dark_frame is not None:
+            cur_flat = fits.open(lampson_copied[i], mode='update', ignore_missing_end=True, output_verify='ignore')
+            cur_flat[0].data -= dark_data
+            cur_flat.flush(output_verify='ignore')
+            cur_flat.close(output_verify='ignore')
 
-        # Check if we should normalize individual flats first
-        # such as in the case of twilight flats.
-        if normalizeFirst:
-            f_on = open(_offlis, 'w')
-            f_on.write('\n'.join(lampsoff) + '\n')
-            f_on.close()
+        # Linearity correction
+        lin_correction.lin_correction(lampson_copied[i], instrument=instrument)
 
-            # Subtract "off" from individual frames
-            ir.imarith('@'+_onlis, '-', _off, '@'+_onNormLis)
+    print(f'makeflat: Making flat lamps on with the following images:')
+    for i in range(len(lampsoff_copied)):
+        print(f'\t{lampson_copied[i]}')
 
-            # Scale them and combine
-            ir.imcombine.scale = 'median'
-            ir.imcombine('@' + _onNormLis, _norm)
-        else:
-            # Combine all "on" frames
-            ir.imcombine('@' + _onlis, _on)
+        # Dark subtraction
+        if dark_frame is not None:
+            cur_flat = fits.open(lampsoff_copied[i], mode='update', ignore_missing_end=True, output_verify='ignore')
+            cur_flat[0].data -= dark_data
+            cur_flat.flush(output_verify='ignore')
+            cur_flat.close(output_verify='ignore')
 
-            # Now do lampsOn - lampsOff
-            ir.imarith(_on, '-', _off, _norm)
+        # Linearity correction
+        lin_correction.lin_correction(lampsoff_copied[i], instrument=instrument)
 
 
-        # Normalize the final flat
-        ir.module.load('noao', doprint=0, hush=1)
-        ir.module.load('imred', doprint=0, hush=1)
-        ir.module.load('generic', doprint=0, hush=1)
-        orig_img = fits.getdata(_norm)
-        orig_size = (orig_img.shape)[0]
-        if (orig_size >= 1024):
-            flatRegion = '[100:900,513:950]'
-        else:
-            flatRegion = ''
-        ir.normflat(_norm, _out, sample=flatRegion)
+    # Gather up and stack the lamps-off files. Final median-combined image is 'off_med'
+    if len(lampsoff_copied) > 0:
+        stack_off = []
+        for ii in range(len(lampsoff_copied)):
+            img = fits.getdata(lampsoff_copied[ii])
+            stack_off.append(img)
+        stack_off = np.array(stack_off)
 
+        # Stack the lamps off flats with sigma clipping, median combine.
+        off_avg, off_med, off_std = astropy.stats.sigma_clipped_stats(stack_off,
+                                                               cenfunc='median',
+                                                               sigma_lower=3,
+                                                               sigma_upper=3,
+                                                               axis=0)
+
+        del stack_off, off_avg, off_std
     else:
-        f_on = open(_onlis, 'w')
-        f_on.write('\n'.join(lampson_copied) + '\n')
-        f_on.close()
+        off_med = None
 
-        # Combine twilight flats
-        ir.unlearn('imcombine')
-        ir.imcombine.combine = 'median'
-        ir.imcombine.reject = 'sigclip'
-        ir.imcombine.nlow = 1
-        ir.imcombine.nhigh = 1
+    # Load up the lamps on images
+    stack_on = []
+    hdr = None
+
+    for ii in range(len(lampson_copied)):
+        # Load images (and first header)
+        if ii == 0:
+            img, hdr = fits.getdata(lampson_copied[ii], header=True)
+        else:
+            img = fits.getdata(lampson_copied[ii])
+
+        # Subtract the off-lamps (if we have them)
+        if off_med is not None:
+            img -= off_med
+
+        # Normalize before combining if specified.
         if normalizeFirst:
-            # Scale them
-            ir.imcombine.scale = 'median'
-        ir.imcombine('@' + _onlis, _norm)
+            # Determine central area for normalization, avoid edges. Leave a 10% gap on each side.
+            norm_gap_size = (0.1 * np.array(img.shape)).astype('int')
+            norm_lo = norm_gap_size
+            norm_hi = img.shape - norm_gap_size
+            norm_value = np.median( img[norm_lo[0]:norm_hi[0], norm_lo[1]:norm_hi[1]] )
 
-        # Normalize the flat
-        ir.module.load('noao', doprint=0, hush=1)
-        ir.module.load('imred', doprint=0, hush=1)
-        ir.module.load('generic', doprint=0, hush=1)
-        flatRegion = '[100:900,513:950]'
-        ir.normflat(_norm, _out, sample=flatRegion)
+            img /= norm_value
 
-def makemask(dark, flat, output, instrument=instruments.default_inst):
+        stack_on.append(img)
+
+    stack_on = np.array(stack_on)
+
+    # Stack the lamps off flats with sigma clipping, median combine.
+    on_avg, on_med, on_std = astropy.stats.sigma_clipped_stats(stack_on,
+                                                               cenfunc='median',
+                                                               sigma_lower=3,
+                                                               sigma_upper=3,
+                                                               axis=0)
+
+    # Normalize the final flat.
+    norm_gap_size = (0.1 * np.array(on_med.shape)).astype('int')
+    norm_lo = norm_gap_size
+    norm_hi = on_med.shape - norm_gap_size
+    norm_value = np.median(on_med[norm_lo[0]:norm_hi[0], norm_lo[1]:norm_hi[1]])
+
+    on_med /= norm_value
+
+    # Save to an output file.
+    fits.writeto(_out, on_med, header=hdr)
+
+    # Save some records of which files went into the stack.
+    f_on = open(_onlis, 'w')
+    f_on.write('\n'.join(lampson_copied) + '\n')
+    f_on.close()
+
+    if off_med is not None:
+        f_off = open(_offlis, 'w')
+        f_off.write('\n'.join(lampsoff_copied) + '\n')
+        f_off.close()
+
+    return
+
+
+def makemask(dark, flat, output, reduce_dir=None, instrument=instruments.default_inst):
     """
     Make bad pixel mask for imaging data. Makes a calib/ directory
     and stores all output there. All output and temporary files
@@ -330,10 +319,15 @@ def makemask(dark, flat, output, instrument=instruments.default_inst):
     output : str
         The output file name. This will be created in the masks/
         subdirectory.
+    reduce_dir : str, optional
+        Directory such as <epoch>/reduce/ with contents including
+        the calib/, calib/darks/, etc. directories live.
+        Files will be output into reduce_dir + calib/darks/.
+        If epoch_dir is None, then use the current working directory.
     instrument : instruments object, optional
         Instrument of data. Default is `instruments.default_inst`
     """
-    redDir = os.getcwd() + '/'
+    rawDir, redDir = get_raw_reduce_directories(None, reduce_dir)
     calDir = redDir + 'calib/'
     maskDir = util.trimdir(calDir + 'masks/')
     flatDir = util.trimdir(calDir + 'flats/')
@@ -354,6 +348,9 @@ def makemask(dark, flat, output, instrument=instruments.default_inst):
     ##########
     whatDir = redDir + dark
     print(whatDir)
+    print(f'makemask: Making mask {_out} with the following:')
+    print(f'\t{_dark}')
+    print(f'\t{_flat}')
 
     # Get the sigma-clipped mean and stddev on the dark
     img_dk = fits.getdata(_dark)
@@ -493,18 +490,31 @@ def make_instrument_mask(dark, flat, outDir, instrument=instruments.default_inst
     new_file[0].data[mask] = 1
     new_file[0].writeto(_out, output_verify='silentfix')
 
-def analyzeDarkCalib(firstFrame, skipcombo=False):
+
+def analyzeDarkCalib(firstFrame, raw_dir=None, reduce_dir=None, skipcombo=False):
     """
     Reduce data from the dark_calib script that should be run once
     a summer in order to test the dark current and readnoise.
 
     This should be run in the reduce/calib/ directory for a particular
     run.
+
+    Parameters
+    ------
+    firstFrame : float
+        Number of the first frame.
+    raw_dir : str, optional
+        Directory where raw files are stored. By default,
+        assumes that raw files are stored in '../raw'
+    reduce_dir : str, optional
+        Directory such as <epoch>/reduce/ with contents including
+        the calib/, calib/darks/, etc. directories live.
+        Files will be output into reduce_dir + calib/darks/.
+        If epoch_dir is None, then use the current working directory.
     """
-    redDir = os.getcwd() + '/'  # Reduce directory.
+    rawDir, redDir = get_raw_reduce_directories(raw_dir, reduce_dir)
     curDir = redDir + 'calib/'
     darkDir = util.trimdir(curDir + 'darks/')
-    rawDir = util.trimdir(os.path.abspath(redDir + '../raw') + '/')
 
     util.mkdir(curDir)
     util.mkdir(darkDir)
@@ -593,3 +603,17 @@ def analyzeDarkCalib(firstFrame, skipcombo=False):
     _out.close()
 
     return
+
+def get_raw_reduce_directories(raw_dir, reduce_dir):
+    # Determine directory locations
+    if reduce_dir is None:
+        redDir = os.getcwd() + '/'  # Reduce directory.
+    else:
+        redDir = util.trimdir(os.path.abspath(reduce_dir) + '/')
+    # Set location of raw data
+    if raw_dir is not None:
+        rawDir = util.trimdir(os.path.abspath(raw_dir) + '/')
+    else:
+        rawDir = util.trimdir(os.path.abspath(redDir + '../raw') + '/')
+    return rawDir, redDir
+
