@@ -2070,7 +2070,6 @@ def clean_makecoo(_ce, _cc, refSrc, strSrc, aotsxyRef, radecRef,
     # re-center stars to get exact coordinates
     if check_loc:
 
-        pdb.set_trace()
         text = ir.imcntr(_ce, xref, yref, cbox=cent_box, Stdout=1)
         values = text[0].split()
         xref = float(values[2])
