@@ -1,4 +1,3 @@
-from pyraf import iraf as ir
 from scipy import ndimage
 from astropy.io import fits
 import numpy as np

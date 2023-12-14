@@ -1,11 +1,9 @@
 from astropy.io import fits
 from astropy.table import Table
 from astropy import stats
-import os, sys, shutil
+import os, shutil
 from kai.reduce import util, lin_correction
-#import util
 import numpy as np
-from pyraf import iraf as ir
 from kai import instruments
 from datetime import datetime
 import pdb
@@ -13,13 +11,11 @@ import astropy
 import warnings
 from pkg_resources import parse_version
 
-def makesky(
-        files, nite,
-        wave, dark_frame=None,
-        skyscale=True,
-        raw_dir=None,
-        instrument=instruments.default_inst,
-    ):
+
+def makesky(files, nite, wave,
+            dark_frame=None, skyscale=True,
+            raw_dir=None, reduce_dir=None,
+            instrument=instruments.default_inst):
     """
     Make short wavelength (not L-band or longer) skies.
     
@@ -42,30 +38,21 @@ def makesky(
     raw_dir : str, optional
         Directory where raw files are stored. By default,
         assumes that raw files are stored in '../raw'
+    reduce_dir : str, optional
+        Directory such as <epoch>/reduce/ with contents including
+        the calib/, calib/darks/, etc. directories live.
+        Files will be output into reduce_dir + calib/darks/.
+        If epoch_dir is None, then use the current working directory.
     instrument : instruments object, optional
         Instrument of data. Default is `instruments.default_inst`
     """
+    rawDir, redDir = get_raw_reduce_directories(raw_dir, reduce_dir)
+
+    waveDir = redDir + wave + '/'
+    skyDir = waveDir + 'sky_' + nite + '/'
+
     # Make new directory for the current passband and switch into it
     util.mkdir(wave)
-    os.chdir(wave)
-    
-    # Determine directory locatons
-    waveDir = os.getcwd() + '/'
-    redDir = util.trimdir(os.path.abspath(waveDir + '../') + '/')
-    rootDir = util.trimdir(os.path.abspath(redDir + '../') + '/')
-    skyDir = waveDir + 'sky_' + nite + '/'
-    print(waveDir)
-    print(redDir)
-    print(rootDir)
-              
-    
-    # Set location of raw data
-    rawDir = rootDir + 'raw/'
-    
-    # Check if user has specified a specific raw directory
-    if raw_dir is not None:
-        rawDir = util.trimdir(os.path.abspath(raw_dir) + '/')
-    
     util.mkdir(skyDir)
     print('raw dir: ', rawDir)
     print('sky dir: ', skyDir)
@@ -76,56 +63,53 @@ def makesky(
 
     util.rmall([skylist, output])
 
-    nn = instrument.make_filenames(files, rootDir=skyDir)
-    nsc = instrument.make_filenames(files, rootDir=skyDir, prefix='scale')
-    skies = instrument.make_filenames(files, rootDir=rawDir)
+    nn = instrument.make_filenames(files, rootDir=skyDir)  # copy of raw sky
+    nsc = instrument.make_filenames(files, rootDir=skyDir, prefix='scale')  # scaled sky
+    skies = instrument.make_filenames(files, rootDir=rawDir)  # original raw sky
 
     for ii in range(len(nn)):
         if os.path.exists(nn[ii]): os.remove(nn[ii])
         if os.path.exists(nsc[ii]): os.remove(nsc[ii])
         shutil.copy(skies[ii], nn[ii])
-    
+
     # Write out the sources of the sky files
     data_sources_file = open(redDir + 'data_sources.txt', 'a')
     data_sources_file.write('---\n# Sky Files ({0})\n'.format(wave))
-    
+
     for cur_file in skies:
         out_line = '{0} ({1})\n'.format(cur_file, datetime.now())
         data_sources_file.write(out_line)
-    
+
     data_sources_file.close()
-    
+
     # If dark frame is provided, carry out dark correction
     if dark_frame is not None:
         dark_file = redDir + '/calib/darks/' + dark_frame
-        
+
         # Read in dark frame data
         dark_data = fits.getdata(dark_file, ignore_missing_end=True)
-        
+
         # Go through each sky file
-        for i in range(len(skies)):        
-            with fits.open(nn[i], mode='readonly', output_verify = 'ignore', 
-            ignore_missing_end=True) as cur_sky:
+        for i in range(len(skies)):
+            with fits.open(nn[i], mode='readonly', output_verify='ignore', ignore_missing_end=True) as cur_sky:
                 sky_data = cur_sky[0].data
                 sky_header = cur_sky[0].header
             sky_data = sky_data - dark_data
-            sky_hdu = fits.PrimaryHDU(
-                data=sky_data,
-                header=sky_header)
-            sky_hdu.writeto(nn[i], output_verify='ignore',
-            overwrite=True)
+            sky_hdu = fits.PrimaryHDU(data=sky_data, header=sky_header)
+            sky_hdu.writeto(nn[i], output_verify='ignore', overwrite=True)
     else:
         warning_message = 'Dark frame not provided for makesky().'
         warning_message += '\nUsing sky frames without dark subtraction.'
-        
+
         warnings.warn(warning_message)
-    
-    
+
     # Perform linearity correction
-    if instrument is 'NIRC2':
-        for i in range(len(skies)):
-            lin_correction.lin_correction(nn[i], instrument=instrument)
-    
+    for i in range(len(skies)):
+        lin_correction.lin_correction(nn[i], instrument=instrument)
+
+    # List of skies to combine (might be changed after scaling).
+    skies_to_combine = nn
+
     # scale skies to common median
     if skyscale:
         _skylog = skyDir + 'sky_scale.log'
@@ -139,8 +123,8 @@ def makesky(
             img_sky = fits.getdata(nn[i], ignore_missing_end=True)
             if parse_version(astropy.__version__) < parse_version('3.0'):
                 sky_stats = stats.sigma_clipped_stats(img_sky,
-                                                       sigma=3,
-                                                       iters=4)
+                                                      sigma=3,
+                                                      iters=4)
             else:
                 sky_stats = stats.sigma_clipped_stats(img_sky,
                                                       sigma=10,
@@ -149,7 +133,7 @@ def makesky(
             sky_mean[i] = sky_stats[0]
 
         sky_all = sky_mean.mean()
-        sky_scale = sky_all/sky_mean
+        sky_scale = sky_all / sky_mean
 
         for i in range(len(skies)):
             _nn = fits.open(nn[i], ignore_missing_end=True)
@@ -157,9 +141,9 @@ def makesky(
             _nn[0].writeto(nsc[i])
 
             skyf = nn[i].split('/')
-            print(('%s   skymean=%10.2f   skyscale=%10.2f' % 
-                  (skyf[len(skyf)-1], sky_mean[i],sky_scale[i])))
-            f_skylog.write('%s   %10.2f  %10.2f\n' % 
+            print(('%s   skymean=%10.2f   skyscale=%10.2f' %
+                   (skyf[len(skyf) - 1], sky_mean[i], sky_scale[i])))
+            f_skylog.write('%s   %10.2f  %10.2f\n' %
                            (nn[i], sky_mean[i], sky_scale[i]))
 
         # Make list for combinng
@@ -167,36 +151,43 @@ def makesky(
         f_on.write('\n'.join(nsc) + '\n')
         f_on.close()
 
-        #skylist = skyDir + 'scale????.fits'
+        # skylist = skyDir + 'scale????.fits'
         f_skylog.close()
+        skies_to_combine = nsc
     else:
         # Make list for combinng
         f_on = open(skylist, 'w')
         f_on.write('\n'.join(nn) + '\n')
         f_on.close()
 
-        #skylist = skyDir + 'n????.fits' 
+        # skylist = skyDir + 'n????.fits'
 
-    if os.path.exists(output): os.remove(output)
-    ir.unlearn('imcombine')
-    ir.imcombine.combine = 'median'
-    ir.imcombine.reject = 'none'
-    ir.imcombine.nlow = 1
-    ir.imcombine.nhigh = 1
+    # Combine the skies
+    img_stack = []  # stack of image data
+    hdr_stack = []  # stack of image headers
+    for ii in range(len(skies_to_combine)):
+        img, hdr = fits.getdata(skies_to_combine[ii], header=True)
+        img_stack.append(img)
+        hdr_stack.append(hdr)
+    img_stack = np.array(img_stack)
 
-    ir.imcombine('@' + skylist, output)
-    
-    # Change back to original directory
-    os.chdir('../')
+    # Stack the darks with sigma clipping, median combine.
+    sk_avg, sk_med, sk_std = astropy.stats.sigma_clipped_stats(img_stack,
+                                                               cenfunc='median',
+                                                               sigma_lower=3,
+                                                               sigma_upper=3,
+                                                               axis=0)
+
+    # Save to an output file. Use first header.
+    fits.writeto(output, sk_med, header=hdr_stack[0], overwrite=True)
+
+    return
 
 
-def makesky_lp(
-        files, nite,
-        wave, dark_frame=None,
-        number=3, rejectHsigma=None,
-        raw_dir=None,
-        instrument=instruments.default_inst,
-    ):
+def makesky_lp(files, nite, wave,
+               dark_frame=None, number=3, rejectHsigma=5,
+               raw_dir=None, reduce_dir=None,
+               instrument=instruments.default_inst):
     """
     Make L' skies by carefully treating the ROTPPOSN angle
     of the K-mirror. Uses 3 skies combined (set by number keyword).
@@ -217,35 +208,33 @@ def makesky_lp(
     number : int, default=3
         Number of skies to be combined
     rejectHsigma : int, default:None
-        Flag to pass for rejectHsigma for IRAF imcombine
-        By default, no flags are passed
+        Apply a sigma_high threshold for sigma clipping. This works to
+        remove stars or galaxies when using science images to make the sky.
     raw_dir : str, optional
         Directory where raw files are stored. By default,
         assumes that raw files are stored in '../raw'
+    reduce_dir : str, optional
+        Directory such as <epoch>/reduce/ with contents including
+        the calib/, calib/darks/, etc. directories live.
+        Files will be output into reduce_dir + calib/darks/.
+        If epoch_dir is None, then use the current working directory.
     instrument : instruments object, optional
         Instrument of data. Default is `instruments.default_inst`
     """
-    
-    # Make new directory for the current passband and switch into it
-    util.mkdir(wave)
-    os.chdir(wave)
-    
-    # Determine directory locatons
-    waveDir = os.getcwd() + '/'
-    redDir = util.trimdir(os.path.abspath(waveDir + '../') + '/')
-    rootDir = util.trimdir(os.path.abspath(redDir + '../') + '/')
+    rawDir, redDir = get_raw_reduce_directories(raw_dir, reduce_dir)
+
+    waveDir = redDir + wave + '/'
     skyDir = waveDir + 'sky_' + nite + '/'
-    
-    rawDir = rootDir + 'raw/'
-    
-    # Check if user has specified a specific raw directory
-    if raw_dir is not None:
-        rawDir = util.trimdir(os.path.abspath(raw_dir) + '/')
-    
+
+    # Make new directory for the current passband and switch into it
+    util.mkdir(waveDir)
+    os.chdir(waveDir)
+
     util.mkdir(skyDir)
-    print('sky dir: ',skyDir)
-    print('wave dir: ',waveDir)
-    
+    print('raw dir: ', rawDir)
+    print('sky dir: ', skyDir)
+    print('wave dir: ', waveDir)
+
     # Copy over the raw sky files into the sky directory
     skies = instrument.make_filenames(files, rootDir=skyDir)
     raw = instrument.make_filenames(files, rootDir=rawDir)
@@ -253,17 +242,17 @@ def makesky_lp(
     for ii in range(len(skies)):
         if os.path.exists(skies[ii]): os.remove(skies[ii])
         shutil.copy(raw[ii], skies[ii])
-    
+
     # Write out the sources of the sky files
     data_sources_file = open(redDir + 'data_sources.txt', 'a')
     data_sources_file.write('---\n# Sky Files ({0})\n'.format(wave))
-    
+
     for cur_file in raw:
         out_line = '{0} ({1})\n'.format(cur_file, datetime.now())
         data_sources_file.write(out_line)
-    
+
     data_sources_file.close()
-    
+
     _rawlis = skyDir + 'raw.lis'
     _nlis = skyDir + 'n.lis'
     _skyRot = skyDir + 'skyRot.txt'
@@ -273,82 +262,89 @@ def makesky_lp(
     util.rmall([_rawlis, _nlis, _skyRot, _txt, _out, _log])
     util.rmall([sky + '.fits' for sky in skies])
 
-    open(_rawlis, 'w').write('\n'.join(raw)+'\n')
-    open(_nlis, 'w').write('\n'.join(skies)+'\n')
-    
+    open(_rawlis, 'w').write('\n'.join(raw) + '\n')
+    open(_nlis, 'w').write('\n'.join(skies) + '\n')
+
     print('makesky_lp: Getting raw files')
 
     write_sky_rot_file(_rawlis, _nlis, _skyRot)
-    
+
     # If dark frame is provided, carry out dark correction
     if dark_frame is not None:
         dark_file = redDir + '/calib/darks/' + dark_frame
-        
+
         # Read in dark frame data
         dark_data = fits.getdata(dark_file, ignore_missing_end=True)
-        
+
         # Go through each sky file
-        for i in range(len(skies)):        
-            with fits.open(skies[i], mode='readonly', output_verify = 'ignore', 
-            ignore_missing_end=True) as cur_sky:
+        for i in range(len(skies)):
+            with fits.open(skies[i], mode='readonly', output_verify='ignore', ignore_missing_end=True) as cur_sky:
                 sky_data = cur_sky[0].data
                 sky_header = cur_sky[0].header
             sky_data = sky_data - dark_data
-            sky_hdu = fits.PrimaryHDU(
-            data=sky_data, 
-            header=sky_header)
-            sky_hdu.writeto(skies[i], 
-            output_verify='ignore', 
-            overwrite=True)
+            sky_hdu = fits.PrimaryHDU(data=sky_data, header=sky_header)
+            sky_hdu.writeto(skies[i], output_verify='ignore', overwrite=True)
     else:
         warning_message = 'Dark frame not provided for makesky_lp().'
         warning_message += '\nUsing sky frames without dark subtraction.'
-        
+
         warnings.warn(warning_message)
-    
+
     # Perform linearity correction
-    if instrument is 'NIRC2':
-        for i in range(len(skies)):
-            lin_correction.lin_correction(skies[i], instrument=instrument)
-    
+    for i in range(len(skies)):
+        lin_correction.lin_correction(skies[i], instrument=instrument)
+
     # Read in the list of files and rotation angles
     files, angles = read_sky_rot_file(_skyRot)
 
     # Fix angles to be between -180 and 180
     angles[angles > 180] -= 360.0
     angles[angles < -180] += 360.0
-    
+
     sidx = np.argsort(angles)
-    
+
     # Make sorted numarrays
     angles = angles[sidx]
     files = files[sidx]
 
+    # Open some logging files
     f_log = open(_log, 'w')
     f_txt = open(_txt, 'w')
-    
+
     # Skip the first and last since we are going to 
     # average every NN files.
     print('makesky_lp: Combining to make skies.')
     startIdx = number / 2
     stopIdx = len(sidx) - (number / 2)
-    for i in range(startIdx, stopIdx):
-        sky = 'sky%.1f' % (angles[i])
-        skyFits = skyDir + sky + '.fits'
-        util.rmall([skyFits])
-
+    for i in np.arange(startIdx, stopIdx):
         # Take NN images
-        start = i - (number/2)
-        stop = start + number
+        start = int(i - (number / 2))
+        stop = int(start + number)
+
         list = [file for file in files[start:stop]]
         short = [file for file in files[start:stop]]
         angleTmp = angles[start:stop]
+        angle_avg = angleTmp.mean()
+
+        sky = 'sky%.1f' % (angle_avg)
+        skyFits = skyDir + sky + '.fits'
+        util.rmall([skyFits])
 
         # Make short names
         for j in range(len(list)):
             tmp = (short[j]).rsplit('/', 1)
-            short[j] = tmp[len(tmp)-1]
+            short[j] = tmp[len(tmp) - 1]
 
+        # Load up the FITS files.
+        img_stack = []
+        hdr_stack = []
+        for j in range(len(list)):
+            img, hdr = fits.getdata(list[j], header=True)
+            img_stack.append(img)
+            hdr_stack.append(hdr)
+        img_stack = np.array(img_stack)
+
+        # Log the short names of the sky frames in this stack.
         print('%s: %s' % (sky, " ".join(short)))
         f_log.write('%s:' % sky)
         for j in range(len(short)):
@@ -357,144 +353,83 @@ def makesky_lp(
             f_log.write(' %6.1f' % angleTmp[j])
         f_log.write('\n')
 
-        ir.unlearn('imcombine')
-        ir.imcombine.combine = 'median'
-
-        if (rejectHsigma == None):
-            ir.imcombine.reject = 'none'
-            ir.imcombine.nlow = 1
-            ir.imcombine.nhigh = 1
+        # Decide if we are using mean or median.
+        if number < 3:
+            cenfunc = 'mean'
         else:
-            ir.imcombine.reject = 'sigclip'
-            ir.imcombine.lsigma = 100
-            ir.imcombine.hsigma = rejectHsigma
-            ir.imcombine.zero = 'median'
+            cenfunc = 'median'
 
-        ir.imcombine.logfile = ''
-        ir.imcombine(','.join(list), skyFits)
+        # Stack the images.
+        sk_avg, sk_med, sk_std = astropy.stats.sigma_clipped_stats(img_stack,
+                                                                   cenfunc=cenfunc,
+                                                                   sigma_lower=100,
+                                                                   sigma_upper=rejectHsigma,
+                                                                   axis=0)
+        if number < 3:
+            sk_img = sk_avg
+        else:
+            sk_img = sk_med
 
-        ir.hedit(skyFits, 'SKYCOMB', 
-                 '%s: %s' % (sky, ' '.join(short)), 
-                 add='yes', show='no', verify='no')
+        sk_hdr = hdr_stack[0]
+        sk_hdr['SKYCOMB'] = '%s: %s' % (sky, ' '.join(short))
+        fits.writeto(skyFits, sk_img, header=sk_hdr, overwrite=True)
 
-        f_txt.write('%13s %8.3f\n' % (sky, angles[i]))
-	
+        # Save output sky angle to txt file.
+        f_txt.write('%13s %8.3f\n' % (sky, angle_avg))
+
     f_txt.close()
     f_log.close()
-    
+
     # Change back to original directory
     os.chdir('../')
 
+    return
 
-def makesky_lp2(files, nite, wave):
-    """Make L' skies by carefully treating the ROTPPOSN angle
-    of the K-mirror. Uses only 2 skies combined."""
 
-    # Start out in something like '06maylgs1/reduce/kp/'
-    waveDir = os.getcwd() + '/'
-    redDir = util.trimdir(os.path.abspath(waveDir + '../') + '/')
-    rootDir = util.trimdir(os.path.abspath(redDir + '../') + '/')
-    skyDir = waveDir + 'sky_' + nite + '/'
-    rawDir = rootDir + 'raw/'
+def makesky_fromsci(files, nite, wave,
+                    raw_dir=None, reduce_dir=None,
+                    instrument=instruments.default_inst):
+    """
+    Make short wavelength (not L-band or longer) skies from the science exposures
+    themselves. We use strong clipping to get rid of stars. This should only be used
+    on sparser science fields.
 
-    util.mkdir(skyDir)
-
-    raw = instrument.make_filenames(files, rootDir=rawDir)
-    skies = instrument.make_filenames(files, rootDir=skyDir)
-    
-    _rawlis = skyDir + 'raw.lis'
-    _nlis = skyDir + 'n.lis'
-    _skyRot = skyDir + 'skyRot.txt'
-    _txt = skyDir + 'rotpposn.txt'
-    _out = skyDir + 'sky'
-    _log = _out + '.log'
-    util.rmall([_rawlis, _nlis, _skyRot, _txt, _out, _log])
-    util.rmall([sky + '.fits' for sky in skies])
-
-    open(_rawlis, 'w').write('\n'.join(raw)+'\n')
-    open(_nlis, 'w').write('\n'.join(skies)+'\n')
-
-    print('makesky_lp: Getting raw files')
-    
-    write_sky_rot_file(_rawlis, _nlis, _skyRot)
-
-    # Read in the list of files and rotation angles
-    files, angles = read_sky_rot_file(_skyRot)
-
-    # Fix angles to be between -180 and 180
-    angles[angles > 180] -= 360.0
-    angles[angles < -180] += 360.0
-    
-    sidx = np.argsort(angles)
-    
-    # Make sorted numarrays
-    angles = angles[sidx]
-    files = files[sidx]
-
-    f_log = open(_log, 'w')
-    f_txt = open(_txt, 'w')
-
-    # Skip the first and last since we are going to 
-    # average every 3 files.
-    print('makesky_lp: Combining to make skies.')
-    for i in range(1, len(sidx)):
-        angav = (angles[i] + angles[i-1])/2.
-        sky = 'sky%.1f' % (angav)
-        skyFits = skyDir + sky + '.fits'
-        util.rmall([skyFits])
-
-        # Average 2 images
-        list = [file for file in files[i-1:i+1]]
-        short = [file for file in files[i-1:i+1]]
-
-        # Make short names
-        for j in range(len(list)):
-            tmp = (short[j]).rsplit('/', 1)
-            short[j] = tmp[len(tmp)-1]
-
-        print('%s: %s %s' % (sky, short[0], short[1]))
-        f_log.write('%s: %s %s  %6.1f %6.1f\n' %
-                    (sky, short[0], short[1], 
-                     angles[i-1], angles[i]))
-
-        ir.unlearn('imcombine')
-        ir.imcombine.combine = 'average'
-        ir.imcombine.reject = 'none'
-        ir.imcombine.nlow = 1
-        ir.imcombine.nhigh = 1
-        ir.imcombine.logfile = ''
-        ir.imcombine(list[1]+','+list[0], skyFits)
-
-        ir.hedit(skyFits, 'SKYCOMB', 
-                 '%s: %s %s' % (sky, short[0], short[1]), 
-                 add='yes', show='no', verify='no')
-
-        f_txt.write('%13s %8.3f\n' % (sky, angav))
-	
-    f_txt.close()
-    f_log.close()
-
-    #ir.imdelete('@' + _nlis)
-
-def makesky_fromsci(files, nite, wave, instrument=instruments.default_inst):
-    """Make short wavelength (not L-band or longer) skies."""
+    Parameters
+    ----------
+    files : list of int
+        Integer list of the files. Does not require padded zeros.
+    nite : str
+        Name for night of observation (e.g.: "nite1"), used as suffix
+        inside the reduce sub-directories.
+    wave : str
+        Name for the observation passband (e.g.: "kp")
+    raw_dir : str, optional
+        Directory where raw files are stored. By default,
+        assumes that raw files are stored in '../raw'
+    reduce_dir : str, optional
+        Directory such as <epoch>/reduce/ with contents including
+        the calib/, calib/darks/, etc. directories live.
+        Files will be output into reduce_dir + calib/darks/.
+        If epoch_dir is None, then use the current working directory.
+    instrument : instruments object, optional
+        Instrument of data. Default is `instruments.default_inst`
+    """
+    rawDir, redDir = get_raw_reduce_directories(raw_dir, reduce_dir)
 
     util.mkdir(wave)
     os.chdir(wave)
 
-    # Start out in something like '06maylgs1/reduce/kp/'
-    waveDir = os.getcwd() + '/'
-    redDir = util.trimdir(os.path.abspath(waveDir + '../') + '/')
-    # redDir = waveDir #I'm running in /reduce. manually move wavedir afterwards? - Matthew
-    rootDir = util.trimdir(os.path.abspath(redDir + '../') + '/')
+    waveDir = redDir + wave + '/'
     skyDir = waveDir + 'sky_' + nite + '/'
-    rawDir = rootDir + 'raw/'
+
+    # Make new directory for the current passband and switch into it
+    util.mkdir(wave)
+    os.chdir(wave)
 
     util.mkdir(skyDir)
-    print('sky dir: ',skyDir)
-    print('wave dir: ',waveDir)
-    # print('raw dir: ',rawDir)
-    # print('red dir: ',redDir)
+    print('raw dir: ', rawDir)
+    print('sky dir: ', skyDir)
+    print('wave dir: ', waveDir)
 
     skylist = skyDir + 'skies_to_combine.lis'
     output = skyDir + 'sky_' + wave + '.fits'
@@ -506,17 +441,23 @@ def makesky_fromsci(files, nite, wave, instrument=instruments.default_inst):
     skies = instrument.make_filenames(files, rootDir=rawDir)
 
     for ii in range(len(nn)):
-        ir.imdelete(nn[ii])
-        ir.imdelete(nsc[ii])
-        ir.imcopy(skies[ii], nn[ii], verbose="no")
+        if os.path.exists(nn[ii]): os.remove(nn[ii])
+        if os.path.exists(nsc[ii]): os.remove(nsc[ii])
+        shutil.copy(skies[ii], nn[ii])
 
-    # Make list for combinng. Reset the skyDir to an IRAF variable.
-    ir.set(skydir=skyDir)
-    f_on = open(skylist, 'w')
-    for ii in range(len(nn)):
-        nn_new = nn[ii].replace(skyDir, "skydir$")
-        f_on.write(nn_new + '\n')
-    f_on.close()
+    # Write out the sources of the sky files
+    data_sources_file = open(redDir + 'data_sources.txt', 'a')
+    data_sources_file.write('---\n# Sky Files ({0})\n'.format(wave))
+
+    for cur_file in skies:
+        out_line = '{0} ({1})\n'.format(cur_file, datetime.now())
+        data_sources_file.write(out_line)
+
+    data_sources_file.close()
+
+    # Perform linearity correction
+    for i in range(len(skies)):
+        lin_correction.lin_correction(nn[i], instrument=instrument)
 
     # Calculate some sky statistics, but reject high (star-like) pixels
     sky_mean = np.zeros([len(skies)], dtype=float)
@@ -541,132 +482,32 @@ def makesky_fromsci(files, nite, wave, instrument=instruments.default_inst):
     # Upper threshold above which we will ignore pixels when combining.
     hthreshold = sky_mean_all + 3.0 * sky_std_all
 
-    ir.imdelete(output)
-    ir.unlearn('imcombine')
-    ir.imcombine.combine = 'median'
-    ir.imcombine.reject = 'sigclip'
-    ir.imcombine.mclip = 'yes'
-    ir.imcombine.hsigma = 2
-    ir.imcombine.lsigma = 10
-    ir.imcombine.hthreshold = hthreshold
+    # Combine the skies
+    img_stack = []  # stack of image data
+    hdr_stack = []  # stack of image headers
+    for ii in range(len(skies)):
+        img, hdr = fits.getdata(skies[ii], header=True)
+        img_stack.append(img)
+        hdr_stack.append(hdr)
+    img_stack = np.array(img_stack)
 
-    ir.imcombine('@' + skylist, output)
-   
+    # Mask all pixels greater than the high threshold.
+    img_stack_msk = np.ma.masked_greater(img_stack, hthreshold)
+
+    # Stack the darks with sigma clipping, median combine.
+    sk_avg, sk_med, sk_std = astropy.stats.sigma_clipped_stats(img_stack_msk,
+                                                               cenfunc='median',
+                                                               sigma_lower=10,
+                                                               sigma_upper=2,
+                                                               axis=0)
+
+    # Save to an output file. Use first header.
+    fits.writeto(output, sk_med, header=hdr_stack[0], overwrite=True)
+
     # Change back to original directory
     os.chdir('../')
 
-def makesky_lp_fromsci(files, nite, wave, number=3, rejectHsigma=None):
-    """Make L' skies by carefully treating the ROTPPOSN angle
-    of the K-mirror. Uses 3 skies combined (set by number keyword)."""
-
-    # Start out in something like '06maylgs1/reduce/kp/'
-    waveDir = os.getcwd() + '/'
-    redDir = util.trimdir(os.path.abspath(waveDir + '../') + '/')
-    rootDir = util.trimdir(os.path.abspath(redDir + '../') + '/')
-    skyDir = waveDir + 'sky_' + nite + '/'
-    rawDir = rootDir + 'raw/'
-
-    util.mkdir(skyDir)
-
-    raw = instrument.make_filenames(files, rootDir=rawDir)
-    skies = instrument.make_filenames(files, rootDir=skyDir)
-
-    flatDir = redDir + 'calib/flats/'
-    flat = flatDir + 'flat_' + wave + '.fits'
-    if not os.access(flat, os.F_OK): 
-        flat = flatDir + 'flat.fits'
-    
-    _rawlis = skyDir + 'raw.lis'
-    _nlis = skyDir + 'n.lis'
-    _skyRot = skyDir + 'skyRot.txt'
-    _txt = skyDir + 'rotpposn.txt'
-    _out = skyDir + 'sky'
-    _log = _out + '.log'
-    util.rmall([_rawlis, _nlis, _skyRot, _txt, _out, _log])
-    util.rmall([sky + '.fits' for sky in skies])
-
-    open(_rawlis, 'w').write('\n'.join(raw)+'\n')
-    open(_nlis, 'w').write('\n'.join(skies)+'\n')
-
-    print('makesky_lp: Getting raw files')
-    ir.imarith('@'+_rawlis, '/', flat, '@'+_nlis)
-    #ir.imcopy('@' + _rawlis, '@' + _nlis, verbose='no')
-    ir.hselect('@' + _nlis, "$I,ROTPPOSN", 'yes', Stdout=_skyRot) 
-    #write_sky_rot_file(_rawlis, _nlis, _skyRot)
-
-    # Read in the list of files and rotation angles
-    files, angles = read_sky_rot_file(_skyRot)
-
-    # Fix angles to be between -180 and 180
-    angles[angles > 180] -= 360.0
-    angles[angles < -180] += 360.0
-    
-    sidx = np.argsort(angles)
-    
-    # Make sorted numarrays
-    angles = angles[sidx]
-    files = files[sidx]
-
-    f_log = open(_log, 'w')
-    f_txt = open(_txt, 'w')
-
-    # Skip the first and last since we are going to 
-    # average every NN files.
-    print('makesky_lp: Combining to make skies.')
-    startIdx = number / 2
-    stopIdx = len(sidx) - (number / 2)
-    for i in range(startIdx, stopIdx):
-        sky = 'sky%.1f' % (angles[i])
-        skyFitsTmp = skyDir + sky + '_tmp.fits'
-        skyFits = skyDir + sky + '.fits'
-        util.rmall([skyFitsTmp, skyFits])
-
-        # Take NN images
-        start = i - (number/2)
-        stop = start + number
-        list = [file for file in files[start:stop]]
-        short = [file for file in files[start:stop]]
-        angleTmp = angles[start:stop]
-
-        # Make short names
-        for j in range(len(list)):
-            tmp = (short[j]).rsplit('/', 1)
-            short[j] = tmp[len(tmp)-1]
-
-        print('%s: %s' % (sky, " ".join(short)))
-        f_log.write('%s:' % sky)
-        for j in range(len(short)):
-            f_log.write(' %s' % short[j])
-        for j in range(len(angleTmp)):
-            f_log.write(' %6.1f' % angleTmp[j])
-        f_log.write('\n')
-
-        ir.unlearn('imcombine')
-        ir.imcombine.combine = 'median'
-
-        if (rejectHsigma == None):
-            ir.imcombine.reject = 'none'
-            ir.imcombine.nlow = 1
-            ir.imcombine.nhigh = 1
-        else:
-            ir.imcombine.reject = 'sigclip'
-            ir.imcombine.lsigma = 100
-            ir.imcombine.hsigma = rejectHsigma
-            ir.imcombine.zero = 'median'
-
-        ir.imcombine.logfile = ''
-        ir.imcombine(','.join(list), skyFitsTmp)
-
-        ir.imarith(skyFitsTmp, '*', flat, skyFits)
-
-        ir.hedit(skyFits, 'SKYCOMB', 
-                 '%s: %s' % (sky, ' '.join(short)), 
-                 add='yes', show='no', verify='no')
-
-        f_txt.write('%13s %8.3f\n' % (sky, angles[i]))
-	
-    f_txt.close()
-    f_log.close()
+    return
 
 
 def read_sky_rot_file(sky_rot_file):
@@ -677,7 +518,8 @@ def read_sky_rot_file(sky_rot_file):
     angles = rotTab[cols[1]]
 
     return files, angles
-    
+
+
 def write_sky_rot_file(rawlis, nlis, skyRot):
     """Write the list of files and rotation angles in Lp.
     Created to avoid using pyraf which causes issues when dealing
@@ -690,8 +532,8 @@ def write_sky_rot_file(rawlis, nlis, skyRot):
     rot = []
     for fit in contents:
         try:
-            with fits.open(fit, mode='readonly', output_verify = 'ignore', 
-                           ignore_missing_end = True) as rot_hdu:
+            with fits.open(fit, mode='readonly', output_verify='ignore',
+                           ignore_missing_end=True) as rot_hdu:
                 rot_header = rot_hdu[0].header
                 rot.append(rot_header['ROTPPOSN'])
         except:
@@ -701,5 +543,19 @@ def write_sky_rot_file(rawlis, nlis, skyRot):
         for jj, ii in enumerate(rot):
             edit.write(contents[jj] + '\t' + str(ii) + '\n')
 
-    
-    
+    return
+
+
+def get_raw_reduce_directories(raw_dir, reduce_dir):
+    # Determine directory locations
+    if reduce_dir is None:
+        redDir = os.getcwd() + '/'  # Reduce directory.
+    else:
+        redDir = util.trimdir(os.path.abspath(reduce_dir) + '/')
+    # Set location of raw data
+    if raw_dir is not None:
+        rawDir = util.trimdir(os.path.abspath(raw_dir) + '/')
+    else:
+        rawDir = util.trimdir(os.path.abspath(redDir + '../raw') + '/')
+    return rawDir, redDir
+

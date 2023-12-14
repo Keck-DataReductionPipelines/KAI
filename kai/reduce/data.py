@@ -270,10 +270,8 @@ def clean(files, nite, wave, refSrc, strSrc,
             ])
 
             ### Copy the raw file to local directory ###
-            #ir.imcopy(_raw, _cp, verbose='no')
-            img_data = fits.getdata(_raw)
-            img_hdr = fits.getheader(_raw)
-            fits.writeto(_cp, img_data, header=img_hdr, output_verify=outputVerify)
+            hdulist=fits.open(_raw)
+            hdulist[0].writeto(_cp, overwrite = True)
 
             ### Make persistance mask ###
             # - Checked images, this doesn't appear to be a large effect.
@@ -281,7 +279,7 @@ def clean(files, nite, wave, refSrc, strSrc,
             
             # Dark correction
             if dark_frame is not None:
-                with fits.open(_cp, mode='readonly', output_verify = 'ignore', 
+                with fits.open(_cp, mode='denywrite', output_verify = 'ignore', 
                 ignore_missing_end=True) as cur_frame:
                     frame_data = cur_frame[0].data
                     frame_header = cur_frame[0].header
@@ -301,14 +299,9 @@ def clean(files, nite, wave, refSrc, strSrc,
             # It might be scaled or there might be a specific one for L'.
             sky = skyObj.getSky(_cp)
 
-            #ir.imarith(_cp, '-', sky, _ss)
             util.imarith(_cp, '-', sky, _ss)
 
             ### Flat field ###
-            #ir.imarith(_ss, '/', flat, _ff)
-            util.imarith(_ss, '/', flat, _ff)
-
-            #ir.imarith(_ss, '/', flat, _ff)
             util.imarith(_ss, '/', flat, _ff)
             
             ### Make a static bad pixel mask ###
@@ -1826,7 +1819,7 @@ def clean_drizzle(xgeoim, ygeoim, _bp, _cd, _wgt, _dlog,
                             kernel = 'lanczos3')
 
     bp_img = fits.getdata(_bp)
-    driz.add_image(bp_img, wcs_in, inwht = wgt_in,
+    driz.add_image(bp_img, wcs_in,# inwht = wgt_in,
                         expin = 1.0,
                         xmax = int(drizzle.outnx),
                         ymax = int(drizzle.outny),
@@ -1834,9 +1827,19 @@ def clean_drizzle(xgeoim, ygeoim, _bp, _cd, _wgt, _dlog,
                         in_units = 'cps')
 
     driz.write(_cd)
-    #ir.drizzle(_bp, _cd, outweig=_wgt, Stdout=_dlog)
-    cd_data = fits.getdata(_cd)
-    fits.writeto(_cd, cd_data, header=hdr, overwrite=True, output_verify=outputVerify)
+    hdulist=fits.open(_cd)
+    img_data = hdulist['SCI'].data
+    img_header = hdulist['SCI'].header
+    img_hdu = fits.PrimaryHDU(data=img_data, header=hdr)
+    img_hdu.writeto(_cd, output_verify='ignore', 
+                                overwrite=True)
+
+    wgt_data = hdulist['WHT'].data
+    wgt_header = hdulist['WHT'].header
+    wgt_hdu = fits.PrimaryHDU(data=wgt_data, header=hdr)
+    wgt_hdu.writeto(_wgt, output_verify='ignore', 
+                                overwrite=True)
+
 
 def clean_cosmicrays(_ff, _mask, wave):
     """Clean the image of cosmicrays and make a mask containing the location
@@ -2072,7 +2075,6 @@ def clean_makecoo(_ce, _cc, refSrc, strSrc, aotsxyRef, radecRef,
     # re-center stars to get exact coordinates
     if check_loc:
 
-        #pdb.set_trace()
         #text = ir.imcntr(_ce, xref, yref, cbox=cent_box, Stdout=1)
         #values = text[0].split()
         #xref = float(values[2])
