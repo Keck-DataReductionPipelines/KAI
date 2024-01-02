@@ -3,167 +3,93 @@ import numpy as np
 import pylab as py
 from astropy.table import Table
 from astropy.io import fits
-import pickle, glob
-from mpl_toolkits.mplot3d import Axes3D
-from matplotlib import cm
+from photutils.profiles import CurveOfGrowth
+from photutils.utils import calc_total_error
 import os
 from scipy import interpolate
 import kai
 
-def setup_phot(imageRoot, silent=False,
-               apertures=[25,50,75,100,125,150,175,200],
-               sky_annulus=200, sky_dannulus=50, zmag=0):
-
-    from pyraf import iraf as ir
-    
-    # Load image header
-    hdr = fits.getheader(imageRoot + '.fits')
-
-    ir.digiphot()
-    ir.daophot()
-    ir.unlearn('phot')
-    ir.unlearn('datapars')
-    ir.unlearn('centerpars')
-    ir.unlearn('fitskypars')
-    ir.unlearn('photpars')
-
-    ##########
-    # Set up datapars
-    ##########
-    ir.datapars.fwhmpsf = 5.0 # shouldn't really matter
-    ir.datapars.sigma = 'INDEF'
-    ir.datapars.datamin = 'INDEF'
-
-    if os.path.exists(imageRoot + '.max'):
-        max_file = open(imageRoot + '.max', 'r')
-        max_line = max_file.readline()
-        max = float(max_line)
-        ir.datapars.datamax = max
-
-        if not silent:
-            print( 'Set ir.datapars.datamax = %d' % max)
-
-    # Pull gain from the header
-    ir.datapars.gain = 'GAIN'
-    ir.datapars.epadu = 'INDEF'
-
-    # Assumes 43.1 electrons per read of noise
-    nreads = 1.0
-    if int(hdr['SAMPMODE']) == 3:
-        nreads = int(hdr['MULTISAM'])
-    
-    ir.datapars.ccdread = ''
-    ir.datapars.readnoise = 43.1 * math.sqrt(2.0) / math.sqrt(nreads)
-
-    # Get exposure times from header
-    ir.datapars.exposure = ''
-    ir.datapars.itime = float(hdr['ITIME']) * int(hdr['COADDS'])
-
-    # Other Header keywords
-    ir.datapars.airmass = 'AIRMASS'
-    ir.datapars.filter = 'FWINAME'
-    ir.datapars.obstime = 'EXPSTART'
-
-    
-    ##########
-    # Setup centerpars. We will use *.coo file for initial guess.
-    ##########
-    ir.centerpars.calgorithm = 'centroid'
-
-    ##########
-    # Setup fitskypars
-    ##########
-    ir.fitskypars.salgorithm = 'centroid'
-    ir.fitskypars.annulus = sky_annulus
-    ir.fitskypars.dannulus = sky_dannulus
-
-    ##########
-    # Setup photpars
-    ##########
-    # Setup a zeropoint... this assumes Strehl = 1, but good enough for now.
-    ir.photpars.zmag = zmag
-    ir.photpars.apertures = ','.join([str(aa) for aa in apertures])
-    
-    ##########
-    # Setup phot
-    ##########
-    ir.phot.interactive = 'no'
-    ir.phot.radplots = 'no'
-    ir.phot.verify = 'No'
-
-    if silent:
-        ir.phot.verbose = 'no'
-    else:
-        ir.phot.verbose = 'yes'
 
 def run_phot(imageRoot, silent=False,
-             apertures=[25,50,75,100,125,150,175,200],
+             apertures=[25, 50, 75, 100, 125, 150, 175, 200],
              sky_annulus=200, sky_dannulus=50, zmag=0):
+    """
+    Run aperture photometry on a *.fits image at the coordinates specified in
+    an accompanying *.coo file to make a curve of growth. Background/sky
+    subtraction is done with a circular annulus.
 
-    from pyraf import iraf as ir
-    
-    setup_phot(imageRoot, apertures=apertures, zmag=zmag, silent=silent,
-               sky_annulus=sky_annulus, sky_dannulus=sky_dannulus)
+    Inputs
+    ------
+    imageRoot : str
+        Name of a *.fits file. Can be a NIRC2 or OSIRIS image or a PSF file.
+        There needs to be a corresponding *.coo file that goes with it.
 
-    image = imageRoot + '.fits'
-    coords = imageRoot + '.coo'
+    Optional Inputs
+    ---------------
+    silent : bool
+        Print the resulting curve of growth.
+    apertures : list or ndarray
+        The radii (in pixels) at which to calculate the enclosed flux.
+    sky_annulus: float
+        The inner radius of the sky annulus (in pixels).
+    sky_dannulus: float
+        The outer - inner radius of the sky annulus (in pixels).
+    zmag : float
+        A zeropoint magnitude to apply to convert fluxes to magnitudes.
+        See the mag and mag_err output below.
 
-    # Output into current directory, not data directory
-    rootSplit = imageRoot.split('/')
-    output = rootSplit[-1] + '.phot.mag'
+    Outputs
+    -------
+    radius : list or ndarray, dtype=float
+        Radii at which the enclosed flux is computed.
 
-    ir.phot(image, coords, output)
+    flux : list or ndarray, dtype=float
+        Enclosed flux within the aperture, background subtracted, in units of DN.
 
-    (radius, flux, mag, merr) = get_phot_output(output, silent=silent)
+    mag : list or ndarray, dtype=float
+        Flux converted to magnitude using:
+            mag = -2.5 * log10(flux) + zmag + 2.5 * log10(itime)
 
-    return (radius, flux, mag, merr)
+    mag_err : list or ndarray, dtype=float
+        Flux errors converted to magnitude using
+            sqrt(flux * gain) + sqrt(bkg * gain)
+        as the only noise sources. Note this is likely not very accurate.
+    """
+    image, hdr = fits.getdata(imageRoot + '.fits', header=True)
+    coords = np.loadtxt(imageRoot + '.coo')
 
-def get_phot_output(output, silent=False):
-    from pyraf import iraf as ir
-    
-    # Now get the results using txdump
-    radStr = ir.txdump(output, 'RAPERT', 'yes', Stdout=1)
-    fluxStr = ir.txdump(output, 'FLUX', 'yes', Stdout=1)
-    magStr = ir.txdump(output, 'MAG', 'yes', Stdout=1)
-    merrStr = ir.txdump(output, 'MERR', 'yes', Stdout=1)
-    pierStr = ir.txdump(output, 'PIER', 'yes', Stdout=1)
+    itime = float(hdr['ITIME']) * int(hdr['COADDS'])
+    gain = hdr['GAIN']
 
-    radFields = radStr[0].split()
-    fluxFields = fluxStr[0].split()
-    magFields = magStr[0].split()
-    merrFields = merrStr[0].split()
-    pierFields = pierStr[0].split()
+    radii = apertures
+    radii_sky = [sky_annulus, sky_annulus + sky_dannulus]
 
-    count = len(radFields)
+    cog = CurveOfGrowth(image, coords, radii)
+    cog_sky = CurveOfGrowth(image, coords, radii_sky)
 
-    radius = np.zeros(count, dtype=float)
-    flux = np.zeros(count, dtype=float)
-    mag = np.zeros(count, dtype=float)
-    merr = np.zeros(count, dtype=float)
+    # Compute sky background in DN / pix^2
+    bkg = (cog_sky.profile[1] - cog.profile[2])
+    bkg_err = np.sqrt(bkg)  # Poisson noise from background
+    bkg /= (cog_sky.area[1] - cog_sky.area[0])
+    bkg_err /= (cog_sky.area[1] - cog_sky.area[0])
 
-    for rr in range(count):
-        radius[rr] = float(radFields[rr])
+    # Background subtraction
+    flux = cog.profile - (bkg * cog.area)
+    flux_err = calc_total_error(flux, bkg_err * cog.area, gain)
+    print()
 
-        if (int(pierFields[rr]) != 0 or magFields[rr] == 'INDEF' or
-            merrFields[rr] == 'INDEF'):
-            print( 'Problem in image: ' + output)
+    radius = apertures
 
-            # Error
-            flux[rr] = 0
-            mag[rr] = 0
-            merr[rr] = 0
-        else:
-            flux[rr] = float(fluxFields[rr])
-            mag[rr] = float(magFields[rr])
-            merr[rr] = float(merrFields[rr])
+    mag = -2.5 * np.log10(flux) + zmag + 2.5 * math.log10(itime)
+    merr = (2.5 / math.log(10)) * (flux_err / flux)
 
     if not silent:
-        print( '%6s  %10s  %6s  %6s' % ('Radius', 'Flux', 'Mag', 'MagErr'))
-        for ii in range(count):
-            print( '%8.1f  %10d  %6.3f  %6.3f' % \
-                (radius[ii], flux[ii], mag[ii], merr[ii]))
-    
+        print('%6s  %10s  %6s  %6s' % ('Radius', 'Flux', 'Mag', 'MagErr'))
+        for ii in range(len(radius)):
+            print('%8.1f  %10f  %6.3f  %6.3f' % (radius[ii], flux[ii], mag[ii], merr[ii]))
+
     return (radius, flux, mag, merr)
+
 
 def get_filter_profile(filter):
     """
@@ -184,8 +110,8 @@ def get_filter_profile(filter):
                'Hcont', 'Brgamma', 'FeII']
 
     if filter not in filters:
-        print( 'Could not find profile for filter %s.' % filter)
-        print( 'Choices are: ', filters)
+        print('Could not find profile for filter %s.' % filter)
+        print('Choices are: ', filters)
         return
 
     table = Table.read(rootDir + filter + '.dat', format='ascii')
@@ -196,14 +122,15 @@ def get_filter_profile(filter):
     # Lets fix wavelength array for duplicate values
     diff = np.diff(wavelength)
     idx = np.where(diff <= 0)[0]
-    wavelength[idx+1] += 1.0e-7
+    wavelength[idx + 1] += 1.0e-7
 
     # Get rid of all entries with negative transmission
     idx = np.where(transmission > 1)[0]
     wavelength = wavelength[idx]
-    transmission = transmission[idx] / 100.0 # convert from % to ratio
+    transmission = transmission[idx] / 100.0  # convert from % to ratio
 
     return (wavelength, transmission)
+
 
 def test_filter_profile_interp():
     """
@@ -219,7 +146,7 @@ def test_filter_profile_interp():
     Lp_wave, Lp_trans = get_filter_profile('Lp')
 
     # We will need to resample these transmission curves.
-    print( 'Creating interp object')
+    print('Creating interp object')
     K_interp = interpolate.splrep(K_wave, K_trans, k=1, s=0)
     Kp_interp = interpolate.splrep(Kp_wave, Kp_trans, k=1, s=0)
     Ks_interp = interpolate.splrep(Ks_wave, Ks_trans, k=1, s=0)
@@ -234,7 +161,7 @@ def test_filter_profile_interp():
     H_wave_new = np.arange(H_wave.min(), H_wave.max(), 0.0005)
     Lp_wave_new = np.arange(Lp_wave.min(), Lp_wave.max(), 0.0005)
 
-    print( 'Interpolating')
+    print('Interpolating')
     K_trans_new = interpolate.splev(K_wave_new, K_interp)
     Kp_trans_new = interpolate.splev(Kp_wave_new, Kp_interp)
     Ks_trans_new = interpolate.splev(Ks_wave_new, Ks_interp)
@@ -242,9 +169,9 @@ def test_filter_profile_interp():
     H_trans_new = interpolate.splev(H_wave_new, H_interp)
     Lp_trans_new = interpolate.splev(Lp_wave_new, Lp_interp)
 
-    print( 'Plotting')
-#     py.figure(2, figsize=(4,4))
-#     py.subplots_adjust(left=0.2, bottom=0.14, top=0.95, right=0.94)
+    print('Plotting')
+    #     py.figure(2, figsize=(4,4))
+    #     py.subplots_adjust(left=0.2, bottom=0.14, top=0.95, right=0.94)
     py.clf()
     py.plot(K_wave, K_trans, 'bo', ms=4, label='_nolegend_', mec='blue')
     py.plot(K_wave_new, K_trans_new, 'b-', label='K', linewidth=2)
@@ -263,10 +190,11 @@ def test_filter_profile_interp():
 
     py.plot(Lp_wave, Lp_trans, 'go', ms=4, label='_nolegend_', mec='green')
     py.plot(Lp_wave_new, Lp_trans_new, 'g-', label='Lp', linewidth=2)
-    
+
     py.legend(loc='lower right', numpoints=1, markerscale=0.1)
     py.xlabel('Wavelength (microns)')
     py.ylabel('Transmission (%)')
+
 
 #     py.axis([2.110, 2.120, 0.928, 0.945])
 
