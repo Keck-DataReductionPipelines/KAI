@@ -680,10 +680,8 @@ def write_sky_rot_file(rawlis, nlis, skyRot):
     """Write the list of files and rotation angles in Lp.
     Created to avoid using pyraf which causes issues when dealing
     with non-fits conforming headers."""
-    # 1. Copy file
-    shutil.copyfile(rawlis, nlis)
     # 2. Loop through files to obtain ROTPPOSN header and append to list
-    with open(nlis) as file:
+    with open(rawlis) as file:
         contents = file.read().split('\n')
     rot = []
     for fit in contents:
@@ -694,10 +692,11 @@ def write_sky_rot_file(rawlis, nlis, skyRot):
                 rot.append(rot_header['ROTPPOSN'])
         except:
             continue
+    with open(nlis) as file:
+        contents = file.read().split('\n')
     # 3. Write in skyRot the name of the file and the header values
     with open(skyRot, 'at') as edit:
         for jj, ii in enumerate(rot):
             edit.write(contents[jj] + '\t' + str(ii) + '\n')
-
     
     
