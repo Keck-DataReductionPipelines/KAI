@@ -131,7 +131,7 @@ def clean(files, nite, wave, refSrc, strSrc,
     """
     from pyraf import iraf as ir
 
-    # Determine directory locatons
+    # Determine directory locations
     redDir = os.getcwd() + '/'
     rootDir = util.trimdir(os.path.abspath(redDir + '../') + '/')
 
@@ -795,7 +795,7 @@ def combine(files, wave, outroot, field=None, outSuffix=None,
     # Change back to original directory
     os.chdir(redDir)
 
-def rot_img(root, phi, cleanDir):
+def rot_img_iraf(root, phi, cleanDir):
     """Rotate images to PA=0 if they have a different PA from one
     another. If the entire data set is taken at a single PA, leave
     it as is. Do this only if set includes various PAs.
@@ -823,6 +823,67 @@ def rot_img(root, phi, cleanDir):
         fits.writeto(outCln, img, output_verify=outputVerify)
 
     return
+
+
+def rot_img(root, phi, cleanDir):
+    """
+    Rotate image with scipy.ndimage.rotate. Only the image is rotated.
+    The header WCS is not modified. The output imageis pre-pended with 'r'
+    instead of 'c'.
+
+    Parameters
+    ----------
+    root : str
+        Root name of the file to rotate. Do not include the prefix (e.g. 'c').
+    phi : float
+        Angle to rotate the input image to get to PA=0.
+    cleanDir : str
+        The clean directory to find the input image and save the output rotated image.
+    """
+    from scipy.ndimage import rotate
+    from astropy.wcs import WCS
+
+    inCln = cleanDir + 'c' + root + '.fits'
+    outCln = cleanDir + 'r' + root + '.fits'
+
+    in_img, in_hdr = fits.getdata(inCln, header=True)
+    in_wcs = WCS(in_hdr)
+
+    # Rotate the image
+    out_img = rotate(in_img, -phi, order=3, mode='constant', cval=0, reshape=False)
+
+    # Rotate the WCS
+    theta = np.deg2rad(phi)
+    sina = np.sin(theta)
+    cosa = np.cos(theta)
+    rot_mat = np.array([[cosa, -sina],
+                        [sina, cosa]])
+
+    if in_wcs.wcs.has_cd():  # CD matrix
+        new_cd = np.dot(rot_mat, in_wcs.wcs.cd)
+        in_wcs.wcs.cd = new_cd
+        in_wcs.wcs.set()
+
+    elif in_wcs.wcs.has_pc():  # PC matrix + CDELT
+        new_pc = np.dot(rot_mat, in_wcs.wcs.get_pc())
+        in_wcs.wcs.pc = new_pc
+        in_wcs.wcs.set()
+    else:
+        raise TypeError("Unsupported wcs type (only CD or PC matrix allowed)")
+
+    out_hdr = copy.deepcopy(in_hdr)
+
+    del out_hdr['CD1_1']
+    del out_hdr['CD1_2']
+    del out_hdr['CD2_1']
+    del out_hdr['CD2_2']
+
+    out_hdr.update(in_wcs.to_header())
+
+    fits.writeto(outCln, out_img, in_hdr, output_verify=outputVerify, overwrite=True)
+
+    return
+
 
 def gcSourceXY(name, label_file='/Users/jlu/data/gc/source_list/label.dat'):
     """
