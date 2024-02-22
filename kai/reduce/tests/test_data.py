@@ -72,6 +72,9 @@ class TestRotImg(unittest.TestCase):
 
         assert img_rot_iraf.shape == img_rot_noiraf.shape
 
+        # Add WCS keyword test. Make sure the input and output CD are different and the
+        # IRAF CD and NO_IRAF CD are close to the same. 
+
         return
 
 
