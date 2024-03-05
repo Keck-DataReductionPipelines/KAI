@@ -510,6 +510,8 @@ class Analysis(object):
                 fitsFile = 'mag%s%s_%s.fits' % (self.epoch, self.imgSuffix, self.filt)
                 hdr = fits.getheader(fitsFile)
                 angle = self.instrument.get_position_angle(hdr)
+                import pdb
+                pdb.set_trace()
                 print(self.instrument.name)
                 
                 # Check for wide camera
@@ -688,8 +690,8 @@ class Analysis(object):
 
             # Make a named/labeled version
             cmd = 'java -Xmx1024m align %s ' % (self.alignFlags)
-            #cmd += '-N %s ' % self.labellist
-            cmd += '-accel_file %s ' % self.labellist
+            #cmd += '-N %s ' % self.labellist #USE THIS FOR MICROLENSING TARGETS
+            cmd += '-accel_file %s ' % self.labellist #USE THIS FOR SGRA*
             if (self.orbitlist != None) and (self.orbitlist != ''):
                 cmd += '-o %s ' % self.orbitlist
             cmd += '-r align%s%s_%3.1f_named ' % (self.imgSuffix, file_ext, self.corrMain)
