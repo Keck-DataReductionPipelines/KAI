@@ -21,11 +21,39 @@ Functions
 
 .. autoapisummary::
 
+   kai.reduce.analysis.idl_process_run
    kai.reduce.analysis.plotPosError
 
 
 
-.. py:class:: Analysis(epoch, rootDir='/g/lu/data/orion/', filt='kp', clean_dir=None, combo_dir=None, combo_stf_dir=None, epochDirSuffix=None, imgSuffix=None, stfDir=None, useDistorted=False, cleanList='c.lis', airopa_mode='single', stf_version=None, instrument=instruments.default_inst)
+.. py:function:: idl_process_run(batch_file)
+
+   
+   Function to help run parallel processes for IDL, used for StarFinder
+
+
+   :Parameters:
+
+       **batch_file** : str
+           Path of the bath file containing the IDL command to run
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:class:: Analysis(epoch, rootDir='/g/lu/data/orion/', filt='kp', clean_dir=None, combo_dir=None, combo_stf_dir=None, epochDirSuffix=None, imgSuffix=None, stfDir=None, useDistorted=False, cleanList='c.lis', airopa_mode='single', stf_version=None, stf_debug=False, stf_parallelize=True, instrument=instruments.default_inst)
 
 
    Bases: :py:obj:`object`
