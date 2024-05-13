@@ -98,6 +98,7 @@ class Analysis(object):
 
         self.starlist = rootDir + 'source_list/psf_central.dat'
         self.labellist = rootDir+ 'source_list/label.dat'
+        self.labellist_accel = True
         self.orbitlist = rootDir+ 'source_list/orbits.dat'
         self.calFile = rootDir + 'source_list/photo_calib.dat'
 
@@ -780,11 +781,18 @@ class Analysis(object):
 
             # Make a named/labeled version
             cmd = 'java -Xmx1024m align %s ' % (self.alignFlags)
-            #cmd += '-N %s ' % self.labellist
-            cmd += '-accel_file %s ' % self.labellist
+
+            # Support label.dat files with or without accelerations.
+            if self.labellist_accel:
+                cmd += '-accel_file %s ' % self.labellist
+            else:
+                cmd += '-N %s ' % self.labellist
+                
             if (self.orbitlist != None) and (self.orbitlist != ''):
                 cmd += '-o %s ' % self.orbitlist
+            
             cmd += '-r align%s%s_%3.1f_named ' % (self.imgSuffix, file_ext, self.corrMain[0])
+
             cmd += alnList2
             print(cmd)
 

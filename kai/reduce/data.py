@@ -283,7 +283,8 @@ def clean(
                 overwrite=True)
             
             # Linearity correction
-            lin_correction.lin_correction(_cp, instrument=instrument)
+            if instrument is 'NIRC2':
+                lin_correction.lin_correction(_cp, instrument=instrument)
             
             ### Sky subtract ###
             # Get the proper sky for this science frame.
