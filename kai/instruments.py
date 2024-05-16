@@ -57,6 +57,9 @@ class Instrument(object):
     
     def get_lin_corr_coeffs(self):
         pass
+    
+    def get_radec(self, hdr):
+        pass
 
     
 class NIRC2(Instrument):
@@ -202,6 +205,29 @@ class NIRC2(Instrument):
         
         lin_corr_coeffs = np.array([1.001, -6.9e-6, -0.70e-10])
         return lin_corr_coeffs
+     
+    def get_radec(self, hdr):
+        """Return list of RA and Dec as decimal degrees"""
+        
+        date = hdr['DATE-OBS']
+        
+        if (float(date[0:4]) < 2024):
+            # Previous to 2023/2024 electronics upgrade, RA and DEC stored
+            # as decimal degrees
+            return [float(hdr['RA']), float(hdr['DEC'])]
+        else:
+            # New coordinates are in HH:MM:SS.SSS or DD:MM:SS.SSS, so have
+            # to convert to decimals degrees
+            RA_split = hdr['RA'].split(':')
+            RA_decimal_hrs = float(RA_split[0]) +\
+                float(RA_split[1])/60. + float(RA_split[2])/3600.
+            RA_decimal_degs = (RA_decimal_hrs / 24.) * 360.
+            
+            DEC_split = hdr['RA'].split(':')
+            DEC_decimal_degs = float(DEC_split[0]) +\
+                float(DEC_split[1])/60. + float(DEC_split[2])/3600.
+            
+            return [float(hdr['RA']), float(hdr['DEC'])]
         
 
 
@@ -419,6 +445,11 @@ class OSIRIS(Instrument):
         Set to the 95% saturation threshold in DN.
         """
         return 17000.0
+    
+    def get_radec(self, hdr):
+        """Return list of RA and Dec as decimal degrees"""
+        
+        return [float(hdr['RA']), float(hdr['DEC'])]
 
 ##################################################
 #

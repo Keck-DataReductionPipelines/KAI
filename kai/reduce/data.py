@@ -184,7 +184,7 @@ def clean(
         # This is the image for which refSrc is relevant.
         firstFile = instrument.make_filenames([files[0]], rootDir=rawDir)[0]
         hdr1 = fits.getheader(firstFile, ignore_missing_end=True)
-        radecRef = [float(hdr1['RA']), float(hdr1['DEC'])]
+        radecRef = instrument.get_radec(hdr1)
         aotsxyRef = kai_util.getAotsxy(hdr1)
 
         if ref_offset_method == 'pcu':
@@ -1978,7 +1978,7 @@ def clean_makecoo(_ce, _cc, refSrc, strSrc, aotsxyRef, radecRef,
 
     hdr = fits.getheader(_ce, ignore_missing_end=True)
 
-    radec = [float(hdr['RA']), float(hdr['DEC'])]
+    radec = instrument.get_radec(hdr)
     aotsxy = kai_util.getAotsxy(hdr)
     if offset_method == 'pcu':
         pcuxy = [float(hdr['PCSFX']), float(hdr['PCSFY'])]  #New version may be PCUX and PCUY
