@@ -78,9 +78,6 @@ class NIRC2(Instrument):
         self.hdr_keys['camera'] = 'CAMNAME'
         self.hdr_keys['shutter'] = 'SHRNAME'
         self.hdr_keys['mjd'] = 'MJD-OBS'
-        if el_upg_2024:
-            self.hdr_keys['mjd'] = 'MJD'
-        
         self.hdr_keys['elevation'] = 'EL'
 
         self.bad_pixel_mask = 'nirc2mask.fits'
@@ -91,6 +88,10 @@ class NIRC2(Instrument):
 
         self.telescope = 'Keck'
         self.telescope_diam = 10.5 # telescope diameter in meters
+        
+        self.el_upg_2024 = el_upg_2024
+        if el_upg_2024:
+            self.hdr_keys['mjd'] = 'MJD'
 
         return
     
@@ -207,6 +208,22 @@ class NIRC2(Instrument):
         """
         
         lin_corr_coeffs = np.array([1.001, -6.9e-6, -0.70e-10])
+        
+        # Post 2024 upgrade to NIRC2 electronics, gain is ~2x compared to the
+        # values calculated by Metchev+ (i.e. gain is now ~8 e-/DN rather ~4
+        # e-/DN, and so nonlinearity now starts at ~4000 DN/coadd rather than
+        # ~8000 DN/coadd)
+        # Therefore, x can be multiplied by 2 for the same coeffs,
+        # or equivalently: coeffs can be multiplied by 2^n: [2^0, 2^1, 2^2]
+        
+        if self.el_upg_2024:
+            lin_corr_coeffs = np.array([
+                1.001 * 2**0,
+                -6.9e-6 * 2**1,
+                -0.70e-10 * 2**2,
+            ])
+            
+        
         return lin_corr_coeffs
      
     def get_radec(self, hdr):
