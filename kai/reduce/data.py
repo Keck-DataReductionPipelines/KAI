@@ -1145,7 +1145,7 @@ def combine_drizzle(imgsize, cleanDir, roots, outroot, weights, shifts,
 
         
         # Read in MJD of current file from FITS header
-        mjd = float(hdr['MJD-OBS'])
+        mjd = float(hdr[instrument.hdr_keys['mjd']])
         mjd_weightedSum += weights[i] * mjd
         
         # Drizzle this file ontop of all previous ones.
@@ -1226,6 +1226,13 @@ def combine_drizzle(imgsize, cleanDir, roots, outroot, weights, shifts,
     
     fits_f[0].header.set(
         'MJD-OBS', mjd_weightedMean,
+        'Weighted modified julian date of combined observations'
+    )
+    
+    # Also write in the file's MJD header keyword,
+    # in case it differs from "MJD-OBS"
+    fits_f[0].header.set(
+        instrument.hdr_keys['mjd'], mjd_weightedMean,
         'Weighted modified julian date of combined observations'
     )
     
@@ -1361,7 +1368,7 @@ def combine_submaps(
             ir.drizzle.ygeoim = distYgeoim
 
         # Read in MJD of current file from FITS header
-        mjd = float(hdr['MJD-OBS'])
+        mjd = float(hdr[instrument.hdr_keys['mjd']])
         mjd_weightedSums[sub] += weights[i] * mjd
         
         # Drizzle this file ontop of all previous ones.
@@ -1436,10 +1443,26 @@ def combine_submaps(
                               'Y Distortion Image')
         
         # Store weighted MJDs in header
-        fits_f[0].header.set('MJD-OBS', mjd_weightedMeans[s], 'Weighted modified julian date of combined observations')
-    
+        fits_f[0].header.set(
+            'MJD-OBS',
+            mjd_weightedMeans[s],
+            'Weighted modified julian date of combined observations',
+        )
+        
+        # Also write in the file's MJD header keyword,
+        # in case it differs from "MJD-OBS"
+        fits_f[0].header.set(
+            instrument.hdr_keys['mjd'],
+            mjd_weightedMeans[s],
+            'Weighted modified julian date of combined observations',
+        )
+        
         ## Also update date field in header
-        fits_f[0].header.set('DATE', '{0}'.format(submaps_time_obs[s].fits), 'Weighted observation date')
+        fits_f[0].header.set(
+            'DATE',
+            '{0}'.format(submaps_time_obs[s].fits),
+            'Weighted observation date',
+        )
         
         # Write out final submap fits file
         fits_f[0].writeto(_fits[s], output_verify=outputVerify)
