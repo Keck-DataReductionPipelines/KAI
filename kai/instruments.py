@@ -227,7 +227,7 @@ class NIRC2(Instrument):
             DEC_decimal_degs = float(DEC_split[0]) +\
                 float(DEC_split[1])/60. + float(DEC_split[2])/3600.
             
-            return [float(hdr['RA']), float(hdr['DEC'])]
+            return [RA_decimal_degs, DEC_decimal_degs]
         
 
 
