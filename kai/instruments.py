@@ -63,7 +63,7 @@ class Instrument(object):
 
     
 class NIRC2(Instrument):
-    def __init__(self):
+    def __init__(self, el_upg_2024=False):
         self.name = 'NIRC2'
         
         # Define header keywords
@@ -78,6 +78,9 @@ class NIRC2(Instrument):
         self.hdr_keys['camera'] = 'CAMNAME'
         self.hdr_keys['shutter'] = 'SHRNAME'
         self.hdr_keys['mjd'] = 'MJD-OBS'
+        if el_upg_2024:
+            self.hdr_keys['mjd'] = 'MJD'
+        
         self.hdr_keys['elevation'] = 'EL'
 
         self.bad_pixel_mask = 'nirc2mask.fits'
