@@ -130,13 +130,16 @@ class NIRC2(Instrument):
         return
     
     def get_filter_name(self, hdr):
-        filter1 = hdr['fwiname']
-        filter2 = hdr['fwoname']
-        filt = filter1
-        if (filter1.startswith('PK')):
-            filt = filter2
+        if 'fwiname' in hdr:
+            filter1 = hdr['fwiname']
+            filter2 = hdr['fwoname']
+            filt = filter1
+            if (filter1.startswith('PK')):
+                filt = filter2
 
-        return filt
+            return filt
+        else:
+            return 'None'
 
     def get_plate_scale(self, hdr):
         """
