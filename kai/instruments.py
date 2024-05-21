@@ -5,6 +5,7 @@ import collections
 from astropy.io import fits
 import pdb
 from astropy.io.fits.hdu.image import _ImageBaseHDU
+from astropy.time import Time
 
 module_dir = os.path.dirname(__file__)
 
@@ -63,7 +64,40 @@ class Instrument(object):
 
     
 class NIRC2(Instrument):
-    def __init__(self, el_upg_2024=False):
+    def __init__(self, obs_year=None):
+        """
+        NIRC2 Instrument object. During initialization, the observation year
+        can be specified in order to help KAI account for NIRC2 instrument
+        upgrade(s).
+        
+        Parameters
+        ----------
+        obs_year : float or string, default=None
+            Specify the time of observation, either as a float for year
+            (indicating the Julian Year) or as a string to indicate the time in
+            ISO format (YYYY-MM-DD). Supports upgrades to NIRC2 that change the
+            output data file format.
+        """
+        
+        # Check if obs_year is valid
+        if obs_year is None:
+            obs_year = 2023.0
+        
+        year_time_format = ''
+        if type(obs_year) is float:
+            year_time_format = 'jyear'
+        elif type(obs_year) is str:
+            year_time_format = 'iso'
+        
+        try:
+            self.obs_year = Time(
+                obs_year, format=year_time_format,
+            )
+        except:
+            raise ValueError('obs_year = {0} is not recognized as a valid time format'.format(
+                obs_year
+            ))
+            
         self.name = 'NIRC2'
         
         # Define header keywords
@@ -89,8 +123,8 @@ class NIRC2(Instrument):
         self.telescope = 'Keck'
         self.telescope_diam = 10.5 # telescope diameter in meters
         
-        self.el_upg_2024 = el_upg_2024
-        if el_upg_2024:
+        # 2024 NIRC2 electronics upgrade
+        if self.obs_year.mjd >= 2024.0:
             self.hdr_keys['mjd'] = 'MJD'
 
         return
