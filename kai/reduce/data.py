@@ -8,9 +8,9 @@ from astropy.nddata.utils import Cutout2D
 from astropy.nddata import CCDData
 from astropy.nddata import block_replicate
 from astropy import units as u
-import ccdproc as ccdp
+#import ccdproc as ccdp
 import math
-from drizzle import drizzle
+#from drizzle import drizzle
 from . import kai_util
 from kai.reduce import util, lin_correction
 from kai import instruments
@@ -27,6 +27,8 @@ import warnings
 from datetime import datetime
 
 from scipy import ndimage
+from scipy.interpolate import griddata
+
 
 module_dir = os.path.dirname(__file__)
 
@@ -858,7 +860,7 @@ def rot_img(root, phi, cleanDir):
     cosa = np.cos(theta)
     rot_mat = np.array([[cosa, -sina],
                         [sina, cosa]])
-
+    
     if in_wcs.wcs.has_cd():  # CD matrix
         new_cd = np.dot(rot_mat, in_wcs.wcs.cd)
         in_wcs.wcs.cd = new_cd
@@ -870,17 +872,63 @@ def rot_img(root, phi, cleanDir):
         in_wcs.wcs.set()
     else:
         raise TypeError("Unsupported wcs type (only CD or PC matrix allowed)")
-
+    
     out_hdr = copy.deepcopy(in_hdr)
+    
+    
+    # Don't use the default to_header for these
+    # params since it switches PC to CD
+    # https://github.com/astropy/astropy/issues/1084
+    if in_wcs.wcs.has_cd():  # CD matrix
+        out_hdr['CD1_1'] = new_cd[0][0]
+        out_hdr['CD1_2'] = new_cd[0][1]
+        out_hdr['CD2_1'] = new_cd[1][0]
+        out_hdr['CD2_2'] = new_cd[1][1]
+    
+    elif in_wcs.wcs.has_pc():  # PC matrix + CDELT
+        out_hdr['PC1_1'] = new_pc[0][0]
+        out_hdr['PC1_2'] = new_pc[0][1]
+        out_hdr['PC2_1'] = new_pc[1][0]
+        out_hdr['PC2_2'] = new_pc[1][1]
+    
+    #CCD to image transform
+    ltm = np.dot(rot_mat, [[1, 0],[0, 1]])
+    out_hdr['LTM1_1'] = ltm[0][0]
+    out_hdr['LTM1_2'] = ltm[1][0]
+    out_hdr['LTM2_1'] = ltm[0][1]
+    out_hdr['LTM2_2'] = ltm[1][1]
 
-    del out_hdr['CD1_1']
-    del out_hdr['CD1_2']
-    del out_hdr['CD2_1']
-    del out_hdr['CD2_2']
+    # CCD to image tranform part 2
+    # Assuming rotation around center
+    img_size_x = in_hdr['NAXIS1']
+    img_size_y = in_hdr['NAXIS2']
+    orig_arr = np.concatenate((img_size_x/2*np.ones((2,1)), img_size_y/2*np.ones((2,1))), axis =1)
+    add_arr = np.array([img_size_x/2, img_size_y/2])
+    rotated_arr = np.dot(-rot_mat, orig_arr) + add_arr
+    out_hdr['LTV1'] = rotated_arr[0][0]
+    out_hdr['LTV2'] = rotated_arr[1][1]
+    
+    
+    #out_hdr.update(in_wcs.to_header())
+    
+    # Deletes the incorrectly generated PC
+    # if relevant (https://github.com/astropy/astropy/issues/1084)
+    if not in_wcs.wcs.has_pc():
+        try:
+            del out_hdr['PC1_1']
+            del out_hdr['PC1_2']
+            del out_hdr['PC2_1']
+            del out_hdr['PC2_2']
+        except:
+            pass
+            
+        
+    testIraf = cleanDir + 'r' + root + '_iraf.fits'
+    iraf_img, iraf_hdr = fits.getdata(testIraf, header=True)
+    
 
-    out_hdr.update(in_wcs.to_header())
-
-    fits.writeto(outCln, out_img, in_hdr, output_verify=outputVerify, overwrite=True)
+    fits.writeto(outCln, out_img, out_hdr, output_verify=outputVerify,
+                    overwrite=True)
 
     return
 
@@ -1712,7 +1760,7 @@ def combine_lis(outfile, cleanDir, roots, diffPA):
         f_lis.write('\n'.join(rFits) + '\n')
         f_lis.close()
 
-def combine_register(outroot, refImage, diffPA):
+def combine_register_iraf(outroot, refImage, diffPA):
     from pyraf import iraf as ir
 
     shiftFile = outroot + '.shifts'
@@ -1783,6 +1831,97 @@ def combine_register(outroot, refImage, diffPA):
 
     return (shiftsTable)
 
+def xregister_correlation_fourier(I, R, Nx, Ny):
+    """
+    Pythonified version of algorithm from iraf xregister
+    (see algorithms https://astro.uni-bonn.de/~sysstw/lfa_html/iraf/images.xregister.html)
+    """
+    sum_I = np.sum(I) / (Nx * Ny)
+    sum_R = np.sum(R) / (Nx * Ny)
+    
+    sumsqI = np.sqrt(np.sum((I - sum_I) ** 2))
+    sumsqR = np.sqrt(np.sum((R - sum_R) ** 2))
+    
+    FFTI = np.fft.fft2((I - sum_I) / sumsqI)
+    FFTR = np.fft.fft2((R - sum_R) / sumsqR)
+    
+    correlation = np.fft.ifft2(FFTR * np.conj(FFTI))
+
+    return correlation
+
+def combine_register(outroot, refImage, diffPA):
+    from pyraf import iraf as ir
+
+    shiftFile = outroot + '.shifts'
+    util.rmall([shiftFile])
+
+    # xregister parameters
+    ir.immatch
+    ir.unlearn('xregister')
+    ir.xregister.coords = outroot + '.coo'
+    ir.xregister.output = ''
+    ir.xregister.append = 'no'
+    ir.xregister.databasefmt = 'no'
+    ir.xregister.verbose = 'no'
+    ir.xregister.xwindow='30'
+    ir.xregister.ywindow='30'
+    ir.xregister.correlation='fourier'
+    ir.xregister.function='centroid'
+
+    print('combine: registering images')
+    if (diffPA == 1):
+        input = '@' + outroot + '.lis_r'
+    else:
+        input = '@' + outroot + '.lis'
+
+    hdu = fits.open(refImage)
+    nx = hdu[0].header['NAXIS1']
+    ny = hdu[0].header['NAXIS2']
+
+    regions = '['+str(nx/2-nx/4)+':'+str(nx/2+nx/4)+','+str(ny/2-ny/4)+':'+str(ny/2+ny/4)+']'
+    #regions = '[*,*]'
+    # print 'input = ', input
+    print('xwindow,ywindow',ir.xregister.xwindow,ir.xregister.ywindow) #30, 30
+    print('refImage = ', refImage)
+    print('regions = ', regions)
+    print('shiftFile = ', shiftFile)
+
+    fileNames = Table.read(input[1:], format='ascii.no_header') # removed , header_start=None
+    fileNames = np.array(fileNames)
+    fileNames = np.array(fileNames, dtype='S')
+    coords = Table.read(outroot + '.coo', format='ascii', header_start=None)
+    shiftsTable_empty = np.zeros((len(fileNames), 3), dtype=float)
+    shiftsTable = Table(shiftsTable_empty, dtype=('S50', float, float)) #dtype=(float, float, 'S50')
+
+    for ii in range(len(fileNames)):
+        inFile = fileNames[ii]
+
+        tmpCooFile = outroot + '_tmp.coo'
+        _coo = open(tmpCooFile, 'w')
+        _coo.write('%.2f  %.2f\n' % (coords[0][0], coords[0][1]))
+        _coo.write('%.2f  %.2f\n' % (coords[ii+1][0], coords[ii+1][1])) #Changed from [0][ii+1] to [ii+1][0]
+        print('%.2f  %.2f\n' % (coords[0][0], coords[0][1]))
+        print('%.2f  %.2f\n' % (coords[ii+1][0], coords[ii+1][1]))
+        _coo.close()
+
+        util.rmall([shiftFile])
+        print('inFile = ', inFile)
+        print(tmpCooFile, inFile, refImage, regions, shiftFile)
+        ir.xregister.coords = tmpCooFile
+        ir.xregister(inFile, refImage, regions, shiftFile)
+
+        # # Read in the shifts file. Column format is:
+        # # Filename.fits  xshift  yshift
+        _shifts = Table.read(shiftFile, format='ascii.no_header')
+        shiftsTable[ii][0] = _shifts[0][0]
+        shiftsTable[ii][1] = _shifts[0][1]
+        shiftsTable[ii][2] = _shifts[0][2]
+
+
+    util.rmall([shiftFile])
+    shiftsTable.write(shiftFile, format = 'ascii')
+
+    return (shiftsTable)
 
 def combine_log(outroot, roots, strehls, fwhm, weights):
     _log = outroot + '.log'
@@ -1948,8 +2087,7 @@ def clean_drizzle(xgeoim, ygeoim, _bp, _cd, _wgt, _dlog,
     wgt_hdu.writeto(_wgt, output_verify='ignore', 
                                 overwrite=True)
 
-
-def clean_cosmicrays(_ff, _mask, wave):
+def clean_cosmicrays_iraf(_ff, _mask, wave):
     """Clean the image of cosmicrays and make a mask containing the location
     of all the cosmicrays. The CR masks can later be used in combine() to
     keep cosmicrays from being included.
@@ -1971,7 +2109,7 @@ def clean_cosmicrays(_ff, _mask, wave):
     ff_img = fits.getdata(_ff)
     tmp_stats = stats.sigma_clipped_stats(ff_img,
                                           sigma_upper=2, sigma_lower=5,
-                                          maxiters=5)
+                                          iters=5)
     mean = tmp_stats[0]
     stddev = tmp_stats[2]
 
@@ -1989,22 +2127,283 @@ def clean_cosmicrays(_ff, _mask, wave):
     if 'ms' in wave:
         fluxray = 10.0
 
-    #ir.module.load('noao', doprint=0, hush=1)
-    #ir.module.load('imred', doprint=0, hush=1)
-    #ir.module.load('crutil', doprint=0, hush=1)
-    #ir.unlearn('cosmicrays')
+    ir.module.load('noao', doprint=0, hush=1)
+    ir.module.load('imred', doprint=0, hush=1)
+    ir.module.load('crutil', doprint=0, hush=1)
+    ir.unlearn('cosmicrays')
 
-    #ir.cosmicrays(_ff, ' ', crmasks=_mask, thresho=crthreshold,
-    #              fluxrat=fluxray, npasses=10., window=7,
-    #              interac='no', train='no', answer='NO')
+    ir.cosmicrays(_ff, ' ', crmasks=_mask, thresho=crthreshold,
+                  fluxrat=fluxray, npasses=10., window=7,
+                  interac='no', train='no', answer='NO')
 
-    hdulist = fits.open(_ff)
-    img = hdulist[0].data
-    newdata, crmask = ccdp.cosmicray_median(img, thresh=5, mbox=7, rbox=5) 
+    ir.imcopy(_mask+'.pl', _mask, verbose='no')
+    if os.path.exists(_mask + '.pl'): os.remove(_mask + '.pl')
+
+def cosmicray_median(ccd, error_image=None, thresh=5, mbox=11, gbox=0,
+                     rbox=0, fratio = 1):
+    """
+    Modified from ccdproc
+    
+    Identify cosmic rays through median technique. The median technique
+    identifies cosmic rays by identifying pixels by subtracting a median image
+    from the initial data array.
+
+    Parameters
+    ----------
+    ccd : `numpy.ndarray` or `numpy.ma.MaskedArray`
+        Data to have cosmic ray cleaned.
+
+    thresh : float, optional
+        Threshold for detecting cosmic rays.
+        Default is ``5``.
+
+    error_image : `numpy.ndarray`, float or None, optional
+        Error level. If None, the task will use the standard
+        deviation of the data. If an ndarray, it should have the same shape
+        as data.
+        Default is ``None``.
+
+    mbox : int, optional
+        Median box for detecting cosmic rays.
+        Default is ``11``.
+
+    gbox : int, optional
+        Box size to grow cosmic rays. If zero, no growing will be done.
+        Default is ``0``.
+
+    rbox : int, optional
+        Median box for calculating replacement values. If zero, no pixels will
+        be replaced.
+        Default is ``0``.
+
+    Notes
+    -----
+    Similar implementation to crmedian in iraf.imred.crutil.crmedian.
+
+    Returns
+    -------
+    nccd : `~astropy.nddata.CCDData` or `numpy.ndarray`
+        An object of the same type as ccd is returned. If it is a
+        `~astropy.nddata.CCDData`, the mask attribute will also be updated with
+        areas identified with cosmic rays masked.
+
+    nccd : `numpy.ndarray`
+        If an `numpy.ndarray` is provided as ccd, a boolean ndarray with the
+        cosmic rays identified will also be returned.
+
+    Examples
+    --------
+    1) Given an numpy.ndarray object, the syntax for running
+       cosmicray_median would be:
+
+       >>> newdata, mask = cosmicray_median(data, error_image=error,
+       ...                                  thresh=5, mbox=11,
+       ...                                  rbox=11, gbox=5)   # doctest: +SKIP
+
+       where error is an array that is the same shape as data but
+       includes the pixel error. This would return a data array, newdata,
+       with the bad pixels replaced by the local median from a box of 11
+       pixels; and it would return a mask indicating the bad pixels.
+
+    2) Given an `~astropy.nddata.CCDData` object with an uncertainty frame, the syntax
+       for running cosmicray_median would be:
+
+       >>> newccd = cosmicray_median(ccd, thresh=5, mbox=11,
+       ...                           rbox=11, gbox=5)   # doctest: +SKIP
+
+       The newccd object will have bad pixels in its data array replace and the
+       mask of the object will be created if it did not previously exist or be
+       updated with the detected cosmic rays.
+    """
+    data = ccd
+
+    if error_image is None:
+        error_image = data.std()
+    else:
+        if not isinstance(error_image, (float, np.ndarray)):
+            raise TypeError('error_image is not a float or ndarray.')
+
+    # create the median image
+    marr = ndimage.median_filter(data, size=(mbox, mbox))
+
+    # Only look at the data array
+    if isinstance(data, np.ma.MaskedArray):
+        data = data.data
+
+    # Find the residual image
+    # Compare residual to the error in the image
+    rarr = (data - marr) /error_image
+
+    # Compare residual to the mean nearby
+    # in order to exclude stars
+    rarr2 = (data - marr) /marr
+                         
+    # identify all sources
+    crarr = (rarr > thresh) & (rarr2 > fratio)
+
+    # grow the pixels
+    if gbox > 0:
+        crarr = ndimage.maximum_filter(crarr, gbox)
+
+    # replace bad pixels in the image
+    #ndata = data.copy()
+    if rbox > 0:
+        # Assert shape of data is a square
+        assert np.shape(data)[0] == np.shape(data)[1]
+        ndata = loop_through_crs(data, crarr, dim = np.shape(data)[0])
+
+        #data = np.ma.masked_array(data, (crarr == 1))
+        #mdata = ndimage.median_filter(data, rbox)
+        #return ndata, mdata, crarr
+        #ndata[crarr == 1] = mdata[crarr == 1]
+
+    return ndata, crarr
+
+def loop_through_crs(data, crarr, search_box = 5, interp_box = 10, dim = 1024):
+    # Box to search for cosmic rays must be smaller than the area you're interpretting over
+    assert search_box < interp_box
+    
+    masked_data = np.ma.masked_array(data, (crarr == 1))
+    new_data = copy.deepcopy(data)
+
+    crarr_xs = np.where(crarr == True)[0]
+    crarr_ys = np.where(crarr == True)[1]
+
+    mark_done = np.ones((1024, 1024))
+    mark_done[crarr == 1] = 0
+
+    filled_vals = masked_data.filled(np.nan)
+    
+    for crarr_x, crarr_y in zip(crarr_xs, crarr_ys):
+        if mark_done[crarr_x, crarr_y] == 1:
+            continue
+        
+        # Set edges of search box and round to edges of image 
+        min_search_x = crarr_x - search_box
+        max_search_x = crarr_x + search_box
+        min_search_y = crarr_y - search_box
+        max_search_y = crarr_y + search_box
+
+        min_search_x, max_search_x = round_to_edge(min_search_x, max_search_x, 0, dim)
+        min_search_y, max_search_y = round_to_edge(min_search_y, max_search_y, 0, dim)
+
+        # Set values in search box (which will be filled in) as done
+        mark_done[min_search_x:max_search_x, min_search_y:max_search_y] = 1
+
+        # Set edges of interp box and round to edges of image 
+        min_interp_x = crarr_x - interp_box
+        max_interp_x = crarr_x + interp_box
+        min_interp_y = crarr_y - interp_box
+        max_interp_y = crarr_y + interp_box
+
+        min_interp_x, max_interp_x = round_to_edge(min_interp_x, max_interp_x, 0, dim)
+        min_interp_y, max_interp_y = round_to_edge(min_interp_y, max_interp_y, 0, dim)
+
+        # Cut out cosmic rays
+        patch_x = np.arange(min_interp_x, max_interp_x)
+        patch_y = np.arange(min_interp_y, max_interp_y)
+        masked_data_patch = masked_data[min_interp_x:max_interp_x, min_interp_y:max_interp_y]
+        x1, y1 = np.meshgrid(patch_x, patch_y, indexing='ij')
+        x = x1[~masked_data_patch.mask]
+        y = y1[~masked_data_patch.mask]
+        filtered_data = masked_data_patch[~masked_data_patch.mask]
+
+        # Prepare patch related to where we're looking for cosmic rays
+        search_patch_x = np.arange(min_search_x, max_search_x)
+        search_patch_y = np.arange(min_search_y, max_search_y)
+        x1_search_patch, y1_search_patch = np.meshgrid(search_patch_x, search_patch_y, indexing='ij')
+        masked_data_search_patch = masked_data[min_search_x:max_search_x, min_search_y:max_search_y]
+
+        # Interpolate over masked data and find interpolated values
+        # over search area (where we've looked for cosmic rays)
+        linear_interp = griddata((x, y), filtered_data.ravel(), (x1_search_patch,y1_search_patch), fill_value = np.nan)
+
+        # Set masked out cosmic ray values to interpolated values
+        new_data_patch = new_data[min_search_x:max_search_x, min_search_y:max_search_y]
+        new_data_patch[masked_data_search_patch.mask] = linear_interp[masked_data_search_patch.mask]
+        new_data[min_search_x:max_search_x, min_search_y:max_search_y] = new_data_patch
+
+    return new_data
+
+
+def round_to_edge(min_box_val, max_box_val, min_val, max_val):
+    if min_box_val < min_val:
+        min_box_val = min_val
+    if max_box_val > max_val:
+        max_box_val = max_val
+
+    return min_box_val, max_box_val
+    
+def clean_cosmicrays(_ff, _mask, wave, thresh=10, mbox=2, gbox=0, rbox=5, fratio=1):
+    """Clean the image of cosmicrays and make a mask containing the location
+    of all the cosmicrays. The CR masks can later be used in combine() to
+    keep cosmicrays from being included.
+
+    @param _ff: Flat fielded file on which to fix cosmic rays. A new
+        image will be created with the _f appended to it.
+    @type _ff: string
+    @param _mask: The filename used for the resulting mask.
+    @type _mask: string
+    @parram wave: The filter of the observations (e.g. 'kp', 'lp'). This
+        is used to determine different thresholds for CR rejection.
+    @type wave: string
+    """
+    # Determine the threshold at which we should start looking
+    # for cosmicrays. Need to figure out the mean level of the
+    # background.
+    ff_img = fits.getdata(_ff)
+    tmp_stats = stats.sigma_clipped_stats(ff_img,
+                                          sigma_upper=2, sigma_lower=5,
+                                          maxiters=5)
+    mean = tmp_stats[0]
+    stddev = tmp_stats[2]
+    
+    newdata, crmask = cosmicray_median(ff_img, error_image = stddev, thresh=thresh, mbox=mbox, gbox=gbox, rbox=rbox, fratio=fratio)
+    #ndata, mdata, crarr= cosmicray_median(ff_img, error_image = stddev, thresh=thresh, mbox=mbox, gbox=gbox, rbox=rbox, fratio=fratio)
+    #return ndata, mdata, crarr
     crmask = crmask.astype(int)
 
-    #ir.imcopy(_mask+'.pl', _mask, verbose='no')
-    #if os.path.exists(_mask + '.pl'): os.remove(_mask + '.pl')
+    # Save to a temporary file.
+    fits.writeto(_mask, crmask, output_verify=outputVerify)
+    fits.writeto(_ff, newdata, output_verify=outputVerify, overwrite = True)
+
+    return stddev
+
+def clean_cosmicrays_LACosmic(_ff, _mask, wave):
+    """Clean the image of cosmicrays and make a mask containing the location
+    of all the cosmicrays. The CR masks can later be used in combine() to
+    keep cosmicrays from being included.
+
+    @param _ff: Flat fielded file on which to fix cosmic rays. A new
+        image will be created with the _f appended to it.
+    @type _ff: string
+    @param _mask: The filename used for the resulting mask.
+    @type _mask: string
+    @parram wave: The filter of the observations (e.g. 'kp', 'lp'). This
+        is used to determine different thresholds for CR rejection.
+    @type wave: string
+    """
+
+    from astropy.nddata import CCDData
+    import astropy.units as u
+    #ex2_path = Path('example2-reduced')
+
+    #ccd = CCDData.read(ex2_path / 'kelt-16-b-S001-R001-C084-r.fit')
+    #ccd = CCDData.read(_ff, unit=u.electron)
+    ccd = CCDData.read(_ff, unit=u.adu)
+    ccd = ccdp.gain_correct(ccd, 4 * u.electron / u.adu)
+
+    new_ccd = ccdp.cosmicray_lacosmic(ccd, readnoise=10, sigclip=4, verbose=True)
+    #new_ccd = ccdp.cosmicray_lacosmic(ccd, readnoise=10, sigclip=7, verbose=True)
+
+    # To just get the cosmic ray mask, this tells it to ignore
+    # any pixels that were masked out beforehand
+    crmask = new_ccd.mask
+    crmask[ccd.mask] = False
+
+    hdulist = fits.open(_ff)
+    img = new_ccd #hdulist[0].data
+    crmask = crmask.astype(int)
 
     # Save to a temporary file.
     fits.writeto(_mask, crmask, output_verify=outputVerify)
