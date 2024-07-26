@@ -1,16 +1,16 @@
-:py:mod:`kai.mtf`
-=================
+kai.mtf
+=======
 
 .. py:module:: kai.mtf
 
 
 Submodules
 ----------
+
 .. toctree::
-   :titlesonly:
    :maxdepth: 1
 
-   mmm/index.rst
-   mtf/index.rst
+   /autoapi/kai/mtf/mmm/index
+   /autoapi/kai/mtf/mtf/index
 
 

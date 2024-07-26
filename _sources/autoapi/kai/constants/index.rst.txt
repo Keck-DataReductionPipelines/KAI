@@ -1,7 +1,25 @@
-:py:mod:`kai.constants`
-=======================
+kai.constants
+=============
 
 .. py:module:: kai.constants
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   kai.constants.sigma
+   kai.constants.Lsun
+   kai.constants.Rsun
+   kai.constants.Msun
+   kai.constants.gsun
+   kai.constants.G
+   kai.constants.c
+   kai.constants.cm_in_AU
+   kai.constants.cm_in_pc
+   kai.constants.AU_in_pc
+   kai.constants.sec_in_yr
 
 
 Module Contents
@@ -10,55 +28,44 @@ Module Contents
 .. py:data:: sigma
    :value: 5.6704e-05
 
-   
 
 .. py:data:: Lsun
    :value: 3.839e+33
 
-   
 
 .. py:data:: Rsun
    :value: 0.004652
 
-   
 
 .. py:data:: Msun
    :value: 1.98892e+30
 
-   
 
 .. py:data:: gsun
    :value: 27400.0
 
-   
 
 .. py:data:: G
    :value: 6.6726e-08
 
-   
 
 .. py:data:: c
    :value: 299792.458
 
-   
 
 .. py:data:: cm_in_AU
    :value: 14960000000000.0
 
-   
 
 .. py:data:: cm_in_pc
    :value: 3.086e+18
 
-   
 
 .. py:data:: AU_in_pc
    :value: 206264.806
 
-   
 
 .. py:data:: sec_in_yr
    :value: 31557000.0
 
-   
 

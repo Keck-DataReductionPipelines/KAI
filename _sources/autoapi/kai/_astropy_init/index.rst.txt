@@ -1,7 +1,16 @@
-:py:mod:`kai._astropy_init`
-===========================
+kai._astropy_init
+=================
 
 .. py:module:: kai._astropy_init
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   kai._astropy_init.__version__
+   kai._astropy_init.__githash__
 
 
 Module Contents
@@ -10,10 +19,8 @@ Module Contents
 .. py:data:: __version__
    :value: ''
 
-   
 
 .. py:data:: __githash__
    :value: ''
 
-   
 

@@ -1,31 +1,31 @@
-:py:mod:`kai.reduce`
-====================
+kai.reduce
+==========
 
 .. py:module:: kai.reduce
 
 
 Submodules
 ----------
+
 .. toctree::
-   :titlesonly:
    :maxdepth: 1
 
-   align_rms/index.rst
-   analysis/index.rst
-   bfixpix/index.rst
-   calib/index.rst
-   calibrate/index.rst
-   correct_ipc/index.rst
-   dar/index.rst
-   data/index.rst
-   kai_util/index.rst
-   lin_correction/index.rst
-   prep_analysis/index.rst
-   reduce_template/index.rst
-   reduce_template_osiris/index.rst
-   sky/index.rst
-   slalib/index.rst
-   test_dar/index.rst
-   util/index.rst
+   /autoapi/kai/reduce/align_rms/index
+   /autoapi/kai/reduce/analysis/index
+   /autoapi/kai/reduce/bfixpix/index
+   /autoapi/kai/reduce/calib/index
+   /autoapi/kai/reduce/calibrate/index
+   /autoapi/kai/reduce/correct_ipc/index
+   /autoapi/kai/reduce/dar/index
+   /autoapi/kai/reduce/data/index
+   /autoapi/kai/reduce/kai_util/index
+   /autoapi/kai/reduce/lin_correction/index
+   /autoapi/kai/reduce/prep_analysis/index
+   /autoapi/kai/reduce/reduce_template/index
+   /autoapi/kai/reduce/reduce_template_osiris/index
+   /autoapi/kai/reduce/sky/index
+   /autoapi/kai/reduce/slalib/index
+   /autoapi/kai/reduce/test_dar/index
+   /autoapi/kai/reduce/util/index
 
 

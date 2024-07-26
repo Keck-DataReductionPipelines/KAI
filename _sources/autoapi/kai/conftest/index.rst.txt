@@ -1,5 +1,5 @@
-:py:mod:`kai.conftest`
-======================
+kai.conftest
+============
 
 .. py:module:: kai.conftest
 
@@ -15,31 +15,28 @@
        !! processed by numpydoc !!
 
 
-Module Contents
----------------
-
-
-Functions
-~~~~~~~~~
-
-.. autoapisummary::
-
-   kai.conftest.pytest_configure
-
-
-
 Attributes
-~~~~~~~~~~
+----------
 
 .. autoapisummary::
 
    kai.conftest.ASTROPY_HEADER
 
 
+Functions
+---------
+
+.. autoapisummary::
+
+   kai.conftest.pytest_configure
+
+
+Module Contents
+---------------
+
 .. py:data:: ASTROPY_HEADER
    :value: True
 
-   
 
 .. py:function:: pytest_configure(config)
 

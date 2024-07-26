@@ -1,15 +1,11 @@
-:py:mod:`kai.reduce.prep_analysis`
-==================================
+kai.reduce.prep_analysis
+========================
 
 .. py:module:: kai.reduce.prep_analysis
 
 
-Module Contents
----------------
-
-
 Functions
-~~~~~~~~~
+---------
 
 .. autoapisummary::
 
@@ -32,9 +28,10 @@ Functions
    kai.reduce.prep_analysis.prepStarfinder
 
 
+Module Contents
+---------------
 
 .. py:function:: euclidean(x1, y1, x2, y2)
-
 
 .. py:function:: removeEdges(imgArr, finalTable, cutoff=100, x='xcentroid', y='ycentroid', scale=0.009942)
 

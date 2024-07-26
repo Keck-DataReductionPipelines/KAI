@@ -1,22 +1,19 @@
-:py:mod:`kai.tests.test_calibrate`
-==================================
+kai.tests.test_calibrate
+========================
 
 .. py:module:: kai.tests.test_calibrate
 
 
-Module Contents
----------------
-
-
 Functions
-~~~~~~~~~
+---------
 
 .. autoapisummary::
 
    kai.tests.test_calibrate.test_star_names
 
 
+Module Contents
+---------------
 
 .. py:function:: test_star_names()
-
 

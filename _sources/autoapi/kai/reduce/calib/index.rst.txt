@@ -1,15 +1,19 @@
-:py:mod:`kai.reduce.calib`
-==========================
+kai.reduce.calib
+================
 
 .. py:module:: kai.reduce.calib
 
 
-Module Contents
----------------
+Attributes
+----------
+
+.. autoapisummary::
+
+   kai.reduce.calib.module_dir
 
 
 Functions
-~~~~~~~~~
+---------
 
 .. autoapisummary::
 
@@ -20,18 +24,10 @@ Functions
    kai.reduce.calib.analyzeDarkCalib
 
 
-
-Attributes
-~~~~~~~~~~
-
-.. autoapisummary::
-
-   kai.reduce.calib.module_dir
-
+Module Contents
+---------------
 
 .. py:data:: module_dir
-
-   
 
 .. py:function:: makedark(files, output, raw_dir=None, instrument=instruments.default_inst)
 

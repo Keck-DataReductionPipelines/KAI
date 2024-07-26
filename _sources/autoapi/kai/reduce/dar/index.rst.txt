@@ -1,15 +1,20 @@
-:py:mod:`kai.reduce.dar`
-========================
+kai.reduce.dar
+==============
 
 .. py:module:: kai.reduce.dar
 
 
-Module Contents
----------------
+Attributes
+----------
+
+.. autoapisummary::
+
+   kai.reduce.dar.p2
+   kai.reduce.dar.module_dir
 
 
 Functions
-~~~~~~~~~
+---------
 
 .. autoapisummary::
 
@@ -25,24 +30,14 @@ Functions
    kai.reduce.dar.test_darPlusDistortion
 
 
-
-Attributes
-~~~~~~~~~~
-
-.. autoapisummary::
-
-   kai.reduce.dar.p2
-   kai.reduce.dar.module_dir
-
+Module Contents
+---------------
 
 .. py:data:: p2
    :value: False
 
-   
 
 .. py:data:: module_dir
-
-   
 
 .. py:function:: get_atm_conditions(year)
 
@@ -353,5 +348,4 @@ Attributes
        !! processed by numpydoc !!
 
 .. py:function:: test_darPlusDistortion()
-
 

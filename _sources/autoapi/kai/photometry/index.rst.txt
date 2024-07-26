@@ -1,15 +1,11 @@
-:py:mod:`kai.photometry`
-========================
+kai.photometry
+==============
 
 .. py:module:: kai.photometry
 
 
-Module Contents
----------------
-
-
 Functions
-~~~~~~~~~
+---------
 
 .. autoapisummary::
 
@@ -21,15 +17,14 @@ Functions
    kai.photometry.test_atmosphere_profile_interp
 
 
+Module Contents
+---------------
 
 .. py:function:: setup_phot(imageRoot, silent=False, apertures=[25, 50, 75, 100, 125, 150, 175, 200], sky_annulus=200, sky_dannulus=50, zmag=0)
 
-
 .. py:function:: run_phot(imageRoot, silent=False, apertures=[25, 50, 75, 100, 125, 150, 175, 200], sky_annulus=200, sky_dannulus=50, zmag=0)
 
-
 .. py:function:: get_phot_output(output, silent=False)
-
 
 .. py:function:: get_filter_profile(filter)
 
@@ -86,5 +81,4 @@ Functions
        !! processed by numpydoc !!
 
 .. py:function:: test_atmosphere_profile_interp()
-
 

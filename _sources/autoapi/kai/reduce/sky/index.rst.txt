@@ -1,15 +1,11 @@
-:py:mod:`kai.reduce.sky`
-========================
+kai.reduce.sky
+==============
 
 .. py:module:: kai.reduce.sky
 
 
-Module Contents
----------------
-
-
 Functions
-~~~~~~~~~
+---------
 
 .. autoapisummary::
 
@@ -22,6 +18,8 @@ Functions
    kai.reduce.sky.write_sky_rot_file
 
 
+Module Contents
+---------------
 
 .. py:function:: makesky(files, nite, wave, dark_frame=None, skyscale=True, raw_dir=None, instrument=instruments.default_inst)
 

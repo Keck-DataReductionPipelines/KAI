@@ -1,21 +1,19 @@
-:py:mod:`kai.mtf.mmm`
-=====================
+kai.mtf.mmm
+===========
 
 .. py:module:: kai.mtf.mmm
 
 
-Module Contents
----------------
-
-
 Functions
-~~~~~~~~~
+---------
 
 .. autoapisummary::
 
    kai.mtf.mmm.mmm
 
 
+Module Contents
+---------------
 
 .. py:function:: mmm(sky_vector, highbad=None, readnoise=None, integer=False, debug=False, silent=False)
 

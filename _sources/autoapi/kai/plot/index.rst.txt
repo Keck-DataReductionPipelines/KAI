@@ -1,21 +1,19 @@
-:py:mod:`kai.plot`
-==================
+kai.plot
+========
 
 .. py:module:: kai.plot
 
 
-Module Contents
----------------
-
-
 Functions
-~~~~~~~~~
+---------
 
 .. autoapisummary::
 
    kai.plot.plotpsf
 
 
+Module Contents
+---------------
 
 .. py:function:: plotpsf(epoch, target, user_root, coo_star='psf_000', scale=0.00995, filt='kp', outdir='./')
 

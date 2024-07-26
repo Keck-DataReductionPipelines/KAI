@@ -1,5 +1,5 @@
-:py:mod:`kai.utils.tests`
-=========================
+kai.utils.tests
+===============
 
 .. py:module:: kai.utils.tests
 

@@ -1,5 +1,5 @@
-:py:mod:`kai.tests`
-===================
+kai.tests
+=========
 
 .. py:module:: kai.tests
 
@@ -29,10 +29,10 @@
 
 Submodules
 ----------
+
 .. toctree::
-   :titlesonly:
    :maxdepth: 1
 
-   test_calibrate/index.rst
+   /autoapi/kai/tests/test_calibrate/index
 
 

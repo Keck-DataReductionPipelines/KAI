@@ -92,7 +92,10 @@
         <span class="c1"># Must define the following parameters as a </span>
 
         <span class="c1"># Define</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">hdr_keys</span> <span class="o">=</span> <span class="p">{}</span>
+<div class="viewcode-block" id="Instrument.hdr_keys">
+<a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.Instrument.hdr_keys">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hdr_keys</span> <span class="o">=</span> <span class="p">{}</span></div>
+
 
         <span class="bp">self</span><span class="o">.</span><span class="n">hdr_keys</span><span class="p">[</span><span class="s1">&#39;filename&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;filename&#39;</span>
         
@@ -182,10 +185,16 @@
 <a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.NIRC2">[docs]</a>
 <span class="k">class</span> <span class="nc">NIRC2</span><span class="p">(</span><span class="n">Instrument</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;NIRC2&#39;</span>
+<div class="viewcode-block" id="NIRC2.name">
+<a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.NIRC2.name">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;NIRC2&#39;</span></div>
+
         
         <span class="c1"># Define header keywords</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">hdr_keys</span> <span class="o">=</span> <span class="p">{}</span>
+<div class="viewcode-block" id="NIRC2.hdr_keys">
+<a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.NIRC2.hdr_keys">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hdr_keys</span> <span class="o">=</span> <span class="p">{}</span></div>
+
 
         <span class="bp">self</span><span class="o">.</span><span class="n">hdr_keys</span><span class="p">[</span><span class="s1">&#39;filename&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;FILENAME&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hdr_keys</span><span class="p">[</span><span class="s1">&#39;object_name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;OBJECT&#39;</span>
@@ -198,14 +207,32 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">hdr_keys</span><span class="p">[</span><span class="s1">&#39;mjd&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;MJD-OBS&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hdr_keys</span><span class="p">[</span><span class="s1">&#39;elevation&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;EL&#39;</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">bad_pixel_mask</span> <span class="o">=</span> <span class="s1">&#39;nirc2mask.fits&#39;</span>
+<div class="viewcode-block" id="NIRC2.bad_pixel_mask">
+<a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.NIRC2.bad_pixel_mask">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bad_pixel_mask</span> <span class="o">=</span> <span class="s1">&#39;nirc2mask.fits&#39;</span></div>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">distCoef</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">distXgeoim</span> <span class="o">=</span> <span class="n">module_dir</span> <span class="o">+</span> <span class="s1">&#39;/reduce//distortion/nirc2_narrow_xgeoim.fits&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">distYgeoim</span> <span class="o">=</span> <span class="n">module_dir</span> <span class="o">+</span> <span class="s1">&#39;/reduce//distortion/nirc2_narrow_ygeoim.fits&#39;</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">telescope</span> <span class="o">=</span> <span class="s1">&#39;Keck&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">telescope_diam</span> <span class="o">=</span> <span class="mf">10.5</span> <span class="c1"># telescope diameter in meters</span>
+<div class="viewcode-block" id="NIRC2.distCoef">
+<a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.NIRC2.distCoef">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">distCoef</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span></div>
+
+<div class="viewcode-block" id="NIRC2.distXgeoim">
+<a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.NIRC2.distXgeoim">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">distXgeoim</span> <span class="o">=</span> <span class="n">module_dir</span> <span class="o">+</span> <span class="s1">&#39;/reduce//distortion/nirc2_narrow_xgeoim.fits&#39;</span></div>
+
+<div class="viewcode-block" id="NIRC2.distYgeoim">
+<a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.NIRC2.distYgeoim">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">distYgeoim</span> <span class="o">=</span> <span class="n">module_dir</span> <span class="o">+</span> <span class="s1">&#39;/reduce//distortion/nirc2_narrow_ygeoim.fits&#39;</span></div>
+
+
+<div class="viewcode-block" id="NIRC2.telescope">
+<a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.NIRC2.telescope">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">telescope</span> <span class="o">=</span> <span class="s1">&#39;Keck&#39;</span></div>
+
+<div class="viewcode-block" id="NIRC2.telescope_diam">
+<a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.NIRC2.telescope_diam">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">telescope_diam</span> <span class="o">=</span> <span class="mf">10.5</span> <span class="c1"># telescope diameter in meters</span></div>
+
 
         <span class="k">return</span>
     
@@ -370,10 +397,16 @@
 <span class="sd">    OSIRIS Imager - after 2019</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;OSIRIS&#39;</span>
+<div class="viewcode-block" id="OSIRIS.name">
+<a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.OSIRIS.name">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;OSIRIS&#39;</span></div>
+
         
         <span class="c1"># Define</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">hdr_keys</span> <span class="o">=</span> <span class="p">{}</span>
+<div class="viewcode-block" id="OSIRIS.hdr_keys">
+<a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.OSIRIS.hdr_keys">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hdr_keys</span> <span class="o">=</span> <span class="p">{}</span></div>
+
 
         <span class="bp">self</span><span class="o">.</span><span class="n">hdr_keys</span><span class="p">[</span><span class="s1">&#39;filename&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;datafile&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hdr_keys</span><span class="p">[</span><span class="s1">&#39;object_name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;object&#39;</span>
@@ -386,14 +419,32 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">hdr_keys</span><span class="p">[</span><span class="s1">&#39;mjd&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;MJD-OBS&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hdr_keys</span><span class="p">[</span><span class="s1">&#39;elevation&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;EL&#39;</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">bad_pixel_mask</span> <span class="o">=</span> <span class="s1">&#39;osiris_img_mask.fits&#39;</span>
+<div class="viewcode-block" id="OSIRIS.bad_pixel_mask">
+<a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.OSIRIS.bad_pixel_mask">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bad_pixel_mask</span> <span class="o">=</span> <span class="s1">&#39;osiris_img_mask.fits&#39;</span></div>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">distCoef</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">distXgeoim</span> <span class="o">=</span> <span class="n">module_dir</span> <span class="o">+</span> <span class="s1">&#39;/reduce/distortion/OSIRIS_im_x_2021.fits&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">distYgeoim</span> <span class="o">=</span> <span class="n">module_dir</span> <span class="o">+</span> <span class="s1">&#39;/reduce/distortion/OSIRIS_im_y_2021.fits&#39;</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">telescope</span> <span class="o">=</span> <span class="s1">&#39;Keck&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">telescope_diam</span> <span class="o">=</span> <span class="mf">10.5</span> <span class="c1"># telescope diameter in meters</span>
+<div class="viewcode-block" id="OSIRIS.distCoef">
+<a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.OSIRIS.distCoef">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">distCoef</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span></div>
+
+<div class="viewcode-block" id="OSIRIS.distXgeoim">
+<a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.OSIRIS.distXgeoim">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">distXgeoim</span> <span class="o">=</span> <span class="n">module_dir</span> <span class="o">+</span> <span class="s1">&#39;/reduce/distortion/OSIRIS_im_x_2021.fits&#39;</span></div>
+
+<div class="viewcode-block" id="OSIRIS.distYgeoim">
+<a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.OSIRIS.distYgeoim">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">distYgeoim</span> <span class="o">=</span> <span class="n">module_dir</span> <span class="o">+</span> <span class="s1">&#39;/reduce/distortion/OSIRIS_im_y_2021.fits&#39;</span></div>
+
+
+<div class="viewcode-block" id="OSIRIS.telescope">
+<a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.OSIRIS.telescope">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">telescope</span> <span class="o">=</span> <span class="s1">&#39;Keck&#39;</span></div>
+
+<div class="viewcode-block" id="OSIRIS.telescope_diam">
+<a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.OSIRIS.telescope_diam">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">telescope_diam</span> <span class="o">=</span> <span class="mf">10.5</span> <span class="c1"># telescope diameter in meters</span></div>
+
         
         <span class="k">return</span>
     

@@ -1,14 +1,19 @@
-:py:mod:`kai.reduce.calibrate`
-==============================
+kai.reduce.calibrate
+====================
 
 .. py:module:: kai.reduce.calibrate
 
 
-Module Contents
----------------
+Attributes
+----------
+
+.. autoapisummary::
+
+   kai.reduce.calibrate.all_scales
+
 
 Classes
-~~~~~~~
+-------
 
 .. autoapisummary::
 
@@ -16,9 +21,8 @@ Classes
    kai.reduce.calibrate.Starlist
 
 
-
 Functions
-~~~~~~~~~
+---------
 
 .. autoapisummary::
 
@@ -32,24 +36,17 @@ Functions
    kai.reduce.calibrate.get_camera_type
 
 
-
-Attributes
-~~~~~~~~~~
-
-.. autoapisummary::
-
-   kai.reduce.calibrate.all_scales
-
+Module Contents
+---------------
 
 .. py:data:: all_scales
    :value: [[1.0, 'No scaling'], [0.0102, 'Speckle'], [0.0087, 'KCAM-AO'], [0.0085, 'SCAM-AO'], [0.00993,...
 
-   
 
 .. py:class:: IndentedHelpFormatterWithNL(indent_increment=2, max_help_position=24, width=None, short_first=1)
 
-
    Bases: :py:obj:`optparse.IndentedHelpFormatter`
+
 
    
    Format help with indented section bodies.
@@ -71,21 +68,18 @@ Attributes
 
    ..
        !! processed by numpydoc !!
+
    .. py:method:: format_description(description)
 
 
    .. py:method:: format_option(option)
 
 
-
 .. py:function:: main(argv=None)
-
 
 .. py:function:: read_command_line(argv)
 
-
 .. py:function:: read_photo_calib_file(options, verbose=False)
-
 
 .. py:function:: input_data(options)
 
@@ -223,8 +217,8 @@ Attributes
 
 .. py:class:: Starlist
 
-
    Bases: :py:obj:`object`
+
 
    
    Use this to keep all the lists associated with

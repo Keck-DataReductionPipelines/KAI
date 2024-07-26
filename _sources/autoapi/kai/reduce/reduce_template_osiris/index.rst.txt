@@ -1,15 +1,20 @@
-:py:mod:`kai.reduce.reduce_template_osiris`
-===========================================
+kai.reduce.reduce_template_osiris
+=================================
 
 .. py:module:: kai.reduce.reduce_template_osiris
 
 
-Module Contents
----------------
+Attributes
+----------
+
+.. autoapisummary::
+
+   kai.reduce.reduce_template_osiris.epoch
+   kai.reduce.reduce_template_osiris.osiris
 
 
 Functions
-~~~~~~~~~
+---------
 
 .. autoapisummary::
 
@@ -19,24 +24,14 @@ Functions
    kai.reduce.reduce_template_osiris.jackknife
 
 
-
-Attributes
-~~~~~~~~~~
-
-.. autoapisummary::
-
-   kai.reduce.reduce_template_osiris.epoch
-   kai.reduce.reduce_template_osiris.osiris
-
+Module Contents
+---------------
 
 .. py:data:: epoch
    :value: '20aug22os'
 
-   
 
 .. py:data:: osiris
-
-   
 
 .. py:function:: makelog_and_prep_images()
 

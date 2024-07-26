@@ -1,15 +1,19 @@
-:py:mod:`kai.reduce.kai_util`
-=============================
+kai.reduce.kai_util
+===================
 
 .. py:module:: kai.reduce.kai_util
 
 
-Module Contents
----------------
+Attributes
+----------
+
+.. autoapisummary::
+
+   kai.reduce.kai_util._nargs
 
 
 Functions
-~~~~~~~~~
+---------
 
 .. autoapisummary::
 
@@ -30,17 +34,10 @@ Functions
    kai.reduce.kai_util.plotKeyword
 
 
-
-Attributes
-~~~~~~~~~~
-
-.. autoapisummary::
-
-   kai.reduce.kai_util._nargs
-
+Module Contents
+---------------
 
 .. py:function:: kailog(directory)
-
 
 .. py:function:: makelog(directory, outfile='image_log.txt', instrument=instruments.default_inst)
 
@@ -68,13 +65,9 @@ Attributes
 
 .. py:data:: _nargs
 
-   
-
 .. py:function:: getAotsxy(hdr)
 
-
 .. py:function:: pix2radec()
-
 
 .. py:function:: radec2pix(radec, phi, scale, posRef)
 
@@ -109,7 +102,6 @@ Attributes
        !! processed by numpydoc !!
 
 .. py:function:: aotsxy2pix(aotsxy, scale, aotsxyRef, inst_angle=0.0)
-
 
 .. py:function:: pcuxy2pix(pcuxy, phi, scale, pcuxyRef)
 
@@ -222,15 +214,11 @@ Attributes
 
 .. py:function:: getScale(hdr, instrument=instruments.default_inst)
 
-
 .. py:function:: getPA(hdr, instrument=instruments.default_inst)
-
 
 .. py:function:: getCentralWavelength(hdr, instrument=instruments.default_inst)
 
-
 .. py:function:: calcOverhead(tint, coadds, ndithers, nframes, reads, tread=0.181)
-
 
 .. py:function:: plotKeyword(keyword1, keyword2, imgList)
 

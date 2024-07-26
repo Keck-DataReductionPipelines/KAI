@@ -1,23 +1,27 @@
-:py:mod:`kai.mtf.mtf`
-=====================
+kai.mtf.mtf
+===========
 
 .. py:module:: kai.mtf.mtf
 
 
-Module Contents
----------------
+Attributes
+----------
+
+.. autoapisummary::
+
+   kai.mtf.mtf.Fvalues
+
 
 Classes
-~~~~~~~
+-------
 
 .. autoapisummary::
 
    kai.mtf.mtf.DataHolder
 
 
-
 Functions
-~~~~~~~~~
+---------
 
 .. autoapisummary::
 
@@ -43,18 +47,10 @@ Functions
    kai.mtf.mtf.strehl
 
 
-
-Attributes
-~~~~~~~~~~
-
-.. autoapisummary::
-
-   kai.mtf.mtf.Fvalues
-
+Module Contents
+---------------
 
 .. py:data:: Fvalues
-
-   
 
 .. py:function:: get_mtf(image, params, sources)
 
@@ -497,9 +493,7 @@ Attributes
 
 .. py:function:: params_arr2dict(param_array)
 
-
 .. py:function:: params_dict2arr(param_dict)
-
 
 .. py:function:: t_perfect_keck(x, p, pupil=None)
 
@@ -1559,7 +1553,6 @@ Attributes
        !! processed by numpydoc !!
 
 .. py:class:: DataHolder
-
 
    Bases: :py:obj:`object`
 

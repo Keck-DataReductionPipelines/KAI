@@ -1,21 +1,19 @@
-:py:mod:`kai.conditions`
-========================
+kai.conditions
+==============
 
 .. py:module:: kai.conditions
 
 
-Module Contents
----------------
-
-
 Functions
-~~~~~~~~~
+---------
 
 .. autoapisummary::
 
    kai.conditions.summarize_observing_conditions
 
 
+Module Contents
+---------------
 
 .. py:function:: summarize_observing_conditions(fitsFiles)
 

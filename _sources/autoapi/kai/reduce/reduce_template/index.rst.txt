@@ -1,15 +1,20 @@
-:py:mod:`kai.reduce.reduce_template`
-====================================
+kai.reduce.reduce_template
+==========================
 
 .. py:module:: kai.reduce.reduce_template
 
 
-Module Contents
----------------
+Attributes
+----------
+
+.. autoapisummary::
+
+   kai.reduce.reduce_template.epoch
+   kai.reduce.reduce_template.nirc2
 
 
 Functions
-~~~~~~~~~
+---------
 
 .. autoapisummary::
 
@@ -19,24 +24,14 @@ Functions
    kai.reduce.reduce_template.jackknife
 
 
-
-Attributes
-~~~~~~~~~~
-
-.. autoapisummary::
-
-   kai.reduce.reduce_template.epoch
-   kai.reduce.reduce_template.nirc2
-
+Module Contents
+---------------
 
 .. py:data:: epoch
    :value: '19apr21'
 
-   
 
 .. py:data:: nirc2
-
-   
 
 .. py:function:: makelog()
 

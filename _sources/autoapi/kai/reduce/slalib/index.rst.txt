@@ -1,15 +1,11 @@
-:py:mod:`kai.reduce.slalib`
-===========================
+kai.reduce.slalib
+=================
 
 .. py:module:: kai.reduce.slalib
 
 
-Module Contents
----------------
-
-
 Functions
-~~~~~~~~~
+---------
 
 .. autoapisummary::
 
@@ -20,6 +16,8 @@ Functions
    kai.reduce.slalib.da1p
 
 
+Module Contents
+---------------
 
 .. py:function:: refco(HM, TDK, PMB, RH, WL, PHI, TLR, EPS)
 

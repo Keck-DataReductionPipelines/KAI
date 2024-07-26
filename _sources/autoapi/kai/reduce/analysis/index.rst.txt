@@ -1,23 +1,19 @@
-:py:mod:`kai.reduce.analysis`
-=============================
+kai.reduce.analysis
+===================
 
 .. py:module:: kai.reduce.analysis
 
 
-Module Contents
----------------
-
 Classes
-~~~~~~~
+-------
 
 .. autoapisummary::
 
    kai.reduce.analysis.Analysis
 
 
-
 Functions
-~~~~~~~~~
+---------
 
 .. autoapisummary::
 
@@ -25,6 +21,8 @@ Functions
    kai.reduce.analysis.plotPosError
 
 
+Module Contents
+---------------
 
 .. py:function:: idl_process_run(batch_file)
 
@@ -55,8 +53,8 @@ Functions
 
 .. py:class:: Analysis(epoch, rootDir='/g/lu/data/orion/', filt='kp', clean_dir=None, combo_dir=None, combo_stf_dir=None, epochDirSuffix=None, imgSuffix=None, stfDir=None, useDistorted=False, cleanList='c.lis', airopa_mode='single', stf_version=None, stf_debug=False, stf_parallelize=True, instrument=instruments.default_inst)
 
-
    Bases: :py:obj:`object`
+
 
    
    Object that will perform our standard post-data-reduction analysis.
@@ -80,6 +78,154 @@ Functions
 
    ..
        !! processed by numpydoc !!
+
+   .. py:attribute:: type
+      :value: 'ao'
+
+
+
+   .. py:attribute:: corrMain
+      :value: [0.8]
+
+
+
+   .. py:attribute:: corrSub
+      :value: [0.6]
+
+
+
+   .. py:attribute:: corrClean
+      :value: [0.7]
+
+
+
+   .. py:attribute:: airopa_mode
+
+
+   .. py:attribute:: trimfake
+      :value: 1
+
+
+
+   .. py:attribute:: stfFlags
+      :value: ''
+
+
+
+   .. py:attribute:: stf_debug
+
+
+   .. py:attribute:: stf_parallelize
+
+
+   .. py:attribute:: starlist
+
+
+   .. py:attribute:: labellist
+
+
+   .. py:attribute:: labellist_accel
+      :value: True
+
+
+
+   .. py:attribute:: orbitlist
+
+
+   .. py:attribute:: calFile
+
+
+   .. py:attribute:: instrument
+
+
+   .. py:attribute:: calStars
+      :value: ['irs16NW', 'S3-22', 'S2-22', 'S4-3', 'S1-1', 'S1-21', 'S1-12', 'S2-2', 'S3-88', 'S2-75',...
+
+
+
+   .. py:attribute:: calFlags
+      :value: '-f 1 -R '
+
+
+
+   .. py:attribute:: mapFilter2Cal
+
+
+   .. py:attribute:: calCooStar
+      :value: 'irs16C'
+
+
+
+   .. py:attribute:: cooStar
+      :value: 'irs16C'
+
+
+
+   .. py:attribute:: deblend
+      :value: None
+
+
+
+   .. py:attribute:: alignFlags
+      :value: '-R 3 -p -a 0'
+
+
+
+   .. py:attribute:: numSubMaps
+      :value: 3
+
+
+
+   .. py:attribute:: minSubMaps
+      :value: 3
+
+
+
+   .. py:attribute:: epoch
+
+
+   .. py:attribute:: rootDir
+
+
+   .. py:attribute:: filt
+
+
+   .. py:attribute:: dirEpoch
+
+
+   .. py:attribute:: dirClean
+
+
+   .. py:attribute:: dirCleanAln
+
+
+   .. py:attribute:: dirCombo
+
+
+   .. py:attribute:: starfinder_dir_name
+      :value: 'starfinder/'
+
+
+
+   .. py:attribute:: dirComboAln
+
+
+   .. py:attribute:: cleanList
+
+
+   .. py:attribute:: cleanFiles
+      :value: []
+
+
+
+   .. py:attribute:: dirStart
+
+
+   .. py:attribute:: plotPosMagCut
+      :value: 15.0
+
+
+
    .. py:method:: prepStarfinder(targetName, targetCoords, psfStars, filterName)
 
       
@@ -102,6 +248,7 @@ Functions
 
       ..
           !! processed by numpydoc !!
+
 
    .. py:method:: analyzeCombo()
 
@@ -131,7 +278,6 @@ Functions
 
 
    .. py:method:: alignClean()
-
 
 
 .. py:function:: plotPosError(starlist, raw=False, suffix='', radius=4, magCutOff=15.0, title=True)

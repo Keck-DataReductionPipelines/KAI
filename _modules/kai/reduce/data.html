@@ -2285,22 +2285,49 @@
                  <span class="n">skyfile</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">angleOffset</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
                  <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">):</span>
         <span class="c1"># Setup some variables we will need later on</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">sciDir</span> <span class="o">=</span> <span class="n">sciDir</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">skyDir</span> <span class="o">=</span> <span class="n">skyDir</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">wave</span> <span class="o">=</span> <span class="n">wave</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">skyFile</span> <span class="o">=</span> <span class="n">skyfile</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">scale</span> <span class="o">=</span> <span class="n">scale</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">angleOffset</span> <span class="o">=</span> <span class="n">angleOffset</span>
+<div class="viewcode-block" id="Sky.sciDir">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/data/index.html#kai.reduce.data.Sky.sciDir">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sciDir</span> <span class="o">=</span> <span class="n">sciDir</span></div>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">instrument</span> <span class="o">=</span> <span class="n">instrument</span>
+<div class="viewcode-block" id="Sky.skyDir">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/data/index.html#kai.reduce.data.Sky.skyDir">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">skyDir</span> <span class="o">=</span> <span class="n">skyDir</span></div>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">defaultSky</span> <span class="o">=</span> <span class="n">skyDir</span> <span class="o">+</span> <span class="s1">&#39;sky_&#39;</span> <span class="o">+</span> <span class="n">wave</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span>
+<div class="viewcode-block" id="Sky.wave">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/data/index.html#kai.reduce.data.Sky.wave">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wave</span> <span class="o">=</span> <span class="n">wave</span></div>
+
+<div class="viewcode-block" id="Sky.skyFile">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/data/index.html#kai.reduce.data.Sky.skyFile">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">skyFile</span> <span class="o">=</span> <span class="n">skyfile</span></div>
+
+<div class="viewcode-block" id="Sky.scale">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/data/index.html#kai.reduce.data.Sky.scale">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scale</span> <span class="o">=</span> <span class="n">scale</span></div>
+
+<div class="viewcode-block" id="Sky.angleOffset">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/data/index.html#kai.reduce.data.Sky.angleOffset">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">angleOffset</span> <span class="o">=</span> <span class="n">angleOffset</span></div>
+
+
+<div class="viewcode-block" id="Sky.instrument">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/data/index.html#kai.reduce.data.Sky.instrument">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">instrument</span> <span class="o">=</span> <span class="n">instrument</span></div>
+
+
+<div class="viewcode-block" id="Sky.defaultSky">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/data/index.html#kai.reduce.data.Sky.defaultSky">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">defaultSky</span> <span class="o">=</span> <span class="n">skyDir</span> <span class="o">+</span> <span class="s1">&#39;sky_&#39;</span> <span class="o">+</span> <span class="n">wave</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span></div>
+
 
         <span class="k">if</span> <span class="p">(</span><span class="n">wave</span> <span class="o">==</span> <span class="s1">&#39;lp&#39;</span> <span class="ow">or</span> <span class="n">wave</span> <span class="o">==</span> <span class="s1">&#39;ms&#39;</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__initLp__</span><span class="p">()</span>
 
         <span class="c1"># This will be the final returned skyname</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">skyName</span> <span class="o">=</span> <span class="n">skyDir</span> <span class="o">+</span> <span class="s1">&#39;sky_scaled.fits&#39;</span>
+<div class="viewcode-block" id="Sky.skyName">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/data/index.html#kai.reduce.data.Sky.skyName">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">skyName</span> <span class="o">=</span> <span class="n">skyDir</span> <span class="o">+</span> <span class="s1">&#39;sky_scaled.fits&#39;</span></div>
+
 
 <div class="viewcode-block" id="Sky.__initLp__">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/data/index.html#kai.reduce.data.Sky.__initLp__">[docs]</a>

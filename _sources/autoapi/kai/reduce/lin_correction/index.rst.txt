@@ -1,21 +1,19 @@
-:py:mod:`kai.reduce.lin_correction`
-===================================
+kai.reduce.lin_correction
+=========================
 
 .. py:module:: kai.reduce.lin_correction
 
 
-Module Contents
----------------
-
-
 Functions
-~~~~~~~~~
+---------
 
 .. autoapisummary::
 
    kai.reduce.lin_correction.lin_correction
 
 
+Module Contents
+---------------
 
 .. py:function:: lin_correction(file, instrument=instruments.default_inst)
 

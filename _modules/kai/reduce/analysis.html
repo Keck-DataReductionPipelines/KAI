@@ -164,33 +164,87 @@
 <span class="sd">            By default, runs in parallel (all 4 run together).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Setup default parameters</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="s1">&#39;ao&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">corrMain</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.8</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">corrSub</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.6</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">corrClean</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.7</span><span class="p">]</span>
-        <span class="c1"># airopa mode can be &quot;legacy&quot;, &quot;single&quot;, or &quot;variable&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">airopa_mode</span> <span class="o">=</span> <span class="n">airopa_mode</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">trimfake</span> <span class="o">=</span> <span class="mi">1</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">stfFlags</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">stf_debug</span> <span class="o">=</span> <span class="n">stf_debug</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">stf_parallelize</span> <span class="o">=</span> <span class="n">stf_parallelize</span>
+<div class="viewcode-block" id="Analysis.type">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.type">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="s1">&#39;ao&#39;</span></div>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">starlist</span> <span class="o">=</span> <span class="n">rootDir</span> <span class="o">+</span> <span class="s1">&#39;source_list/psf_central.dat&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">labellist</span> <span class="o">=</span> <span class="n">rootDir</span><span class="o">+</span> <span class="s1">&#39;source_list/label.dat&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">labellist_accel</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">orbitlist</span> <span class="o">=</span> <span class="n">rootDir</span><span class="o">+</span> <span class="s1">&#39;source_list/orbits.dat&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">calFile</span> <span class="o">=</span> <span class="n">rootDir</span> <span class="o">+</span> <span class="s1">&#39;source_list/photo_calib.dat&#39;</span>
+<div class="viewcode-block" id="Analysis.corrMain">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.corrMain">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">corrMain</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.8</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Analysis.corrSub">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.corrSub">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">corrSub</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.6</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Analysis.corrClean">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.corrClean">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">corrClean</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.7</span><span class="p">]</span></div>
+
+        <span class="c1"># airopa mode can be &quot;legacy&quot;, &quot;single&quot;, or &quot;variable&quot;</span>
+<div class="viewcode-block" id="Analysis.airopa_mode">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.airopa_mode">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">airopa_mode</span> <span class="o">=</span> <span class="n">airopa_mode</span></div>
+
+<div class="viewcode-block" id="Analysis.trimfake">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.trimfake">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trimfake</span> <span class="o">=</span> <span class="mi">1</span></div>
+
+<div class="viewcode-block" id="Analysis.stfFlags">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.stfFlags">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stfFlags</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span></div>
+
+<div class="viewcode-block" id="Analysis.stf_debug">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.stf_debug">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stf_debug</span> <span class="o">=</span> <span class="n">stf_debug</span></div>
+
+<div class="viewcode-block" id="Analysis.stf_parallelize">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.stf_parallelize">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stf_parallelize</span> <span class="o">=</span> <span class="n">stf_parallelize</span></div>
+
+
+<div class="viewcode-block" id="Analysis.starlist">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.starlist">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">starlist</span> <span class="o">=</span> <span class="n">rootDir</span> <span class="o">+</span> <span class="s1">&#39;source_list/psf_central.dat&#39;</span></div>
+
+<div class="viewcode-block" id="Analysis.labellist">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.labellist">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">labellist</span> <span class="o">=</span> <span class="n">rootDir</span><span class="o">+</span> <span class="s1">&#39;source_list/label.dat&#39;</span></div>
+
+<div class="viewcode-block" id="Analysis.labellist_accel">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.labellist_accel">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">labellist_accel</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="Analysis.orbitlist">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.orbitlist">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">orbitlist</span> <span class="o">=</span> <span class="n">rootDir</span><span class="o">+</span> <span class="s1">&#39;source_list/orbits.dat&#39;</span></div>
+
+<div class="viewcode-block" id="Analysis.calFile">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.calFile">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">calFile</span> <span class="o">=</span> <span class="n">rootDir</span> <span class="o">+</span> <span class="s1">&#39;source_list/photo_calib.dat&#39;</span></div>
+
 
         <span class="c1"># Keep track of the instrument these images are from.</span>
         <span class="c1"># We need this to get things like plate scale, etc.</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">instrument</span> <span class="o">=</span> <span class="n">instrument</span>
+<div class="viewcode-block" id="Analysis.instrument">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.instrument">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">instrument</span> <span class="o">=</span> <span class="n">instrument</span></div>
+
         
+<div class="viewcode-block" id="Analysis.calStars">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.calStars">[docs]</a>
         <span class="bp">self</span><span class="o">.</span><span class="n">calStars</span> <span class="o">=</span> <span class="p">[</span>
             <span class="s1">&#39;irs16NW&#39;</span><span class="p">,</span> <span class="s1">&#39;S3-22&#39;</span><span class="p">,</span> <span class="s1">&#39;S2-22&#39;</span><span class="p">,</span> <span class="s1">&#39;S4-3&#39;</span><span class="p">,</span> <span class="s1">&#39;S1-1&#39;</span><span class="p">,</span> <span class="s1">&#39;S1-21&#39;</span><span class="p">,</span> <span class="s1">&#39;S1-12&#39;</span><span class="p">,</span>
             <span class="s1">&#39;S2-2&#39;</span><span class="p">,</span> <span class="s1">&#39;S3-88&#39;</span><span class="p">,</span> <span class="s1">&#39;S2-75&#39;</span><span class="p">,</span> <span class="s1">&#39;S3-36&#39;</span><span class="p">,</span> <span class="s1">&#39;S1-33&#39;</span><span class="p">,</span>
-        <span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">calFlags</span> <span class="o">=</span> <span class="s1">&#39;-f 1 -R &#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">mapFilter2Cal</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;kp&#39;</span><span class="p">:</span> <span class="s1">&#39;Kp&#39;</span><span class="p">,</span> <span class="s1">&#39;h&#39;</span><span class="p">:</span> <span class="s1">&#39;H&#39;</span><span class="p">,</span> <span class="s1">&#39;lp&#39;</span><span class="p">:</span> <span class="s1">&#39;Lp_o1&#39;</span><span class="p">,</span> <span class="s1">&#39;ms&#39;</span><span class="p">:</span> <span class="s1">&#39;Ms_o1&#39;</span><span class="p">}</span>
+        <span class="p">]</span></div>
+
+<div class="viewcode-block" id="Analysis.calFlags">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.calFlags">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">calFlags</span> <span class="o">=</span> <span class="s1">&#39;-f 1 -R &#39;</span></div>
+
+<div class="viewcode-block" id="Analysis.mapFilter2Cal">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.mapFilter2Cal">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapFilter2Cal</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;kp&#39;</span><span class="p">:</span> <span class="s1">&#39;Kp&#39;</span><span class="p">,</span> <span class="s1">&#39;h&#39;</span><span class="p">:</span> <span class="s1">&#39;H&#39;</span><span class="p">,</span> <span class="s1">&#39;lp&#39;</span><span class="p">:</span> <span class="s1">&#39;Lp_o1&#39;</span><span class="p">,</span> <span class="s1">&#39;ms&#39;</span><span class="p">:</span> <span class="s1">&#39;Ms_o1&#39;</span><span class="p">}</span></div>
+
         <span class="k">if</span> <span class="s1">&#39;kp&#39;</span> <span class="ow">in</span> <span class="n">filt</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">calColumn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mapFilter2Cal</span><span class="p">[</span><span class="s1">&#39;kp&#39;</span><span class="p">]</span>
         <span class="k">elif</span> <span class="s1">&#39;J&#39;</span> <span class="ow">in</span> <span class="n">filt</span><span class="p">:</span>
@@ -199,26 +253,53 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">calColumn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mapFilter2Cal</span><span class="p">[</span><span class="n">filt</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>                           <span class="c1">#default to kp if filt not in mapFilter2Cal.  Consider other solution to deal with unexpected filt</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">calColumn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mapFilter2Cal</span><span class="p">[</span><span class="s1">&#39;kp&#39;</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">calCooStar</span> <span class="o">=</span> <span class="s1">&#39;irs16C&#39;</span>
-        
-        <span class="bp">self</span><span class="o">.</span><span class="n">cooStar</span> <span class="o">=</span> <span class="s1">&#39;irs16C&#39;</span>
+<div class="viewcode-block" id="Analysis.calCooStar">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.calCooStar">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">calCooStar</span> <span class="o">=</span> <span class="s1">&#39;irs16C&#39;</span></div>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">deblend</span> <span class="o">=</span> <span class="kc">None</span>
+        
+<div class="viewcode-block" id="Analysis.cooStar">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.cooStar">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cooStar</span> <span class="o">=</span> <span class="s1">&#39;irs16C&#39;</span></div>
+
+
+<div class="viewcode-block" id="Analysis.deblend">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.deblend">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">deblend</span> <span class="o">=</span> <span class="kc">None</span></div>
+
 
         <span class="c1">#self.alignFlags = &#39;-R 3 -v -p -a 0&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">alignFlags</span> <span class="o">=</span> <span class="s1">&#39;-R 3 -p -a 0&#39;</span>
+<div class="viewcode-block" id="Analysis.alignFlags">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.alignFlags">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alignFlags</span> <span class="o">=</span> <span class="s1">&#39;-R 3 -p -a 0&#39;</span></div>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">numSubMaps</span> <span class="o">=</span> <span class="mi">3</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">minSubMaps</span> <span class="o">=</span> <span class="mi">3</span>
+
+<div class="viewcode-block" id="Analysis.numSubMaps">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.numSubMaps">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">numSubMaps</span> <span class="o">=</span> <span class="mi">3</span></div>
+
+<div class="viewcode-block" id="Analysis.minSubMaps">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.minSubMaps">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">minSubMaps</span> <span class="o">=</span> <span class="mi">3</span></div>
+
         
         <span class="c1"># Setup input parameters </span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">epoch</span> <span class="o">=</span> <span class="n">epoch</span>
+<div class="viewcode-block" id="Analysis.epoch">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.epoch">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">epoch</span> <span class="o">=</span> <span class="n">epoch</span></div>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">rootDir</span> <span class="o">=</span> <span class="n">rootDir</span>
+
+<div class="viewcode-block" id="Analysis.rootDir">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.rootDir">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rootDir</span> <span class="o">=</span> <span class="n">rootDir</span></div>
+
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">rootDir</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">rootDir</span> <span class="o">+=</span> <span class="s1">&#39;/&#39;</span>     
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">filt</span> <span class="o">=</span> <span class="n">filt</span>
+<div class="viewcode-block" id="Analysis.filt">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.filt">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filt</span> <span class="o">=</span> <span class="n">filt</span></div>
+
         
         <span class="k">if</span> <span class="n">epochDirSuffix</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">suffix</span> <span class="o">=</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">epochDirSuffix</span>
@@ -232,10 +313,16 @@
 
         <span class="c1"># Setup Directories</span>
         <span class="c1"># Epoch directory</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dirEpoch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rootDir</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">epoch</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">suffix</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span>
+<div class="viewcode-block" id="Analysis.dirEpoch">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.dirEpoch">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dirEpoch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rootDir</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">epoch</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">suffix</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span></div>
+
         
         <span class="c1"># Clean directory</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dirClean</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dirEpoch</span> <span class="o">+</span> <span class="s1">&#39;clean/&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">filt</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span>
+<div class="viewcode-block" id="Analysis.dirClean">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.dirClean">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dirClean</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dirEpoch</span> <span class="o">+</span> <span class="s1">&#39;clean/&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">filt</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span></div>
+
         <span class="k">if</span> <span class="n">clean_dir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">dirClean</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">trimdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">clean_dir</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span>
                                          <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">filt</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span>
@@ -246,15 +333,24 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">dirCleanStf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dirClean</span> <span class="o">+</span> <span class="s1">&#39;starfinder/&#39;</span> <span class="o">+</span> <span class="n">stfDir</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">dirCleanStf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dirClean</span> <span class="o">+</span> <span class="s1">&#39;starfinder/&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dirCleanAln</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dirCleanStf</span> <span class="o">+</span> <span class="s1">&#39;align/&#39;</span>
+<div class="viewcode-block" id="Analysis.dirCleanAln">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.dirCleanAln">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dirCleanAln</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dirCleanStf</span> <span class="o">+</span> <span class="s1">&#39;align/&#39;</span></div>
+
         
         <span class="c1"># Combo directory</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dirCombo</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dirEpoch</span> <span class="o">+</span> <span class="s1">&#39;combo/&#39;</span>
+<div class="viewcode-block" id="Analysis.dirCombo">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.dirCombo">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dirCombo</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dirEpoch</span> <span class="o">+</span> <span class="s1">&#39;combo/&#39;</span></div>
+
         <span class="k">if</span> <span class="n">combo_dir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">dirCombo</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">trimdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">combo_dir</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span>
         
         <span class="c1"># Starfinder directory</span>
-        <span class="n">starfinder_dir_name</span> <span class="o">=</span> <span class="s1">&#39;starfinder/&#39;</span>
+<div class="viewcode-block" id="Analysis.starfinder_dir_name">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.starfinder_dir_name">[docs]</a>
+        <span class="n">starfinder_dir_name</span> <span class="o">=</span> <span class="s1">&#39;starfinder/&#39;</span></div>
+
         <span class="k">if</span> <span class="n">stf_version</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">starfinder_dir_name</span> <span class="o">=</span> <span class="s1">&#39;starfinder_</span><span class="si">{0}</span><span class="s1">/&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">stf_version</span><span class="p">)</span>
         
@@ -272,7 +368,10 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">dirComboStf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dirComboStf</span> <span class="o">+</span> <span class="n">starfinder_dir_name</span>
         
         
-        <span class="bp">self</span><span class="o">.</span><span class="n">dirComboAln</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dirComboStf</span> <span class="o">+</span> <span class="s1">&#39;align/&#39;</span>
+<div class="viewcode-block" id="Analysis.dirComboAln">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.dirComboAln">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dirComboAln</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dirComboStf</span> <span class="o">+</span> <span class="s1">&#39;align/&#39;</span></div>
+
         
         <span class="c1"># make the directories if we need to</span>
         <span class="k">if</span> <span class="n">cleanList</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
@@ -282,8 +381,14 @@
         <span class="n">util</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dirComboAln</span><span class="p">)</span>
         
         <span class="c1"># Get the list of clean files to work on</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">cleanList</span> <span class="o">=</span> <span class="n">cleanList</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">cleanFiles</span> <span class="o">=</span> <span class="p">[]</span>
+<div class="viewcode-block" id="Analysis.cleanList">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.cleanList">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cleanList</span> <span class="o">=</span> <span class="n">cleanList</span></div>
+
+<div class="viewcode-block" id="Analysis.cleanFiles">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.cleanFiles">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cleanFiles</span> <span class="o">=</span> <span class="p">[]</span></div>
+
         <span class="k">if</span> <span class="n">cleanList</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">_list</span> <span class="o">=</span> <span class="n">Table</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dirClean</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">cleanList</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;ascii.no_header&#39;</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">_list</span><span class="p">)):</span>
@@ -292,10 +397,16 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">cleanFiles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
 
         <span class="c1"># Keep track of the current directory we started in</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dirStart</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
+<div class="viewcode-block" id="Analysis.dirStart">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.dirStart">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dirStart</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span></div>
+
 
         <span class="c1"># Set the default magnitude cut for plotPosError</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">plotPosMagCut</span> <span class="o">=</span> <span class="mf">15.0</span>
+<div class="viewcode-block" id="Analysis.plotPosMagCut">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.plotPosMagCut">[docs]</a>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plotPosMagCut</span> <span class="o">=</span> <span class="mf">15.0</span></div>
+
         
 <div class="viewcode-block" id="Analysis.prepStarfinder">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.prepStarfinder">[docs]</a>

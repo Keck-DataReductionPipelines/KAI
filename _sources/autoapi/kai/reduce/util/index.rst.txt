@@ -1,15 +1,21 @@
-:py:mod:`kai.reduce.util`
-=========================
+kai.reduce.util
+===============
 
 .. py:module:: kai.reduce.util
 
 
-Module Contents
----------------
+Attributes
+----------
+
+.. autoapisummary::
+
+   kai.reduce.util.module_dir
+   kai.reduce.util.dir_alias_file
+   kai.reduce.util.dir_alias
 
 
 Functions
-~~~~~~~~~
+---------
 
 .. autoapisummary::
 
@@ -22,28 +28,14 @@ Functions
    kai.reduce.util.update_header_coords
 
 
-
-Attributes
-~~~~~~~~~~
-
-.. autoapisummary::
-
-   kai.reduce.util.module_dir
-   kai.reduce.util.dir_alias_file
-   kai.reduce.util.dir_alias
-
+Module Contents
+---------------
 
 .. py:data:: module_dir
 
-   
-
 .. py:data:: dir_alias_file
 
-   
-
 .. py:data:: dir_alias
-
-   
 
 .. py:function:: rmall(files)
 

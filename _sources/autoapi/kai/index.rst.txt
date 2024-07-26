@@ -1,5 +1,5 @@
-:py:mod:`kai`
-=============
+kai
+===
 
 .. py:module:: kai
 
@@ -29,30 +29,30 @@
 
 Subpackages
 -----------
-.. toctree::
-   :titlesonly:
-   :maxdepth: 3
 
-   extern/index.rst
-   mtf/index.rst
-   reduce/index.rst
-   tests/index.rst
-   utils/index.rst
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/kai/extern/index
+   /autoapi/kai/mtf/index
+   /autoapi/kai/reduce/index
+   /autoapi/kai/tests/index
+   /autoapi/kai/utils/index
 
 
 Submodules
 ----------
+
 .. toctree::
-   :titlesonly:
    :maxdepth: 1
 
-   _astropy_init/index.rst
-   conditions/index.rst
-   conftest/index.rst
-   constants/index.rst
-   instruments/index.rst
-   photometry/index.rst
-   plot/index.rst
-   strehl/index.rst
+   /autoapi/kai/_astropy_init/index
+   /autoapi/kai/conditions/index
+   /autoapi/kai/conftest/index
+   /autoapi/kai/constants/index
+   /autoapi/kai/instruments/index
+   /autoapi/kai/photometry/index
+   /autoapi/kai/plot/index
+   /autoapi/kai/strehl/index
 
 

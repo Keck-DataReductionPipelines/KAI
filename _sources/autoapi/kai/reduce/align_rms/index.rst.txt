@@ -1,15 +1,11 @@
-:py:mod:`kai.reduce.align_rms`
-==============================
+kai.reduce.align_rms
+====================
 
 .. py:module:: kai.reduce.align_rms
 
 
-Module Contents
----------------
-
-
 Functions
-~~~~~~~~~
+---------
 
 .. autoapisummary::
 
@@ -20,9 +16,10 @@ Functions
    kai.reduce.align_rms.parse_options
 
 
+Module Contents
+---------------
 
 .. py:function:: main(argv=None)
-
 
 .. py:function:: run(args=None)
 
@@ -49,10 +46,7 @@ Functions
 
 .. py:function:: trim_stars(s, options)
 
-
 .. py:function:: calc_error(v_msk, v_avg, cnt, options)
 
-
 .. py:function:: parse_options(args)
-
 

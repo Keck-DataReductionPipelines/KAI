@@ -1,14 +1,20 @@
-:py:mod:`kai.instruments`
-=========================
+kai.instruments
+===============
 
 .. py:module:: kai.instruments
 
 
-Module Contents
----------------
+Attributes
+----------
+
+.. autoapisummary::
+
+   kai.instruments.module_dir
+   kai.instruments.default_inst
+
 
 Classes
-~~~~~~~
+-------
 
 .. autoapisummary::
 
@@ -17,25 +23,18 @@ Classes
    kai.instruments.OSIRIS
 
 
-
-
-Attributes
-~~~~~~~~~~
-
-.. autoapisummary::
-
-   kai.instruments.module_dir
-   kai.instruments.default_inst
-
+Module Contents
+---------------
 
 .. py:data:: module_dir
 
-   
-
 .. py:class:: Instrument
 
-
    Bases: :py:obj:`object`
+
+
+   .. py:attribute:: hdr_keys
+
 
    .. py:method:: get_bad_pixel_mask_name()
 
@@ -76,11 +75,44 @@ Attributes
    .. py:method:: get_lin_corr_coeffs()
 
 
-
 .. py:class:: NIRC2
 
-
    Bases: :py:obj:`Instrument`
+
+
+   .. py:attribute:: name
+      :value: 'NIRC2'
+
+
+
+   .. py:attribute:: hdr_keys
+
+
+   .. py:attribute:: bad_pixel_mask
+      :value: 'nirc2mask.fits'
+
+
+
+   .. py:attribute:: distCoef
+      :value: ''
+
+
+
+   .. py:attribute:: distXgeoim
+
+
+   .. py:attribute:: distYgeoim
+
+
+   .. py:attribute:: telescope
+      :value: 'Keck'
+
+
+
+   .. py:attribute:: telescope_diam
+      :value: 10.5
+
+
 
    .. py:method:: get_filter_name(hdr)
 
@@ -108,6 +140,7 @@ Attributes
       ..
           !! processed by numpydoc !!
 
+
    .. py:method:: get_position_angle(hdr)
 
       
@@ -131,6 +164,7 @@ Attributes
       ..
           !! processed by numpydoc !!
 
+
    .. py:method:: get_parallactic_angle(hdr)
 
       
@@ -153,6 +187,7 @@ Attributes
 
       ..
           !! processed by numpydoc !!
+
 
    .. py:method:: get_instrument_angle(hdr)
 
@@ -180,6 +215,7 @@ Attributes
 
       ..
           !! processed by numpydoc !!
+
 
    .. py:method:: get_gain(hdr)
 
@@ -210,6 +246,7 @@ Attributes
       ..
           !! processed by numpydoc !!
 
+
    .. py:method:: get_align_type(hdr, errors=False)
 
 
@@ -235,6 +272,7 @@ Attributes
 
       ..
           !! processed by numpydoc !!
+
 
    .. py:method:: get_linearity_correction_coeffs()
 
@@ -271,8 +309,8 @@ Attributes
 
 .. py:class:: OSIRIS
 
-
    Bases: :py:obj:`Instrument`
+
 
    
    OSIRIS Imager - after 2019
@@ -294,6 +332,41 @@ Attributes
 
    ..
        !! processed by numpydoc !!
+
+   .. py:attribute:: name
+      :value: 'OSIRIS'
+
+
+
+   .. py:attribute:: hdr_keys
+
+
+   .. py:attribute:: bad_pixel_mask
+      :value: 'osiris_img_mask.fits'
+
+
+
+   .. py:attribute:: distCoef
+      :value: ''
+
+
+
+   .. py:attribute:: distXgeoim
+
+
+   .. py:attribute:: distYgeoim
+
+
+   .. py:attribute:: telescope
+      :value: 'Keck'
+
+
+
+   .. py:attribute:: telescope_diam
+      :value: 10.5
+
+
+
    .. py:method:: get_filter_name(hdr)
 
 
@@ -320,6 +393,7 @@ Attributes
       ..
           !! processed by numpydoc !!
 
+
    .. py:method:: get_pcu_scale(hdr)
 
       
@@ -342,6 +416,7 @@ Attributes
 
       ..
           !! processed by numpydoc !!
+
 
    .. py:method:: get_pcuxyRef(hdr)
 
@@ -366,6 +441,7 @@ Attributes
       ..
           !! processed by numpydoc !!
 
+
    .. py:method:: get_position_angle(hdr)
 
       
@@ -388,6 +464,7 @@ Attributes
 
       ..
           !! processed by numpydoc !!
+
 
    .. py:method:: get_instrument_angle(hdr)
 
@@ -413,6 +490,7 @@ Attributes
       ..
           !! processed by numpydoc !!
 
+
    .. py:method:: get_parallactic_angle(hdr)
 
       
@@ -435,6 +513,7 @@ Attributes
 
       ..
           !! processed by numpydoc !!
+
 
    .. py:method:: get_central_wavelength(hdr)
 
@@ -459,6 +538,7 @@ Attributes
 
       ..
           !! processed by numpydoc !!
+
 
    .. py:method:: get_gain(hdr)
 
@@ -490,6 +570,7 @@ Attributes
       ..
           !! processed by numpydoc !!
 
+
    .. py:method:: subtract_reference_pixels(img)
 
 
@@ -515,6 +596,7 @@ Attributes
 
       ..
           !! processed by numpydoc !!
+
 
    .. py:method:: get_align_type(hdr, errors=False)
 
@@ -544,6 +626,4 @@ Attributes
 
 
 .. py:data:: default_inst
-
-   
 

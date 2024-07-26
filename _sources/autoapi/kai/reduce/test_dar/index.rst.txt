@@ -1,15 +1,11 @@
-:py:mod:`kai.reduce.test_dar`
-=============================
+kai.reduce.test_dar
+===================
 
 .. py:module:: kai.reduce.test_dar
 
 
-Module Contents
----------------
-
-
 Functions
-~~~~~~~~~
+---------
 
 .. autoapisummary::
 
@@ -18,13 +14,12 @@ Functions
    kai.reduce.test_dar.plotDarCoeffsVsZenith
 
 
+Module Contents
+---------------
 
 .. py:function:: diffDarOnOff(cleanDir1, cleanDir2)
 
-
 .. py:function:: plotScalePosangOverNight(alignRoot, imgDir)
 
-
 .. py:function:: plotDarCoeffsVsZenith()
-
 

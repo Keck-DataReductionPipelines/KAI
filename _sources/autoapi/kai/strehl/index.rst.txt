@@ -1,15 +1,11 @@
-:py:mod:`kai.strehl`
-====================
+kai.strehl
+==========
 
 .. py:module:: kai.strehl
 
 
-Module Contents
----------------
-
-
 Functions
-~~~~~~~~~
+---------
 
 .. autoapisummary::
 
@@ -21,6 +17,8 @@ Functions
    kai.strehl.stddev_to_fwhm
 
 
+Module Contents
+---------------
 
 .. py:function:: calc_strehl(file_list, out_file, apersize=0.3, instrument=instruments.default_inst)
 
@@ -61,7 +59,6 @@ Functions
        !! processed by numpydoc !!
 
 .. py:function:: calc_strehl_single(img_file, radius, dl_peak_flux_ratio, instrument=instruments.default_inst)
-
 
 .. py:function:: calc_peak_flux_ratio(img, coords, radius, skysub=True)
 
@@ -140,7 +137,5 @@ Functions
 
 .. py:function:: fwhm_to_stddev(fwhm)
 
-
 .. py:function:: stddev_to_fwhm(stddev)
-
 
