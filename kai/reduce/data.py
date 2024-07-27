@@ -617,6 +617,9 @@ def combine(files, wave, outroot, field=None, outSuffix=None,
             shutil.copy(source_clean_dir + 'c' + source_file_root + '.coo',
                         dest_clean_dir + 'c' + dest_file_root + '.coo')
             
+            shutil.copy(source_clean_dir + 'c' + source_file_root + '.rcoo',
+                        dest_clean_dir + 'c' + dest_file_root + '.rcoo')
+            
             shutil.copy(source_clean_dir + 'distort/cd' + source_file_root + '.fits',
                         dest_clean_dir + 'distort/cd' + dest_file_root + '.fits')
             
