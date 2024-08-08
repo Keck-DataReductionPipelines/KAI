@@ -100,7 +100,7 @@ def calc_strehl(file_list, out_file, apersize=0.3, instrument=instruments.defaul
         for ii in range(len(file_list)):
             strehl, fwhm, rmswfe = calc_strehl_single(file_list[ii], radius, 
                                                       dl_peak_flux_ratio, instrument=instrument)
-            mjd = fits.getval(file_list[ii], instrument.hdr_keys['mjd'])
+            mjd = instrument.get_mjd(fits.getheader(file_list[ii]))
             dirname, filename = os.path.split(file_list[ii])
 
             _out.write(fmt_dat.format(img=filename, strehl=strehl, rms=rmswfe, fwhm=fwhm, mjd=mjd))

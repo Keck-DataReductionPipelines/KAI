@@ -61,43 +61,18 @@ class Instrument(object):
     
     def get_radec(self, hdr):
         pass
+    
+    def get_mjd(self, hdr):
+        pass
 
     
 class NIRC2(Instrument):
-    def __init__(self, obs_year=None):
+    def __init__(self):
         """
         NIRC2 Instrument object. During initialization, the observation year
         can be specified in order to help KAI account for NIRC2 instrument
         upgrade(s).
-        
-        Parameters
-        ----------
-        obs_year : float or string, default=None
-            Specify the time of observation, either as a float for year
-            (indicating the Julian Year) or as a string to indicate the time in
-            ISO format (YYYY-MM-DD). Supports upgrades to NIRC2 that change the
-            output data file format.
-        """
-        
-        # Check if obs_year is valid
-        if obs_year is None:
-            obs_year = 2023.0
-        
-        year_time_format = ''
-        if type(obs_year) is float:
-            year_time_format = 'jyear'
-        elif type(obs_year) is str:
-            year_time_format = 'iso'
-        
-        try:
-            self.obs_year = Time(
-                obs_year, format=year_time_format,
-            )
-        except:
-            raise ValueError('obs_year = {0} is not recognized as a valid time format'.format(
-                obs_year
-            ))
-            
+        """    
         self.name = 'NIRC2'
         
         # Define header keywords
@@ -111,7 +86,6 @@ class NIRC2(Instrument):
         self.hdr_keys['nfowler'] = 'MULTISAM'
         self.hdr_keys['camera'] = 'CAMNAME'
         self.hdr_keys['shutter'] = 'SHRNAME'
-        self.hdr_keys['mjd'] = 'MJD-OBS'
         self.hdr_keys['elevation'] = 'EL'
 
         self.bad_pixel_mask = 'nirc2mask.fits'
@@ -122,10 +96,6 @@ class NIRC2(Instrument):
 
         self.telescope = 'Keck'
         self.telescope_diam = 10.5 # telescope diameter in meters
-        
-        # 2024 NIRC2 electronics upgrade
-        if self.obs_year.mjd >= 2024.0:
-            self.hdr_keys['mjd'] = 'MJD'
 
         return
     
@@ -285,7 +255,16 @@ class NIRC2(Instrument):
                 float(DEC_split[1])/60. + float(DEC_split[2])/3600.
             
             return [RA_decimal_degs, DEC_decimal_degs]
+    
+    def get_mjd(self, hdr):
+        """Return observation time in MJD"""
         
+        date = hdr['DATE-OBS']
+        
+        if (float(date[0:4]) < 2024):
+            return float(hdr['MJD-OBS'])
+        else:
+            return float(hdr['MJD'])
 
 
 class OSIRIS(Instrument):
@@ -507,6 +486,11 @@ class OSIRIS(Instrument):
         """Return list of RA and Dec as decimal degrees"""
         
         return [float(hdr['RA']), float(hdr['DEC'])]
+    
+    def get_mjd(self, hdr):
+        """Return observation time in MJD"""
+        
+        return float(hdr['MJD-OBS'])
 
 ##################################################
 #

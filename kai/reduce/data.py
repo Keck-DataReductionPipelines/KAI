@@ -1148,7 +1148,7 @@ def combine_drizzle(imgsize, cleanDir, roots, outroot, weights, shifts,
 
         
         # Read in MJD of current file from FITS header
-        mjd = float(hdr[instrument.hdr_keys['mjd']])
+        mjd = instrument.get_mjd(hdr)
         mjd_weightedSum += weights[i] * mjd
         
         # Drizzle this file ontop of all previous ones.
@@ -1231,11 +1231,8 @@ def combine_drizzle(imgsize, cleanDir, roots, outroot, weights, shifts,
         'MJD-OBS', mjd_weightedMean,
         'Weighted modified julian date of combined observations'
     )
-    
-    # Also write in the file's MJD header keyword,
-    # in case it differs from "MJD-OBS"
     fits_f[0].header.set(
-        instrument.hdr_keys['mjd'], mjd_weightedMean,
+        'MJD', mjd_weightedMean,
         'Weighted modified julian date of combined observations'
     )
     
@@ -1371,7 +1368,7 @@ def combine_submaps(
             ir.drizzle.ygeoim = distYgeoim
 
         # Read in MJD of current file from FITS header
-        mjd = float(hdr[instrument.hdr_keys['mjd']])
+        mjd = instrument.get_mjd(hdr)
         mjd_weightedSums[sub] += weights[i] * mjd
         
         # Drizzle this file ontop of all previous ones.
@@ -1451,11 +1448,8 @@ def combine_submaps(
             mjd_weightedMeans[s],
             'Weighted modified julian date of combined observations',
         )
-        
-        # Also write in the file's MJD header keyword,
-        # in case it differs from "MJD-OBS"
         fits_f[0].header.set(
-            instrument.hdr_keys['mjd'],
+            'MJD',
             mjd_weightedMeans[s],
             'Weighted modified julian date of combined observations',
         )
