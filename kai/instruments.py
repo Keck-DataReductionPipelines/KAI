@@ -53,7 +53,7 @@ class Instrument(object):
     def get_align_type(self, errors=False):
         pass
 
-    def get_saturation_level(self):
+    def get_saturation_level(self, hdr):
         pass
     
     def get_lin_corr_coeffs(self):
@@ -193,11 +193,16 @@ class NIRC2(Instrument):
 
         return atype
 
-    def get_saturation_level(self):
+    def get_saturation_level(self, hdr):
         """
         Set to the 95% saturation threshold in DN.
         """
-        return 12000.0
+        date = hdr['DATE-OBS']
+        
+        if (float(date[0:4]) < 2024):
+            return 6_000.0
+        else:
+            return 12_000.0
     
     def get_linearity_correction_coeffs(self):
         """
@@ -476,7 +481,7 @@ class OSIRIS(Instrument):
 
         return atype
     
-    def get_saturation_level(self):
+    def get_saturation_level(self, hdr):
         """
         Set to the 95% saturation threshold in DN.
         """
