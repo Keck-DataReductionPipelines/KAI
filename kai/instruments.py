@@ -199,7 +199,7 @@ class NIRC2(Instrument):
         """
         date = hdr['DATE-OBS']
         
-        if (float(date[0:4]) < 2024):
+        if (float(date[0:4]) >= 2024):
             return 6000.0
         else:
             return 12000.0
