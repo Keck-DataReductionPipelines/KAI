@@ -56,7 +56,7 @@ class Instrument(object):
     def get_saturation_level(self, hdr):
         pass
     
-    def get_lin_corr_coeffs(self):
+    def get_linearity_correction_coeffs(self, hdr):
         pass
     
     def get_radec(self, hdr):
@@ -204,7 +204,7 @@ class NIRC2(Instrument):
         else:
             return 12000.0
     
-    def get_linearity_correction_coeffs(self):
+    def get_linearity_correction_coeffs(self, hdr):
         """
         Returns coefficients (`coeffs`, as defined below)
         in order to perform linearity correction
@@ -228,13 +228,13 @@ class NIRC2(Instrument):
         # Therefore, x can be multiplied by 2 for the same coeffs,
         # or equivalently: coeffs can be multiplied by 2^n: [2^0, 2^1, 2^2]
         
-        if self.el_upg_2024:
+        date = hdr['DATE-OBS']
+        if (float(date[0:4]) >= 2024):
             lin_corr_coeffs = np.array([
                 1.001 * 2**0,
                 -6.9e-6 * 2**1,
                 -0.70e-10 * 2**2,
             ])
-            
         
         return lin_corr_coeffs
      
