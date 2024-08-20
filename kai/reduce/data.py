@@ -320,7 +320,9 @@ def clean(
             clean_drizzle(distXgeoim, distYgeoim, _bp, _ce, _wgt, _dlog,
                           fixDAR=fixDAR, instrument=instrument,
                           use_koa_weather=use_koa_weather)
-
+            
+            hdr = fits.getheader(_raw, ignore_missing_end=True)
+            
             ### Make .max file ###
             # Determine the non-linearity level. Raw data level of
             # non-linearity is 12,000 but we subtracted
@@ -330,7 +332,7 @@ def clean(
             nonlinSky = skyObj.getNonlinearCorrection(sky)
 
             coadds = fits.getval(_ss, instrument.hdr_keys['coadds'])
-            satLevel = (coadds*instrument.get_saturation_level()) - nonlinSky - bkg
+            satLevel = (coadds*instrument.get_saturation_level(hdr)) - nonlinSky - bkg
             file(_max, 'w').write(str(satLevel))
 
             ### Rename and clean up files ###
@@ -339,7 +341,6 @@ def clean(
 
             ### Make the *.coo file and update headers ###
             # First check if PA is not zero
-            hdr = fits.getheader(_raw, ignore_missing_end=True)
             phi = instrument.get_position_angle(hdr)
 
             clean_makecoo(_ce, _cc, refSrc, strSrc, aotsxyRef, radecRef,
