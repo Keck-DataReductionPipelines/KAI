@@ -163,6 +163,9 @@ class TestCosmicRayRemoval(unittest.TestCase):
         iraf = fits.getdata(reduce_dir + 'crmask{}_iraf.fits'.format(img_root))
         noiraf = fits.getdata(reduce_dir + 'crmask{}_noiraf.fits'.format(img_root))
 
+        noiraf_img = fits.getdata(reduce_dir + 'ff{}_f_noiraf.fits'.format(img_root))
+        iraf_img = fits.getdata(reduce_dir + 'ff{}_f_iraf.fits'.format(img_root))
+
         total_cosmic_rays_iraf = np.sum(iraf)
 
         in_iraf_only = len(np.where((iraf - noiraf) == 1)[0])
@@ -179,8 +182,12 @@ class TestCosmicRayRemoval(unittest.TestCase):
         assert in_iraf_only/total_cosmic_rays_iraf < 0.25
         assert in_noiraf_only/total_cosmic_rays_iraf < 0.25
 
-        #FIXME: add test for replaced values
-        # check they're not too far off
+        # Check replaced values are within 40 counts
+        # and that there are fewer than 10 pixels with
+        # a difference greater than 10 counts
+        difference = np.abs(iraf_img - noiraf_img)
+        assert np.max(difference) < 55
+        assert len(np.where(difference > 10)[0]) < 15
         
         return
 
