@@ -765,10 +765,6 @@ def combine(files, wave, outroot, field=None, outSuffix=None,
     # Keep record of files that went into this combine
     combine_lis(_out + '.lis', cleanDir, roots, diffPA)
 
-    print(_out, refImage, diffPA)
-    import pdb
-    pdb.set_trace()
-
     # Register images to get shifts.
     shiftsTab = combine_register(_out, refImage, diffPA)
 
