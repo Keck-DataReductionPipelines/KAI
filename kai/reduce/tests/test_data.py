@@ -8,6 +8,7 @@ from kai.reduce import util
 from astropy.io import fits
 import math
 import numpy as np
+from astropy.table import Table
 
 class TestClean(unittest.TestCase):
     def test_clean(self):
@@ -237,6 +238,79 @@ class TestCombineRegister(unittest.TestCase):
         # Register images to get shifts.
         shiftsTab = data.combine_register_iraf(_out, refImage, diffPA)
 
+        return
+
+    def test_run_combine_register_noiraf(self): #self
+        mod_path = os.path.dirname(os.path.abspath(data.__file__))
+
+        epoch_dir = mod_path + '/../data/test_epoch/17may21/'
+        cleanDir = epoch_dir + 'clean/ob170095_kp/'
+        comboDir = epoch_dir + 'combo/'
+        
+        outroot = '17may21_ob170095'
+        wave = 'kp'
+        instrument = instruments.default_inst
+
+        files = ['n{0:04d}'.format(ii) for ii in range(7, 19+1)]
+        # Make strings out of all the filename roots.
+        roots = instrument.make_filenames(files, prefix='')
+        #roots = [aa.replace('.fits', '') for aa in roots]
+        rootsc = [aa.replace('n', 'c') for aa in roots]
+        
+        _out = comboDir + 'mag' + outroot + '_' + wave + '_noiraf'
+        
+        strehls, fwhm = data.loadStrehl(cleanDir, rootsc)
+        # skip trimming since no trimming in this test
+
+        roots = [aa.replace('.fits', '') for aa in roots]
+        roots = [aa.replace('n', '') for aa in roots]
+
+        # Determine the reference image
+        # refImage_index = 0    # Use the first image from night
+        refImage_index = np.argmin(fwhm)    # Use the lowest FWHM frame
+        refImage = cleanDir + 'c' + roots[refImage_index] + '.fits'
+        print('combine: reference image - %s' % refImage)
+
+        # See if all images are at same PA, if not, rotate all to PA = 0
+        # temporarily. This needs to be done to get correct shifts.
+        diffPA = data.combine_rotation(cleanDir, roots, instrument=instrument)
+
+        # Make a table of coordinates for the reference source.
+        # These serve as initial estimates for the shifts.
+        data.combine_coo(_out + '.coo', cleanDir, roots, diffPA, refImage_index)
+    
+        # Keep record of files that went into this combine
+        data.combine_lis(_out + '.lis', cleanDir, roots, diffPA)
+
+        # Register images to get shifts.
+        shiftsTab = data.combine_register(_out, refImage, diffPA)
+
+        return
+
+    def test_compare_combine_register_iraf_noiraf(self):
+        """Compare IRAF vs. no IRAF combine register routine."""
+
+        mod_path = os.path.dirname(os.path.abspath(data.__file__))
+        
+        combo_dir = mod_path + '/../data/test_epoch/17may21/combo/'
+        
+        iraf = Table.read(combo_dir + 'mag17may21_ob170095_kp_iraf.shifts', format='ascii', data_start=1)
+        noiraf = Table.read(combo_dir + 'mag17may21_ob170095_kp_noiraf.shifts', format='ascii', data_start=1)
+
+        shift_differences_y = []
+        shift_differences_x = []
+        shift_differences_total = []
+        for i in range(len(iraf)):
+            shift_differences_y.append(noiraf['col1'][i] - iraf['col1'][i])
+            shift_differences_x.append(noiraf['col2'][i] - iraf['col2'][i])
+            shift_differences_total.append(np.sqrt((noiraf['col1'][i] - iraf['col1'][i])**2 + (noiraf['col2'][i] - iraf['col2'][i])**2))
+
+        # Mean difference is less than 0.1 pixels
+        assert np.mean(shift_differences_total) < 0.1
+
+        # Max difference is less than 0.3 pixels
+        assert np.max(shift_differences_total) < 0.3
+        
         return
 
 class TestMosaicRegister(unittest.TestCase):

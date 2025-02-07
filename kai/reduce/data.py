@@ -25,6 +25,8 @@ import copy
 import shutil
 import warnings
 from datetime import datetime
+from scipy.ndimage import shift
+from scipy.optimize import least_squares
 
 from scipy import ndimage
 from scipy.interpolate import griddata
@@ -762,6 +764,10 @@ def combine(files, wave, outroot, field=None, outSuffix=None,
 
     # Keep record of files that went into this combine
     combine_lis(_out + '.lis', cleanDir, roots, diffPA)
+
+    print(_out, refImage, diffPA)
+    import pdb
+    pdb.set_trace()
 
     # Register images to get shifts.
     shiftsTab = combine_register(_out, refImage, diffPA)
@@ -1849,42 +1855,28 @@ def xregister_correlation_fourier(I, R, Nx, Ny):
 
     return correlation
 
-def combine_register(outroot, refImage, diffPA):
-    from pyraf import iraf as ir
+def elliptical_gaussian_2d(params, x, y):
+    amplitude, x0, y0, sigma_x, sigma_y, theta, offset = params
+    x_prime = (x - x0) * np.cos(theta) + (y - y0) * np.sin(theta)
+    y_prime = -(x - x0) * np.sin(theta) + (y - y0) * np.cos(theta)
+    return amplitude * np.exp(-((x_prime / sigma_x) ** 2 + (y_prime / sigma_y) ** 2) / 2) + offset
+
+def residuals(params, x, y, image):
+    # Residual function for least_squares
+    return elliptical_gaussian_2d(params, x, y) - image
+
+def combine_register(outroot, refImage, diffPA, plot_correlation = False):
 
     shiftFile = outroot + '.shifts'
-    util.rmall([shiftFile])
-
-    # xregister parameters
-    ir.immatch
-    ir.unlearn('xregister')
-    ir.xregister.coords = outroot + '.coo'
-    ir.xregister.output = ''
-    ir.xregister.append = 'no'
-    ir.xregister.databasefmt = 'no'
-    ir.xregister.verbose = 'no'
-    ir.xregister.xwindow='30'
-    ir.xregister.ywindow='30'
-    ir.xregister.correlation='fourier'
-    ir.xregister.function='centroid'
 
     print('combine: registering images')
     if (diffPA == 1):
         input = '@' + outroot + '.lis_r'
     else:
         input = '@' + outroot + '.lis'
-
-    hdu = fits.open(refImage)
-    nx = hdu[0].header['NAXIS1']
-    ny = hdu[0].header['NAXIS2']
-
-    regions = '['+str(nx/2-nx/4)+':'+str(nx/2+nx/4)+','+str(ny/2-ny/4)+':'+str(ny/2+ny/4)+']'
-    #regions = '[*,*]'
-    # print 'input = ', input
-    print('xwindow,ywindow',ir.xregister.xwindow,ir.xregister.ywindow) #30, 30
-    print('refImage = ', refImage)
-    print('regions = ', regions)
-    print('shiftFile = ', shiftFile)
+    
+    ref_img = fits.getdata(refImage)
+    coo_file_ref = Table.read(refImage[:-5] + '.coo', format='ascii', header_start=None)
 
     fileNames = Table.read(input[1:], format='ascii.no_header') # removed , header_start=None
     fileNames = np.array(fileNames)
@@ -1892,30 +1884,100 @@ def combine_register(outroot, refImage, diffPA):
     coords = Table.read(outroot + '.coo', format='ascii', header_start=None)
     shiftsTable_empty = np.zeros((len(fileNames), 3), dtype=float)
     shiftsTable = Table(shiftsTable_empty, dtype=('S50', float, float)) #dtype=(float, float, 'S50')
+    
+    hdrRef = fits.getheader(refImage, ignore_missing_end=True)
+    instrument = instruments.default_inst
+    plate_scale = instrument.get_plate_scale(hdrRef) #arcsec/pixels
+    crop_val = 1/plate_scale # 1 arcsec/(arcsec/pix)
+    crop_val = int(np.round(crop_val))
 
     for ii in range(len(fileNames)):
-        inFile = fileNames[ii]
+        fileName = fileNames[ii].decode("utf-8")
+        shift_img = fits.getdata(fileName)
+        coo_name = fileName[:-5] + '.coo'
+        coo_file = Table.read(coo_name, format='ascii', header_start=None)
+        
+        
+        xshift = coo_file_ref['col2'] - coo_file['col2'] 
+        yshift = coo_file_ref['col1'] - coo_file['col1']
+        global_shift_img = shift(shift_img, (xshift, yshift), mode = 'constant')
+        _x = np.fft.fft2(ref_img)
+        _y = np.fft.fft2(global_shift_img).conj()
+        
+        corr = np.abs(np.fft.ifft2(_x * _y))
+        
+        concat_x = np.concatenate((corr[512:], corr[:512]))
+        correlation_img = np.concatenate((concat_x[:,512:], concat_x[:,:512]), axis =1)
 
-        tmpCooFile = outroot + '_tmp.coo'
-        _coo = open(tmpCooFile, 'w')
-        _coo.write('%.2f  %.2f\n' % (coords[0][0], coords[0][1]))
-        _coo.write('%.2f  %.2f\n' % (coords[ii+1][0], coords[ii+1][1])) #Changed from [0][ii+1] to [ii+1][0]
-        print('%.2f  %.2f\n' % (coords[0][0], coords[0][1]))
-        print('%.2f  %.2f\n' % (coords[ii+1][0], coords[ii+1][1]))
-        _coo.close()
+        correlation_img = correlation_img - np.median(correlation_img)
+        
+        # Find centroid by fitting gaussian
 
-        util.rmall([shiftFile])
-        print('inFile = ', inFile)
-        print(tmpCooFile, inFile, refImage, regions, shiftFile)
-        ir.xregister.coords = tmpCooFile
-        ir.xregister(inFile, refImage, regions, shiftFile)
+        # Initial crop of +/- 1 arcsec
+        initial_crop_image = correlation_img[(512 - crop_val):(512 + crop_val), (512 - crop_val):(512 + crop_val)]
+        
+        # Find the approximate peak location
+        y_peak, x_peak = np.unravel_index(np.argmax(initial_crop_image), initial_crop_image.shape)
+        
+        # Define a cutout around the peak +/- cutout_size
+        cutout_size = 5
+        y_min, y_max = max(0, y_peak - cutout_size), min(initial_crop_image.shape[0], y_peak + cutout_size)
+        x_min, x_max = max(0, x_peak - cutout_size), min(initial_crop_image.shape[1], x_peak + cutout_size)
+        
+        # Extract the cutout image
+        image_cutout = initial_crop_image[y_min:y_max, x_min:x_max]
+        y_cutout, x_cutout = np.indices(image_cutout.shape)
 
-        # # Read in the shifts file. Column format is:
-        # # Filename.fits  xshift  yshift
-        _shifts = Table.read(shiftFile, format='ascii.no_header')
-        shiftsTable[ii][0] = _shifts[0][0]
-        shiftsTable[ii][1] = _shifts[0][1]
-        shiftsTable[ii][2] = _shifts[0][2]
+        # Flatten the arrays for fitting
+        x_flat = x_cutout.ravel()
+        y_flat = y_cutout.ravel()
+        image_flat = image_cutout.ravel()
+
+        # Initial guess for the parameters: [amplitude, x0, y0, sigma_x, sigma_y, theta, offset]
+        initial_guess = [
+            np.max(image_cutout),            # Amplitude
+            image_cutout.shape[1] // 2,      # x0 (center of cutout in x)
+            image_cutout.shape[0] // 2,      # y0 (center of cutout in y)
+            1,                               # sigma_x
+            1,                               # sigma_y
+            0,                               # theta
+            np.min(correlation_img)             # offset (background level)
+        ]
+        
+        # Bounds for the parameters
+        bounds = (
+            [0, 0, 0, 0.1, 0.1, -np.pi, -np.inf],   # Lower bounds
+            [np.inf, image_cutout.shape[1], image_cutout.shape[0], np.inf, np.inf, np.pi, np.inf]  # Upper bounds
+        )
+        
+        # Run least squares optimization
+        result = least_squares(
+            residuals, initial_guess, args=(x_flat, y_flat, image_flat), bounds=bounds, xtol=1e-12, ftol=1e-12, gtol=1e-12, max_nfev=10000
+        )
+        
+        # Extract the optimized parameters
+        amplitude, x0_fit, y0_fit, sigma_x, sigma_y, theta_fit, offset = result.x
+        
+        # Translate the cutout coordinates back to full image coordinates
+        x0_full = x0_fit + x_min + (512 - crop_val)
+        y0_full = y0_fit + y_min + (512 - crop_val)
+        
+        total_x_shift = xshift + (512 - x0_full)
+        total_y_shift = yshift + (512 - y0_full)
+    
+        if plot_correlation:
+            plt.imshow(correlation_img, origin="upper", cmap="viridis")
+            plt.scatter(x0_full, y0_full, color="red", marker="*", s=20, label="Gaussian Fit Centroid")
+            plt.scatter(-((shifts[i][1] - xshift) - 512), -((shifts[i][0] - yshift) - 512), color="blue", marker="*", s=20, label="Iraf Centroid")
+            plt.legend()
+            plt.xlim(x_min + (512 - crop_val), x_max + (512 - crop_val))
+            plt.ylim(y_min + (512 - crop_val), y_max + (512 - crop_val))
+            plt.show()
+            plt.close()
+
+        shiftsTable[ii][0] = fileName.split('/')[-1]
+        shiftsTable[ii][1] = total_y_shift
+        shiftsTable[ii][2] = total_x_shift
 
 
     util.rmall([shiftFile])
