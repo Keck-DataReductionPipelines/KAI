@@ -28,6 +28,7 @@ import warnings
 from datetime import datetime
 
 from scipy import ndimage
+import astroalign as aa
 
 module_dir = os.path.dirname(__file__)
 
@@ -1615,17 +1616,17 @@ def combine_register(outroot, refImage, diffPA):
     util.rmall([shiftFile])
 
     # xregister parameters
-    ir.immatch
-    ir.unlearn('xregister')
-    ir.xregister.coords = outroot + '.coo'
-    ir.xregister.output = ''
-    ir.xregister.append = 'no'
-    ir.xregister.databasefmt = 'no'
-    ir.xregister.verbose = 'no'
-    ir.xregister.xwindow='30'
-    ir.xregister.ywindow='30'
-    ir.xregister.correlation='fourier'
-    ir.xregister.function='centroid'
+    #ir.immatch
+    #ir.unlearn('xregister')
+    drizzle.coords = outroot + '.coo'
+    drizzle.output = ''
+    drizzle.append = 'no'
+    drizzle.databasefmt = 'no'
+    drizzle.verbose = 'no'
+    drizzle.xwindow='30'
+    drizzle.ywindow='30'
+    drizzle.correlation='fourier'
+    drizzle.function='centroid'
 
     print('combine: registering images')
     if (diffPA == 1):
@@ -1640,14 +1641,14 @@ def combine_register(outroot, refImage, diffPA):
     regions = '['+str(nx/2-nx/4)+':'+str(nx/2+nx/4)+','+str(ny/2-ny/4)+':'+str(ny/2+ny/4)+']'
     #regions = '[*,*]'
     # print 'input = ', input
-    print('xwindow,ywindow',ir.xregister.xwindow,ir.xregister.ywindow)
+    print('xwindow,ywindow',drizzle.xwindow,drizzle.ywindow)
     print('refImage = ', refImage)
     print('regions = ', regions)
     print('shiftFile = ', shiftFile)
 
     fileNames = Table.read(input[1:], format='ascii.no_header') # removed , header_start=None
     fileNames = np.array(fileNames)
-    fileNames = np.array(fileNames, dtype='S')
+    fileNames = np.array(fileNames, dtype='str')
     coords = Table.read(outroot + '.coo', format='ascii', header_start=None)
     shiftsTable_empty = np.zeros((len(fileNames), 3), dtype=float)
     shiftsTable = Table(shiftsTable_empty, dtype=('S50', float, float)) #dtype=(float, float, 'S50')
@@ -1663,8 +1664,12 @@ def combine_register(outroot, refImage, diffPA):
 
         util.rmall([shiftFile])
         print('inFile = ', inFile)
-        ir.xregister.coords = tmpCooFile
-        ir.xregister(inFile, refImage, regions, shiftFile)
+        drizzle.coords = tmpCooFile
+        inFile = str(inFile)
+        #ir.xregister(inFile, refImage, regions, shiftFile)
+        pdb.set_trace() #This seems to be my last set_trace before I stopped working on this. -SKT
+        aligned_image, footprint = aa.register(fits.getdata(inFile), fits.getdata(refImage))
+
 
         # # Read in the shifts file. Column format is:
         # # Filename.fits  xshift  yshift
@@ -2082,8 +2087,8 @@ def clean_makecoo(_ce, _cc, refSrc, strSrc, aotsxyRef, radecRef,
 
         image_data = fits.getdata(_ce)
         com = ndimage.center_of_mass(image_data[int(yref-cent_box/2):int(yref+cent_box/2),int(xref-cent_box/2):int(xref+cent_box/2)])
-        xref = xref-cent_box/2 + (com[1]+0.5)
-        yref = yref-cent_box/2 + (com[0]+0.5)
+        xref = xref-cent_box/2 + (com[1]+0.75)
+        yref = yref-cent_box/2 + (com[0]+0.75)
 
         #text = ir.imcntr(_ce, xstr, ystr, cbox=cent_box, Stdout=1)
         #values = text[0].split()
@@ -2091,8 +2096,8 @@ def clean_makecoo(_ce, _cc, refSrc, strSrc, aotsxyRef, radecRef,
         #ystr = float(values[4])
 
         com = ndimage.center_of_mass(image_data[int(ystr-cent_box/2):int(ystr+cent_box/2),int(xstr-cent_box/2):int(xstr+cent_box/2)])
-        xstr = xstr-cent_box/2 + (com[1]+0.5)
-        ystr = ystr-cent_box/2 + (com[0]+0.5)
+        xstr = xstr-cent_box/2 + (com[1]+0.75)
+        ystr = ystr-cent_box/2 + (com[0]+0.75)
 
         print('clean_makecoo: xref, yref final = {0:.2f} {1:.2f}'.format(xref, yref))
 

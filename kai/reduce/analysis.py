@@ -691,10 +691,8 @@ class Analysis(object):
 
             # Make a named/labeled version
             cmd = 'java -Xmx1024m align %s ' % (self.alignFlags)
-<<<<<<< HEAD
             #cmd += '-N %s ' % self.labellist
             cmd += '-accel_file %s ' % self.labellist
-=======
 
             # Support label.dat files with or without accelerations.
             if self.labellist_accel:
@@ -702,7 +700,6 @@ class Analysis(object):
             else:
                 cmd += '-N %s ' % self.labellist
                 
->>>>>>> dev
             if (self.orbitlist != None) and (self.orbitlist != ''):
                 cmd += '-o %s ' % self.orbitlist
                 
