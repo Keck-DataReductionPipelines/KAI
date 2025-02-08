@@ -21,6 +21,12 @@ def lin_correction(file, instrument=instruments.default_inst):
     instrument : instruments object, optional
         Instrument of data. Default is `instruments.default_inst`
     """
+    # Determine if we have linearity correction coefficients to apply.
+    coeffs = instrument.get_linearity_correction_coeffs()
+
+    if coeffs is None:
+        return
+
     # Extract header and image data
     hdul = fits.open(file, mode='update', ignore_missing_end=True)
     
@@ -31,8 +37,7 @@ def lin_correction(file, instrument=instruments.default_inst):
     num_coadds = im_header['COADDS']
     
     x = im_data / num_coadds
-    coeffs = instrument.get_linearity_correction_coeffs()
-    
+
     # Determine order of polynomial correction
     norm_poly_order = len(coeffs)
     

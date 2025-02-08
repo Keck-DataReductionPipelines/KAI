@@ -559,3 +559,4 @@ def get_raw_reduce_directories(raw_dir, reduce_dir):
         rawDir = util.trimdir(os.path.abspath(redDir + '../raw') + '/')
     return rawDir, redDir
 
+

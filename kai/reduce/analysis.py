@@ -634,6 +634,50 @@ class Analysis(object):
             os.chdir(self.dirStart)
             raise
 
+    def alignComboFlyStar(self):
+        print('ALIGN_RMS combo')
+
+        from flystar import align, starlists, transforms
+
+        # Include filter for AO images
+        if self.type == 'ao':
+            file_ext = '_' + self.filt
+        else:
+            file_ext = self.filt
+
+        # Include deblend flag in starlist name
+        if self.deblend == 1:
+            deblend_str = 'd'
+        else:
+            deblend_str = ''
+
+        main_map_root = f'mag{self.epoch}{self.imgSuffix}{file_ext}'
+        main_map_root += '_{self.corrMain:3.1f}{deblend_str}'
+        main_map_root += '_stf_cal.lis'
+
+        sub_map_roots = []
+        for ss in range(self.numSubMaps):
+            sub_map_root = f'm{self.epoch}{self.imgSuffix}{file_ext}_{ss+1:d}'
+            sub_map_root += '_{self.corrSub:3.1f}{deblend_str}'
+            sub_map_root += '_stf_cal.lis'
+            sub_map_roots.append( sub_map_root )
+
+        main_list = starlists.StarList.from_lis_file(self.dirComboStf + main_map_root)
+        sub_lists = []
+        for ss in range(self.numSubMaps):
+            sub_lists.append( starlists.StarList.from_lis_file(self.dirComboStf + sub_map_roots[ss]) )
+
+        msc = align.MosaicToRef(main_list, sub_lists, ref_index=0, iters=2,
+                                  dr_tol=[1,1], dm_tol=[0.5,0.3],
+                                  trans_class=transforms.PolyTransform,
+                                  trans_args={'order':0},
+                                  verbose=True)
+        msc.fit()
+
+        # align_rms -- combo and make final list.
+
+        return
+
     def alignCombo(self):
         print('ALIGN_RMS combo')
 

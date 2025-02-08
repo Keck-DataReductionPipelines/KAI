@@ -55,7 +55,7 @@ class Instrument(object):
     def get_saturation_level(self):
         pass
     
-    def get_lin_corr_coeffs(self):
+    def get_linearity_correction_coeffs(self):
         pass
 
     
