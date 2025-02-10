@@ -1964,7 +1964,7 @@ def combine_register(outroot, refImage, diffPA, plot_correlation = False):
         if plot_correlation:
             plt.imshow(correlation_img, origin="upper", cmap="viridis")
             plt.scatter(x0_full, y0_full, color="red", marker="*", s=20, label="Gaussian Fit Centroid")
-            plt.scatter(-((shifts[i][1] - xshift) - 512), -((shifts[i][0] - yshift) - 512), color="blue", marker="*", s=20, label="Iraf Centroid")
+            #plt.scatter(-((shifts[i][1] - xshift) - 512), -((shifts[i][0] - yshift) - 512), color="blue", marker="*", s=20, label="Iraf Centroid")
             plt.legend()
             plt.xlim(x_min + (512 - crop_val), x_max + (512 - crop_val))
             plt.ylim(y_min + (512 - crop_val), y_max + (512 - crop_val))
@@ -2805,7 +2805,7 @@ class Sky(object):
         self.f_skylog = f_skylog
 
     def getSky(self, _n):
-        from pyraf import iraf as ir
+        #from pyraf import iraf as ir
 
         if (self.wave == 'lp' or self.wave == 'ms'):
             sky = self.getSkyLp(_n)
@@ -2832,7 +2832,7 @@ class Sky(object):
         @param _sky: name of sky frame
         @type _sky: string
         """
-        from pyraf import iraf as ir
+        #from pyraf import iraf as ir
 
         util.rmall([self.skyName])
 
@@ -2874,14 +2874,15 @@ class Sky(object):
         @returns sky: name of sky file to use.
         @rtype sky: string
         """
-        from pyraf import iraf as ir
+        #from pyraf import iraf as ir
 
         # Sky subtract
         # determine the best angle for sky or use manual file
 
         # -- Determine the rotpposn for this image
-        sciAng_tmp = ir.hselect(_n, "ROTPPOSN", "yes", Stdout=1)
-        sciAng = float(sciAng_tmp[0])
+        #sciAng_tmp = ir.hselect(_n, "ROTPPOSN", "yes", Stdout=1)
+        #sciAng = float(sciAng_tmp[0])
+        sciAng = fits.getheader(_n)['ROTPPOSN']
 
         # -- Determine the best sky rotpposn.
         skyBest = self.angFitA + (self.angFitB * sciAng)
