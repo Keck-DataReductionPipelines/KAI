@@ -11,6 +11,7 @@ from astropy import units as u
 #import ccdproc as ccdp
 import math
 #from drizzle import drizzle
+import drizzle
 from . import kai_util
 from kai.reduce import util, lin_correction
 from kai import instruments
@@ -133,7 +134,7 @@ def clean(files, nite, wave, refSrc, strSrc,
         In images where 'aotsxy' keywords aren't reliable, 'radec' calculated
         offsets may work better.
     """
-    from pyraf import iraf as ir
+    #from pyraf import iraf as ir
 
     # Determine directory locations
     redDir = os.getcwd() + '/'
@@ -332,6 +333,9 @@ def clean(files, nite, wave, refSrc, strSrc,
 
             ### Background Subtraction ###
             bkg = clean_bkgsubtract(_ff_f, _bp)
+
+            import pdb
+            pdb.set_trace()
 
             ### Drizzle individual file ###
             clean_drizzle(distXgeoim, distYgeoim, _bp, _ce, _wgt, _dlog,
@@ -1186,7 +1190,7 @@ def trim_table_by_name(outroots, tableFileName):
     return newtable
 
 
-def combine_drizzle(imgsize, cleanDir, roots, outroot, weights, shifts,
+def combine_drizzle_iraf(imgsize, cleanDir, roots, outroot, weights, shifts,
                     wave, diffPA, fixDAR=True, use_koa_weather=False,
                     mask=True, instrument=instruments.default_inst,
                    ):
@@ -1204,7 +1208,7 @@ def combine_drizzle(imgsize, cleanDir, roots, outroot, weights, shifts,
     #util.mkdir(cleanDir + 'shifted')
 
     # Prep drizzle stuff
-    setup_drizzle(imgsize)
+    setup_drizzle_iraf(imgsize)
 
     # BUG: with context... when many files are drizzled
     # together, a new, bigger context file is created, but this
@@ -2059,7 +2063,7 @@ def setup_drizzle(imgsize):
     drizzle.
     @param type: str
     """
-    from pyraf import iraf as ir
+    #from pyraf import iraf as ir
 
     # Setup the drizzle parameters we will use
     #ir.module.load('stsdas', doprint=0, hush=1)
@@ -2081,10 +2085,131 @@ def setup_drizzle(imgsize):
     drizzle.in_un = 'counts'
     drizzle.out_un = 'counts'
 
+def setup_drizzle_iraf(imgsize):
+    """Setup drizzle parameters for NIRC2 data.
+    @param imgsize: The size (in pixels) of the final drizzle image.
+    This assumes that the image will be square.
+    @type imgsize: int
+    @param mask: The name of the mask to use during
+    drizzle.
+    @param type: str
+    """
+    from pyraf import iraf as ir
+    # Setup the drizzle parameters we will use
+    ir.module.load('stsdas', doprint=0, hush=1)
+    ir.module.load('analysis', doprint=0, hush=1)
+    ir.module.load('dither', doprint=0, hush=1)
+    ir.unlearn('drizzle')
+    ir.drizzle.outweig = ''
+    ir.drizzle.in_mask = ''
+    ir.drizzle.wt_scl = 1
+    ir.drizzle.outnx = imgsize
+    ir.drizzle.outny = imgsize
+    ir.drizzle.pixfrac = 1
+    ir.drizzle.kernel = 'lanczos3'
+    ir.drizzle.scale = 1
+    ir.drizzle.shft_un = 'input'
+    ir.drizzle.shft_fr = 'output'
+    ir.drizzle.align = 'center'
+    ir.drizzle.expkey = 'ITIME'
+    ir.drizzle.in_un = 'counts'
+    ir.drizzle.out_un = 'counts'
+
+def clean_drizzle_iraf(xgeoim, ygeoim, _bp, _cd, _wgt, _dlog,
+        fixDAR=True, instrument=instruments.default_inst,
+        use_koa_weather=False):
+            
+    from pyraf import iraf as ir
+    # Get the distortion maps for this instrument.
+    hdr = fits.getheader(_bp)
+    distXgeoim, distYgeoim = instrument.get_distortion_maps(hdr)
+    
+    if (fixDAR == True):
+        darRoot = _cd.replace('.fits', 'geo')
+
+        (xgeoim, ygeoim) = dar.darPlusDistortion(
+                               _bp, darRoot, xgeoim, ygeoim,
+                               instrument=instrument,
+                               use_koa_weather=use_koa_weather)
+
+        ir.drizzle.xgeoim = xgeoim
+        ir.drizzle.ygeoim = ygeoim
+    else:
+        ir.drizzle.xgeoim = distXgeoim
+        ir.drizzle.ygeoim = distYgeoim
+
+    ir.drizzle(_bp, _cd, outweig=_wgt, Stdout=_dlog)
+
 def clean_drizzle(xgeoim, ygeoim, _bp, _cd, _wgt, _dlog,
         fixDAR=True, instrument=instruments.default_inst,
         use_koa_weather=False):
-    from pyraf import iraf as ir
+
+    # Get the distortion maps for this instrument.
+
+    bp_file = fits.open(_bp)
+    hdr = bp_file[0].header
+    bp_img = bp_file[0].data
+    distXgeoim, distYgeoim = instrument.get_distortion_maps(hdr)
+    exp_time = hdr['ITIME']
+
+    if (fixDAR == True):
+        darRoot = _cd.replace('.fits', 'geo')
+
+        (xgeoim, ygeoim) = dar.darPlusDistortion(
+                               _bp, darRoot, xgeoim, ygeoim,
+                               instrument=instrument,
+                               use_koa_weather=use_koa_weather)
+    else:
+        xgeoim = distXgeoim
+        ygeoim = distYgeoim
+
+    wgt_in = np.ones((int(drizzle.outnx),int(drizzle.outny)))
+    wcs_in = wcs.WCS(hdr)
+    wcs_out = wcs.WCS(hdr)
+
+    xgeoim = fits.getdata(xgeoim).astype('float32')
+    ygeoim = fits.getdata(ygeoim).astype('float32')
+
+    xdist = wcs.DistortionLookupTable( xgeoim, [0, 0], [0, 0], [1, 1])
+    ydist = wcs.DistortionLookupTable( ygeoim, [0, 0], [0, 0], [1, 1])
+
+    wcs_in.cpdis1 = xdist
+    wcs_in.cpdis2 = ydist
+
+    pixmap = drizzle.utils.calc_pixmap(wcs_in, wcs_out)
+
+    driz = drizzle.resample.Drizzle(kernel = 'lanczos3',
+                                    out_shape = np.shape(bp_img),
+                                    fillval = 0
+                                    )
+
+    driz.add_image(bp_img, pixmap = pixmap, 
+                        exptime = exp_time,
+                        xmax = int(drizzle.outnx),
+                        ymax = int(drizzle.outny),
+                        wht_scale = 1.0,
+                        pixfrac = 1.0,
+                        in_units = 'counts')
+
+    #swtich from output cps to counts by multiplying by total counts
+    out_img = driz.out_img * driz._texptime
+    img_hdu = fits.PrimaryHDU(data=out_img, header=hdr)
+    img_hdu.writeto(_cd, output_verify='ignore', 
+                                overwrite=True)
+    #hdulist=fits.open(_cd)
+    #img_data = hdulist['SCI'].data
+    #img_header = hdulist['SCI'].header
+
+    #wgt_data = hdulist['WHT'].data
+    #wgt_header = hdulist['WHT'].header
+    wgt_hdu = fits.PrimaryHDU(data=driz.out_wht, header=hdr)
+    wgt_hdu.writeto(_wgt, output_verify='ignore', 
+                                overwrite=True)
+
+def clean_drizzle_1p14p4(xgeoim, ygeoim, _bp, _cd, _wgt, _dlog,
+        fixDAR=True, instrument=instruments.default_inst,
+        use_koa_weather=False):
+    #from pyraf import iraf as ir
 
     # Get the distortion maps for this instrument.
     
@@ -2410,6 +2535,7 @@ def clean_cosmicrays(_ff, _mask, wave, thresh=10, mbox=2, gbox=0, rbox=5, fratio
     # for cosmicrays. Need to figure out the mean level of the
     # background.
     ff_img = fits.getdata(_ff)
+    ff_header = fits.getheader(_ff)
     tmp_stats = stats.sigma_clipped_stats(ff_img,
                                           sigma_upper=2, sigma_lower=5,
                                           maxiters=5)
@@ -2423,7 +2549,7 @@ def clean_cosmicrays(_ff, _mask, wave, thresh=10, mbox=2, gbox=0, rbox=5, fratio
 
     # Save to a temporary file.
     fits.writeto(_mask, crmask, output_verify=outputVerify)
-    fits.writeto(_ff, newdata, output_verify=outputVerify, overwrite = True)
+    fits.writeto(_ff, newdata, header=ff_header, output_verify=outputVerify, overwrite = True)
 
     return stddev
 

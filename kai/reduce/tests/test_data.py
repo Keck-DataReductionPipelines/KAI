@@ -23,6 +23,12 @@ class TestClean(unittest.TestCase):
         dark_files = range(214, 223 + 1)
         dark_out = 'dark_30.0s_1ca.fits'
         dark_out_full_path = reduce_dir + 'calib/darks/' + dark_out  # only use for testing
+
+        sci_files = ['{0:03d}'.format(ii) for ii in range(7, 19+1)]
+        refSrc = [556, 564]
+        data.clean(sci_files, 'ob170095', 'kp', refSrc, refSrc, field='ob170095',
+                   raw_dir='../raw/', clean_dir='../clean/', instrument=nirc2)
+
         return
 
 
@@ -130,7 +136,8 @@ class TestCosmicRayRemoval(unittest.TestCase):
         epoch_dir = mod_path + '/../data/test_epoch/17may21/'
         reduce_dir = epoch_dir + 'reduce/kp/sci_ob170095/'
 
-        img_root = '0007'
+        #for ii in range(7, 20):
+        img_root = '0007' #'{0:04d}'.format(ii)
     
         to_clean_img_filename = reduce_dir + 'ff' + img_root + '.fits'
         clean_img_filename = reduce_dir + 'ff' + img_root + '_f.fits'
@@ -193,7 +200,7 @@ class TestCosmicRayRemoval(unittest.TestCase):
         return
 
 class TestCombineRegister(unittest.TestCase):
-    def test_run_combine_register_iraf(): #self
+    def test_run_combine_register_iraf(self):
         mod_path = os.path.dirname(os.path.abspath(data.__file__))
 
         epoch_dir = mod_path + '/../data/test_epoch/17may21/'
@@ -311,6 +318,126 @@ class TestCombineRegister(unittest.TestCase):
         # Max difference is less than 0.3 pixels
         assert np.max(shift_differences_total) < 0.3
         
+        return
+
+class TestCleanDrizzle(unittest.TestCase):
+    """
+    Tests create the drizzled files and weighting files and does basic
+    tests on no iraf version.
+    Note that we do not directly compare the iraf and no iraf cases.
+    The weighting file looks much more sharp/defined for the no iraf case
+    and more smooth for the iraf case. It's unclear which is more correct.
+    It causes differences in the nosie background but it shouldn't change
+    the star positions.
+    """
+    def test_run_clean_drizzle_iraf(self):
+        # To be run in the reduce directory of the test_epoch
+        mod_path = os.path.dirname(os.path.abspath(data.__file__))
+        epoch_dir = mod_path + '/../data/test_epoch/17may21/'
+        rawDir = epoch_dir + 'raw/'
+        
+        instrument = instruments.NIRC2()
+        files = ['{0:04d}_iraf'.format(ii) for ii in range(7, 19+1)]
+        firstFile = instrument.make_filenames([files[0]], rootDir=rawDir)[0]
+        hdr1 = fits.getheader(firstFile, ignore_missing_end=True)
+
+        
+        # Prep drizzle stuff
+        # Get image size from header - this is just in case the image
+        # isn't 1024x1024 (e.g., NIRC2 sub-arrays). Also, if it's
+        # rectangular, choose the larger dimension and make it square
+        imgsizeX = float(hdr1['NAXIS1'])
+        imgsizeY = float(hdr1['NAXIS2'])
+
+        distXgeoim, distYgeoim = instrument.get_distortion_maps(hdr1)
+        if (imgsizeX >= imgsizeY):
+            imgsize = imgsizeX
+        else:
+            imgsize = imgsizeY
+        data.setup_drizzle_iraf(imgsize)
+        
+        os.chdir('kp/sci_ob170095/')
+        for f in files:
+            _bp = instrument.make_filenames([f], prefix='bp')[0]
+            _ce = instrument.make_filenames([f], prefix='ce')[0]
+            _wgt = instrument.make_filenames([f], prefix='wgt')[0]
+            _ff = instrument.make_filenames([f], prefix='ff')[0]
+            _ff_f = _ff.replace('_iraf.fits', '_f_iraf.fits')
+            _dlog_tmp = instrument.make_filenames([f], prefix='driz')[0]
+            _dlog = _dlog_tmp.replace('.fits', '.log')
+
+            ### Background Subtraction ###
+            if os.path.exists(_bp) == False:
+                bkg = data.clean_bkgsubtract(_ff_f, _bp)
+            
+            ### Drizzle individual file ###
+            data.clean_drizzle_iraf(distXgeoim, distYgeoim, _bp, _ce, _wgt, _dlog,
+                          fixDAR=True, instrument=instrument,
+                          use_koa_weather=False)
+        os.chdir('../..')
+
+        return
+
+    def test_run_clean_drizzle_noiraf(self):
+        # To be run in the reduce directory of the test_epoch
+        mod_path = os.path.dirname(os.path.abspath(data.__file__))
+        epoch_dir = mod_path + '/../data/test_epoch/17may21/'
+        rawDir = epoch_dir + 'raw/'
+        
+        instrument = instruments.NIRC2()
+        files = ['{0:04d}_noiraf'.format(ii) for ii in range(7, 19+1)]
+        firstFile = instrument.make_filenames([files[0]], rootDir=rawDir)[0]
+        hdr1 = fits.getheader(firstFile, ignore_missing_end=True)
+
+        
+        # Prep drizzle stuff
+        # Get image size from header - this is just in case the image
+        # isn't 1024x1024 (e.g., NIRC2 sub-arrays). Also, if it's
+        # rectangular, choose the larger dimension and make it square
+        imgsizeX = float(hdr1['NAXIS1'])
+        imgsizeY = float(hdr1['NAXIS2'])
+
+        distXgeoim, distYgeoim = instrument.get_distortion_maps(hdr1)
+        if (imgsizeX >= imgsizeY):
+            imgsize = imgsizeX
+        else:
+            imgsize = imgsizeY
+        data.setup_drizzle(imgsize)
+        
+        os.chdir('kp/sci_ob170095/')
+        for f in [files[0]]:
+            _bp = instrument.make_filenames([f], prefix='bp')[0]
+            _ce = instrument.make_filenames([f], prefix='ce')[0]
+            _wgt = instrument.make_filenames([f], prefix='wgt')[0]
+            _ff = instrument.make_filenames([f], prefix='ff')[0]
+            _ff_f = _ff.replace('_noiraf.fits', '_f_noiraf.fits')
+            _dlog_tmp = instrument.make_filenames([f], prefix='driz')[0]
+            _dlog = _dlog_tmp.replace('.fits', '.log')
+
+            ### Background Subtraction ###
+            if os.path.exists(_bp) == False:
+                bkg = data.clean_bkgsubtract(_ff_f, _bp)
+            else:
+                os.remove(_bp)
+                bkg = data.clean_bkgsubtract(_ff_f, _bp)
+            
+            ### Drizzle individual file ###
+            data.clean_drizzle(distXgeoim, distYgeoim, _bp, _ce, _wgt, _dlog,
+                          fixDAR=True, instrument=instrument,
+                          use_koa_weather=False)
+
+        drizzled_file = fits.open('ce0007_noiraf.fits')
+        weight_file = fits.open('wgt0007_noiraf.fits')
+
+        # check shape is correct
+        assert np.array_equal(np.shape(drizzled_file[0].data), np.array([1024, 1024]))
+        assert np.array_equal(np.shape(weight_file[0].data), np.array([1024, 1024]))
+
+        # makes sure there's no nans in the dirrzle file
+        assert np.sum(np.isnan(drizzled_file[0].data)) == 0
+        
+        os.chdir('../..')
+
         return
 
 class TestMosaicRegister(unittest.TestCase):
