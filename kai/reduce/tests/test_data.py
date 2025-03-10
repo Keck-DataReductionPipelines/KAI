@@ -11,7 +11,27 @@ import numpy as np
 from astropy.table import Table
 
 class TestClean(unittest.TestCase):
-    def test_clean(self):
+     def test_clean_iraf():#self):
+        nirc2 = instruments.NIRC2()
+
+        mod_path = os.path.dirname(os.path.abspath(data.__file__))
+
+        epoch_dir = mod_path + '/../data/test_epoch/17may21/'
+        reduce_dir = epoch_dir + 'reduce/'
+        raw_dir = epoch_dir + 'raw/'
+
+        dark_files = range(214, 223 + 1)
+        dark_out = 'dark_30.0s_1ca.fits'
+        dark_out_full_path = reduce_dir + 'calib/darks/' + dark_out  # only use for testing
+
+        sci_files = ['{0:04d}_iraf'.format(ii) for ii in range(7, 19+1)]
+        refSrc = [556, 564]
+        data.clean_iraf(sci_files, 'ob170095', 'kp', refSrc, refSrc, field='ob170095',
+                   raw_dir='../raw/', clean_dir='../clean/', instrument=nirc2)
+
+        return
+         
+     def test_clean(self):
         nirc2 = instruments.NIRC2()
 
         mod_path = os.path.dirname(os.path.abspath(data.__file__))
@@ -28,6 +48,28 @@ class TestClean(unittest.TestCase):
         refSrc = [556, 564]
         data.clean(sci_files, 'ob170095', 'kp', refSrc, refSrc, field='ob170095',
                    raw_dir='../raw/', clean_dir='../clean/', instrument=nirc2)
+
+        return
+
+
+class TestCombine(unittest.TestCase):
+    def test_combine_iraf():
+        nirc2 = instruments.NIRC2()
+
+        sci_files = ['{0:03d}_iraf'.format(ii) for ii in range(7, 19+1)]
+        
+        data.combine_iraf(sci_files, 'kp', '17may21', trim=1,
+                 weight='strehl', field='ob170095', submaps=3)
+
+        return
+
+    def test_combine_noiraf(self):
+        nirc2 = instruments.NIRC2()
+
+        sci_files = ['{0:03d}'.format(ii) for ii in range(7, 19+1)]
+        
+        data.combine(sci_files, 'kp', '17may21', trim=1,
+                 weight='strehl', field='ob170095', submaps=3)
 
         return
 
@@ -402,7 +444,7 @@ class TestCleanDrizzle(unittest.TestCase):
             imgsize = imgsizeX
         else:
             imgsize = imgsizeY
-        data.setup_drizzle(imgsize)
+        #data.setup_drizzle(imgsize)
         
         os.chdir('kp/sci_ob170095/')
         for f in [files[0]]:
@@ -439,6 +481,111 @@ class TestCleanDrizzle(unittest.TestCase):
         os.chdir('../..')
 
         return
+
+class TestCombineDrizzle(unittest.TestCase):
+    """
+    Tests create the drizzled files and weighting files and does basic
+    tests on no iraf version.
+    Note that we do not directly compare the iraf and no iraf cases.
+    The weighting file looks much more sharp/defined for the no iraf case
+    and more smooth for the iraf case. It's unclear which is more correct.
+    It causes differences in the nosie background but it shouldn't change
+    the star positions.
+    """
+    def test_run_combine_drizzle_iraf():#self):
+        # To be run in the reduce directory of the test_epoch
+        mod_path = os.path.dirname(os.path.abspath(data.__file__))
+        epoch_dir = mod_path + '/../data/test_epoch/17may21_iraf/'
+        cleanDir = epoch_dir + 'clean/ob170095_kp/'
+        combo_dir = epoch_dir + 'combo/'
+
+        _out = epoch_dir + '/combo/mag17may21_ob170095_kp'
+        _sub = epoch_dir + '/combo/m17may21_ob170095_kp'
+        refImage = epoch_dir + 'clean/ob170095_kp/c0016.fits'
+        diffPA = 0
+        submaps = 3
+        wave = 'kp'
+        instrument = instruments.NIRC2()
+
+        # After trimming
+        roots = ['0007', '0008', '0009', '0010', '0011', '0012', 
+                 '0013', '0014', '0015', '0016', '0017', '0018', '0019']
+        strehls = np.array([0.314, 0.369, 0.348, 0.375, 0.388, 0.373, 
+                            0.347, 0.371, 0.356, 0.387, 0.367, 0.325, 0.333])
+        fwhm = np.array([65.87, 58.67, 60.66, 57.74, 56.38, 57.87, 57.89, 
+                         55.93, 58.22, 55.82, 56.07, 60.98,  59.9])
+        weights = np.array([0.0674833440791, 0.0793036750484, 0.0747904577692, 
+                            0.0805931656995, 0.0833870621105, 0.0801633354825, 
+                            0.0745755426606, 0.0797335052654, 0.0765097786374, 
+                            0.0831721470019, 0.0788738448313, 0.0698474102729, 0.0715667311412])
+
+        shiftsTab = Table.read(combo_dir + 'mag17may21_ob170095_kp.shifts', format='ascii', data_start=1)
+        roots, strehls, fwhm, weights, shiftsTab = data.sort_frames(roots, strehls, fwhm, weights, shiftsTab)
+        xysize = 1166
+
+        data.combine_drizzle_iraf(xysize, cleanDir, roots, _out, weights, shiftsTab,
+                    wave, diffPA, fixDAR=True, mask=True, instrument=instrument,
+                    use_koa_weather=False)
+
+        return
+
+    def test_run_combine_drizzle_noiraf(self):
+        # To be run in the reduce directory of the test_epoch
+        mod_path = os.path.dirname(os.path.abspath(data.__file__))
+        epoch_dir = mod_path + '/../data/test_epoch/17may21_noiraf/'
+        cleanDir = epoch_dir + 'clean/ob170095_kp/'
+        combo_dir = epoch_dir + 'combo/'
+
+        _out = epoch_dir + '/combo/mag17may21_ob170095_kp'
+        _sub = epoch_dir + '/combo/m17may21_ob170095_kp'
+        refImage = epoch_dir + 'clean/ob170095_kp/c0016.fits'
+        diffPA = 0
+        submaps = 3
+        wave = 'kp'
+        instrument = instruments.NIRC2()
+
+        roots = ['0007', '0008', '0009', '0010', '0011', '0012', '0013', 
+                 '0014', '0015', '0016', '0017', '0018', '0019']
+        strehls = np.array([0.314, 0.369, 0.348, 0.376, 0.39, 0.373, 
+                            0.347, 0.371, 0.357, 0.388, 0.368, 0.326, 0.333])
+        fwhm = np.array([65.85, 58.66, 60.65, 57.72, 56.37, 57.86, 
+                         57.84, 55.89, 58.17, 55.78, 56.03, 60.95, 59.87])
+        weights = np.array([0.06738197424892704, 0.07918454935622317, 0.07467811158798282, 
+                            0.08068669527896996, 0.08369098712446352, 0.08004291845493562, 
+                            0.07446351931330471,  0.0796137339055794, 0.07660944206008583, 
+                            0.08326180257510729, 0.07896995708154506, 0.06995708154506437, 0.07145922746781116])
+        
+
+        shiftsTab = Table.read(combo_dir + 'mag17may21_ob170095_kp.shifts', format='ascii', data_start=1)
+        
+        roots, strehls, fwhm, weights, shiftsTab = data.sort_frames(roots, strehls, fwhm, weights, shiftsTab)
+        xysize = 1170
+
+        data.combine_drizzle(xysize, cleanDir, roots, _out, weights, shiftsTab,
+                    wave, diffPA, fixDAR=True, mask=True, instrument=instrument,
+                    use_koa_weather=False)
+
+        return
+
+    def test_compare_combine_drizzle_iraf_noiraf(self):
+        mod_path = os.path.dirname(os.path.abspath(data.__file__))
+        data_dir_iraf = mod_path + '/../data/test_epoch/17may21_iraf/combo/'
+        data_dir_noiraf = mod_path + '/../data/test_epoch/17may21_noiraf/combo/'
+        
+        iraf_drizzled_img = fits.open(data_dir_iraf + 'mag17may21_ob170095_kp.fits')
+        noiraf_drizzled_img = fits.open(data_dir_noiraf + 'mag17may21_ob170095_kp.fits')
+
+        #no iraf puts it in the corner of the inflated images 
+        #whereas iraf puts it in the center, so we shift them to compare them
+        y = 71
+        x = 71
+        iraf_drizzled_img_cut = iraf_drizzled_img[0].data[y:y+1024, x:x+1024]
+        noiraf_drizzled_img_cut = noiraf_drizzled_img[0].data[0:1024, 0:1024]
+
+        assert(np.isclose(np.mean(iraf_drizzled_img_cut/noiraf_drizzled_img_cut), 1, rtol = 2e-3))
+
+        return
+
 
 class TestMosaicRegister(unittest.TestCase):
     def test_run_mosaic_register_iraf(self):
