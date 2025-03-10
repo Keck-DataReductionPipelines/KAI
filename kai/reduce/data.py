@@ -1967,9 +1967,6 @@ def combine_drizzle(imgsize, cleanDir, roots, outroot, weights, shifts,
         wcs_in = wcs.WCS(hdr)
         wcs_out = wcs.WCS(hdr)
 
-        import pdb
-        pdb.set_trace()
-
         wcs_in.wcs.crpix = [wcs_in.wcs.crpix[0] - xsh, wcs_in.wcs.crpix[1] - ysh]
     
         xgeoim = fits.getdata(xgeoim).astype('float32')
@@ -2330,6 +2327,10 @@ def combine_submaps(
     #    _tmp_ir[ff] = _tmp[ff].replace(comboDir, 'comboDir$')
     #    _wgt_ir[ff] = _wgt[ff].replace(comboDir, 'comboDir$')
 
+    driz = drizzle.resample.Drizzle(kernel = 'lanczos3',
+                    out_shape = (imgsize, imgsize),
+                    fillval = 0
+                    )
 
     for i in range(len(roots)):
         # Cleaned image
@@ -2373,7 +2374,7 @@ def combine_submaps(
         hdr = fits.getheader(_c,ignore_missing_end=True)
         phi = instrument.get_position_angle(hdr)
         if (diffPA == 1):
-            ir.drizzle.rot = phi
+            drizzle.rot = phi
 
         # Calculate saturation level for submaps
         # by weighting each individual satLevel and summing.
@@ -2400,13 +2401,9 @@ def combine_submaps(
                                    ygeoim=distYgeoim,
                                    instrument=instrument,
                                    use_koa_weather=use_koa_weather)
-            xgeoim = xgeoim.replace(cleanDir, 'cleanDir$')
-            ygeoim = ygeoim.replace(cleanDir, 'cleanDir$')
-            ir.drizzle.xgeoim = xgeoim
-            ir.drizzle.ygeoim = ygeoim
         else:
-            ir.drizzle.xgeoim = distXgeoim
-            ir.drizzle.ygeoim = distYgeoim
+            xgeoim = distXgeoim
+            ygeoim = distYgeoim
 
         # Read in MJD of current file from FITS header
         mjd = float(hdr['MJD-OBS'])
@@ -2420,10 +2417,38 @@ def combine_submaps(
             #_mask = cleanDir + 'masks/mask' + roots[i] + '.fits'
         else:
             _mask = ''
+        """
         ir.drizzle.in_mask = _mask
         ir.drizzle.outweig = wgt_ir
         ir.drizzle.xsh = xsh
         ir.drizzle.ysh = ysh
+        """
+        # We tell it the input its distorted/shfited and we want to undistort it
+        wgt_in = np.ones((int(imgsize),int(imgsize)))
+        wcs_in = wcs.WCS(hdr)
+        wcs_out = wcs.WCS(hdr)
+
+        wcs_in.wcs.crpix = [wcs_in.wcs.crpix[0] - xsh, wcs_in.wcs.crpix[1] - ysh]
+
+        xgeoim = fits.getdata(xgeoim).astype('float32')
+        ygeoim = fits.getdata(ygeoim).astype('float32')
+    
+        xdist = wcs.DistortionLookupTable( xgeoim, [0, 0], [0, 0], [1, 1])
+        ydist = wcs.DistortionLookupTable( ygeoim, [0, 0], [0, 0], [1, 1])
+    
+        wcs_in.cpdis1 = xdist
+        wcs_in.cpdis2 = ydist
+    
+        pixmap = drizzle.utils.calc_pixmap(wcs_in, wcs_out)
+
+        # since we're remaking driz object it's being added to nothign
+        driz.add_image(cdwt_img, pixmap = pixmap, 
+                            exptime = exp_time,
+                            xmax = int(imgsize),
+                            ymax = int(imgsize),
+                            wht_scale = 1.0,
+                            pixfrac = 1.0,
+                            in_units = 'counts')
 
         ir.drizzle(_cdwt_ir, fits_im_ir, Stdout=log)
     
