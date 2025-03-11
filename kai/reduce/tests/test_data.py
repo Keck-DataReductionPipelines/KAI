@@ -475,7 +475,7 @@ class TestCleanDrizzle(unittest.TestCase):
         assert np.array_equal(np.shape(drizzled_file[0].data), np.array([1024, 1024]))
         assert np.array_equal(np.shape(weight_file[0].data), np.array([1024, 1024]))
 
-        # makes sure there's no nans in the dirrzle file
+        # makes sure there's no nans in the drizzle file
         assert np.sum(np.isnan(drizzled_file[0].data)) == 0
         
         os.chdir('../..')
@@ -582,7 +582,22 @@ class TestCombineDrizzle(unittest.TestCase):
         iraf_drizzled_img_cut = iraf_drizzled_img[0].data[y:y+1024, x:x+1024]
         noiraf_drizzled_img_cut = noiraf_drizzled_img[0].data[0:1024, 0:1024]
 
-        assert(np.isclose(np.mean(iraf_drizzled_img_cut/noiraf_drizzled_img_cut), 1, rtol = 2e-3))
+        # Note total size of the images are different because the shifts
+        # are slightly different which is used to calculate the padding.
+        
+        zero_idxs = np.logical_and((noiraf_drizzled_img_cut == 0), (iraf_drizzled_img_cut == 0))
+        assert(np.isclose(np.mean((iraf_drizzled_img_cut/noiraf_drizzled_img_cut)[~zero_idxs]), 1, rtol = 1e-2))
+
+        # makes sure there's no nans in the drizzle file
+        assert np.sum(np.isnan(iraf_drizzled_img[0].data)) == 0
+        assert np.sum(np.isnan(noiraf_drizzled_img[0].data)) == 0
+
+        # check max saturation levels are close
+        max_sat_noiraf = open(data_dir_noiraf + 'mag17may21_ob170095_kp.max')
+        max_sat_iraf = open(data_dir_iraf + 'mag17may21_ob170095_kp.max')
+        max_sat_noiraf = float(max_sat_noiraf.read())
+        max_sat_iraf = float(max_sat_iraf.read())
+        assert(np.isclose(max_sat_noiraf, max_sat_iraf, rtol = 1))
 
         return
 

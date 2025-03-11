@@ -1895,12 +1895,16 @@ def combine_drizzle(imgsize, cleanDir, roots, outroot, weights, shifts,
     
     print('combine: drizzling images together')
     f_dlog = open(_dlog, 'a')
-    driz = drizzle.resample.Drizzle(kernel = 'lanczos3',
+    kernel = 'lanczos3'
+    driz = drizzle.resample.Drizzle(kernel = kernel,
                     out_shape = (imgsize, imgsize), #np.shape(cdwt_img),
                     fillval = 0
                     )
                        
     for i in range(len(roots)):
+        f_dlog.write(time.ctime() + '\n')
+        f_dlog.write('- This is image {} to be drizzled'.format(i) + '\n')
+        
         # Cleaned image
         _c = cleanDir + 'c' + roots[i] + '.fits'
 
@@ -1939,6 +1943,10 @@ def combine_drizzle(imgsize, cleanDir, roots, outroot, weights, shifts,
             xgeoim = distXgeoim
             ygeoim = distYgeoim
 
+        f_dlog.write('- Input data image: ' + _cdwt + '\n')
+        f_dlog.write('- X-shift distortion image: ' + xgeoim + '\n')
+        f_dlog.write('- Y-shift distortion image: ' + ygeoim + '\n')
+
         cdwt_img = fits.getdata(_cdwt)
 
         # Get exposure time
@@ -1947,14 +1955,18 @@ def combine_drizzle(imgsize, cleanDir, roots, outroot, weights, shifts,
         # Read in MJD of current file from FITS header
         mjd = float(hdr['MJD-OBS'])
         mjd_weightedSum += weights[i] * mjd
-        
-        # Drizzle this file ontop of all previous ones.
-        f_dlog.write(time.ctime())
 
+        
+        # weight the image by multiplying by mask
+        # this is what is said to be done by in_mask in the iraf version 
+        # (https://ftp.eso.org/scisoft/scisoft4/sources/iraf/extern/eis/doc/drizzle.hlp.html)
         if (mask == True):
-            _mask = 'cleanDir$masks/mask' + roots[i] + '.fits'
+            _mask = cleanDir + '/masks/mask' + roots[i] + '.fits'
+            mask_img = fits.getdata(_mask)
+            wgt_in = np.ones(np.shape(mask_img))*mask_img
+            f_dlog.write('- Mask image: ' + _mask + '\n')
         else:
-            _mask = ''
+            wgt_in = np.ones(np.shape(mask_img))
         
         print('Drizzling: ', roots[i])
         print('     xsh = {0:8.2f}'.format( xsh ))
@@ -1963,7 +1975,6 @@ def combine_drizzle(imgsize, cleanDir, roots, outroot, weights, shifts,
         print('   outnx = {0:8d}'.format( imgsize ))
 
         # We tell it the input its distorted/shfited and we want to undistort it
-        wgt_in = np.ones((int(imgsize),int(imgsize)))
         wcs_in = wcs.WCS(hdr)
         wcs_out = wcs.WCS(hdr)
 
@@ -1980,21 +1991,24 @@ def combine_drizzle(imgsize, cleanDir, roots, outroot, weights, shifts,
     
         pixmap = drizzle.utils.calc_pixmap(wcs_in, wcs_out)
         
-
-        # since we're remaking driz object it's being added to nothign
-        driz.add_image(cdwt_img, pixmap = pixmap, 
+        # Drizzle this file ontop of all previous ones
+        driz.add_image(cdwt_img, pixmap = pixmap,  #cdwt_img
+                            weight_map = wgt_in,
                             exptime = exp_time,
                             xmax = int(imgsize),
                             ymax = int(imgsize),
                             wht_scale = 1.0,
                             pixfrac = 1.0,
                             in_units = 'counts')
+        f_dlog.write('- Drizzling onto full output image. Kernel: ' + kernel + '\n')
     
         #swtich from output cps to counts by multiplying by total counts
         out_img = driz.out_img * driz._texptime
         img_hdu = fits.PrimaryHDU(data=out_img, header=hdr)
         img_hdu.writeto(_tmpfits, output_verify='ignore', 
                                     overwrite=True)
+
+        f_dlog.write('- Output data image: ' + _tmpfits + '\n')
 
         # Read .max file with saturation level for final combined image
         # by weighting each individual satLevel and summing.
@@ -2006,7 +2020,7 @@ def combine_drizzle(imgsize, cleanDir, roots, outroot, weights, shifts,
         satLvl_wt = satLvl * weights[i]
         satLvl_combo += satLvl_wt
 
-    f_dlog.close()
+    f_dlog.write('Writing final images')
     print(_cdwt)
     print(_tmpfits)
 
@@ -2061,10 +2075,19 @@ def combine_drizzle(imgsize, cleanDir, roots, outroot, weights, shifts,
         'DATE', '{0}'.format(time_obs.fits),
         'Weighted observation date'
     )
+
+    # save weight file
+    f_dlog.write('- Output weighting image: ' + _wgt + '\n')
+    wgt_hdu = fits.PrimaryHDU(data=driz.out_wht, header=hdr)
+    wgt_hdu.writeto(_wgt, output_verify='ignore', 
+                                overwrite=True)
     
     # Save to final fits file.
+    f_dlog.write('- Output data image: ' + _tmpfits + '\n')
     fits_f[0].writeto(_fits, output_verify=outputVerify)
     util.rmall([_tmpfits, _cdwt])
+
+    f_dlog.close()
                        
 def combine_drizzle_iraf(imgsize, cleanDir, roots, outroot, weights, shifts,
                     wave, diffPA, fixDAR=True, use_koa_weather=False,
