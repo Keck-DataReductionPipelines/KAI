@@ -115,7 +115,12 @@ class NIRC2(Instrument):
         """
         Get the sky PA in degrees East of North. 
         """
-        return float(hdr['ROTPOSN']) - float(hdr['INSTANGL'])
+        # This should be set by rot_img if specified
+        if 'PA' in hdr.keys():
+            pa = float(hdr['PA'])
+        else:
+            pa = float(hdr['ROTPOSN']) - float(hdr['INSTANGL'])
+        return pa
 
     def get_parallactic_angle(self,hdr):
         """
@@ -271,8 +276,14 @@ class OSIRIS(Instrument):
         """
         Get the sky PA in degrees East of North. 
         """
+        
+        # This should be set by rot_img if specified
+        if 'PA' in hdr.keys():
+            pa = float(hdr['PA'])
+        else:
+            pa = hdr['PA_IMAG']
         # pa = float(hdr['ROTPOSN']) - self.get_instrument_angle(hdr)
-        pa = hdr['PA_IMAG']
+        
 
         #if in PCU mode, read the PCU rotation angle instead
         if 'PCUZ' in hdr.keys():

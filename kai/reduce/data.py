@@ -1469,9 +1469,12 @@ def combine_iraf(files, wave, outroot, field=None, outSuffix=None,
                     wave, diffPA, fixDAR=fixDAR, mask=mask, instrument=instrument,
                     use_koa_weather=use_koa_weather)
 
+    import pdb
+    pdb.set_trace()
+
     # Now make submaps
     if (submaps > 0):
-        combine_submaps(xysize, cleanDir, roots, _sub, weights,
+        combine_submaps_iraf(xysize, cleanDir, roots, _sub, weights,
                         shiftsTab, submaps, wave, diffPA, fixDAR=fixDAR,
                         mask=mask, instrument=instrument,
                         use_koa_weather=use_koa_weather)
@@ -1517,7 +1520,7 @@ def rot_img_iraf(root, phi, cleanDir):
     return
 
 
-def rot_img(root, phi, cleanDir, return_cd_only = False):
+def rot_img(root, phi, cleanDir, edit_header_PA = False, return_cd_only = False):
     """
     Rotate image with scipy.ndimage.rotate. Only the image is rotated.
     The header WCS is not modified. The output imageis pre-pended with 'r'
@@ -1531,6 +1534,8 @@ def rot_img(root, phi, cleanDir, return_cd_only = False):
         Angle to rotate the input image to get to PA=0.
     cleanDir : str
         The clean directory to find the input image and save the output rotated image.
+    edit_header_PA : bool
+        Default is False.
     return_cd_only : bool
         If true, only returns the cd matrix corresponding to the rotation and phi
         and DOES NOT ROTATE IMAGE.
@@ -1613,7 +1618,9 @@ def rot_img(root, phi, cleanDir, return_cd_only = False):
             del out_hdr['PC2_2']
         except:
             pass
-            
+
+    if edit_header_PA:
+        out_hdr['PA'] = out_hdr['ROTPOSN'] + phi
         
     fits.writeto(outCln, out_img, out_hdr, output_verify=outputVerify,
                     overwrite=True)
@@ -1926,7 +1933,7 @@ def combine_drizzle(imgsize, cleanDir, roots, outroot, weights, shifts,
         ysh = shifts[i][2]
 
         # Read in PA of each file to feed into drizzle for rotation
-        hdr = fits.getheader(_c, ignore_missing_end=True)
+        hdr = fits.getheader(_cd, ignore_missing_end=True)
         phi = instrument.get_position_angle(hdr)
         if (diffPA == 1):
              cd_mat = rot_img(roots[i], phi, cleanDir, return_cd_only = True)
@@ -1966,7 +1973,7 @@ def combine_drizzle(imgsize, cleanDir, roots, outroot, weights, shifts,
             wgt_in = np.ones(np.shape(mask_img))*mask_img
             f_dlog.write('- Mask image: ' + _mask + '\n')
         else:
-            wgt_in = np.ones(np.shape(mask_img))
+            wgt_in = np.ones(np.shape(cdwt_img))
         
         print('Drizzling: ', roots[i])
         print('     xsh = {0:8.2f}'.format( xsh ))
@@ -1979,6 +1986,10 @@ def combine_drizzle(imgsize, cleanDir, roots, outroot, weights, shifts,
         wcs_out = wcs.WCS(hdr)
 
         wcs_in.wcs.crpix = [wcs_in.wcs.crpix[0] - xsh, wcs_in.wcs.crpix[1] - ysh]
+        #import pdb
+        #pdb.set_trace()
+        if (diffPA == 1):
+            wcs_in.wcs.cd = cd_mat
     
         xgeoim = fits.getdata(xgeoim).astype('float32')
         ygeoim = fits.getdata(ygeoim).astype('float32')
@@ -2050,6 +2061,9 @@ def combine_drizzle(imgsize, cleanDir, roots, outroot, weights, shifts,
         phi = 0.7
         fits_f[0].header.set('ROTPOSN', "%.5f" % phi,
                               'rotator user position')
+        if 'PA' in fits_f[0].header:
+            fits_f[0].header.set('PA', phi,
+                              'PA set by KAI')
 
     # Add keyword with distortion image information
     fits_f[0].header.set('DISTORTX', "%s" % distXgeoim,
@@ -2304,7 +2318,10 @@ def combine_submaps(
           Starfinder can't deal with.
     """
 
-    extend = ['_1', '_2', '_3']
+    extend = []
+    for i in range(1 ,submaps+1):
+        extend.append('_{}'.format(i))
+    #extend = ['_1', '_2', '_3']
     _out = [outroot + end for end in extend]
     _fits = [o + '.fits' for o in _out]
     _tmp = [o + '_tmp.fits' for o in _out]
@@ -2350,10 +2367,13 @@ def combine_submaps(
     #    _tmp_ir[ff] = _tmp[ff].replace(comboDir, 'comboDir$')
     #    _wgt_ir[ff] = _wgt[ff].replace(comboDir, 'comboDir$')
 
-    driz = drizzle.resample.Drizzle(kernel = 'lanczos3',
-                    out_shape = (imgsize, imgsize),
-                    fillval = 0
-                    )
+    # Make one drizzle object per submap
+    driz = []
+    for i in range(submaps):
+        driz.append(drizzle.resample.Drizzle(kernel = 'lanczos3',
+                        out_shape = (imgsize, imgsize),
+                        fillval = 0
+                        ))
 
     for i in range(len(roots)):
         # Cleaned image
@@ -2428,6 +2448,11 @@ def combine_submaps(
             xgeoim = distXgeoim
             ygeoim = distYgeoim
 
+        cdwt_img = fits.getdata(cdwt)
+
+        # Get exposure time
+        exp_time = hdr['ITIME']
+
         # Read in MJD of current file from FITS header
         mjd = float(hdr['MJD-OBS'])
         mjd_weightedSums[sub] += weights[i] * mjd
@@ -2435,19 +2460,28 @@ def combine_submaps(
         # Drizzle this file ontop of all previous ones.
         log.write(time.ctime())
 
+        # weight the image by multiplying by mask
+        # this is what is said to be done by in_mask in the iraf version 
+        # (https://ftp.eso.org/scisoft/scisoft4/sources/iraf/extern/eis/doc/drizzle.hlp.html)
+        if (mask == True):
+            _mask = cleanDir + '/masks/mask' + roots[i] + '.fits'
+            mask_img = fits.getdata(_mask)
+            wgt_in = np.ones(np.shape(mask_img))*mask_img
+        else:
+            wgt_in = np.ones(np.shape(cdwt_img))
+        """
         if (mask == True):
             _mask = 'cleanDir$masks/mask' + roots[i] + '.fits'
             #_mask = cleanDir + 'masks/mask' + roots[i] + '.fits'
         else:
             _mask = ''
-        """
+        
         ir.drizzle.in_mask = _mask
         ir.drizzle.outweig = wgt_ir
         ir.drizzle.xsh = xsh
         ir.drizzle.ysh = ysh
         """
         # We tell it the input its distorted/shfited and we want to undistort it
-        wgt_in = np.ones((int(imgsize),int(imgsize)))
         wcs_in = wcs.WCS(hdr)
         wcs_out = wcs.WCS(hdr)
 
@@ -2464,8 +2498,8 @@ def combine_submaps(
     
         pixmap = drizzle.utils.calc_pixmap(wcs_in, wcs_out)
 
-        # since we're remaking driz object it's being added to nothign
-        driz.add_image(cdwt_img, pixmap = pixmap, 
+        driz[sub].add_image(cdwt_img, pixmap = pixmap, 
+                            weight_map = wgt_in,
                             exptime = exp_time,
                             xmax = int(imgsize),
                             ymax = int(imgsize),
@@ -2473,7 +2507,16 @@ def combine_submaps(
                             pixfrac = 1.0,
                             in_units = 'counts')
 
-        ir.drizzle(_cdwt_ir, fits_im_ir, Stdout=log)
+        #import pdb
+        #pdb.set_trace()
+        
+        #swtich from output cps to counts by multiplying by total counts
+        out_img = driz[sub].out_img * driz[sub]._texptime
+        img_hdu = fits.PrimaryHDU(data=out_img, header=hdr)
+        img_hdu.writeto(fits_im, output_verify='ignore', 
+                                    overwrite=True)
+
+        #ir.drizzle(_cdwt_ir, fits_im_ir, Stdout=log)
     
     # Calculate weighted MJDs for each submap
     mjd_weightedMeans = mjd_weightedSums / weightsTot
@@ -2512,7 +2555,7 @@ def combine_submaps(
         itime = fits_f[0].header.get('ITIME')
         itime /= weightsTot[s]
         #fits_f[0].header.update('ITIME', '%.5f' % itime)
-        fits_f[0].header['ITIME'] = ('%.5f' % itime)
+        #fits_f[0].header['ITIME'] = ('%.5f' % itime)
 
         # Set the ROTPOSN value for the combined submaps.
 
@@ -2540,7 +2583,9 @@ def combine_submaps(
         # Write out final submap fits file
         fits_f[0].writeto(_fits[s], output_verify=outputVerify)
     
-    
+        wgt_hdu = fits.PrimaryHDU(data=driz[s].out_wht, header=hdr)
+        wgt_hdu.writeto(_wgt[s], output_verify='ignore', 
+                                    overwrite=True)
     util.rmall(_tmp)
     util.rmall([cdwt])
 
@@ -2572,7 +2617,7 @@ def combine_submaps_iraf(
     util.rmall(_fits + _tmp + _wgt + _log + _max)
 
     # Prep drizzle stuff
-    setup_drizzle(imgsize)
+    setup_drizzle_iraf(imgsize)
     print('Drizzle imgsize = ', imgsize)
     ir.drizzle.outcont = ''
 
@@ -2726,7 +2771,7 @@ def combine_submaps_iraf(
         # and if all goes well...don't ever correct negative pixels to zero.
         tmp_stats = stats.sigma_clipped_stats(fits_f[0].data,
                                           sigma_upper=1, sigma_lower=10,
-                                          maxiters=5)
+                                          iters=5)
         sci_mean = tmp_stats[0]
         sci_stddev = tmp_stats[2]
 
