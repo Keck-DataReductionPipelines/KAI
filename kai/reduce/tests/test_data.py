@@ -204,7 +204,8 @@ class TestCosmicRayRemoval(unittest.TestCase):
         """Compare IRAF vs. no IRAF cosmicray removal routine."""
 
         mod_path = os.path.dirname(os.path.abspath(data.__file__))
-        
+
+        """
         epoch_dir = mod_path + '/../data/test_epoch/17may21/'
         reduce_dir = epoch_dir + 'reduce/kp/sci_ob170095/'
         
@@ -215,6 +216,21 @@ class TestCosmicRayRemoval(unittest.TestCase):
 
         noiraf_img = fits.getdata(reduce_dir + 'ff{}_f_noiraf.fits'.format(img_root))
         iraf_img = fits.getdata(reduce_dir + 'ff{}_f_iraf.fits'.format(img_root))
+        """
+
+        iraf_epoch_dir = mod_path + '/../data/test_epoch/17may21_iraf/'
+        iraf_reduce_dir = iraf_epoch_dir + 'reduce/kp/sci_ob170095/'
+
+        noiraf_epoch_dir = mod_path + '/../data/test_epoch/17may21_noiraf/'
+        noiraf_reduce_dir = noiraf_epoch_dir + 'reduce/kp/sci_ob170095/'
+        
+        img_root = '0007'
+        
+        iraf = fits.getdata(iraf_reduce_dir + 'crmask{}.fits'.format(img_root))
+        noiraf = fits.getdata(noiraf_reduce_dir + 'crmask{}.fits'.format(img_root))
+
+        noiraf_img = fits.getdata(noiraf_reduce_dir + 'ff{}_f.fits'.format(img_root))
+        iraf_img = fits.getdata(iraf_reduce_dir + 'ff{}_f.fits'.format(img_root))
 
         total_cosmic_rays_iraf = np.sum(iraf)
 

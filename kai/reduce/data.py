@@ -3751,7 +3751,7 @@ def round_to_edge(min_box_val, max_box_val, min_val, max_val):
 
     return min_box_val, max_box_val
     
-def clean_cosmicrays(_ff, _mask, wave, thresh=10, mbox=2, gbox=0, rbox=5, fratio=1):
+def clean_cosmicrays(_ff, _mask, wave, thresh=5, mbox=5, rbox=10, fratio = 0.4, gbox = 0):
     """Clean the image of cosmicrays and make a mask containing the location
     of all the cosmicrays. The CR masks can later be used in combine() to
     keep cosmicrays from being included.
