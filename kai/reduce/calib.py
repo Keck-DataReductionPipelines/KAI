@@ -515,7 +515,7 @@ def makeflat_iraf(
         warnings.warn(warning_message)
     
     # Perform linearity correction [only NIRC2]
-    if instrument is 'NIRC2':
+    if instrument == 'NIRC2':
         for i in range(len(lampson_copied)):
             lin_correction.lin_correction(lampson_copied[i],
                 instrument=instrument)

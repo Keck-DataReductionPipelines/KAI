@@ -9,6 +9,8 @@ from astropy.io import fits
 import math
 import numpy as np
 from astropy.table import Table
+from astropy import stats
+from copy import deepcopy
 
 class TestClean(unittest.TestCase):
      def test_clean_iraf():#self):
@@ -38,6 +40,7 @@ class TestClean(unittest.TestCase):
 
         epoch_dir = mod_path + '/../data/test_epoch/17may21/'
         reduce_dir = epoch_dir + 'reduce/'
+        clean_dir = epoch_dir + 'clean/'
         raw_dir = epoch_dir + 'raw/'
 
         dark_files = range(214, 223 + 1)
@@ -47,6 +50,7 @@ class TestClean(unittest.TestCase):
         sci_files = ['{0:03d}'.format(ii) for ii in range(7, 19+1)]
         refSrc = [556, 564]
         data.clean(sci_files, 'ob170095', 'kp', refSrc, refSrc, field='ob170095',
+                   #raw_dir=raw_dir, clean_dir=clean_dir, instrument=nirc2)
                    raw_dir='../raw/', clean_dir='../clean/', instrument=nirc2)
 
         return
@@ -78,7 +82,7 @@ class TestRotImg(unittest.TestCase):
     def test_run_rot_img_noiraf(self):
         mod_path = os.path.dirname(os.path.abspath(data.__file__))
 
-        epoch_dir = mod_path + '/../data/test_epoch/17may21/'
+        epoch_dir = mod_path + '/../data/test_epoch/17may21_noiraf/'
         clean_dir = epoch_dir + 'clean/ob170095_kp/'
 
         img_root = '0007'
@@ -87,14 +91,14 @@ class TestRotImg(unittest.TestCase):
         rot_img_filename = clean_dir + 'r' + img_root + '.fits'
 
         data.rot_img(img_root, phi, cleanDir=clean_dir)
-        shutil.move(rot_img_filename, rot_img_filename.replace('.fits', '_noiraf.fits'))
+        #shutil.move(rot_img_filename, rot_img_filename.replace('.fits', '_noiraf.fits'))
 
         return
 
     def test_run_rot_img_iraf(self):
         mod_path = os.path.dirname(os.path.abspath(data.__file__))
 
-        epoch_dir = mod_path + '/../data/test_epoch/17may21/'
+        epoch_dir = mod_path + '/../data/test_epoch/17may21_iraf/'
         clean_dir = epoch_dir + 'clean/ob170095_kp/'
 
         img_root = '0007'
@@ -103,7 +107,7 @@ class TestRotImg(unittest.TestCase):
         rot_img_filename = clean_dir + 'r' + img_root + '.fits'
 
         data.rot_img_iraf(img_root, phi, cleanDir=clean_dir)
-        shutil.move(rot_img_filename, rot_img_filename.replace('.fits', '_iraf.fits'))
+        #shutil.move(rot_img_filename, rot_img_filename.replace('.fits', '_iraf.fits'))
 
         return
 
@@ -112,24 +116,32 @@ class TestRotImg(unittest.TestCase):
 
         mod_path = os.path.dirname(os.path.abspath(data.__file__))
 
-        epoch_dir = mod_path + '/../data/test_epoch/17may21/'
-        clean_dir = epoch_dir + 'clean/ob170095_kp/'
+        epoch_dir_noiraf = mod_path + '/../data/test_epoch/17may21_noiraf/'
+        clean_dir_noiraf = epoch_dir_noiraf + 'clean/ob170095_kp/'
+
+        epoch_dir_iraf = mod_path + '/../data/test_epoch/17may21_iraf/'
+        clean_dir_iraf = epoch_dir_iraf + 'clean/ob170095_kp/'
 
         img_root = '0007'
         phi = 30.0   # arbitrary.
 
-        rot_img_filename = clean_dir + 'r' + img_root + '.fits'
+        rot_img_filename_noiraf = clean_dir_noiraf + 'r' + img_root + '.fits'
+        rot_img_filename_iraf = clean_dir_iraf + 'r' + img_root + '.fits'
 
-        img_rot_iraf, img_rot_iraf_hdr = fits.getdata(rot_img_filename.replace('.fits', '_iraf.fits'), header = True)
-        img_rot_noiraf, img_rot_noiraf_hdr = fits.getdata(rot_img_filename.replace('.fits', '_noiraf.fits'), header = True)
+        img_rot_iraf, img_rot_iraf_hdr = fits.getdata(rot_img_filename_iraf, header = True)
+        img_rot_noiraf, img_rot_noiraf_hdr = fits.getdata(rot_img_filename_noiraf, header = True)
+        #img_rot_iraf, img_rot_iraf_hdr = fits.getdata(rot_img_filename.replace('.fits', '_iraf.fits'), header = True)
+        #img_rot_noiraf, img_rot_noiraf_hdr = fits.getdata(rot_img_filename.replace('.fits', '_noiraf.fits'), header = True)
 
         assert img_rot_iraf.shape == img_rot_noiraf.shape
 
         # Checks headers are the same
         hdr_keys = list(dict(img_rot_iraf_hdr).keys())
-        skip_keys = ['EXTEND', 'DATE', 'IRAF-TLM', 'COMMENT', '']
+        skip_keys = ['EXTEND', 'DATE', 'IRAF-TLM', 'COMMENT', 'ORIGIN', '', 'CRPIX1', 'CRPIX2', 'CRCOR', 'NDRIZIM', 'D001VER', 'D001GEOM', 'D001DATA', 'D001DEXP', 'D001OUDA', 'XREF', 'YREF', 'XSTREHL', 'YSTREHL']
         for key in hdr_keys:
             if key in skip_keys:
+                continue
+            if key[0:4] == 'D001': #Drizzle keywords
                 continue
             if type(img_rot_iraf_hdr[key]) == str:
                 assert img_rot_iraf_hdr[key] == img_rot_noiraf_hdr[key]
@@ -261,7 +273,7 @@ class TestCombineRegister(unittest.TestCase):
     def test_run_combine_register_iraf(self):
         mod_path = os.path.dirname(os.path.abspath(data.__file__))
 
-        epoch_dir = mod_path + '/../data/test_epoch/17may21/'
+        epoch_dir = mod_path + '/../data/test_epoch/17may21/iraf/'
         cleanDir = epoch_dir + 'clean/ob170095_kp/'
         comboDir = epoch_dir + 'combo/'
         
@@ -275,7 +287,7 @@ class TestCombineRegister(unittest.TestCase):
         #roots = [aa.replace('.fits', '') for aa in roots]
         rootsc = [aa.replace('n', 'c') for aa in roots]
         
-        _out = comboDir + 'mag' + outroot + '_' + wave + '_iraf'
+        _out = comboDir + 'mag' + outroot + '_' + wave
         
         strehls, fwhm = data.loadStrehl(cleanDir, rootsc)
         # skip trimming since no trimming in this test
@@ -308,7 +320,7 @@ class TestCombineRegister(unittest.TestCase):
     def test_run_combine_register_noiraf(self): #self
         mod_path = os.path.dirname(os.path.abspath(data.__file__))
 
-        epoch_dir = mod_path + '/../data/test_epoch/17may21/'
+        epoch_dir = mod_path + '/../data/test_epoch/noiraf/17may21/'
         cleanDir = epoch_dir + 'clean/ob170095_kp/'
         comboDir = epoch_dir + 'combo/'
         
@@ -322,7 +334,7 @@ class TestCombineRegister(unittest.TestCase):
         #roots = [aa.replace('.fits', '') for aa in roots]
         rootsc = [aa.replace('n', 'c') for aa in roots]
         
-        _out = comboDir + 'mag' + outroot + '_' + wave + '_noiraf'
+        _out = comboDir + 'mag' + outroot + '_' + wave
         
         strehls, fwhm = data.loadStrehl(cleanDir, rootsc)
         # skip trimming since no trimming in this test
@@ -391,11 +403,12 @@ class TestCleanDrizzle(unittest.TestCase):
     def test_run_clean_drizzle_iraf(self):
         # To be run in the reduce directory of the test_epoch
         mod_path = os.path.dirname(os.path.abspath(data.__file__))
-        epoch_dir = mod_path + '/../data/test_epoch/17may21/'
+
+        epoch_dir = mod_path + '/../data/test_epoch/17may21_iraf/'
         rawDir = epoch_dir + 'raw/'
         
         instrument = instruments.NIRC2()
-        files = ['{0:04d}_iraf'.format(ii) for ii in range(7, 19+1)]
+        files = ['{0:04d}'.format(ii) for ii in range(7, 19+1)]
         firstFile = instrument.make_filenames([files[0]], rootDir=rawDir)[0]
         hdr1 = fits.getheader(firstFile, ignore_missing_end=True)
 
@@ -420,7 +433,8 @@ class TestCleanDrizzle(unittest.TestCase):
             _ce = instrument.make_filenames([f], prefix='ce')[0]
             _wgt = instrument.make_filenames([f], prefix='wgt')[0]
             _ff = instrument.make_filenames([f], prefix='ff')[0]
-            _ff_f = _ff.replace('_iraf.fits', '_f_iraf.fits')
+            _ff_f = _ff.replace('_.fits', '_f.fits')
+            #_ff_f = _ff.replace('_iraf.fits', '_f_iraf.fits')
             _dlog_tmp = instrument.make_filenames([f], prefix='driz')[0]
             _dlog = _dlog_tmp.replace('.fits', '.log')
 
@@ -439,11 +453,12 @@ class TestCleanDrizzle(unittest.TestCase):
     def test_run_clean_drizzle_noiraf(self):
         # To be run in the reduce directory of the test_epoch
         mod_path = os.path.dirname(os.path.abspath(data.__file__))
-        epoch_dir = mod_path + '/../data/test_epoch/17may21/'
+
+        epoch_dir = mod_path + '/../data/test_epoch/17may21_noiraf/'
         rawDir = epoch_dir + 'raw/'
         
         instrument = instruments.NIRC2()
-        files = ['{0:04d}_noiraf'.format(ii) for ii in range(7, 19+1)]
+        files = ['{0:04d}'.format(ii) for ii in range(7, 19+1)]
         firstFile = instrument.make_filenames([files[0]], rootDir=rawDir)[0]
         hdr1 = fits.getheader(firstFile, ignore_missing_end=True)
 
@@ -462,13 +477,14 @@ class TestCleanDrizzle(unittest.TestCase):
             imgsize = imgsizeY
         #data.setup_drizzle(imgsize)
         
-        os.chdir('kp/sci_ob170095/')
+        os.chdir(epoch_dir + 'reduce/kp/sci_ob170095/')
         for f in [files[0]]:
             _bp = instrument.make_filenames([f], prefix='bp')[0]
             _ce = instrument.make_filenames([f], prefix='ce')[0]
             _wgt = instrument.make_filenames([f], prefix='wgt')[0]
             _ff = instrument.make_filenames([f], prefix='ff')[0]
-            _ff_f = _ff.replace('_noiraf.fits', '_f_noiraf.fits')
+            _ff_f = _ff.replace('_.fits', '_f.fits')
+            #_ff_f = _ff.replace('_noiraf.fits', '_f_noiraf.fits')
             _dlog_tmp = instrument.make_filenames([f], prefix='driz')[0]
             _dlog = _dlog_tmp.replace('.fits', '.log')
 
@@ -484,8 +500,8 @@ class TestCleanDrizzle(unittest.TestCase):
                           fixDAR=True, instrument=instrument,
                           use_koa_weather=False)
 
-        drizzled_file = fits.open('ce0007_noiraf.fits')
-        weight_file = fits.open('wgt0007_noiraf.fits')
+        drizzled_file = fits.open('ce0007.fits')
+        weight_file = fits.open('wgt0007.fits')
 
         # check shape is correct
         assert np.array_equal(np.shape(drizzled_file[0].data), np.array([1024, 1024]))
@@ -493,10 +509,61 @@ class TestCleanDrizzle(unittest.TestCase):
 
         # makes sure there's no nans in the drizzle file
         assert np.sum(np.isnan(drizzled_file[0].data)) == 0
-        
+
         os.chdir('../..')
 
         return
+
+    def test_compare_clean_drizzle_iraf_no_iraf_headers(self):
+
+        mod_path = os.path.dirname(os.path.abspath(data.__file__))
+
+        iraf_epoch_dir = mod_path + '/../data/test_epoch/17may21_iraf/'
+        iraf_clean_dir = iraf_epoch_dir + 'clean/ob170095_kp/'
+
+        noiraf_epoch_dir = mod_path + '/../data/test_epoch/17may21_noiraf/'
+        noiraf_clean_dir = noiraf_epoch_dir + 'clean/ob170095_kp/'
+        
+        img_root = '0007'
+        
+        iraf = fits.getheader(iraf_clean_dir + 'c{}.fits'.format(img_root))
+        noiraf = fits.getheader(noiraf_clean_dir + 'c{}.fits'.format(img_root))
+
+        # Checks headers are the same
+        hdr_keys = list(dict(iraf).keys())
+        
+        # Skipping the following old drizzle keywords - they were either deleted or edited in new:
+        # D001VER - Drizzle version
+        # D001GEOM - input geometric parameters, this just said 'user input' and was useless
+        # D001LAM - wavelength applied for transformation, N/A
+        # D001SFTU - units used for shifts - changed to 'pixels' isntead of 'input'
+        # D001SFTF - units used for shifts - changed to 'pixels' isntead of 'output'
+        # D001FVAL - fill value - changed to 0 instead of 'INDEF
+        # D001INXC - reference center of input image (X) - no clear analog in current drizzle
+        # D001INYC - reference center of input image (Y) - no clear analog in current drizzle
+        # D001ONXC - reference center of output image (X) - no clear analog in current drizzle
+        # D001ONYC - reference center of output image (Y) - no clear analog in current drizzle
+        # D001SECP - secondary geometric pattern (bool) - no clear analog in current drizzle
+
+        skip_keys = ['EXTEND', 'DATE', 'IRAF-TLM', 'COMMENT', 'ORIGIN', '', 'CRPIX1', 'CRPIX2', 'CRCOR', 'XREF', 'YREF', 'XSTREHL', 'YSTREHL',
+                    'D001VER', 'D001GEOM', 'D001LAM', 'D001SFTU', 'D001SFTF', 'D001FVAL', 'D001INXC', 'D001INYC', 'D001OUXC', 'D001OUYC', 'D001SECP']
+        for key in hdr_keys:
+            if key in skip_keys:
+                continue
+            if type(iraf[key]) == str:
+                assert iraf[key] == noiraf[key]
+            # Reference pixel
+            #elif key == 'CRPIX1' or key == 'CRPIX2':
+            #    assert math.isclose(img_rot_iraf_hdr[key], img_rot_noiraf_hdr[key], abs_tol = 0.1)
+            # CCD to image coords - some sort of shift
+            #elif key == 'LTV1' or key == 'LTV2':
+            #    assert math.isclose(img_rot_iraf_hdr[key], img_rot_noiraf_hdr[key], abs_tol = 0.5)
+            else:
+                assert math.isclose(iraf[key], noiraf[key], abs_tol = 0.01)
+
+        return
+        
+        
 
 class TestCombineDrizzle(unittest.TestCase):
     """
@@ -574,9 +641,19 @@ class TestCombineDrizzle(unittest.TestCase):
         
 
         shiftsTab = Table.read(combo_dir + 'mag17may21_ob170095_kp.shifts', format='ascii', data_start=1)
-        
         roots, strehls, fwhm, weights, shiftsTab = data.sort_frames(roots, strehls, fwhm, weights, shiftsTab)
         xysize = 1170
+
+        #switch the order of 12 and 13 to match iraf for checking headers
+        pos12 = np.where(np.array(roots) == '0012')[0][0]
+        pos13 = np.where(np.array(roots) == '0013')[0][0]
+        roots[pos12], roots[pos13] = roots[pos13], roots[pos12]
+        strehls[pos12], strehls[pos13] = strehls[pos13], strehls[pos12]
+        fwhm[pos12], fwhm[pos13] = fwhm[pos13], fwhm[pos12]
+        weights[pos12], weights[pos13] = weights[pos13], weights[pos12]
+        shiftsTab_12 = deepcopy(shiftsTab[pos12])
+        shiftsTab_13 = deepcopy(shiftsTab[pos13])
+        shiftsTab[pos12], shiftsTab[pos13] = shiftsTab_13, shiftsTab_12
 
         data.combine_drizzle(xysize, cleanDir, roots, _out, weights, shiftsTab,
                     wave, diffPA, fixDAR=True, mask=True, instrument=instrument,
@@ -592,18 +669,22 @@ class TestCombineDrizzle(unittest.TestCase):
         iraf_drizzled_img = fits.open(data_dir_iraf + 'mag17may21_ob170095_kp.fits')
         noiraf_drizzled_img = fits.open(data_dir_noiraf + 'mag17may21_ob170095_kp.fits')
 
-        #no iraf puts it in the corner of the inflated images 
-        #whereas iraf puts it in the center, so we shift them to compare them
+        # Note total size of the images are different because the shifts
+        # are slightly different which is used to calculate the padding.
+
+        # exact centers are different since xysize calculated from shifts is different
+        # so shift both over by (xysize - 1024)/2
         y = 71
         x = 71
         iraf_drizzled_img_cut = iraf_drizzled_img[0].data[y:y+1024, x:x+1024]
-        noiraf_drizzled_img_cut = noiraf_drizzled_img[0].data[0:1024, 0:1024]
-
-        # Note total size of the images are different because the shifts
-        # are slightly different which is used to calculate the padding.
+        y = 73
+        x = 73
+        noiraf_drizzled_img_cut = noiraf_drizzled_img[0].data[y:y+1024, x:x+1024]
         
         zero_idxs = np.logical_and((noiraf_drizzled_img_cut == 0), (iraf_drizzled_img_cut == 0))
-        assert(np.isclose(np.mean((iraf_drizzled_img_cut/noiraf_drizzled_img_cut)[~zero_idxs]), 1, rtol = 1e-2))
+        mean, med, std = stats.sigma_clipped_stats((iraf_drizzled_img_cut/noiraf_drizzled_img_cut)[~zero_idxs], 
+                                                   sigma_upper = 4, sigma_lower = 4, maxiters=5)
+        assert(np.isclose(mean, 1, rtol = 1e-2))
 
         # makes sure there's no nans in the drizzle file
         assert np.sum(np.isnan(iraf_drizzled_img[0].data)) == 0
@@ -615,6 +696,57 @@ class TestCombineDrizzle(unittest.TestCase):
         max_sat_noiraf = float(max_sat_noiraf.read())
         max_sat_iraf = float(max_sat_iraf.read())
         assert(np.isclose(max_sat_noiraf, max_sat_iraf, rtol = 1))
+
+        # Checks headers are the same
+        iraf_hdr = iraf_drizzled_img[0].header
+        noiraf_hdr = noiraf_drizzled_img[0].header
+        hdr_keys = list(dict(iraf_hdr).keys())
+        
+        # Skipping the following old drizzle keywords - they were either deleted or edited in new:
+        # D001VER - Drizzle version
+        # D001GEOM - input geometric parameters, this just said 'user input' and was useless
+        # D001LAM - wavelength applied for transformation, N/A
+        # D001SFTU - units used for shifts - changed to 'pixels' isntead of 'input'
+        # D001SFTF - units used for shifts - changed to 'pixels' isntead of 'output'
+        # D001FVAL - fill value - changed to 0 instead of 'INDEF
+        # D001INXC - reference center of input image (X) - no clear analog in current drizzle
+        # D001INYC - reference center of input image (Y) - no clear analog in current drizzle
+        # D001ONXC - reference center of output image (X) - no clear analog in current drizzle
+        # D001ONYC - reference center of output image (Y) - no clear analog in current drizzle
+        # D001SECP - secondary geometric pattern (bool) - no clear analog in current drizzle
+        # D001DATA - to save space, iraf had cdwt.fits, but now we add the root
+        # D001DEXP - input exposure time, was incorrect in iraf (~2.5 s instead of 30 s)
+        # D001XGIM - to save space, iraf had cdwtgeo_x.fits, but now we add the root
+        # D001YGIM - to save space, iraf had cdwtgeo_y.fits, but now we add the root
+        # D001XSH - xshift - not checking here, this value is checked in TestCombineRegister()
+        # D001YSH - yshift - not checking here, this value is checked in TestCombineRegister()
+        # NAXIS1, 2 - shape of image which is different based on max shift (1166 vs 1170)
+
+        skip_keys = ['EXTEND', 'DATE', 'IRAF-TLM', 'COMMENT', 'ORIGIN', '', 'CRPIX1', 'CRPIX2', 
+                     'CRCOR', 'XREF', 'YREF', 'XSTREHL', 'YSTREHL', 'NAXIS1', 'NAXIS2',
+                    'D001VER', 'D001GEOM', 'D001LAM', 'D001SFTU', 'D001SFTF', 'D001FVAL', 
+                     'D001INXC', 'D001INYC', 'D001OUXC', 'D001OUYC', 'D001SECP', 
+                     'D001DATA', 'D001DEXP', 'D001XGIM', 'D001YGIM', 'D001XSH', 'D001YSH']
+        
+        for key in hdr_keys:
+            modkey = key[0:2] + '01' + key[4:] # since each drizzled image gets D001, D002, etc, this accounts for that
+            if key in skip_keys or modkey in skip_keys:
+                continue
+                
+            if type(iraf_hdr[key]) == str:
+                if 'comboDir$' in iraf_hdr[key]:
+                    iraf_hdr[key] = 'combo/' + iraf_hdr[key].split('$')[1]
+                elif 'cleanDir$' in iraf_hdr[key]:
+                    iraf_hdr[key] = 'clean/ob170095_kp/' + iraf_hdr[key].split('$')[1]
+                assert iraf_hdr[key] == noiraf_hdr[key]
+            # Reference pixel
+            #elif key == 'CRPIX1' or key == 'CRPIX2':
+            #    assert math.isclose(img_rot_iraf_hdr[key], img_rot_noiraf_hdr[key], abs_tol = 0.1)
+            # CCD to image coords - some sort of shift
+            #elif key == 'LTV1' or key == 'LTV2':
+            #    assert math.isclose(img_rot_iraf_hdr[key], img_rot_noiraf_hdr[key], abs_tol = 0.5)
+            else:
+                assert math.isclose(iraf_hdr[key], noiraf_hdr[key], abs_tol = 0.01)
 
         return
 
@@ -703,7 +835,7 @@ class TestCombineSubmaps(unittest.TestCase):
     It causes differences in the nosie background but it shouldn't change
     the star positions.
     """
-    def test_run_submaps_drizzle_iraf():#self):
+    def test_run_submaps_iraf(self):
         # To be run in the reduce directory of the test_epoch
         mod_path = os.path.dirname(os.path.abspath(data.__file__))
         epoch_dir = mod_path + '/../data/test_epoch/17may21_iraf/'
@@ -773,10 +905,60 @@ class TestCombineSubmaps(unittest.TestCase):
         roots, strehls, fwhm, weights, shiftsTab = data.sort_frames(roots, strehls, fwhm, weights, shiftsTab)
         xysize = 1170
 
+        #switch the order of 12 and 13 to match iraf for submap creation
+        pos12 = np.where(np.array(roots) == '0012')[0][0]
+        pos13 = np.where(np.array(roots) == '0013')[0][0]
+        roots[pos12], roots[pos13] = roots[pos13], roots[pos12]
+        strehls[pos12], strehls[pos13] = strehls[pos13], strehls[pos12]
+        fwhm[pos12], fwhm[pos13] = fwhm[pos13], fwhm[pos12]
+        weights[pos12], weights[pos13] = weights[pos13], weights[pos12]
+        shiftsTab_12 = deepcopy(shiftsTab[pos12])
+        shiftsTab_13 = deepcopy(shiftsTab[pos13])
+        shiftsTab[pos12], shiftsTab[pos13] = shiftsTab_13, shiftsTab_12
+
         data.combine_submaps(xysize, cleanDir, roots, _sub, weights,
                         shiftsTab, submaps, wave, diffPA, fixDAR=True,
                         mask=True, instrument=instrument,
                         use_koa_weather=False)
+
+        return
+
+    def test_compare_combine_submaps_iraf_noiraf(self):
+        mod_path = os.path.dirname(os.path.abspath(data.__file__))
+        data_dir_iraf = mod_path + '/../data/test_epoch/17may21_iraf/combo/'
+        data_dir_noiraf = mod_path + '/../data/test_epoch/17may21_noiraf/combo/'
+
+        for i in range(1, 3+1):
+            iraf_drizzled_img = fits.open(data_dir_iraf + 'm17may21_ob170095_kp_{}.fits'.format(i))
+            noiraf_drizzled_img = fits.open(data_dir_noiraf + 'm17may21_ob170095_kp_{}.fits'.format(i))
+    
+            # Note total size of the images are different because the shifts
+            # are slightly different which is used to calculate the padding.
+            
+            # exact centers are different since xysize calculated from shifts is different
+            # so shift both over by (xysize - 1024)/2
+            y = 71
+            x = 71
+            iraf_drizzled_img_cut = iraf_drizzled_img[0].data[y:y+1024, x:x+1024]
+            y = 73
+            x = 73
+            noiraf_drizzled_img_cut = noiraf_drizzled_img[0].data[y:y+1024, x:x+1024]
+            
+            zero_idxs = np.logical_or((noiraf_drizzled_img_cut == 0), (iraf_drizzled_img_cut == 0))
+            mean, med, std = stats.sigma_clipped_stats((iraf_drizzled_img_cut/noiraf_drizzled_img_cut)[~zero_idxs], 
+                                                   sigma_upper = 4, sigma_lower = 4, maxiters=5)
+            assert(np.isclose(mean, 1, rtol = 2.1e-2))
+    
+            # makes sure there's no nans in the drizzle file
+            assert np.sum(np.isnan(iraf_drizzled_img[0].data)) == 0
+            assert np.sum(np.isnan(noiraf_drizzled_img[0].data)) == 0
+    
+            # check max saturation levels are close
+            max_sat_noiraf = open(data_dir_noiraf + 'mag17may21_ob170095_kp.max')
+            max_sat_iraf = open(data_dir_iraf + 'mag17may21_ob170095_kp.max')
+            max_sat_noiraf = float(max_sat_noiraf.read())
+            max_sat_iraf = float(max_sat_iraf.read())
+            assert(np.isclose(max_sat_noiraf, max_sat_iraf, rtol = 1))
 
         return
 

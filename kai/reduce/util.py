@@ -211,6 +211,7 @@ def imarith(img_list1, operator, img_list2, out_list):
             out = img1 * img2
         if operator == '/':
             out = img1 / img2
+            out[np.where(np.isfinite(out) == False)] = 0
 
         fits.writeto(out_list[ii], out, header=hdr1, output_verify='ignore', overwrite=True)
 

@@ -13,6 +13,7 @@ from datetime import datetime
 import subprocess
 import pylab as py
 import pdb
+import pandas as pd
 
 class Analysis(object):
     """
@@ -324,6 +325,9 @@ class Analysis(object):
             
             # Copy over the starfinder FITS files to the current directory
             epoch_file_root = 'mag{0}_{1}'.format(self.epoch, self.filt)
+
+            if os.path.exists(self.dirCombo + epoch_file_root + '_back.fits') == False:
+                raise Exception('starfinder likely failed - see ' + self.dirCombo + 'starfinder/idlbatch_combo_{0}.log'.format(self.filt) + ' for more details')
             
             shutil.copyfile(self.dirCombo + epoch_file_root + '_back.fits',
                             epoch_file_root + '_back.fits')
@@ -580,7 +584,21 @@ class Analysis(object):
                 args = argsTmp.split()[1:]
                 calibrate.main(args)
 
+            # Checks that calibrateCombo() didn't fail
+            zer_file = pd.read_csv(fileSub[:-8] + '_stf_cal.zer', delim_whitespace = True, header = 3)
+            if np.isnan(zer_file['#ZeroPoint'][0]) == True:
+                raise Exception('calibrateCombo() likely failed and produced a nan zeropoint, see above printouts')
+                
+            if self.type == 'ao':
+                file_ext = '_' + self.filt
+            else:
+                file_ext = self.filt
+            if os.path.exists(self.dirCombo + 'starfinder/align/align%s%s_%3.1f.scale' % (self.imgSuffix, file_ext, self.corrMain)) == False:
+                raise Exception('calibrateCombo() likely failed, see above printouts')
+
+            
             os.chdir(self.dirStart)
+            
         except:
             os.chdir(self.dirStart)
             raise
