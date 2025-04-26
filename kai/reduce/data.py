@@ -184,7 +184,7 @@ def clean(
         # This is the image for which refSrc is relevant.
         firstFile = instrument.make_filenames([files[0]], rootDir=rawDir)[0]
         hdr1 = fits.getheader(firstFile, ignore_missing_end=True)
-        radecRef = [float(hdr1['RA']), float(hdr1['DEC'])]
+        radecRef = instrument.get_radec(hdr1)
         aotsxyRef = kai_util.getAotsxy(hdr1)
 
         if ref_offset_method == 'pcu':
@@ -320,7 +320,9 @@ def clean(
             clean_drizzle(distXgeoim, distYgeoim, _bp, _ce, _wgt, _dlog,
                           fixDAR=fixDAR, instrument=instrument,
                           use_koa_weather=use_koa_weather)
-
+            
+            hdr = fits.getheader(_raw, ignore_missing_end=True)
+            
             ### Make .max file ###
             # Determine the non-linearity level. Raw data level of
             # non-linearity is 12,000 but we subtracted
@@ -330,7 +332,7 @@ def clean(
             nonlinSky = skyObj.getNonlinearCorrection(sky)
 
             coadds = fits.getval(_ss, instrument.hdr_keys['coadds'])
-            satLevel = (coadds*instrument.get_saturation_level()) - nonlinSky - bkg
+            satLevel = (coadds*instrument.get_saturation_level(hdr)) - nonlinSky - bkg
             file(_max, 'w').write(str(satLevel))
 
             ### Rename and clean up files ###
@@ -339,7 +341,6 @@ def clean(
 
             ### Make the *.coo file and update headers ###
             # First check if PA is not zero
-            hdr = fits.getheader(_raw, ignore_missing_end=True)
             phi = instrument.get_position_angle(hdr)
 
             clean_makecoo(_ce, _cc, refSrc, strSrc, aotsxyRef, radecRef,
@@ -1148,7 +1149,7 @@ def combine_drizzle(imgsize, cleanDir, roots, outroot, weights, shifts,
 
         
         # Read in MJD of current file from FITS header
-        mjd = float(hdr['MJD-OBS'])
+        mjd = instrument.get_mjd(hdr)
         mjd_weightedSum += weights[i] * mjd
         
         # Drizzle this file ontop of all previous ones.
@@ -1229,6 +1230,10 @@ def combine_drizzle(imgsize, cleanDir, roots, outroot, weights, shifts,
     
     fits_f[0].header.set(
         'MJD-OBS', mjd_weightedMean,
+        'Weighted modified julian date of combined observations'
+    )
+    fits_f[0].header.set(
+        'MJD', mjd_weightedMean,
         'Weighted modified julian date of combined observations'
     )
     
@@ -1364,7 +1369,7 @@ def combine_submaps(
             ir.drizzle.ygeoim = distYgeoim
 
         # Read in MJD of current file from FITS header
-        mjd = float(hdr['MJD-OBS'])
+        mjd = instrument.get_mjd(hdr)
         mjd_weightedSums[sub] += weights[i] * mjd
         
         # Drizzle this file ontop of all previous ones.
@@ -1439,10 +1444,23 @@ def combine_submaps(
                               'Y Distortion Image')
         
         # Store weighted MJDs in header
-        fits_f[0].header.set('MJD-OBS', mjd_weightedMeans[s], 'Weighted modified julian date of combined observations')
-    
+        fits_f[0].header.set(
+            'MJD-OBS',
+            mjd_weightedMeans[s],
+            'Weighted modified julian date of combined observations',
+        )
+        fits_f[0].header.set(
+            'MJD',
+            mjd_weightedMeans[s],
+            'Weighted modified julian date of combined observations',
+        )
+        
         ## Also update date field in header
-        fits_f[0].header.set('DATE', '{0}'.format(submaps_time_obs[s].fits), 'Weighted observation date')
+        fits_f[0].header.set(
+            'DATE',
+            '{0}'.format(submaps_time_obs[s].fits),
+            'Weighted observation date',
+        )
         
         # Write out final submap fits file
         fits_f[0].writeto(_fits[s], output_verify=outputVerify)
@@ -1981,7 +1999,7 @@ def clean_makecoo(_ce, _cc, refSrc, strSrc, aotsxyRef, radecRef,
 
     hdr = fits.getheader(_ce, ignore_missing_end=True)
 
-    radec = [float(hdr['RA']), float(hdr['DEC'])]
+    radec = instrument.get_radec(hdr)
     aotsxy = kai_util.getAotsxy(hdr)
     if offset_method == 'pcu':
         pcuxy = [float(hdr['PCSFX']), float(hdr['PCSFY'])]  #New version may be PCUX and PCUY

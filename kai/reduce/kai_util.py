@@ -58,7 +58,10 @@ def makelog(directory, outfile='image_log.txt',
             f.write('%16s  ' % frame)
 
             # Second column is object name
-            f.write('%-16s  ' % hdr[ihk['object_name']].replace(' ', ''))
+            if ihk['object_name'] in hdr:
+                f.write('%-16s  ' % hdr[ihk['object_name']].replace(' ', ''))
+            else:
+                f.write('%-16s  ' % '[No object name]')
 
             # Next is integration time, coadds, sampmode, multisam
             f.write('%8.3f  %3d  ' % (hdr[ihk['itime']], hdr[ihk['coadds']]))
@@ -70,10 +73,16 @@ def makelog(directory, outfile='image_log.txt',
             f.write('%-10s ' % filt)
 
             # Camera name
-            f.write('%-6s ' % hdr[ihk['camera']])
+            if ihk['camera'] in hdr:
+                f.write('%-6s ' % hdr[ihk['camera']])
+            else:
+                f.write('%-6s ' % 'None')
 
             # Shutter state
-            f.write('%-6s ' % hdr[ihk['shutter']])
+            if ihk['shutter'] in hdr:
+                f.write('%-6s ' % hdr[ihk['shutter']])
+            else:
+                f.write('%-6s ' % 'None')
 
             # TRICK dichroic (only for OSIRIS)
             if isinstance(instrument, instruments.OSIRIS):
