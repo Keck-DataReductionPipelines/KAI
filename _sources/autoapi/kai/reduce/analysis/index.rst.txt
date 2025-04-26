@@ -100,6 +100,8 @@ Module Contents
 
 
    .. py:attribute:: airopa_mode
+      :value: 'single'
+
 
 
    .. py:attribute:: trimfake
@@ -113,15 +115,23 @@ Module Contents
 
 
    .. py:attribute:: stf_debug
+      :value: False
+
 
 
    .. py:attribute:: stf_parallelize
+      :value: True
+
 
 
    .. py:attribute:: starlist
+      :value: '/g/lu/data/orion/source_list/psf_central.dat'
+
 
 
    .. py:attribute:: labellist
+      :value: '/g/lu/data/orion/source_list/label.dat'
+
 
 
    .. py:attribute:: labellist_accel
@@ -130,16 +140,20 @@ Module Contents
 
 
    .. py:attribute:: orbitlist
+      :value: '/g/lu/data/orion/source_list/orbits.dat'
+
 
 
    .. py:attribute:: calFile
+      :value: '/g/lu/data/orion/source_list/photo_calib.dat'
+
 
 
    .. py:attribute:: instrument
 
 
    .. py:attribute:: calStars
-      :value: ['irs16NW', 'S3-22', 'S2-22', 'S4-3', 'S1-1', 'S1-21', 'S1-12', 'S2-2', 'S3-88', 'S2-75',...
+      :value: ['S3-22', 'S2-22', 'S4-3', 'S1-34', 'S1-1', 'S1-21', 'S3-370', 'S3-88', 'S2-75', 'S3-51', 'S3-348']
 
 
 
@@ -185,9 +199,13 @@ Module Contents
 
 
    .. py:attribute:: rootDir
+      :value: '/g/lu/data/orion/'
+
 
 
    .. py:attribute:: filt
+      :value: 'kp'
+
 
 
    .. py:attribute:: dirEpoch
@@ -202,15 +220,12 @@ Module Contents
    .. py:attribute:: dirCombo
 
 
-   .. py:attribute:: starfinder_dir_name
-      :value: 'starfinder/'
-
-
-
    .. py:attribute:: dirComboAln
 
 
    .. py:attribute:: cleanList
+      :value: 'c.lis'
+
 
 
    .. py:attribute:: cleanFiles

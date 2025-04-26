@@ -410,12 +410,12 @@ Module Contents
        **label_file** : str, default='/Users/jlu/data/gc/source_list/label.dat'
            Full path of label.dat file to search
 
+
+
    :Returns:
 
        **pos** : float list (2 elements)
            x and y offset from Sgr A* in arcsec
-
-
 
 
 
@@ -995,12 +995,18 @@ Module Contents
 
 
    .. py:attribute:: skyFile
+      :value: ''
+
 
 
    .. py:attribute:: scale
+      :value: 1
+
 
 
    .. py:attribute:: angleOffset
+      :value: 0.0
+
 
 
    .. py:attribute:: instrument

@@ -1,23 +1,21 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>kai.reduce.data &mdash; KAI  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=fd3f3429" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
-        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -72,27 +70,27 @@
            <div itemprop="articleBody">
              
   <h1>Source code for kai.reduce.data</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">sys</span>
-<span class="kn">from</span> <span class="nn">astropy.io</span> <span class="kn">import</span> <span class="n">fits</span>
-<span class="kn">from</span> <span class="nn">astropy.table</span> <span class="kn">import</span> <span class="n">Table</span>
-<span class="kn">from</span> <span class="nn">astropy.time</span> <span class="kn">import</span> <span class="n">Time</span>
-<span class="kn">from</span> <span class="nn">astropy</span> <span class="kn">import</span> <span class="n">stats</span>
-<span class="kn">import</span> <span class="nn">math</span>
-<span class="kn">from</span> <span class="nn">pyraf</span> <span class="kn">import</span> <span class="n">iraf</span> <span class="k">as</span> <span class="n">ir</span>
-<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">kai_util</span>
-<span class="kn">from</span> <span class="nn">kai.reduce</span> <span class="kn">import</span> <span class="n">util</span><span class="p">,</span> <span class="n">lin_correction</span>
-<span class="kn">from</span> <span class="nn">kai</span> <span class="kn">import</span> <span class="n">instruments</span>
-<span class="kn">from</span> <span class="nn">kai</span> <span class="kn">import</span> <span class="n">strehl</span>
-<span class="kn">import</span> <span class="nn">time</span>
-<span class="kn">import</span> <span class="nn">pdb</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">dar</span>
-<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">bfixpix</span>
-<span class="kn">import</span> <span class="nn">subprocess</span>
-<span class="kn">import</span> <span class="nn">copy</span>
-<span class="kn">import</span> <span class="nn">shutil</span>
-<span class="kn">import</span> <span class="nn">warnings</span>
-<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span><span class="o">,</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">fits</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy.table</span><span class="w"> </span><span class="kn">import</span> <span class="n">Table</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy.time</span><span class="w"> </span><span class="kn">import</span> <span class="n">Time</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">stats</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyraf</span><span class="w"> </span><span class="kn">import</span> <span class="n">iraf</span> <span class="k">as</span> <span class="n">ir</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">kai_util</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">kai.reduce</span><span class="w"> </span><span class="kn">import</span> <span class="n">util</span><span class="p">,</span> <span class="n">lin_correction</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">kai</span><span class="w"> </span><span class="kn">import</span> <span class="n">instruments</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">kai</span><span class="w"> </span><span class="kn">import</span> <span class="n">strehl</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pdb</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">dar</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">bfixpix</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
 
 <div class="viewcode-block" id="module_dir">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/data/index.html#kai.reduce.data.module_dir">[docs]</a>
@@ -110,7 +108,7 @@
 
 <div class="viewcode-block" id="clean">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/data/index.html#kai.reduce.data.clean">[docs]</a>
-<span class="k">def</span> <span class="nf">clean</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">clean</span><span class="p">(</span>
         <span class="n">files</span><span class="p">,</span> <span class="n">nite</span><span class="p">,</span> <span class="n">wave</span><span class="p">,</span> <span class="n">refSrc</span><span class="p">,</span> <span class="n">strSrc</span><span class="p">,</span>
         <span class="n">dark_frame</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">badColumns</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">field</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -269,7 +267,7 @@
         <span class="c1"># This is the image for which refSrc is relevant.</span>
         <span class="n">firstFile</span> <span class="o">=</span> <span class="n">instrument</span><span class="o">.</span><span class="n">make_filenames</span><span class="p">([</span><span class="n">files</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">rootDir</span><span class="o">=</span><span class="n">rawDir</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">hdr1</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getheader</span><span class="p">(</span><span class="n">firstFile</span><span class="p">,</span> <span class="n">ignore_missing_end</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">radecRef</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">hdr1</span><span class="p">[</span><span class="s1">&#39;RA&#39;</span><span class="p">]),</span> <span class="nb">float</span><span class="p">(</span><span class="n">hdr1</span><span class="p">[</span><span class="s1">&#39;DEC&#39;</span><span class="p">])]</span>
+        <span class="n">radecRef</span> <span class="o">=</span> <span class="n">instrument</span><span class="o">.</span><span class="n">get_radec</span><span class="p">(</span><span class="n">hdr1</span><span class="p">)</span>
         <span class="n">aotsxyRef</span> <span class="o">=</span> <span class="n">kai_util</span><span class="o">.</span><span class="n">getAotsxy</span><span class="p">(</span><span class="n">hdr1</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">ref_offset_method</span> <span class="o">==</span> <span class="s1">&#39;pcu&#39;</span><span class="p">:</span>
@@ -405,7 +403,9 @@
             <span class="n">clean_drizzle</span><span class="p">(</span><span class="n">distXgeoim</span><span class="p">,</span> <span class="n">distYgeoim</span><span class="p">,</span> <span class="n">_bp</span><span class="p">,</span> <span class="n">_ce</span><span class="p">,</span> <span class="n">_wgt</span><span class="p">,</span> <span class="n">_dlog</span><span class="p">,</span>
                           <span class="n">fixDAR</span><span class="o">=</span><span class="n">fixDAR</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">instrument</span><span class="p">,</span>
                           <span class="n">use_koa_weather</span><span class="o">=</span><span class="n">use_koa_weather</span><span class="p">)</span>
-
+            
+            <span class="n">hdr</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getheader</span><span class="p">(</span><span class="n">_raw</span><span class="p">,</span> <span class="n">ignore_missing_end</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            
             <span class="c1">### Make .max file ###</span>
             <span class="c1"># Determine the non-linearity level. Raw data level of</span>
             <span class="c1"># non-linearity is 12,000 but we subtracted</span>
@@ -415,7 +415,7 @@
             <span class="n">nonlinSky</span> <span class="o">=</span> <span class="n">skyObj</span><span class="o">.</span><span class="n">getNonlinearCorrection</span><span class="p">(</span><span class="n">sky</span><span class="p">)</span>
 
             <span class="n">coadds</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getval</span><span class="p">(</span><span class="n">_ss</span><span class="p">,</span> <span class="n">instrument</span><span class="o">.</span><span class="n">hdr_keys</span><span class="p">[</span><span class="s1">&#39;coadds&#39;</span><span class="p">])</span>
-            <span class="n">satLevel</span> <span class="o">=</span> <span class="p">(</span><span class="n">coadds</span><span class="o">*</span><span class="n">instrument</span><span class="o">.</span><span class="n">get_saturation_level</span><span class="p">())</span> <span class="o">-</span> <span class="n">nonlinSky</span> <span class="o">-</span> <span class="n">bkg</span>
+            <span class="n">satLevel</span> <span class="o">=</span> <span class="p">(</span><span class="n">coadds</span><span class="o">*</span><span class="n">instrument</span><span class="o">.</span><span class="n">get_saturation_level</span><span class="p">(</span><span class="n">hdr</span><span class="p">))</span> <span class="o">-</span> <span class="n">nonlinSky</span> <span class="o">-</span> <span class="n">bkg</span>
             <span class="n">file</span><span class="p">(</span><span class="n">_max</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">satLevel</span><span class="p">))</span>
 
             <span class="c1">### Rename and clean up files ###</span>
@@ -424,7 +424,6 @@
 
             <span class="c1">### Make the *.coo file and update headers ###</span>
             <span class="c1"># First check if PA is not zero</span>
-            <span class="n">hdr</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getheader</span><span class="p">(</span><span class="n">_raw</span><span class="p">,</span> <span class="n">ignore_missing_end</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
             <span class="n">phi</span> <span class="o">=</span> <span class="n">instrument</span><span class="o">.</span><span class="n">get_position_angle</span><span class="p">(</span><span class="n">hdr</span><span class="p">)</span>
 
             <span class="n">clean_makecoo</span><span class="p">(</span><span class="n">_ce</span><span class="p">,</span> <span class="n">_cc</span><span class="p">,</span> <span class="n">refSrc</span><span class="p">,</span> <span class="n">strSrc</span><span class="p">,</span> <span class="n">aotsxyRef</span><span class="p">,</span> <span class="n">radecRef</span><span class="p">,</span>
@@ -459,7 +458,7 @@
 
 <div class="viewcode-block" id="clean_get_supermask">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/data/index.html#kai.reduce.data.clean_get_supermask">[docs]</a>
-<span class="k">def</span> <span class="nf">clean_get_supermask</span><span class="p">(</span><span class="n">_statmask</span><span class="p">,</span> <span class="n">_supermask</span><span class="p">,</span> <span class="n">badColumns</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">clean_get_supermask</span><span class="p">(</span><span class="n">_statmask</span><span class="p">,</span> <span class="n">_supermask</span><span class="p">,</span> <span class="n">badColumns</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Create temporary mask for each individual image that will contain the</span>
 <span class="sd">    supermask plus the designated bad columns.</span>
@@ -485,7 +484,7 @@
 
 <div class="viewcode-block" id="clean_makemask">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/data/index.html#kai.reduce.data.clean_makemask">[docs]</a>
-<span class="k">def</span> <span class="nf">clean_makemask</span><span class="p">(</span><span class="n">_mask</span><span class="p">,</span> <span class="n">_mask_cosmic</span><span class="p">,</span> <span class="n">_mask_static</span><span class="p">,</span> <span class="n">wave</span><span class="p">,</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">clean_makemask</span><span class="p">(</span><span class="n">_mask</span><span class="p">,</span> <span class="n">_mask_cosmic</span><span class="p">,</span> <span class="n">_mask_static</span><span class="p">,</span> <span class="n">wave</span><span class="p">,</span>
                    <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    _mask -- output name for final mask</span>
@@ -532,7 +531,7 @@
 
 <div class="viewcode-block" id="clean_lp">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/data/index.html#kai.reduce.data.clean_lp">[docs]</a>
-<span class="k">def</span> <span class="nf">clean_lp</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="n">nite</span><span class="p">,</span> <span class="n">wave</span><span class="p">,</span> <span class="n">refSrc</span><span class="p">,</span> <span class="n">strSrc</span><span class="p">,</span> <span class="n">angOff</span><span class="p">,</span> <span class="n">skyfile</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">clean_lp</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="n">nite</span><span class="p">,</span> <span class="n">wave</span><span class="p">,</span> <span class="n">refSrc</span><span class="p">,</span> <span class="n">strSrc</span><span class="p">,</span> <span class="n">angOff</span><span class="p">,</span> <span class="n">skyfile</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Only here for backwards compatability.</span>
 <span class="sd">    You should use clean() instead.</span>
@@ -543,7 +542,7 @@
 
 <div class="viewcode-block" id="combine">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/data/index.html#kai.reduce.data.combine">[docs]</a>
-<span class="k">def</span> <span class="nf">combine</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="n">wave</span><span class="p">,</span> <span class="n">outroot</span><span class="p">,</span> <span class="n">field</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">outSuffix</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">combine</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="n">wave</span><span class="p">,</span> <span class="n">outroot</span><span class="p">,</span> <span class="n">field</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">outSuffix</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
             <span class="n">trim</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fwhm_max</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">submaps</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
             <span class="n">fixDAR</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">use_koa_weather</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
             <span class="n">mask</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
@@ -882,7 +881,7 @@
 
 <div class="viewcode-block" id="rot_img">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/data/index.html#kai.reduce.data.rot_img">[docs]</a>
-<span class="k">def</span> <span class="nf">rot_img</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">cleanDir</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">rot_img</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">cleanDir</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Rotate images to PA=0 if they have a different PA from one</span>
 <span class="sd">    another. If the entire data set is taken at a single PA, leave</span>
 <span class="sd">    it as is. Do this only if set includes various PAs.</span>
@@ -910,7 +909,7 @@
 
 <div class="viewcode-block" id="gcSourceXY">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/data/index.html#kai.reduce.data.gcSourceXY">[docs]</a>
-<span class="k">def</span> <span class="nf">gcSourceXY</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">label_file</span><span class="o">=</span><span class="s1">&#39;/Users/jlu/data/gc/source_list/label.dat&#39;</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">gcSourceXY</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">label_file</span><span class="o">=</span><span class="s1">&#39;/Users/jlu/data/gc/source_list/label.dat&#39;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Queries label.dat for the xy offset from Sgr A* (in arcsec)</span>
 <span class="sd">    for the star given as an input</span>
@@ -951,7 +950,7 @@
 
 <div class="viewcode-block" id="calcStrehl">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/data/index.html#kai.reduce.data.calcStrehl">[docs]</a>
-<span class="k">def</span> <span class="nf">calcStrehl</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="n">wave</span><span class="p">,</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">calcStrehl</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="n">wave</span><span class="p">,</span>
                <span class="n">clean_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">field</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -1046,7 +1045,7 @@
 
 <div class="viewcode-block" id="weight_by_strehl">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/data/index.html#kai.reduce.data.weight_by_strehl">[docs]</a>
-<span class="k">def</span> <span class="nf">weight_by_strehl</span><span class="p">(</span><span class="n">roots</span><span class="p">,</span> <span class="n">strehls</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">weight_by_strehl</span><span class="p">(</span><span class="n">roots</span><span class="p">,</span> <span class="n">strehls</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate weights based on the strehl of each image.</span>
 <span class="sd">    This does some intelligent handling for REALLY bad data quality.</span>
@@ -1073,7 +1072,7 @@
 
 <div class="viewcode-block" id="trim_on_fwhm">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/data/index.html#kai.reduce.data.trim_on_fwhm">[docs]</a>
-<span class="k">def</span> <span class="nf">trim_on_fwhm</span><span class="p">(</span><span class="n">roots</span><span class="p">,</span> <span class="n">strehls</span><span class="p">,</span> <span class="n">fwhm</span><span class="p">,</span> <span class="n">fwhm_max</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">trim_on_fwhm</span><span class="p">(</span><span class="n">roots</span><span class="p">,</span> <span class="n">strehls</span><span class="p">,</span> <span class="n">fwhm</span><span class="p">,</span> <span class="n">fwhm_max</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Take a list of files and trim based on the FWHM. All files that have a</span>
 <span class="sd">    FWHM &lt; 1.25 * FWHM.min()</span>
@@ -1108,7 +1107,7 @@
 
 <div class="viewcode-block" id="readWeightsFile">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/data/index.html#kai.reduce.data.readWeightsFile">[docs]</a>
-<span class="k">def</span> <span class="nf">readWeightsFile</span><span class="p">(</span><span class="n">roots</span><span class="p">,</span> <span class="n">weightFile</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">readWeightsFile</span><span class="p">(</span><span class="n">roots</span><span class="p">,</span> <span class="n">weightFile</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Expects a file of the format:</span>
 <span class="sd">    column1 = file name (e.g. c0001.fits).</span>
@@ -1133,7 +1132,7 @@
 
 <div class="viewcode-block" id="loadStrehl">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/data/index.html#kai.reduce.data.loadStrehl">[docs]</a>
-<span class="k">def</span> <span class="nf">loadStrehl</span><span class="p">(</span><span class="n">cleanDir</span><span class="p">,</span> <span class="n">roots</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">loadStrehl</span><span class="p">(</span><span class="n">cleanDir</span><span class="p">,</span> <span class="n">roots</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Load Strehl and FWHM info. The file format will be</span>
 <span class="sd">    column1 = name of cleaned fits file (e.g. c0001.fits).</span>
@@ -1160,7 +1159,7 @@
 
 <div class="viewcode-block" id="trim_table_by_name">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/data/index.html#kai.reduce.data.trim_table_by_name">[docs]</a>
-<span class="k">def</span> <span class="nf">trim_table_by_name</span><span class="p">(</span><span class="n">outroots</span><span class="p">,</span> <span class="n">tableFileName</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">trim_table_by_name</span><span class="p">(</span><span class="n">outroots</span><span class="p">,</span> <span class="n">tableFileName</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Takes a list of values (listed in tableFileName) and trim them down based on</span>
 <span class="sd">    the desired output list of root files names (outroots).</span>
@@ -1182,7 +1181,7 @@
 
 <div class="viewcode-block" id="combine_drizzle">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/data/index.html#kai.reduce.data.combine_drizzle">[docs]</a>
-<span class="k">def</span> <span class="nf">combine_drizzle</span><span class="p">(</span><span class="n">imgsize</span><span class="p">,</span> <span class="n">cleanDir</span><span class="p">,</span> <span class="n">roots</span><span class="p">,</span> <span class="n">outroot</span><span class="p">,</span> <span class="n">weights</span><span class="p">,</span> <span class="n">shifts</span><span class="p">,</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">combine_drizzle</span><span class="p">(</span><span class="n">imgsize</span><span class="p">,</span> <span class="n">cleanDir</span><span class="p">,</span> <span class="n">roots</span><span class="p">,</span> <span class="n">outroot</span><span class="p">,</span> <span class="n">weights</span><span class="p">,</span> <span class="n">shifts</span><span class="p">,</span>
                     <span class="n">wave</span><span class="p">,</span> <span class="n">diffPA</span><span class="p">,</span> <span class="n">fixDAR</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">use_koa_weather</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                     <span class="n">mask</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">,</span>
                    <span class="p">):</span>
@@ -1272,7 +1271,7 @@
 
         
         <span class="c1"># Read in MJD of current file from FITS header</span>
-        <span class="n">mjd</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;MJD-OBS&#39;</span><span class="p">])</span>
+        <span class="n">mjd</span> <span class="o">=</span> <span class="n">instrument</span><span class="o">.</span><span class="n">get_mjd</span><span class="p">(</span><span class="n">hdr</span><span class="p">)</span>
         <span class="n">mjd_weightedSum</span> <span class="o">+=</span> <span class="n">weights</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">mjd</span>
         
         <span class="c1"># Drizzle this file ontop of all previous ones.</span>
@@ -1355,6 +1354,10 @@
         <span class="s1">&#39;MJD-OBS&#39;</span><span class="p">,</span> <span class="n">mjd_weightedMean</span><span class="p">,</span>
         <span class="s1">&#39;Weighted modified julian date of combined observations&#39;</span>
     <span class="p">)</span>
+    <span class="n">fits_f</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
+        <span class="s1">&#39;MJD&#39;</span><span class="p">,</span> <span class="n">mjd_weightedMean</span><span class="p">,</span>
+        <span class="s1">&#39;Weighted modified julian date of combined observations&#39;</span>
+    <span class="p">)</span>
     
     <span class="c1">## Also update date field in header</span>
     <span class="n">fits_f</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
@@ -1370,7 +1373,7 @@
 
 <div class="viewcode-block" id="combine_submaps">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/data/index.html#kai.reduce.data.combine_submaps">[docs]</a>
-<span class="k">def</span> <span class="nf">combine_submaps</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">combine_submaps</span><span class="p">(</span>
         <span class="n">imgsize</span><span class="p">,</span> <span class="n">cleanDir</span><span class="p">,</span> <span class="n">roots</span><span class="p">,</span> <span class="n">outroot</span><span class="p">,</span> <span class="n">weights</span><span class="p">,</span>
         <span class="n">shifts</span><span class="p">,</span> <span class="n">submaps</span><span class="p">,</span> <span class="n">wave</span><span class="p">,</span> <span class="n">diffPA</span><span class="p">,</span>
         <span class="n">fixDAR</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">use_koa_weather</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
@@ -1491,7 +1494,7 @@
             <span class="n">ir</span><span class="o">.</span><span class="n">drizzle</span><span class="o">.</span><span class="n">ygeoim</span> <span class="o">=</span> <span class="n">distYgeoim</span>
 
         <span class="c1"># Read in MJD of current file from FITS header</span>
-        <span class="n">mjd</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;MJD-OBS&#39;</span><span class="p">])</span>
+        <span class="n">mjd</span> <span class="o">=</span> <span class="n">instrument</span><span class="o">.</span><span class="n">get_mjd</span><span class="p">(</span><span class="n">hdr</span><span class="p">)</span>
         <span class="n">mjd_weightedSums</span><span class="p">[</span><span class="n">sub</span><span class="p">]</span> <span class="o">+=</span> <span class="n">weights</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">mjd</span>
         
         <span class="c1"># Drizzle this file ontop of all previous ones.</span>
@@ -1566,10 +1569,23 @@
                               <span class="s1">&#39;Y Distortion Image&#39;</span><span class="p">)</span>
         
         <span class="c1"># Store weighted MJDs in header</span>
-        <span class="n">fits_f</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s1">&#39;MJD-OBS&#39;</span><span class="p">,</span> <span class="n">mjd_weightedMeans</span><span class="p">[</span><span class="n">s</span><span class="p">],</span> <span class="s1">&#39;Weighted modified julian date of combined observations&#39;</span><span class="p">)</span>
-    
+        <span class="n">fits_f</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
+            <span class="s1">&#39;MJD-OBS&#39;</span><span class="p">,</span>
+            <span class="n">mjd_weightedMeans</span><span class="p">[</span><span class="n">s</span><span class="p">],</span>
+            <span class="s1">&#39;Weighted modified julian date of combined observations&#39;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">fits_f</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
+            <span class="s1">&#39;MJD&#39;</span><span class="p">,</span>
+            <span class="n">mjd_weightedMeans</span><span class="p">[</span><span class="n">s</span><span class="p">],</span>
+            <span class="s1">&#39;Weighted modified julian date of combined observations&#39;</span><span class="p">,</span>
+        <span class="p">)</span>
+        
         <span class="c1">## Also update date field in header</span>
-        <span class="n">fits_f</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s1">&#39;DATE&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{0}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">submaps_time_obs</span><span class="p">[</span><span class="n">s</span><span class="p">]</span><span class="o">.</span><span class="n">fits</span><span class="p">),</span> <span class="s1">&#39;Weighted observation date&#39;</span><span class="p">)</span>
+        <span class="n">fits_f</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
+            <span class="s1">&#39;DATE&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;</span><span class="si">{0}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">submaps_time_obs</span><span class="p">[</span><span class="n">s</span><span class="p">]</span><span class="o">.</span><span class="n">fits</span><span class="p">),</span>
+            <span class="s1">&#39;Weighted observation date&#39;</span><span class="p">,</span>
+        <span class="p">)</span>
         
         <span class="c1"># Write out final submap fits file</span>
         <span class="n">fits_f</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">writeto</span><span class="p">(</span><span class="n">_fits</span><span class="p">[</span><span class="n">s</span><span class="p">],</span> <span class="n">output_verify</span><span class="o">=</span><span class="n">outputVerify</span><span class="p">)</span>
@@ -1582,7 +1598,7 @@
 
 <div class="viewcode-block" id="combine_rotation">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/data/index.html#kai.reduce.data.combine_rotation">[docs]</a>
-<span class="k">def</span> <span class="nf">combine_rotation</span><span class="p">(</span><span class="n">cleanDir</span><span class="p">,</span> <span class="n">roots</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">combine_rotation</span><span class="p">(</span><span class="n">cleanDir</span><span class="p">,</span> <span class="n">roots</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Determine if images are different PAs. If so, then</span>
 <span class="sd">    temporarily rotate the images for xregister to use</span>
@@ -1620,7 +1636,7 @@
 
 <div class="viewcode-block" id="sort_frames">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/data/index.html#kai.reduce.data.sort_frames">[docs]</a>
-<span class="k">def</span> <span class="nf">sort_frames</span><span class="p">(</span><span class="n">roots</span><span class="p">,</span> <span class="n">strehls</span><span class="p">,</span> <span class="n">fwhm</span><span class="p">,</span> <span class="n">weights</span><span class="p">,</span> <span class="n">shiftsTab</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">sort_frames</span><span class="p">(</span><span class="n">roots</span><span class="p">,</span> <span class="n">strehls</span><span class="p">,</span> <span class="n">fwhm</span><span class="p">,</span> <span class="n">weights</span><span class="p">,</span> <span class="n">shiftsTab</span><span class="p">):</span>
     <span class="n">sidx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">fwhm</span><span class="p">)</span>
 
     <span class="c1"># Make sorted lists.</span>
@@ -1661,7 +1677,7 @@
 
 <div class="viewcode-block" id="combine_ref">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/data/index.html#kai.reduce.data.combine_ref">[docs]</a>
-<span class="k">def</span> <span class="nf">combine_ref</span><span class="p">(</span><span class="n">coofile</span><span class="p">,</span> <span class="n">cleanDir</span><span class="p">,</span> <span class="n">roots</span><span class="p">,</span> <span class="n">diffPA</span><span class="p">,</span> <span class="n">refImage_index</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">combine_ref</span><span class="p">(</span><span class="n">coofile</span><span class="p">,</span> <span class="n">cleanDir</span><span class="p">,</span> <span class="n">roots</span><span class="p">,</span> <span class="n">diffPA</span><span class="p">,</span> <span class="n">refImage_index</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Pulls reference star coordinates from image header keywords.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -1687,7 +1703,7 @@
 
 <div class="viewcode-block" id="combine_coo">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/data/index.html#kai.reduce.data.combine_coo">[docs]</a>
-<span class="k">def</span> <span class="nf">combine_coo</span><span class="p">(</span><span class="n">coofile</span><span class="p">,</span> <span class="n">cleanDir</span><span class="p">,</span> <span class="n">roots</span><span class="p">,</span> <span class="n">diffPA</span><span class="p">,</span> <span class="n">refImage_index</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">combine_coo</span><span class="p">(</span><span class="n">coofile</span><span class="p">,</span> <span class="n">cleanDir</span><span class="p">,</span> <span class="n">roots</span><span class="p">,</span> <span class="n">diffPA</span><span class="p">,</span> <span class="n">refImage_index</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Pulls reference star coordinates from *.coo files.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -1720,7 +1736,7 @@
 
 <div class="viewcode-block" id="combine_lis">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/data/index.html#kai.reduce.data.combine_lis">[docs]</a>
-<span class="k">def</span> <span class="nf">combine_lis</span><span class="p">(</span><span class="n">outfile</span><span class="p">,</span> <span class="n">cleanDir</span><span class="p">,</span> <span class="n">roots</span><span class="p">,</span> <span class="n">diffPA</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">combine_lis</span><span class="p">(</span><span class="n">outfile</span><span class="p">,</span> <span class="n">cleanDir</span><span class="p">,</span> <span class="n">roots</span><span class="p">,</span> <span class="n">diffPA</span><span class="p">):</span>
     <span class="c1"># Delete previously existing file</span>
     <span class="n">util</span><span class="o">.</span><span class="n">rmall</span><span class="p">([</span><span class="n">outfile</span><span class="p">])</span>
 
@@ -1743,7 +1759,7 @@
 
 <div class="viewcode-block" id="combine_register">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/data/index.html#kai.reduce.data.combine_register">[docs]</a>
-<span class="k">def</span> <span class="nf">combine_register</span><span class="p">(</span><span class="n">outroot</span><span class="p">,</span> <span class="n">refImage</span><span class="p">,</span> <span class="n">diffPA</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">combine_register</span><span class="p">(</span><span class="n">outroot</span><span class="p">,</span> <span class="n">refImage</span><span class="p">,</span> <span class="n">diffPA</span><span class="p">):</span>
     <span class="n">shiftFile</span> <span class="o">=</span> <span class="n">outroot</span> <span class="o">+</span> <span class="s1">&#39;.shifts&#39;</span>
     <span class="n">util</span><span class="o">.</span><span class="n">rmall</span><span class="p">([</span><span class="n">shiftFile</span><span class="p">])</span>
 
@@ -1816,7 +1832,7 @@
 
 <div class="viewcode-block" id="combine_log">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/data/index.html#kai.reduce.data.combine_log">[docs]</a>
-<span class="k">def</span> <span class="nf">combine_log</span><span class="p">(</span><span class="n">outroot</span><span class="p">,</span> <span class="n">roots</span><span class="p">,</span> <span class="n">strehls</span><span class="p">,</span> <span class="n">fwhm</span><span class="p">,</span> <span class="n">weights</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">combine_log</span><span class="p">(</span><span class="n">outroot</span><span class="p">,</span> <span class="n">roots</span><span class="p">,</span> <span class="n">strehls</span><span class="p">,</span> <span class="n">fwhm</span><span class="p">,</span> <span class="n">weights</span><span class="p">):</span>
     <span class="n">_log</span> <span class="o">=</span> <span class="n">outroot</span> <span class="o">+</span> <span class="s1">&#39;.log&#39;</span>
     <span class="n">util</span><span class="o">.</span><span class="n">rmall</span><span class="p">([</span><span class="n">_log</span><span class="p">])</span>
 
@@ -1830,7 +1846,7 @@
 
 <div class="viewcode-block" id="combine_size">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/data/index.html#kai.reduce.data.combine_size">[docs]</a>
-<span class="k">def</span> <span class="nf">combine_size</span><span class="p">(</span><span class="n">shiftsTable</span><span class="p">,</span> <span class="n">refImage</span><span class="p">,</span> <span class="n">outroot</span><span class="p">,</span> <span class="n">subroot</span><span class="p">,</span> <span class="n">submaps</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">combine_size</span><span class="p">(</span><span class="n">shiftsTable</span><span class="p">,</span> <span class="n">refImage</span><span class="p">,</span> <span class="n">outroot</span><span class="p">,</span> <span class="n">subroot</span><span class="p">,</span> <span class="n">submaps</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Determine the final size of the fully combined image. Use the</span>
 <span class="sd">    shifts stored in the shiftsTable.</span>
 
@@ -1891,7 +1907,7 @@
 
 <div class="viewcode-block" id="setup_drizzle">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/data/index.html#kai.reduce.data.setup_drizzle">[docs]</a>
-<span class="k">def</span> <span class="nf">setup_drizzle</span><span class="p">(</span><span class="n">imgsize</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">setup_drizzle</span><span class="p">(</span><span class="n">imgsize</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Setup drizzle parameters for NIRC2 data.</span>
 <span class="sd">    @param imgsize: The size (in pixels) of the final drizzle image.</span>
 <span class="sd">    This assumes that the image will be square.</span>
@@ -1923,7 +1939,7 @@
 
 <div class="viewcode-block" id="clean_drizzle">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/data/index.html#kai.reduce.data.clean_drizzle">[docs]</a>
-<span class="k">def</span> <span class="nf">clean_drizzle</span><span class="p">(</span><span class="n">xgeoim</span><span class="p">,</span> <span class="n">ygeoim</span><span class="p">,</span> <span class="n">_bp</span><span class="p">,</span> <span class="n">_cd</span><span class="p">,</span> <span class="n">_wgt</span><span class="p">,</span> <span class="n">_dlog</span><span class="p">,</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">clean_drizzle</span><span class="p">(</span><span class="n">xgeoim</span><span class="p">,</span> <span class="n">ygeoim</span><span class="p">,</span> <span class="n">_bp</span><span class="p">,</span> <span class="n">_cd</span><span class="p">,</span> <span class="n">_wgt</span><span class="p">,</span> <span class="n">_dlog</span><span class="p">,</span>
         <span class="n">fixDAR</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">,</span>
         <span class="n">use_koa_weather</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="c1"># Get the distortion maps for this instrument.</span>
@@ -1949,7 +1965,7 @@
 
 <div class="viewcode-block" id="clean_cosmicrays">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/data/index.html#kai.reduce.data.clean_cosmicrays">[docs]</a>
-<span class="k">def</span> <span class="nf">clean_cosmicrays</span><span class="p">(</span><span class="n">_ff</span><span class="p">,</span> <span class="n">_mask</span><span class="p">,</span> <span class="n">wave</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">clean_cosmicrays</span><span class="p">(</span><span class="n">_ff</span><span class="p">,</span> <span class="n">_mask</span><span class="p">,</span> <span class="n">wave</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Clean the image of cosmicrays and make a mask containing the location</span>
 <span class="sd">    of all the cosmicrays. The CR masks can later be used in combine() to</span>
 <span class="sd">    keep cosmicrays from being included.</span>
@@ -2002,7 +2018,7 @@
 
 <div class="viewcode-block" id="clean_cosmicrays2">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/data/index.html#kai.reduce.data.clean_cosmicrays2">[docs]</a>
-<span class="k">def</span> <span class="nf">clean_cosmicrays2</span><span class="p">(</span><span class="n">_ff</span><span class="p">,</span> <span class="n">_ff_cr</span><span class="p">,</span> <span class="n">_mask</span><span class="p">,</span> <span class="n">wave</span><span class="p">,</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">clean_cosmicrays2</span><span class="p">(</span><span class="n">_ff</span><span class="p">,</span> <span class="n">_ff_cr</span><span class="p">,</span> <span class="n">_mask</span><span class="p">,</span> <span class="n">wave</span><span class="p">,</span>
                       <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Clean the image of cosmicrays and make a mask containing the location</span>
 <span class="sd">    of all the cosmicrays. The CR masks can later be used in combine() to</span>
@@ -2038,7 +2054,7 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="n">readnoise</span> <span class="o">=</span> <span class="mf">15.0</span> <span class="o">*</span> <span class="p">(</span><span class="mf">16.0</span> <span class="o">/</span> <span class="n">numreads</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span>
 
-    <span class="kn">from</span> <span class="nn">jlu.util</span> <span class="kn">import</span> <span class="n">cosmics</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">jlu.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">cosmics</span>
     <span class="n">c</span> <span class="o">=</span> <span class="n">cosmics</span><span class="o">.</span><span class="n">cosmicsimage</span><span class="p">(</span><span class="n">ff_img</span><span class="p">,</span> <span class="n">gain</span><span class="o">=</span><span class="n">gain</span><span class="p">,</span> <span class="n">readnoise</span><span class="o">=</span><span class="n">readnoise</span><span class="p">,</span>
                              <span class="n">sigclip</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">sigfrac</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">objlim</span><span class="o">=</span><span class="mf">5.0</span><span class="p">)</span>
     <span class="n">c</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">maxiter</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
@@ -2052,7 +2068,7 @@
 
 <div class="viewcode-block" id="clean_persistance">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/data/index.html#kai.reduce.data.clean_persistance">[docs]</a>
-<span class="k">def</span> <span class="nf">clean_persistance</span><span class="p">(</span><span class="n">_n</span><span class="p">,</span> <span class="n">_pers</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">clean_persistance</span><span class="p">(</span><span class="n">_n</span><span class="p">,</span> <span class="n">_pers</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Make masks of the persistance to be used in combining the images</span>
 <span class="sd">    later on.</span>
@@ -2075,7 +2091,7 @@
 
 <div class="viewcode-block" id="clean_bkgsubtract">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/data/index.html#kai.reduce.data.clean_bkgsubtract">[docs]</a>
-<span class="k">def</span> <span class="nf">clean_bkgsubtract</span><span class="p">(</span><span class="n">_ff_f</span><span class="p">,</span> <span class="n">_bp</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">clean_bkgsubtract</span><span class="p">(</span><span class="n">_ff_f</span><span class="p">,</span> <span class="n">_bp</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Do additional background subtraction of any excess background</span>
 <span class="sd">    flux. This isn&#39;t strictly necessary since it just removes a constant.&quot;&quot;&quot;</span>
     <span class="c1"># Open the image for processing.</span>
@@ -2113,7 +2129,7 @@
 
 <div class="viewcode-block" id="clean_makecoo">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/data/index.html#kai.reduce.data.clean_makecoo">[docs]</a>
-<span class="k">def</span> <span class="nf">clean_makecoo</span><span class="p">(</span><span class="n">_ce</span><span class="p">,</span> <span class="n">_cc</span><span class="p">,</span> <span class="n">refSrc</span><span class="p">,</span> <span class="n">strSrc</span><span class="p">,</span> <span class="n">aotsxyRef</span><span class="p">,</span> <span class="n">radecRef</span><span class="p">,</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">clean_makecoo</span><span class="p">(</span><span class="n">_ce</span><span class="p">,</span> <span class="n">_cc</span><span class="p">,</span> <span class="n">refSrc</span><span class="p">,</span> <span class="n">strSrc</span><span class="p">,</span> <span class="n">aotsxyRef</span><span class="p">,</span> <span class="n">radecRef</span><span class="p">,</span>
         <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">,</span> <span class="n">check_loc</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">update_fits</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">cent_box</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
         <span class="n">offset_method</span><span class="o">=</span><span class="s1">&#39;aotsxy&#39;</span><span class="p">,</span><span class="n">pcuxyRef</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -2153,7 +2169,7 @@
 
     <span class="n">hdr</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getheader</span><span class="p">(</span><span class="n">_ce</span><span class="p">,</span> <span class="n">ignore_missing_end</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-    <span class="n">radec</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;RA&#39;</span><span class="p">]),</span> <span class="nb">float</span><span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;DEC&#39;</span><span class="p">])]</span>
+    <span class="n">radec</span> <span class="o">=</span> <span class="n">instrument</span><span class="o">.</span><span class="n">get_radec</span><span class="p">(</span><span class="n">hdr</span><span class="p">)</span>
     <span class="n">aotsxy</span> <span class="o">=</span> <span class="n">kai_util</span><span class="o">.</span><span class="n">getAotsxy</span><span class="p">(</span><span class="n">hdr</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">offset_method</span> <span class="o">==</span> <span class="s1">&#39;pcu&#39;</span><span class="p">:</span>
         <span class="n">pcuxy</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;PCSFX&#39;</span><span class="p">]),</span> <span class="nb">float</span><span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;PCSFY&#39;</span><span class="p">])]</span>  <span class="c1">#New version may be PCUX and PCUY</span>
@@ -2231,7 +2247,7 @@
 
 <div class="viewcode-block" id="mosaic_ref">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/data/index.html#kai.reduce.data.mosaic_ref">[docs]</a>
-<span class="k">def</span> <span class="nf">mosaic_ref</span><span class="p">(</span><span class="n">outFile</span><span class="p">,</span> <span class="n">cleanDir</span><span class="p">,</span> <span class="n">roots</span><span class="p">,</span> <span class="n">diffPA</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">mosaic_ref</span><span class="p">(</span><span class="n">outFile</span><span class="p">,</span> <span class="n">cleanDir</span><span class="p">,</span> <span class="n">roots</span><span class="p">,</span> <span class="n">diffPA</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate an initial guess at the offsets between mosaic frames.</span>
 <span class="sd">    using the AOTSX/Y keywords from a reference image and each science</span>
 <span class="sd">    image to tell how the positions of the two frames are related.</span>
@@ -2283,8 +2299,8 @@
 
 <div class="viewcode-block" id="Sky">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/data/index.html#kai.reduce.data.Sky">[docs]</a>
-<span class="k">class</span> <span class="nc">Sky</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sciDir</span><span class="p">,</span> <span class="n">skyDir</span><span class="p">,</span> <span class="n">wave</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Sky</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sciDir</span><span class="p">,</span> <span class="n">skyDir</span><span class="p">,</span> <span class="n">wave</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
                  <span class="n">skyfile</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">angleOffset</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
                  <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">):</span>
         <span class="c1"># Setup some variables we will need later on</span>
@@ -2334,7 +2350,7 @@
 
 <div class="viewcode-block" id="Sky.__initLp__">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/data/index.html#kai.reduce.data.Sky.__initLp__">[docs]</a>
-    <span class="k">def</span> <span class="nf">__initLp__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__initLp__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Initializing Lp Sky skyfile=</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">skyFile</span><span class="p">))</span>
 
         <span class="c1"># Read skies from manual sky file (format: raw_science   sky)</span>
@@ -2376,7 +2392,7 @@
 
 <div class="viewcode-block" id="Sky.getSky">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/data/index.html#kai.reduce.data.Sky.getSky">[docs]</a>
-    <span class="k">def</span> <span class="nf">getSky</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_n</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">getSky</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_n</span><span class="p">):</span>
         <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wave</span> <span class="o">==</span> <span class="s1">&#39;lp&#39;</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">wave</span> <span class="o">==</span> <span class="s1">&#39;ms&#39;</span><span class="p">):</span>
             <span class="n">sky</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getSkyLp</span><span class="p">(</span><span class="n">_n</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -2395,7 +2411,7 @@
 
 <div class="viewcode-block" id="Sky.scaleSky">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/data/index.html#kai.reduce.data.Sky.scaleSky">[docs]</a>
-    <span class="k">def</span> <span class="nf">scaleSky</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_n</span><span class="p">,</span> <span class="n">_sky</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">scaleSky</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_n</span><span class="p">,</span> <span class="n">_sky</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Scale the mean level of the sky so that it matches the</span>
 <span class="sd">        science image.</span>
 
@@ -2434,7 +2450,7 @@
 
 <div class="viewcode-block" id="Sky.getSkyLp">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/data/index.html#kai.reduce.data.Sky.getSkyLp">[docs]</a>
-    <span class="k">def</span> <span class="nf">getSkyLp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_n</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">getSkyLp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_n</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Determine which sky we should use for L&#39;. Does all the</span>
 <span class="sd">        rotator mirror angle matching.</span>
 
@@ -2483,7 +2499,7 @@
 
 <div class="viewcode-block" id="Sky.getNonlinearCorrection">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/data/index.html#kai.reduce.data.Sky.getNonlinearCorrection">[docs]</a>
-    <span class="k">def</span> <span class="nf">getNonlinearCorrection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sky</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">getNonlinearCorrection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sky</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Determine the non-linearity level. Raw data level of</span>
 <span class="sd">        non-linearity is 12,000 but we subtracted</span>
 <span class="sd">        off a sky which changed this level. The sky is</span>
@@ -2517,7 +2533,7 @@
 
 <div class="viewcode-block" id="Sky.close">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/data/index.html#kai.reduce.data.Sky.close">[docs]</a>
-    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Close log files opened at init.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wave</span> <span class="o">==</span> <span class="s1">&#39;lp&#39;</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">wave</span> <span class="o">==</span> <span class="s1">&#39;ms&#39;</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">f_skylog</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
@@ -2527,7 +2543,7 @@
 
 <div class="viewcode-block" id="mosaic">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/data/index.html#kai.reduce.data.mosaic">[docs]</a>
-<span class="k">def</span> <span class="nf">mosaic</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="n">wave</span><span class="p">,</span> <span class="n">outroot</span><span class="p">,</span> <span class="n">field</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">outSuffix</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">mosaic</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="n">wave</span><span class="p">,</span> <span class="n">outroot</span><span class="p">,</span> <span class="n">field</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">outSuffix</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
             <span class="n">trim</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">fwhm_max</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">submaps</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">fixDAR</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">maskSubmap</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
             <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Accepts a list of cleaned images and does a weighted combining after</span>
@@ -2685,7 +2701,7 @@
 
 <div class="viewcode-block" id="mosaic_register">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/data/index.html#kai.reduce.data.mosaic_register">[docs]</a>
-<span class="k">def</span> <span class="nf">mosaic_register</span><span class="p">(</span><span class="n">outroot</span><span class="p">,</span> <span class="n">refImage</span><span class="p">,</span> <span class="n">diffPA</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">mosaic_register</span><span class="p">(</span><span class="n">outroot</span><span class="p">,</span> <span class="n">refImage</span><span class="p">,</span> <span class="n">diffPA</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Register images for a mosaic. This only calculates the exact</span>
 <span class="sd">    shifts between each image... it doesn&#39;t do the combining.</span>
@@ -2730,7 +2746,7 @@
 
 <div class="viewcode-block" id="mosaic_size">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/data/index.html#kai.reduce.data.mosaic_size">[docs]</a>
-<span class="k">def</span> <span class="nf">mosaic_size</span><span class="p">(</span><span class="n">shiftsTable</span><span class="p">,</span> <span class="n">refImage</span><span class="p">,</span> <span class="n">outroot</span><span class="p">,</span> <span class="n">subroot</span><span class="p">,</span> <span class="n">submaps</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">mosaic_size</span><span class="p">(</span><span class="n">shiftsTable</span><span class="p">,</span> <span class="n">refImage</span><span class="p">,</span> <span class="n">outroot</span><span class="p">,</span> <span class="n">subroot</span><span class="p">,</span> <span class="n">submaps</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Determine the final size for the completed mosaic.</span>
 

@@ -1,23 +1,21 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>kai.photometry &mdash; KAI  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
-      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=fd3f3429" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
-        <script src="../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -72,25 +70,25 @@
            <div itemprop="articleBody">
              
   <h1>Source code for kai.photometry</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">math</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pylab</span> <span class="k">as</span> <span class="nn">py</span>
-<span class="kn">from</span> <span class="nn">astropy.table</span> <span class="kn">import</span> <span class="n">Table</span>
-<span class="kn">from</span> <span class="nn">astropy.io</span> <span class="kn">import</span> <span class="n">fits</span>
-<span class="kn">import</span> <span class="nn">pickle</span><span class="o">,</span> <span class="nn">glob</span>
-<span class="kn">from</span> <span class="nn">mpl_toolkits.mplot3d</span> <span class="kn">import</span> <span class="n">Axes3D</span>
-<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">cm</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">interpolate</span>
-<span class="kn">import</span> <span class="nn">kai</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pylab</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">py</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy.table</span><span class="w"> </span><span class="kn">import</span> <span class="n">Table</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">fits</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pickle</span><span class="o">,</span><span class="w"> </span><span class="nn">glob</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">mpl_toolkits.mplot3d</span><span class="w"> </span><span class="kn">import</span> <span class="n">Axes3D</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">cm</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">interpolate</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">kai</span>
 
 <div class="viewcode-block" id="setup_phot">
 <a class="viewcode-back" href="../../autoapi/kai/photometry/index.html#kai.photometry.setup_phot">[docs]</a>
-<span class="k">def</span> <span class="nf">setup_phot</span><span class="p">(</span><span class="n">imageRoot</span><span class="p">,</span> <span class="n">silent</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">setup_phot</span><span class="p">(</span><span class="n">imageRoot</span><span class="p">,</span> <span class="n">silent</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                <span class="n">apertures</span><span class="o">=</span><span class="p">[</span><span class="mi">25</span><span class="p">,</span><span class="mi">50</span><span class="p">,</span><span class="mi">75</span><span class="p">,</span><span class="mi">100</span><span class="p">,</span><span class="mi">125</span><span class="p">,</span><span class="mi">150</span><span class="p">,</span><span class="mi">175</span><span class="p">,</span><span class="mi">200</span><span class="p">],</span>
                <span class="n">sky_annulus</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">sky_dannulus</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">zmag</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
 
-    <span class="kn">from</span> <span class="nn">pyraf</span> <span class="kn">import</span> <span class="n">iraf</span> <span class="k">as</span> <span class="n">ir</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">pyraf</span><span class="w"> </span><span class="kn">import</span> <span class="n">iraf</span> <span class="k">as</span> <span class="n">ir</span>
     
     <span class="c1"># Load image header</span>
     <span class="n">hdr</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getheader</span><span class="p">(</span><span class="n">imageRoot</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">)</span>
@@ -175,11 +173,11 @@
 
 <div class="viewcode-block" id="run_phot">
 <a class="viewcode-back" href="../../autoapi/kai/photometry/index.html#kai.photometry.run_phot">[docs]</a>
-<span class="k">def</span> <span class="nf">run_phot</span><span class="p">(</span><span class="n">imageRoot</span><span class="p">,</span> <span class="n">silent</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">run_phot</span><span class="p">(</span><span class="n">imageRoot</span><span class="p">,</span> <span class="n">silent</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
              <span class="n">apertures</span><span class="o">=</span><span class="p">[</span><span class="mi">25</span><span class="p">,</span><span class="mi">50</span><span class="p">,</span><span class="mi">75</span><span class="p">,</span><span class="mi">100</span><span class="p">,</span><span class="mi">125</span><span class="p">,</span><span class="mi">150</span><span class="p">,</span><span class="mi">175</span><span class="p">,</span><span class="mi">200</span><span class="p">],</span>
              <span class="n">sky_annulus</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">sky_dannulus</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">zmag</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
 
-    <span class="kn">from</span> <span class="nn">pyraf</span> <span class="kn">import</span> <span class="n">iraf</span> <span class="k">as</span> <span class="n">ir</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">pyraf</span><span class="w"> </span><span class="kn">import</span> <span class="n">iraf</span> <span class="k">as</span> <span class="n">ir</span>
     
     <span class="n">setup_phot</span><span class="p">(</span><span class="n">imageRoot</span><span class="p">,</span> <span class="n">apertures</span><span class="o">=</span><span class="n">apertures</span><span class="p">,</span> <span class="n">zmag</span><span class="o">=</span><span class="n">zmag</span><span class="p">,</span> <span class="n">silent</span><span class="o">=</span><span class="n">silent</span><span class="p">,</span>
                <span class="n">sky_annulus</span><span class="o">=</span><span class="n">sky_annulus</span><span class="p">,</span> <span class="n">sky_dannulus</span><span class="o">=</span><span class="n">sky_dannulus</span><span class="p">)</span>
@@ -200,8 +198,8 @@
 
 <div class="viewcode-block" id="get_phot_output">
 <a class="viewcode-back" href="../../autoapi/kai/photometry/index.html#kai.photometry.get_phot_output">[docs]</a>
-<span class="k">def</span> <span class="nf">get_phot_output</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">silent</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="kn">from</span> <span class="nn">pyraf</span> <span class="kn">import</span> <span class="n">iraf</span> <span class="k">as</span> <span class="n">ir</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_phot_output</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">silent</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">pyraf</span><span class="w"> </span><span class="kn">import</span> <span class="n">iraf</span> <span class="k">as</span> <span class="n">ir</span>
     
     <span class="c1"># Now get the results using txdump</span>
     <span class="n">radStr</span> <span class="o">=</span> <span class="n">ir</span><span class="o">.</span><span class="n">txdump</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="s1">&#39;RAPERT&#39;</span><span class="p">,</span> <span class="s1">&#39;yes&#39;</span><span class="p">,</span> <span class="n">Stdout</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
@@ -250,7 +248,7 @@
 
 <div class="viewcode-block" id="get_filter_profile">
 <a class="viewcode-back" href="../../autoapi/kai/photometry/index.html#kai.photometry.get_filter_profile">[docs]</a>
-<span class="k">def</span> <span class="nf">get_filter_profile</span><span class="p">(</span><span class="nb">filter</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_filter_profile</span><span class="p">(</span><span class="nb">filter</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Returns the wavelength (in microns) and the transmission for </span>
 <span class="sd">    the specified NIRC2 filter.</span>
@@ -293,7 +291,7 @@
 
 <div class="viewcode-block" id="test_filter_profile_interp">
 <a class="viewcode-back" href="../../autoapi/kai/photometry/index.html#kai.photometry.test_filter_profile_interp">[docs]</a>
-<span class="k">def</span> <span class="nf">test_filter_profile_interp</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_filter_profile_interp</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Plot up the filter transmission curves and their interpolations</span>
 <span class="sd">    for the three K-band filters (K, Kp, Ks).</span>
@@ -361,7 +359,7 @@
 
 <div class="viewcode-block" id="test_atmosphere_profile_interp">
 <a class="viewcode-back" href="../../autoapi/kai/photometry/index.html#kai.photometry.test_atmosphere_profile_interp">[docs]</a>
-<span class="k">def</span> <span class="nf">test_atmosphere_profile_interp</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_atmosphere_profile_interp</span><span class="p">():</span>
     <span class="n">atmDir</span> <span class="o">=</span> <span class="s1">&#39;/u/jlu/data/w51/09jun26/weather/atmosphere_transmission.dat&#39;</span>
     <span class="n">atmData</span> <span class="o">=</span> <span class="n">Table</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">atmDir</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;ascii&#39;</span><span class="p">)</span>
     <span class="n">atm_wave</span> <span class="o">=</span> <span class="n">atmData</span><span class="p">[</span><span class="n">atmData</span><span class="o">.</span><span class="n">colnames</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>

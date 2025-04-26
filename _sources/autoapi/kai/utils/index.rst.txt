@@ -4,8 +4,8 @@ kai.utils
 .. py:module:: kai.utils
 
 
-Subpackages
------------
+Submodules
+----------
 
 .. toctree::
    :maxdepth: 1

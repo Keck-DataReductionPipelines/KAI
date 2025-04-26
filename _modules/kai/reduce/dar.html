@@ -1,23 +1,21 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>kai.reduce.dar &mdash; KAI  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=fd3f3429" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
-        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -73,29 +71,29 @@
              
   <h1>Source code for kai.reduce.dar</h1><div class="highlight"><pre>
 <span></span><span class="c1"># from pyraf import iraf</span>
-<span class="kn">import</span> <span class="nn">glob</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pylab</span> <span class="k">as</span> <span class="nn">py</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">import</span> <span class="nn">math</span>
-<span class="kn">from</span> <span class="nn">astropy.io</span> <span class="kn">import</span> <span class="n">fits</span> <span class="k">as</span> <span class="n">pyfits</span>
-<span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">glob</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pylab</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">py</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">fits</span> <span class="k">as</span> <span class="n">pyfits</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">datetime</span>
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">urllib.request</span><span class="o">,</span> <span class="nn">urllib.parse</span><span class="o">,</span> <span class="nn">urllib.error</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">urllib.request</span><span class="o">,</span><span class="w"> </span><span class="nn">urllib.parse</span><span class="o">,</span><span class="w"> </span><span class="nn">urllib.error</span>
 <div class="viewcode-block" id="p2">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/dar/index.html#kai.reduce.dar.p2">[docs]</a>
     <span class="n">p2</span> <span class="o">=</span> <span class="kc">False</span></div>
 
 <span class="k">except</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">urllib</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">urllib</span>
     <span class="n">p2</span> <span class="o">=</span> <span class="kc">True</span> <span class="c1"># Python 2 is running, so the urllib command is different</span>
-<span class="kn">import</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">sys</span>
-<span class="kn">from</span> <span class="nn">kai.reduce</span> <span class="kn">import</span> <span class="n">kai_util</span>
-<span class="kn">from</span> <span class="nn">kai.reduce</span> <span class="kn">import</span> <span class="n">util</span>
-<span class="kn">from</span> <span class="nn">kai.reduce</span> <span class="kn">import</span> <span class="n">slalib</span>
-<span class="kn">from</span> <span class="nn">kai</span> <span class="kn">import</span> <span class="n">instruments</span>
-<span class="kn">from</span> <span class="nn">astropy.table</span> <span class="kn">import</span> <span class="n">Table</span>
-<span class="kn">from</span> <span class="nn">astropy.time</span> <span class="kn">import</span> <span class="n">Time</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span><span class="o">,</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">kai.reduce</span><span class="w"> </span><span class="kn">import</span> <span class="n">kai_util</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">kai.reduce</span><span class="w"> </span><span class="kn">import</span> <span class="n">util</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">kai.reduce</span><span class="w"> </span><span class="kn">import</span> <span class="n">slalib</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">kai</span><span class="w"> </span><span class="kn">import</span> <span class="n">instruments</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy.table</span><span class="w"> </span><span class="kn">import</span> <span class="n">Table</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy.time</span><span class="w"> </span><span class="kn">import</span> <span class="n">Time</span>
 
 <div class="viewcode-block" id="module_dir">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/dar/index.html#kai.reduce.dar.module_dir">[docs]</a>
@@ -105,7 +103,7 @@
 
 <div class="viewcode-block" id="get_atm_conditions">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/dar/index.html#kai.reduce.dar.get_atm_conditions">[docs]</a>
-<span class="k">def</span> <span class="nf">get_atm_conditions</span><span class="p">(</span><span class="n">year</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_atm_conditions</span><span class="p">(</span><span class="n">year</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Retrieve atmospheric conditions from CFHT archive website,</span>
 <span class="sd">    then calls dar.splitAtmosphereCFHT() to separate the data</span>
@@ -137,7 +135,7 @@
 
 <div class="viewcode-block" id="keckDARcoeffs">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/dar/index.html#kai.reduce.dar.keckDARcoeffs">[docs]</a>
-<span class="k">def</span> <span class="nf">keckDARcoeffs</span><span class="p">(</span><span class="n">lamda</span><span class="p">,</span> <span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">,</span> <span class="n">day</span><span class="p">,</span> <span class="n">hour</span><span class="p">,</span> <span class="n">minute</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">keckDARcoeffs</span><span class="p">(</span><span class="n">lamda</span><span class="p">,</span> <span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">,</span> <span class="n">day</span><span class="p">,</span> <span class="n">hour</span><span class="p">,</span> <span class="n">minute</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate the differential atmospheric refraction</span>
 <span class="sd">    for two objects observed at Keck.</span>
@@ -221,7 +219,7 @@
 
 <div class="viewcode-block" id="download_koa_dat_files">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/dar/index.html#kai.reduce.dar.download_koa_dat_files">[docs]</a>
-<span class="k">def</span> <span class="nf">download_koa_dat_files</span><span class="p">(</span><span class="n">date_str</span><span class="p">,</span> <span class="n">telescope_str</span><span class="p">,</span> <span class="n">param_name</span><span class="p">,</span> <span class="n">download_loc</span><span class="o">=</span><span class="s1">&#39;./&#39;</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">download_koa_dat_files</span><span class="p">(</span><span class="n">date_str</span><span class="p">,</span> <span class="n">telescope_str</span><span class="p">,</span> <span class="n">param_name</span><span class="p">,</span> <span class="n">download_loc</span><span class="o">=</span><span class="s1">&#39;./&#39;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Download the KOA atmospheric condition file for given date and</span>
 <span class="sd">    specified parameter, and save at the download location</span>
@@ -264,7 +262,7 @@
 
 <div class="viewcode-block" id="keckDARcoeffs_koa">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/dar/index.html#kai.reduce.dar.keckDARcoeffs_koa">[docs]</a>
-<span class="k">def</span> <span class="nf">keckDARcoeffs_koa</span><span class="p">(</span><span class="n">lamda</span><span class="p">,</span> <span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">,</span> <span class="n">day</span><span class="p">,</span> <span class="n">hour</span><span class="p">,</span> <span class="n">minute</span><span class="p">,</span> <span class="n">second</span><span class="p">,</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">keckDARcoeffs_koa</span><span class="p">(</span><span class="n">lamda</span><span class="p">,</span> <span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">,</span> <span class="n">day</span><span class="p">,</span> <span class="n">hour</span><span class="p">,</span> <span class="n">minute</span><span class="p">,</span> <span class="n">second</span><span class="p">,</span>
         <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate the differential atmospheric refraction</span>
@@ -392,7 +390,7 @@
 
 <div class="viewcode-block" id="kaidar">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/dar/index.html#kai.reduce.dar.kaidar">[docs]</a>
-<span class="k">def</span> <span class="nf">kaidar</span><span class="p">(</span><span class="n">fitsFile</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">,</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">kaidar</span><span class="p">(</span><span class="n">fitsFile</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">,</span>
         <span class="n">use_koa_weather</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Use the FITS header to extract date, time, wavelength,</span>
@@ -472,7 +470,7 @@
 
 <div class="viewcode-block" id="darPlusDistortion">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/dar/index.html#kai.reduce.dar.darPlusDistortion">[docs]</a>
-<span class="k">def</span> <span class="nf">darPlusDistortion</span><span class="p">(</span><span class="n">inputFits</span><span class="p">,</span> <span class="n">outputRoot</span><span class="p">,</span> <span class="n">xgeoim</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ygeoim</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">darPlusDistortion</span><span class="p">(</span><span class="n">inputFits</span><span class="p">,</span> <span class="n">outputRoot</span><span class="p">,</span> <span class="n">xgeoim</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ygeoim</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">,</span>
         <span class="n">use_koa_weather</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -570,7 +568,7 @@
 
 <div class="viewcode-block" id="applyDAR">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/dar/index.html#kai.reduce.dar.applyDAR">[docs]</a>
-<span class="k">def</span> <span class="nf">applyDAR</span><span class="p">(</span><span class="n">inputFits</span><span class="p">,</span> <span class="n">spaceStarlist</span><span class="p">,</span> <span class="n">plot</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">,</span> <span class="n">plotdir</span> <span class="o">=</span> <span class="s1">&#39;./&#39;</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">applyDAR</span><span class="p">(</span><span class="n">inputFits</span><span class="p">,</span> <span class="n">spaceStarlist</span><span class="p">,</span> <span class="n">plot</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">,</span> <span class="n">plotdir</span> <span class="o">=</span> <span class="s1">&#39;./&#39;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    inputFits: (str) name of fits file associated with this starlist</span>
 
@@ -723,7 +721,7 @@
 
 <div class="viewcode-block" id="removeDAR">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/dar/index.html#kai.reduce.dar.removeDAR">[docs]</a>
-<span class="k">def</span> <span class="nf">removeDAR</span><span class="p">(</span><span class="n">inputFits</span><span class="p">,</span> <span class="n">groundStarlist</span><span class="p">,</span> <span class="n">plot</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">,</span> <span class="n">plotdir</span> <span class="o">=</span> <span class="s1">&#39;./&#39;</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">removeDAR</span><span class="p">(</span><span class="n">inputFits</span><span class="p">,</span> <span class="n">groundStarlist</span><span class="p">,</span> <span class="n">plot</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">,</span> <span class="n">plotdir</span> <span class="o">=</span> <span class="s1">&#39;./&#39;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">    inputFits: (str) name of fits file associated with this starlist</span>
@@ -803,7 +801,7 @@
 
 <div class="viewcode-block" id="splitAtmosphereCFHT">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/dar/index.html#kai.reduce.dar.splitAtmosphereCFHT">[docs]</a>
-<span class="k">def</span> <span class="nf">splitAtmosphereCFHT</span><span class="p">(</span><span class="n">year</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">splitAtmosphereCFHT</span><span class="p">(</span><span class="n">year</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Take an original archive file containing atmospheric parameters and</span>
 <span class="sd">    split it up into seperate files for individual months. This makes</span>
@@ -841,7 +839,7 @@
     
 <div class="viewcode-block" id="test_darPlusDistortion">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/dar/index.html#kai.reduce.dar.test_darPlusDistortion">[docs]</a>
-<span class="k">def</span> <span class="nf">test_darPlusDistortion</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_darPlusDistortion</span><span class="p">():</span>
     <span class="n">data_dir</span> <span class="o">=</span> <span class="n">module_dir</span> <span class="o">+</span> <span class="s1">&#39;/distortion/&#39;</span>
     <span class="n">file_geox_darunfix</span> <span class="o">=</span> <span class="n">data_dir</span> <span class="o">+</span> <span class="s1">&#39;nirc2dist_xgeoim.fits&#39;</span>
     <span class="n">file_geoy_darunfix</span> <span class="o">=</span> <span class="n">data_dir</span> <span class="o">+</span> <span class="s1">&#39;nirc2dist_ygeoim.fits&#39;</span>

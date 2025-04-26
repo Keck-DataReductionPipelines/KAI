@@ -1,23 +1,21 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>kai.reduce.slalib &mdash; KAI  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=fd3f3429" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
-        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -72,11 +70,11 @@
            <div itemprop="articleBody">
              
   <h1>Source code for kai.reduce.slalib</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">math</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
 
 <div class="viewcode-block" id="refco">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/slalib/index.html#kai.reduce.slalib.refco">[docs]</a>
-<span class="k">def</span> <span class="nf">refco</span><span class="p">(</span><span class="n">HM</span><span class="p">,</span> <span class="n">TDK</span><span class="p">,</span> <span class="n">PMB</span><span class="p">,</span> <span class="n">RH</span><span class="p">,</span> <span class="n">WL</span><span class="p">,</span> <span class="n">PHI</span><span class="p">,</span> <span class="n">TLR</span><span class="p">,</span> <span class="n">EPS</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">refco</span><span class="p">(</span><span class="n">HM</span><span class="p">,</span> <span class="n">TDK</span><span class="p">,</span> <span class="n">PMB</span><span class="p">,</span> <span class="n">RH</span><span class="p">,</span> <span class="n">WL</span><span class="p">,</span> <span class="n">PHI</span><span class="p">,</span> <span class="n">TLR</span><span class="p">,</span> <span class="n">EPS</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Determine the constants A and B in the atmospheric refraction</span>
 <span class="sd">    model dZ = A tan Z + B tan**3 Z.</span>
@@ -140,7 +138,7 @@
 
 <div class="viewcode-block" id="refro">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/slalib/index.html#kai.reduce.slalib.refro">[docs]</a>
-<span class="k">def</span> <span class="nf">refro</span><span class="p">(</span><span class="n">ZOBS</span><span class="p">,</span> <span class="n">HM</span><span class="p">,</span> <span class="n">TDK</span><span class="p">,</span> <span class="n">PMB</span><span class="p">,</span> <span class="n">RH</span><span class="p">,</span> <span class="n">WL</span><span class="p">,</span> <span class="n">PHI</span><span class="p">,</span> <span class="n">TLR</span><span class="p">,</span> <span class="n">EPS</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">refro</span><span class="p">(</span><span class="n">ZOBS</span><span class="p">,</span> <span class="n">HM</span><span class="p">,</span> <span class="n">TDK</span><span class="p">,</span> <span class="n">PMB</span><span class="p">,</span> <span class="n">RH</span><span class="p">,</span> <span class="n">WL</span><span class="p">,</span> <span class="n">PHI</span><span class="p">,</span> <span class="n">TLR</span><span class="p">,</span> <span class="n">EPS</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Atmospheric refraction for radio and optical/IR wavelengths.</span>
 <span class="sd">  </span>
@@ -273,7 +271,7 @@
     <span class="n">HS</span> <span class="o">=</span> <span class="mf">80000.0</span>
     
     <span class="c1"># The refraction integrand</span>
-    <span class="k">def</span> <span class="nf">refi</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">dn</span><span class="p">,</span> <span class="n">rdndr</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">refi</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">dn</span><span class="p">,</span> <span class="n">rdndr</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">rdndr</span> <span class="o">/</span> <span class="p">(</span><span class="n">dn</span> <span class="o">+</span> <span class="n">rdndr</span><span class="p">)</span>
 
     <span class="c1"># Transform ZOBS into the normal range.</span>
@@ -487,7 +485,7 @@
 
 <div class="viewcode-block" id="atmt">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/slalib/index.html#kai.reduce.slalib.atmt">[docs]</a>
-<span class="k">def</span> <span class="nf">atmt</span><span class="p">(</span><span class="n">R0</span><span class="p">,</span> <span class="n">T0</span><span class="p">,</span> <span class="n">ALPHA</span><span class="p">,</span> <span class="n">GAMM2</span><span class="p">,</span> <span class="n">DELM2</span><span class="p">,</span> <span class="n">C1</span><span class="p">,</span> <span class="n">C2</span><span class="p">,</span> <span class="n">C3</span><span class="p">,</span> <span class="n">C4</span><span class="p">,</span> <span class="n">C5</span><span class="p">,</span> <span class="n">C6</span><span class="p">,</span> <span class="n">R</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">atmt</span><span class="p">(</span><span class="n">R0</span><span class="p">,</span> <span class="n">T0</span><span class="p">,</span> <span class="n">ALPHA</span><span class="p">,</span> <span class="n">GAMM2</span><span class="p">,</span> <span class="n">DELM2</span><span class="p">,</span> <span class="n">C1</span><span class="p">,</span> <span class="n">C2</span><span class="p">,</span> <span class="n">C3</span><span class="p">,</span> <span class="n">C4</span><span class="p">,</span> <span class="n">C5</span><span class="p">,</span> <span class="n">C6</span><span class="p">,</span> <span class="n">R</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Internal routine used by REFRO</span>
 <span class="sd">  </span>
@@ -533,7 +531,7 @@
 
 <div class="viewcode-block" id="atms">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/slalib/index.html#kai.reduce.slalib.atms">[docs]</a>
-<span class="k">def</span> <span class="nf">atms</span><span class="p">(</span><span class="n">RT</span><span class="p">,</span> <span class="n">TT</span><span class="p">,</span> <span class="n">DNT</span><span class="p">,</span> <span class="n">GAMAL</span><span class="p">,</span> <span class="n">R</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">atms</span><span class="p">(</span><span class="n">RT</span><span class="p">,</span> <span class="n">TT</span><span class="p">,</span> <span class="n">DNT</span><span class="p">,</span> <span class="n">GAMAL</span><span class="p">,</span> <span class="n">R</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">  </span>
 <span class="sd">    Internal routine used by REFRO</span>
@@ -568,7 +566,7 @@
 
 <div class="viewcode-block" id="da1p">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/slalib/index.html#kai.reduce.slalib.da1p">[docs]</a>
-<span class="k">def</span> <span class="nf">da1p</span><span class="p">(</span><span class="n">ANGLE</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">da1p</span><span class="p">(</span><span class="n">ANGLE</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Normalize angle into range +/- pi  (double precision)</span>
 <span class="sd">  </span>

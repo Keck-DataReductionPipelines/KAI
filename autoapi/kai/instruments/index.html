@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../../">
 <head>
@@ -5,25 +7,21 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>kai.instruments &mdash; KAI  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=fd3f3429" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
-        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="kai.photometry" href="../photometry/index.html" />
-    <link rel="prev" title="kai.constants" href="../constants/index.html" /> 
+    <link rel="next" title="kai.mtf" href="../mtf/index.html" />
+    <link rel="prev" title="kai.extern" href="../extern/index.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -49,16 +47,20 @@
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="../../index.html">API Reference</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="../index.html">kai</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="../index.html#subpackages">Subpackages</a></li>
 <li class="toctree-l3 current"><a class="reference internal" href="../index.html#submodules">Submodules</a><ul class="current">
 <li class="toctree-l4"><a class="reference internal" href="../_astropy_init/index.html">kai._astropy_init</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../conditions/index.html">kai.conditions</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../conftest/index.html">kai.conftest</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../constants/index.html">kai.constants</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../extern/index.html">kai.extern</a></li>
 <li class="toctree-l4 current"><a class="current reference internal" href="#">kai.instruments</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../mtf/index.html">kai.mtf</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../photometry/index.html">kai.photometry</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../plot/index.html">kai.plot</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reduce/index.html">kai.reduce</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../strehl/index.html">kai.strehl</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../tests/index.html">kai.tests</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../utils/index.html">kai.utils</a></li>
 </ul>
 </li>
 </ul>
@@ -134,7 +136,7 @@
 
 <dl class="py class">
 <dt class="sig sig-object py" id="kai.instruments.Instrument">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">kai.instruments.</span></span><span class="sig-name descname"><span class="pre">Instrument</span></span><a class="reference internal" href="../../../_modules/kai/instruments.html#Instrument"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.Instrument" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">kai.instruments.</span></span><span class="sig-name descname"><span class="pre">Instrument</span></span><a class="reference internal" href="../../../_modules/kai/instruments.html#Instrument"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.Instrument" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="kai.instruments.Instrument.hdr_keys">
@@ -198,19 +200,29 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="kai.instruments.Instrument.get_saturation_level">
-<span class="sig-name descname"><span class="pre">get_saturation_level</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#Instrument.get_saturation_level"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.Instrument.get_saturation_level" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">get_saturation_level</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hdr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#Instrument.get_saturation_level"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.Instrument.get_saturation_level" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="kai.instruments.Instrument.get_lin_corr_coeffs">
-<span class="sig-name descname"><span class="pre">get_lin_corr_coeffs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#Instrument.get_lin_corr_coeffs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.Instrument.get_lin_corr_coeffs" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="kai.instruments.Instrument.get_linearity_correction_coeffs">
+<span class="sig-name descname"><span class="pre">get_linearity_correction_coeffs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hdr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#Instrument.get_linearity_correction_coeffs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.Instrument.get_linearity_correction_coeffs" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kai.instruments.Instrument.get_radec">
+<span class="sig-name descname"><span class="pre">get_radec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hdr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#Instrument.get_radec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.Instrument.get_radec" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kai.instruments.Instrument.get_mjd">
+<span class="sig-name descname"><span class="pre">get_mjd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hdr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#Instrument.get_mjd"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.Instrument.get_mjd" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="kai.instruments.NIRC2">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">kai.instruments.</span></span><span class="sig-name descname"><span class="pre">NIRC2</span></span><a class="reference internal" href="../../../_modules/kai/instruments.html#NIRC2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.NIRC2" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">kai.instruments.</span></span><span class="sig-name descname"><span class="pre">NIRC2</span></span><a class="reference internal" href="../../../_modules/kai/instruments.html#NIRC2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.NIRC2" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#kai.instruments.Instrument" title="kai.instruments.Instrument"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Instrument</span></code></a></p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="kai.instruments.NIRC2.name">
@@ -309,13 +321,13 @@ this observation in microns.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="kai.instruments.NIRC2.get_saturation_level">
-<span class="sig-name descname"><span class="pre">get_saturation_level</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#NIRC2.get_saturation_level"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.NIRC2.get_saturation_level" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">get_saturation_level</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hdr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#NIRC2.get_saturation_level"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.NIRC2.get_saturation_level" title="Link to this definition"></a></dt>
 <dd><p>Set to the 95% saturation threshold in DN.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="kai.instruments.NIRC2.get_linearity_correction_coeffs">
-<span class="sig-name descname"><span class="pre">get_linearity_correction_coeffs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#NIRC2.get_linearity_correction_coeffs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.NIRC2.get_linearity_correction_coeffs" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">get_linearity_correction_coeffs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hdr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#NIRC2.get_linearity_correction_coeffs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.NIRC2.get_linearity_correction_coeffs" title="Link to this definition"></a></dt>
 <dd><p>Returns coefficients (<cite>coeffs</cite>, as defined below)
 in order to perform linearity correction</p>
 <p>x = (FITS_orig) / (No. of coadds)</p>
@@ -325,11 +337,23 @@ in order to perform linearity correction</p>
 (<a class="reference external" href="http://www.astro.sunysb.edu/metchev/ao.html">http://www.astro.sunysb.edu/metchev/ao.html</a>)</p>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="kai.instruments.NIRC2.get_radec">
+<span class="sig-name descname"><span class="pre">get_radec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hdr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#NIRC2.get_radec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.NIRC2.get_radec" title="Link to this definition"></a></dt>
+<dd><p>Return list of RA and Dec as decimal degrees</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kai.instruments.NIRC2.get_mjd">
+<span class="sig-name descname"><span class="pre">get_mjd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hdr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#NIRC2.get_mjd"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.NIRC2.get_mjd" title="Link to this definition"></a></dt>
+<dd><p>Return observation time in MJD</p>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="kai.instruments.OSIRIS">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">kai.instruments.</span></span><span class="sig-name descname"><span class="pre">OSIRIS</span></span><a class="reference internal" href="../../../_modules/kai/instruments.html#OSIRIS"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.OSIRIS" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">kai.instruments.</span></span><span class="sig-name descname"><span class="pre">OSIRIS</span></span><a class="reference internal" href="../../../_modules/kai/instruments.html#OSIRIS"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.OSIRIS" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#kai.instruments.Instrument" title="kai.instruments.Instrument"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Instrument</span></code></a></p>
 <p>OSIRIS Imager - after 2019</p>
 <dl class="py attribute">
@@ -455,8 +479,20 @@ subtract reference pixels.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="kai.instruments.OSIRIS.get_saturation_level">
-<span class="sig-name descname"><span class="pre">get_saturation_level</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#OSIRIS.get_saturation_level"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.OSIRIS.get_saturation_level" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">get_saturation_level</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hdr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#OSIRIS.get_saturation_level"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.OSIRIS.get_saturation_level" title="Link to this definition"></a></dt>
 <dd><p>Set to the 95% saturation threshold in DN.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kai.instruments.OSIRIS.get_radec">
+<span class="sig-name descname"><span class="pre">get_radec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hdr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#OSIRIS.get_radec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.OSIRIS.get_radec" title="Link to this definition"></a></dt>
+<dd><p>Return list of RA and Dec as decimal degrees</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kai.instruments.OSIRIS.get_mjd">
+<span class="sig-name descname"><span class="pre">get_mjd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hdr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#OSIRIS.get_mjd"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.OSIRIS.get_mjd" title="Link to this definition"></a></dt>
+<dd><p>Return observation time in MJD</p>
 </dd></dl>
 
 </dd></dl>
@@ -473,8 +509,8 @@ subtract reference pixels.</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="../constants/index.html" class="btn btn-neutral float-left" title="kai.constants" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="../photometry/index.html" class="btn btn-neutral float-right" title="kai.photometry" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="../extern/index.html" class="btn btn-neutral float-left" title="kai.extern" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../mtf/index.html" class="btn btn-neutral float-right" title="kai.mtf" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

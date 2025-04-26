@@ -1,23 +1,21 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>kai.reduce.analysis &mdash; KAI  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=fd3f3429" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
-        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -72,26 +70,26 @@
            <div itemprop="articleBody">
              
   <h1>Source code for kai.reduce.analysis</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">shutil</span>
-<span class="kn">from</span> <span class="nn">kai.reduce</span> <span class="kn">import</span> <span class="n">util</span>
-<span class="kn">from</span> <span class="nn">astropy.table</span> <span class="kn">import</span> <span class="n">Table</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">astropy.io</span> <span class="kn">import</span> <span class="n">fits</span>
-<span class="kn">from</span> <span class="nn">astropy.table</span> <span class="kn">import</span> <span class="n">Table</span>
-<span class="kn">from</span> <span class="nn">kai.reduce</span> <span class="kn">import</span> <span class="n">kai_util</span>
-<span class="kn">from</span> <span class="nn">kai.reduce</span> <span class="kn">import</span> <span class="n">calibrate</span>
-<span class="kn">from</span> <span class="nn">kai.reduce</span> <span class="kn">import</span> <span class="n">align_rms</span>
-<span class="kn">from</span> <span class="nn">kai</span> <span class="kn">import</span> <span class="n">instruments</span>
-<span class="kn">from</span> <span class="nn">kai</span> <span class="kn">import</span> <span class="n">strehl</span>
-<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
-<span class="kn">import</span> <span class="nn">subprocess</span>
-<span class="kn">import</span> <span class="nn">pylab</span> <span class="k">as</span> <span class="nn">py</span>
-<span class="kn">import</span> <span class="nn">pdb</span>
-<span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Pool</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span><span class="o">,</span><span class="w"> </span><span class="nn">shutil</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">kai.reduce</span><span class="w"> </span><span class="kn">import</span> <span class="n">util</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy.table</span><span class="w"> </span><span class="kn">import</span> <span class="n">Table</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">fits</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy.table</span><span class="w"> </span><span class="kn">import</span> <span class="n">Table</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">kai.reduce</span><span class="w"> </span><span class="kn">import</span> <span class="n">kai_util</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">kai.reduce</span><span class="w"> </span><span class="kn">import</span> <span class="n">calibrate</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">kai.reduce</span><span class="w"> </span><span class="kn">import</span> <span class="n">align_rms</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">kai</span><span class="w"> </span><span class="kn">import</span> <span class="n">instruments</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">kai</span><span class="w"> </span><span class="kn">import</span> <span class="n">strehl</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pylab</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">py</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pdb</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">multiprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Pool</span>
 
 <div class="viewcode-block" id="idl_process_run">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.idl_process_run">[docs]</a>
-<span class="k">def</span> <span class="nf">idl_process_run</span><span class="p">(</span><span class="n">batch_file</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">idl_process_run</span><span class="p">(</span><span class="n">batch_file</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Function to help run parallel processes for IDL, used for StarFinder</span>
 <span class="sd">    </span>
@@ -113,14 +111,14 @@
 
 <div class="viewcode-block" id="Analysis">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis">[docs]</a>
-<span class="k">class</span> <span class="nc">Analysis</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Analysis</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Object that will perform our standard post-data-reduction analysis.</span>
 <span class="sd">    This includes running starfinder, calibrating, and extracting positional</span>
 <span class="sd">    and photometric errors via align_rms. </span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">epoch</span><span class="p">,</span> <span class="n">rootDir</span><span class="o">=</span><span class="s1">&#39;/g/lu/data/orion/&#39;</span><span class="p">,</span> <span class="n">filt</span><span class="o">=</span><span class="s1">&#39;kp&#39;</span><span class="p">,</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">epoch</span><span class="p">,</span> <span class="n">rootDir</span><span class="o">=</span><span class="s1">&#39;/g/lu/data/orion/&#39;</span><span class="p">,</span> <span class="n">filt</span><span class="o">=</span><span class="s1">&#39;kp&#39;</span><span class="p">,</span>
                  <span class="n">clean_dir</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">combo_dir</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">combo_stf_dir</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">epochDirSuffix</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">imgSuffix</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">stfDir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -233,8 +231,8 @@
 <div class="viewcode-block" id="Analysis.calStars">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.calStars">[docs]</a>
         <span class="bp">self</span><span class="o">.</span><span class="n">calStars</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="s1">&#39;irs16NW&#39;</span><span class="p">,</span> <span class="s1">&#39;S3-22&#39;</span><span class="p">,</span> <span class="s1">&#39;S2-22&#39;</span><span class="p">,</span> <span class="s1">&#39;S4-3&#39;</span><span class="p">,</span> <span class="s1">&#39;S1-1&#39;</span><span class="p">,</span> <span class="s1">&#39;S1-21&#39;</span><span class="p">,</span> <span class="s1">&#39;S1-12&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;S2-2&#39;</span><span class="p">,</span> <span class="s1">&#39;S3-88&#39;</span><span class="p">,</span> <span class="s1">&#39;S2-75&#39;</span><span class="p">,</span> <span class="s1">&#39;S3-36&#39;</span><span class="p">,</span> <span class="s1">&#39;S1-33&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;S3-22&#39;</span><span class="p">,</span> <span class="s1">&#39;S2-22&#39;</span><span class="p">,</span> <span class="s1">&#39;S4-3&#39;</span><span class="p">,</span> <span class="s1">&#39;S1-34&#39;</span><span class="p">,</span> <span class="s1">&#39;S1-1&#39;</span><span class="p">,</span> <span class="s1">&#39;S1-21&#39;</span><span class="p">,</span> <span class="s1">&#39;S3-370&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;S3-88&#39;</span><span class="p">,</span> <span class="s1">&#39;S2-75&#39;</span><span class="p">,</span> <span class="s1">&#39;S3-51&#39;</span><span class="p">,</span> <span class="s1">&#39;S3-348&#39;</span>
         <span class="p">]</span></div>
 
 <div class="viewcode-block" id="Analysis.calFlags">
@@ -347,10 +345,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">dirCombo</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">trimdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">combo_dir</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span>
         
         <span class="c1"># Starfinder directory</span>
-<div class="viewcode-block" id="Analysis.starfinder_dir_name">
-<a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.starfinder_dir_name">[docs]</a>
-        <span class="n">starfinder_dir_name</span> <span class="o">=</span> <span class="s1">&#39;starfinder/&#39;</span></div>
-
+        <span class="n">starfinder_dir_name</span> <span class="o">=</span> <span class="s1">&#39;starfinder/&#39;</span>
         <span class="k">if</span> <span class="n">stf_version</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">starfinder_dir_name</span> <span class="o">=</span> <span class="s1">&#39;starfinder_</span><span class="si">{0}</span><span class="s1">/&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">stf_version</span><span class="p">)</span>
         
@@ -410,7 +405,7 @@
         
 <div class="viewcode-block" id="Analysis.prepStarfinder">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.prepStarfinder">[docs]</a>
-    <span class="k">def</span> <span class="nf">prepStarfinder</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">targetName</span><span class="p">,</span> <span class="n">targetCoords</span><span class="p">,</span> <span class="n">psfStars</span><span class="p">,</span> <span class="n">filterName</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">prepStarfinder</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">targetName</span><span class="p">,</span> <span class="n">targetCoords</span><span class="p">,</span> <span class="n">psfStars</span><span class="p">,</span> <span class="n">filterName</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Creates a _psf.list file and saves it in the source_list/ directory.&quot;&quot;&quot;</span>
         
         <span class="c1"># Covering possible variable inputs and initializing</span>
@@ -450,7 +445,7 @@
     
 <div class="viewcode-block" id="Analysis.analyzeCombo">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.analyzeCombo">[docs]</a>
-    <span class="k">def</span> <span class="nf">analyzeCombo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">analyzeCombo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">starfinderCombo</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">calibrateCombo</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">alignCombo</span><span class="p">()</span></div>
@@ -458,7 +453,7 @@
 
 <div class="viewcode-block" id="Analysis.analyzeClean">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.analyzeClean">[docs]</a>
-    <span class="k">def</span> <span class="nf">analyzeClean</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">analyzeClean</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">starfinderClean</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">calibrateClean</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">alignClean</span><span class="p">()</span></div>
@@ -466,7 +461,7 @@
 
 <div class="viewcode-block" id="Analysis.analyzeComboClean">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.analyzeComboClean">[docs]</a>
-    <span class="k">def</span> <span class="nf">analyzeComboClean</span><span class="p">():</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">analyzeComboClean</span><span class="p">():</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">starfinderCombo</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">starfinderClean</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">calibrateCombo</span><span class="p">()</span>
@@ -478,7 +473,7 @@
 
 <div class="viewcode-block" id="Analysis.starfinderCombo">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.starfinderCombo">[docs]</a>
-    <span class="k">def</span> <span class="nf">starfinderCombo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">oldPsf</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">starfinderCombo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">oldPsf</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;COMBO starfinder&#39;</span><span class="p">)</span>
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Coo Star: &#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">cooStar</span><span class="p">)</span>
@@ -703,7 +698,7 @@
         
 <div class="viewcode-block" id="Analysis.starfinderClean">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.starfinderClean">[docs]</a>
-    <span class="k">def</span> <span class="nf">starfinderClean</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">starfinderClean</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;CLEAN starfinder&#39;</span><span class="p">)</span>
             
@@ -754,7 +749,7 @@
 
 <div class="viewcode-block" id="Analysis.starfinderCleanLoop">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.starfinderCleanLoop">[docs]</a>
-    <span class="k">def</span> <span class="nf">starfinderCleanLoop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">starfinderCleanLoop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;CLEAN starfinder loop&#39;</span><span class="p">)</span>
             <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dirCleanStf</span><span class="p">)</span>
@@ -803,7 +798,7 @@
 
 <div class="viewcode-block" id="Analysis.calibrateCombo">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.calibrateCombo">[docs]</a>
-    <span class="k">def</span> <span class="nf">calibrateCombo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">calibrateCombo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;COMBO calibrate&#39;</span><span class="p">)</span>
             
@@ -891,7 +886,7 @@
 
 <div class="viewcode-block" id="Analysis.calibrateClean">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.calibrateClean">[docs]</a>
-    <span class="k">def</span> <span class="nf">calibrateClean</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">calibrateClean</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="c1"># Calibrate each file</span>
             <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dirCleanStf</span><span class="p">)</span>
@@ -943,7 +938,7 @@
 
 <div class="viewcode-block" id="Analysis.alignCombo">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.alignCombo">[docs]</a>
-    <span class="k">def</span> <span class="nf">alignCombo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">alignCombo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;ALIGN_RMS combo&#39;</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s1">&#39;ao&#39;</span><span class="p">:</span>
@@ -1063,7 +1058,7 @@
     
 <div class="viewcode-block" id="Analysis.alignClean">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.Analysis.alignClean">[docs]</a>
-    <span class="k">def</span> <span class="nf">alignClean</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">alignClean</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dirClean</span><span class="p">)</span>
 
@@ -1119,7 +1114,7 @@
 
 <div class="viewcode-block" id="plotPosError">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/analysis/index.html#kai.reduce.analysis.plotPosError">[docs]</a>
-<span class="k">def</span> <span class="nf">plotPosError</span><span class="p">(</span><span class="n">starlist</span><span class="p">,</span> <span class="n">raw</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">magCutOff</span><span class="o">=</span><span class="mf">15.0</span><span class="p">,</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">plotPosError</span><span class="p">(</span><span class="n">starlist</span><span class="p">,</span> <span class="n">raw</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">magCutOff</span><span class="o">=</span><span class="mf">15.0</span><span class="p">,</span>
                  <span class="n">title</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Make three standard figures that show the data quality </span>

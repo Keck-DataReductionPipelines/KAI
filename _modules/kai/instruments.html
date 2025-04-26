@@ -1,23 +1,21 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>kai.instruments &mdash; KAI  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
-      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=fd3f3429" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
-        <script src="../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -72,13 +70,14 @@
            <div itemprop="articleBody">
              
   <h1>Source code for kai.instruments</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pylab</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">collections</span>
-<span class="kn">from</span> <span class="nn">astropy.io</span> <span class="kn">import</span> <span class="n">fits</span>
-<span class="kn">import</span> <span class="nn">pdb</span>
-<span class="kn">from</span> <span class="nn">astropy.io.fits.hdu.image</span> <span class="kn">import</span> <span class="n">_ImageBaseHDU</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pylab</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">collections</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">fits</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pdb</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy.io.fits.hdu.image</span><span class="w"> </span><span class="kn">import</span> <span class="n">_ImageBaseHDU</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy.time</span><span class="w"> </span><span class="kn">import</span> <span class="n">Time</span>
 
 <div class="viewcode-block" id="module_dir">
 <a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.module_dir">[docs]</a>
@@ -87,8 +86,8 @@
 
 <div class="viewcode-block" id="Instrument">
 <a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.Instrument">[docs]</a>
-<span class="k">class</span> <span class="nc">Instrument</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Instrument</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># Must define the following parameters as a </span>
 
         <span class="c1"># Define</span>
@@ -103,79 +102,91 @@
     
 <div class="viewcode-block" id="Instrument.get_bad_pixel_mask_name">
 <a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.Instrument.get_bad_pixel_mask_name">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_bad_pixel_mask_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_bad_pixel_mask_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">bad_pixel_mask</span></div>
 
 
 <div class="viewcode-block" id="Instrument.get_filter_name">
 <a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.Instrument.get_filter_name">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_filter_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hdr</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_filter_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hdr</span><span class="p">):</span>
         <span class="k">pass</span></div>
 
 
 <div class="viewcode-block" id="Instrument.get_plate_scale">
 <a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.Instrument.get_plate_scale">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_plate_scale</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hdr</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_plate_scale</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hdr</span><span class="p">):</span>
         <span class="k">pass</span></div>
 
 
 <div class="viewcode-block" id="Instrument.get_position_angle">
 <a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.Instrument.get_position_angle">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_position_angle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hdr</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_position_angle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hdr</span><span class="p">):</span>
         <span class="k">pass</span></div>
 
 
 <div class="viewcode-block" id="Instrument.get_parallactic_angle">
 <a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.Instrument.get_parallactic_angle">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_parallactic_angle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">hdr</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_parallactic_angle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">hdr</span><span class="p">):</span>
         <span class="k">pass</span></div>
 
 
 <div class="viewcode-block" id="Instrument.get_instrument_angle">
 <a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.Instrument.get_instrument_angle">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_instrument_angle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hdr</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_instrument_angle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hdr</span><span class="p">):</span>
         <span class="k">pass</span></div>
 
     
 <div class="viewcode-block" id="Instrument.get_central_wavelength">
 <a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.Instrument.get_central_wavelength">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_central_wavelength</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hdr</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_central_wavelength</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hdr</span><span class="p">):</span>
         <span class="k">pass</span></div>
 
     
 <div class="viewcode-block" id="Instrument.get_gain">
 <a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.Instrument.get_gain">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_gain</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hdr</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_gain</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hdr</span><span class="p">):</span>
         <span class="k">pass</span></div>
 
     
 <div class="viewcode-block" id="Instrument.make_filenames">
 <a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.Instrument.make_filenames">[docs]</a>
-    <span class="k">def</span> <span class="nf">make_filenames</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">files</span><span class="p">,</span> <span class="n">rootDir</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;n&#39;</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">make_filenames</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">files</span><span class="p">,</span> <span class="n">rootDir</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;n&#39;</span><span class="p">):</span>
         <span class="k">pass</span></div>
 
         
 <div class="viewcode-block" id="Instrument.get_distortion_maps">
 <a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.Instrument.get_distortion_maps">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_distortion_maps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">date</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_distortion_maps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">date</span><span class="p">):</span>
         <span class="k">pass</span></div>
 
 
 <div class="viewcode-block" id="Instrument.get_align_type">
 <a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.Instrument.get_align_type">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_align_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_align_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="k">pass</span></div>
 
 
 <div class="viewcode-block" id="Instrument.get_saturation_level">
 <a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.Instrument.get_saturation_level">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_saturation_level</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_saturation_level</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hdr</span><span class="p">):</span>
         <span class="k">pass</span></div>
 
     
-<div class="viewcode-block" id="Instrument.get_lin_corr_coeffs">
-<a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.Instrument.get_lin_corr_coeffs">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_lin_corr_coeffs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Instrument.get_linearity_correction_coeffs">
+<a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.Instrument.get_linearity_correction_coeffs">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_linearity_correction_coeffs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hdr</span><span class="p">):</span>
+        <span class="k">pass</span></div>
+
+    
+<div class="viewcode-block" id="Instrument.get_radec">
+<a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.Instrument.get_radec">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_radec</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hdr</span><span class="p">):</span>
+        <span class="k">pass</span></div>
+
+    
+<div class="viewcode-block" id="Instrument.get_mjd">
+<a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.Instrument.get_mjd">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_mjd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hdr</span><span class="p">):</span>
         <span class="k">pass</span></div>
 </div>
 
@@ -183,8 +194,13 @@
     
 <div class="viewcode-block" id="NIRC2">
 <a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.NIRC2">[docs]</a>
-<span class="k">class</span> <span class="nc">NIRC2</span><span class="p">(</span><span class="n">Instrument</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">NIRC2</span><span class="p">(</span><span class="n">Instrument</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        NIRC2 Instrument object. During initialization, the observation year</span>
+<span class="sd">        can be specified in order to help KAI account for NIRC2 instrument</span>
+<span class="sd">        upgrade(s).</span>
+<span class="sd">        &quot;&quot;&quot;</span>    
 <div class="viewcode-block" id="NIRC2.name">
 <a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.NIRC2.name">[docs]</a>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;NIRC2&#39;</span></div>
@@ -204,7 +220,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">hdr_keys</span><span class="p">[</span><span class="s1">&#39;nfowler&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;MULTISAM&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hdr_keys</span><span class="p">[</span><span class="s1">&#39;camera&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;CAMNAME&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hdr_keys</span><span class="p">[</span><span class="s1">&#39;shutter&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;SHRNAME&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">hdr_keys</span><span class="p">[</span><span class="s1">&#39;mjd&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;MJD-OBS&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hdr_keys</span><span class="p">[</span><span class="s1">&#39;elevation&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;EL&#39;</span>
 
 <div class="viewcode-block" id="NIRC2.bad_pixel_mask">
@@ -238,19 +253,22 @@
     
 <div class="viewcode-block" id="NIRC2.get_filter_name">
 <a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.NIRC2.get_filter_name">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_filter_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hdr</span><span class="p">):</span>
-        <span class="n">filter1</span> <span class="o">=</span> <span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;fwiname&#39;</span><span class="p">]</span>
-        <span class="n">filter2</span> <span class="o">=</span> <span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;fwoname&#39;</span><span class="p">]</span>
-        <span class="n">filt</span> <span class="o">=</span> <span class="n">filter1</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">filter1</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;PK&#39;</span><span class="p">)):</span>
-            <span class="n">filt</span> <span class="o">=</span> <span class="n">filter2</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_filter_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hdr</span><span class="p">):</span>
+        <span class="k">if</span> <span class="s1">&#39;fwiname&#39;</span> <span class="ow">in</span> <span class="n">hdr</span><span class="p">:</span>
+            <span class="n">filter1</span> <span class="o">=</span> <span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;fwiname&#39;</span><span class="p">]</span>
+            <span class="n">filter2</span> <span class="o">=</span> <span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;fwoname&#39;</span><span class="p">]</span>
+            <span class="n">filt</span> <span class="o">=</span> <span class="n">filter1</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">filter1</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;PK&#39;</span><span class="p">)):</span>
+                <span class="n">filt</span> <span class="o">=</span> <span class="n">filter2</span>
 
-        <span class="k">return</span> <span class="n">filt</span></div>
+            <span class="k">return</span> <span class="n">filt</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;None&#39;</span></div>
 
 
 <div class="viewcode-block" id="NIRC2.get_plate_scale">
 <a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.NIRC2.get_plate_scale">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_plate_scale</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hdr</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_plate_scale</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hdr</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the plate scale in arcsec/pixel.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -267,7 +285,7 @@
 
 <div class="viewcode-block" id="NIRC2.get_position_angle">
 <a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.NIRC2.get_position_angle">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_position_angle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hdr</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_position_angle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hdr</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the sky PA in degrees East of North. </span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -276,7 +294,7 @@
 
 <div class="viewcode-block" id="NIRC2.get_parallactic_angle">
 <a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.NIRC2.get_parallactic_angle">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_parallactic_angle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">hdr</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_parallactic_angle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">hdr</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the parallactic angle in degrees East of North</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -286,13 +304,13 @@
 
 <div class="viewcode-block" id="NIRC2.get_instrument_angle">
 <a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.NIRC2.get_instrument_angle">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_instrument_angle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hdr</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_instrument_angle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hdr</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;INSTANGL&#39;</span><span class="p">])</span></div>
 
 
 <div class="viewcode-block" id="NIRC2.get_central_wavelength">
 <a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.NIRC2.get_central_wavelength">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_central_wavelength</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hdr</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_central_wavelength</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hdr</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the central wavelength of the filter for </span>
 <span class="sd">        this observation in microns.</span>
@@ -302,20 +320,20 @@
 
 <div class="viewcode-block" id="NIRC2.get_gain">
 <a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.NIRC2.get_gain">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_gain</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hdr</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_gain</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hdr</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;GAIN&#39;</span><span class="p">]</span></div>
 
     
 <div class="viewcode-block" id="NIRC2.make_filenames">
 <a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.NIRC2.make_filenames">[docs]</a>
-    <span class="k">def</span> <span class="nf">make_filenames</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">files</span><span class="p">,</span> <span class="n">rootDir</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;n&#39;</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">make_filenames</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">files</span><span class="p">,</span> <span class="n">rootDir</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;n&#39;</span><span class="p">):</span>
         <span class="n">file_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">rootDir</span> <span class="o">+</span> <span class="n">prefix</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">files</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">file_names</span></div>
 
 
 <div class="viewcode-block" id="NIRC2.get_distortion_maps">
 <a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.NIRC2.get_distortion_maps">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_distortion_maps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hdr</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_distortion_maps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hdr</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Inputs</span>
 <span class="sd">        ----------</span>
@@ -342,7 +360,7 @@
         
 <div class="viewcode-block" id="NIRC2.get_align_type">
 <a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.NIRC2.get_align_type">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_align_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hdr</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_align_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hdr</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="c1"># Setup NIRC2 plate scales</span>
         <span class="c1"># Units are arcsec/pixel</span>
         <span class="n">atypes</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;narrow&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>
@@ -359,16 +377,21 @@
 
 <div class="viewcode-block" id="NIRC2.get_saturation_level">
 <a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.NIRC2.get_saturation_level">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_saturation_level</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_saturation_level</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hdr</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set to the 95% saturation threshold in DN.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="mf">12000.0</span></div>
+        <span class="n">date</span> <span class="o">=</span> <span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;DATE-OBS&#39;</span><span class="p">]</span>
+        
+        <span class="k">if</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">date</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">4</span><span class="p">])</span> <span class="o">&gt;=</span> <span class="mi">2024</span><span class="p">):</span>
+            <span class="k">return</span> <span class="mf">6000.0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mf">12000.0</span></div>
 
     
 <div class="viewcode-block" id="NIRC2.get_linearity_correction_coeffs">
 <a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.NIRC2.get_linearity_correction_coeffs">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_linearity_correction_coeffs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_linearity_correction_coeffs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hdr</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns coefficients (`coeffs`, as defined below)</span>
 <span class="sd">        in order to perform linearity correction</span>
@@ -384,19 +407,73 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         
         <span class="n">lin_corr_coeffs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.001</span><span class="p">,</span> <span class="o">-</span><span class="mf">6.9e-6</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.70e-10</span><span class="p">])</span>
+        
+        <span class="c1"># Post 2024 upgrade to NIRC2 electronics, gain is ~2x compared to the</span>
+        <span class="c1"># values calculated by Metchev+ (i.e. gain is now ~8 e-/DN rather ~4</span>
+        <span class="c1"># e-/DN, and so nonlinearity now starts at ~4000 DN/coadd rather than</span>
+        <span class="c1"># ~8000 DN/coadd)</span>
+        <span class="c1"># Therefore, x can be multiplied by 2 for the same coeffs,</span>
+        <span class="c1"># or equivalently: coeffs can be multiplied by 2^n: [2^0, 2^1, 2^2]</span>
+        
+        <span class="n">date</span> <span class="o">=</span> <span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;DATE-OBS&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">date</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">4</span><span class="p">])</span> <span class="o">&gt;=</span> <span class="mi">2024</span><span class="p">):</span>
+            <span class="n">lin_corr_coeffs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+                <span class="mf">1.001</span> <span class="o">*</span> <span class="mi">2</span><span class="o">**</span><span class="mi">0</span><span class="p">,</span>
+                <span class="o">-</span><span class="mf">6.9e-6</span> <span class="o">*</span> <span class="mi">2</span><span class="o">**</span><span class="mi">1</span><span class="p">,</span>
+                <span class="o">-</span><span class="mf">0.70e-10</span> <span class="o">*</span> <span class="mi">2</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span>
+            <span class="p">])</span>
+        
         <span class="k">return</span> <span class="n">lin_corr_coeffs</span></div>
+
+     
+<div class="viewcode-block" id="NIRC2.get_radec">
+<a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.NIRC2.get_radec">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_radec</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hdr</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return list of RA and Dec as decimal degrees&quot;&quot;&quot;</span>
+        
+        <span class="n">date</span> <span class="o">=</span> <span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;DATE-OBS&#39;</span><span class="p">]</span>
+        
+        <span class="k">if</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">date</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">4</span><span class="p">])</span> <span class="o">&lt;</span> <span class="mi">2024</span><span class="p">):</span>
+            <span class="c1"># Previous to 2023/2024 electronics upgrade, RA and DEC stored</span>
+            <span class="c1"># as decimal degrees</span>
+            <span class="k">return</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;RA&#39;</span><span class="p">]),</span> <span class="nb">float</span><span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;DEC&#39;</span><span class="p">])]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># New coordinates are in HH:MM:SS.SSS or DD:MM:SS.SSS, so have</span>
+            <span class="c1"># to convert to decimals degrees</span>
+            <span class="n">RA_split</span> <span class="o">=</span> <span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;RA&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)</span>
+            <span class="n">RA_decimal_hrs</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">RA_split</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">+</span>\
+                <span class="nb">float</span><span class="p">(</span><span class="n">RA_split</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">/</span><span class="mf">60.</span> <span class="o">+</span> <span class="nb">float</span><span class="p">(</span><span class="n">RA_split</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span><span class="o">/</span><span class="mf">3600.</span>
+            <span class="n">RA_decimal_degs</span> <span class="o">=</span> <span class="p">(</span><span class="n">RA_decimal_hrs</span> <span class="o">/</span> <span class="mf">24.</span><span class="p">)</span> <span class="o">*</span> <span class="mf">360.</span>
+            
+            <span class="n">DEC_split</span> <span class="o">=</span> <span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;RA&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)</span>
+            <span class="n">DEC_decimal_degs</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">DEC_split</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">+</span>\
+                <span class="nb">float</span><span class="p">(</span><span class="n">DEC_split</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">/</span><span class="mf">60.</span> <span class="o">+</span> <span class="nb">float</span><span class="p">(</span><span class="n">DEC_split</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span><span class="o">/</span><span class="mf">3600.</span>
+            
+            <span class="k">return</span> <span class="p">[</span><span class="n">RA_decimal_degs</span><span class="p">,</span> <span class="n">DEC_decimal_degs</span><span class="p">]</span></div>
+
+    
+<div class="viewcode-block" id="NIRC2.get_mjd">
+<a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.NIRC2.get_mjd">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_mjd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hdr</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return observation time in MJD&quot;&quot;&quot;</span>
+        
+        <span class="n">date</span> <span class="o">=</span> <span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;DATE-OBS&#39;</span><span class="p">]</span>
+        
+        <span class="k">if</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">date</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">4</span><span class="p">])</span> <span class="o">&lt;</span> <span class="mi">2024</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;MJD-OBS&#39;</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;MJD&#39;</span><span class="p">])</span></div>
 </div>
 
-        
 
 
 <div class="viewcode-block" id="OSIRIS">
 <a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.OSIRIS">[docs]</a>
-<span class="k">class</span> <span class="nc">OSIRIS</span><span class="p">(</span><span class="n">Instrument</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">OSIRIS</span><span class="p">(</span><span class="n">Instrument</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    OSIRIS Imager - after 2019</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <div class="viewcode-block" id="OSIRIS.name">
 <a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.OSIRIS.name">[docs]</a>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;OSIRIS&#39;</span></div>
@@ -450,14 +527,14 @@
     
 <div class="viewcode-block" id="OSIRIS.get_filter_name">
 <a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.OSIRIS.get_filter_name">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_filter_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hdr</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_filter_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hdr</span><span class="p">):</span>
         <span class="n">f</span> <span class="o">=</span> <span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;ifilter&#39;</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">f</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span></div>
 
         
 <div class="viewcode-block" id="OSIRIS.get_plate_scale">
 <a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.OSIRIS.get_plate_scale">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_plate_scale</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hdr</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_plate_scale</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hdr</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the plate scale in arcsec/pix.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -472,7 +549,7 @@
     
 <div class="viewcode-block" id="OSIRIS.get_pcu_scale">
 <a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.OSIRIS.get_pcu_scale">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_pcu_scale</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">hdr</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_pcu_scale</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">hdr</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The scale on the PCU pinhole mask, in mm (at the front focus) per pixel</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -482,7 +559,7 @@
 
 <div class="viewcode-block" id="OSIRIS.get_pcuxyRef">
 <a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.OSIRIS.get_pcuxyRef">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_pcuxyRef</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">hdr</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_pcuxyRef</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">hdr</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The reference position, when the PCU is on-axis</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -492,7 +569,7 @@
 
 <div class="viewcode-block" id="OSIRIS.get_position_angle">
 <a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.OSIRIS.get_position_angle">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_position_angle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hdr</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_position_angle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hdr</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the sky PA in degrees East of North. </span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -512,7 +589,7 @@
     
 <div class="viewcode-block" id="OSIRIS.get_instrument_angle">
 <a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.OSIRIS.get_instrument_angle">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_instrument_angle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hdr</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_instrument_angle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hdr</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the angle of the instrument w.r.t. to the telescope or </span>
 <span class="sd">        AO bench in degrees.</span>
@@ -523,7 +600,7 @@
 
 <div class="viewcode-block" id="OSIRIS.get_parallactic_angle">
 <a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.OSIRIS.get_parallactic_angle">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_parallactic_angle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">hdr</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_parallactic_angle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">hdr</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the parallactic angle in degrees East of North</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -533,7 +610,7 @@
     
 <div class="viewcode-block" id="OSIRIS.get_central_wavelength">
 <a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.OSIRIS.get_central_wavelength">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_central_wavelength</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hdr</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_central_wavelength</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hdr</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the central wavelength of the filter for </span>
 <span class="sd">        this observation in microns.</span>
@@ -567,13 +644,13 @@
     
 <div class="viewcode-block" id="OSIRIS.get_gain">
 <a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.OSIRIS.get_gain">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_gain</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hdr</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_gain</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hdr</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;DETGAIN&#39;</span><span class="p">]</span></div>
 
     
 <div class="viewcode-block" id="OSIRIS.make_filenames">
 <a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.OSIRIS.make_filenames">[docs]</a>
-    <span class="k">def</span> <span class="nf">make_filenames</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">files</span><span class="p">,</span> <span class="n">rootDir</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">make_filenames</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">files</span><span class="p">,</span> <span class="n">rootDir</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
         <span class="n">file_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">rootDir</span> <span class="o">+</span> <span class="n">prefix</span> <span class="o">+</span> <span class="n">i</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">files</span><span class="p">]</span>
 
         <span class="k">return</span> <span class="n">file_names</span></div>
@@ -581,7 +658,7 @@
 
 <div class="viewcode-block" id="OSIRIS.flip_images">
 <a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.OSIRIS.flip_images">[docs]</a>
-    <span class="k">def</span> <span class="nf">flip_images</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">files</span><span class="p">,</span> <span class="n">rootDir</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">flip_images</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">files</span><span class="p">,</span> <span class="n">rootDir</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Flip images (as they come from the detector flipped) and</span>
 <span class="sd">        subtract reference pixels.</span>
@@ -628,7 +705,7 @@
 
 <div class="viewcode-block" id="OSIRIS.subtract_reference_pixels">
 <a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.OSIRIS.subtract_reference_pixels">[docs]</a>
-    <span class="k">def</span> <span class="nf">subtract_reference_pixels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">subtract_reference_pixels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img</span><span class="p">):</span>
         <span class="n">horiz_ref_pixels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">img</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">4</span><span class="p">],</span> <span class="n">img</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">4</span><span class="p">:]],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">ref_pix_median</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">horiz_ref_pixels</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">new_img</span> <span class="o">=</span> <span class="n">img</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">ref_pix_median</span><span class="p">])</span><span class="o">.</span><span class="n">T</span>
@@ -638,7 +715,7 @@
 
 <div class="viewcode-block" id="OSIRIS.get_distortion_maps">
 <a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.OSIRIS.get_distortion_maps">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_distortion_maps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hdr</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_distortion_maps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hdr</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Inputs</span>
 <span class="sd">        ----------</span>
@@ -658,7 +735,7 @@
 
 <div class="viewcode-block" id="OSIRIS.get_align_type">
 <a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.OSIRIS.get_align_type">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_align_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hdr</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_align_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hdr</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="n">atype</span> <span class="o">=</span> <span class="mi">14</span>
 
         <span class="k">if</span> <span class="n">errors</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
@@ -669,11 +746,27 @@
     
 <div class="viewcode-block" id="OSIRIS.get_saturation_level">
 <a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.OSIRIS.get_saturation_level">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_saturation_level</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_saturation_level</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hdr</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set to the 95% saturation threshold in DN.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="mf">17000.0</span></div>
+
+    
+<div class="viewcode-block" id="OSIRIS.get_radec">
+<a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.OSIRIS.get_radec">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_radec</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hdr</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return list of RA and Dec as decimal degrees&quot;&quot;&quot;</span>
+        
+        <span class="k">return</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;RA&#39;</span><span class="p">]),</span> <span class="nb">float</span><span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;DEC&#39;</span><span class="p">])]</span></div>
+
+    
+<div class="viewcode-block" id="OSIRIS.get_mjd">
+<a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.OSIRIS.get_mjd">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_mjd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hdr</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return observation time in MJD&quot;&quot;&quot;</span>
+        
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;MJD-OBS&#39;</span><span class="p">])</span></div>
 </div>
 
 

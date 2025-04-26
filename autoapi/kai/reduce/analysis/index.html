@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../../../">
 <head>
@@ -5,20 +7,16 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>kai.reduce.analysis &mdash; KAI  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
-      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=fd3f3429" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../../_static/documentation_options.js?v=5929fcd5"></script>
-        <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" />
@@ -49,15 +47,22 @@
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">API Reference</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="../../index.html">kai</a><ul class="current">
-<li class="toctree-l3 current"><a class="reference internal" href="../../index.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../../index.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../../_astropy_init/index.html">kai._astropy_init</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../conditions/index.html">kai.conditions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../conftest/index.html">kai.conftest</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../constants/index.html">kai.constants</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../extern/index.html">kai.extern</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../instruments/index.html">kai.instruments</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../mtf/index.html">kai.mtf</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../photometry/index.html">kai.photometry</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../plot/index.html">kai.plot</a></li>
 <li class="toctree-l4 current"><a class="reference internal" href="../index.html">kai.reduce</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../strehl/index.html">kai.strehl</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../tests/index.html">kai.tests</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../utils/index.html">kai.utils</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="../../index.html#submodules">Submodules</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../../test_drizzle/index.html">test_drizzle</a></li>
@@ -135,7 +140,7 @@
 
 <dl class="py class">
 <dt class="sig sig-object py" id="kai.reduce.analysis.Analysis">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">kai.reduce.analysis.</span></span><span class="sig-name descname"><span class="pre">Analysis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">epoch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rootDir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'/g/lu/data/orion/'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'kp'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clean_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">combo_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">combo_stf_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epochDirSuffix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">imgSuffix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stfDir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">useDistorted</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cleanList</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'c.lis'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">airopa_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'single'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stf_version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stf_debug</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stf_parallelize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instrument</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">instruments.default_inst</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/analysis.html#Analysis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.analysis.Analysis" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">kai.reduce.analysis.</span></span><span class="sig-name descname"><span class="pre">Analysis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">epoch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rootDir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'/g/lu/data/orion/'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'kp'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clean_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">combo_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">combo_stf_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epochDirSuffix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">imgSuffix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stfDir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">useDistorted</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cleanList</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'c.lis'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">airopa_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'single'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stf_version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stf_debug</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stf_parallelize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instrument</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">instruments.default_inst</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/analysis.html#Analysis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.analysis.Analysis" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Object that will perform our standard post-data-reduction analysis.
 This includes running starfinder, calibrating, and extracting positional
@@ -162,7 +167,7 @@ and photometric errors via align_rms.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="kai.reduce.analysis.Analysis.airopa_mode">
-<span class="sig-name descname"><span class="pre">airopa_mode</span></span><a class="reference internal" href="../../../../_modules/kai/reduce/analysis.html#Analysis.airopa_mode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.analysis.Analysis.airopa_mode" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">airopa_mode</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'single'</span></em><a class="reference internal" href="../../../../_modules/kai/reduce/analysis.html#Analysis.airopa_mode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.analysis.Analysis.airopa_mode" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -177,22 +182,22 @@ and photometric errors via align_rms.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="kai.reduce.analysis.Analysis.stf_debug">
-<span class="sig-name descname"><span class="pre">stf_debug</span></span><a class="reference internal" href="../../../../_modules/kai/reduce/analysis.html#Analysis.stf_debug"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.analysis.Analysis.stf_debug" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">stf_debug</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="reference internal" href="../../../../_modules/kai/reduce/analysis.html#Analysis.stf_debug"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.analysis.Analysis.stf_debug" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="kai.reduce.analysis.Analysis.stf_parallelize">
-<span class="sig-name descname"><span class="pre">stf_parallelize</span></span><a class="reference internal" href="../../../../_modules/kai/reduce/analysis.html#Analysis.stf_parallelize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.analysis.Analysis.stf_parallelize" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">stf_parallelize</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="reference internal" href="../../../../_modules/kai/reduce/analysis.html#Analysis.stf_parallelize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.analysis.Analysis.stf_parallelize" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="kai.reduce.analysis.Analysis.starlist">
-<span class="sig-name descname"><span class="pre">starlist</span></span><a class="reference internal" href="../../../../_modules/kai/reduce/analysis.html#Analysis.starlist"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.analysis.Analysis.starlist" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">starlist</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'/g/lu/data/orion/source_list/psf_central.dat'</span></em><a class="reference internal" href="../../../../_modules/kai/reduce/analysis.html#Analysis.starlist"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.analysis.Analysis.starlist" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="kai.reduce.analysis.Analysis.labellist">
-<span class="sig-name descname"><span class="pre">labellist</span></span><a class="reference internal" href="../../../../_modules/kai/reduce/analysis.html#Analysis.labellist"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.analysis.Analysis.labellist" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">labellist</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'/g/lu/data/orion/source_list/label.dat'</span></em><a class="reference internal" href="../../../../_modules/kai/reduce/analysis.html#Analysis.labellist"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.analysis.Analysis.labellist" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -202,12 +207,12 @@ and photometric errors via align_rms.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="kai.reduce.analysis.Analysis.orbitlist">
-<span class="sig-name descname"><span class="pre">orbitlist</span></span><a class="reference internal" href="../../../../_modules/kai/reduce/analysis.html#Analysis.orbitlist"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.analysis.Analysis.orbitlist" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">orbitlist</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'/g/lu/data/orion/source_list/orbits.dat'</span></em><a class="reference internal" href="../../../../_modules/kai/reduce/analysis.html#Analysis.orbitlist"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.analysis.Analysis.orbitlist" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="kai.reduce.analysis.Analysis.calFile">
-<span class="sig-name descname"><span class="pre">calFile</span></span><a class="reference internal" href="../../../../_modules/kai/reduce/analysis.html#Analysis.calFile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.analysis.Analysis.calFile" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">calFile</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'/g/lu/data/orion/source_list/photo_calib.dat'</span></em><a class="reference internal" href="../../../../_modules/kai/reduce/analysis.html#Analysis.calFile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.analysis.Analysis.calFile" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -217,7 +222,7 @@ and photometric errors via align_rms.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="kai.reduce.analysis.Analysis.calStars">
-<span class="sig-name descname"><span class="pre">calStars</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['irs16NW',</span> <span class="pre">'S3-22',</span> <span class="pre">'S2-22',</span> <span class="pre">'S4-3',</span> <span class="pre">'S1-1',</span> <span class="pre">'S1-21',</span> <span class="pre">'S1-12',</span> <span class="pre">'S2-2',</span> <span class="pre">'S3-88',</span> <span class="pre">'S2-75',...</span></em><a class="reference internal" href="../../../../_modules/kai/reduce/analysis.html#Analysis.calStars"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.analysis.Analysis.calStars" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">calStars</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['S3-22',</span> <span class="pre">'S2-22',</span> <span class="pre">'S4-3',</span> <span class="pre">'S1-34',</span> <span class="pre">'S1-1',</span> <span class="pre">'S1-21',</span> <span class="pre">'S3-370',</span> <span class="pre">'S3-88',</span> <span class="pre">'S2-75',</span> <span class="pre">'S3-51',</span> <span class="pre">'S3-348']</span></em><a class="reference internal" href="../../../../_modules/kai/reduce/analysis.html#Analysis.calStars"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.analysis.Analysis.calStars" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -267,12 +272,12 @@ and photometric errors via align_rms.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="kai.reduce.analysis.Analysis.rootDir">
-<span class="sig-name descname"><span class="pre">rootDir</span></span><a class="reference internal" href="../../../../_modules/kai/reduce/analysis.html#Analysis.rootDir"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.analysis.Analysis.rootDir" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">rootDir</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'/g/lu/data/orion/'</span></em><a class="reference internal" href="../../../../_modules/kai/reduce/analysis.html#Analysis.rootDir"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.analysis.Analysis.rootDir" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="kai.reduce.analysis.Analysis.filt">
-<span class="sig-name descname"><span class="pre">filt</span></span><a class="reference internal" href="../../../../_modules/kai/reduce/analysis.html#Analysis.filt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.analysis.Analysis.filt" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">filt</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'kp'</span></em><a class="reference internal" href="../../../../_modules/kai/reduce/analysis.html#Analysis.filt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.analysis.Analysis.filt" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -296,18 +301,13 @@ and photometric errors via align_rms.</p>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="kai.reduce.analysis.Analysis.starfinder_dir_name">
-<span class="sig-name descname"><span class="pre">starfinder_dir_name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'starfinder/'</span></em><a class="reference internal" href="../../../../_modules/kai/reduce/analysis.html#Analysis.starfinder_dir_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.analysis.Analysis.starfinder_dir_name" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
 <dt class="sig sig-object py" id="kai.reduce.analysis.Analysis.dirComboAln">
 <span class="sig-name descname"><span class="pre">dirComboAln</span></span><a class="reference internal" href="../../../../_modules/kai/reduce/analysis.html#Analysis.dirComboAln"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.analysis.Analysis.dirComboAln" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="kai.reduce.analysis.Analysis.cleanList">
-<span class="sig-name descname"><span class="pre">cleanList</span></span><a class="reference internal" href="../../../../_modules/kai/reduce/analysis.html#Analysis.cleanList"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.analysis.Analysis.cleanList" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">cleanList</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'c.lis'</span></em><a class="reference internal" href="../../../../_modules/kai/reduce/analysis.html#Analysis.cleanList"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.analysis.Analysis.cleanList" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">

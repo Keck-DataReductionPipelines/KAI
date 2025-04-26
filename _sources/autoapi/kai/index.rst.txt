@@ -27,19 +27,6 @@ kai
        !! processed by numpydoc !!
 
 
-Subpackages
------------
-
-.. toctree::
-   :maxdepth: 1
-
-   /autoapi/kai/extern/index
-   /autoapi/kai/mtf/index
-   /autoapi/kai/reduce/index
-   /autoapi/kai/tests/index
-   /autoapi/kai/utils/index
-
-
 Submodules
 ----------
 
@@ -50,9 +37,14 @@ Submodules
    /autoapi/kai/conditions/index
    /autoapi/kai/conftest/index
    /autoapi/kai/constants/index
+   /autoapi/kai/extern/index
    /autoapi/kai/instruments/index
+   /autoapi/kai/mtf/index
    /autoapi/kai/photometry/index
    /autoapi/kai/plot/index
+   /autoapi/kai/reduce/index
    /autoapi/kai/strehl/index
+   /autoapi/kai/tests/index
+   /autoapi/kai/utils/index
 
 
