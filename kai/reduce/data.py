@@ -3185,7 +3185,7 @@ def residuals(params, x, y, image):
     # Residual function for least_squares
     return elliptical_gaussian_2d(params, x, y) - image
 
-def combine_register(outroot, refImage, diffPA, plot_correlation = True, instrument = instruments.default_inst):
+def combine_register(outroot, refImage, diffPA, plot_correlation = False, instrument = instruments.default_inst):
 
     shiftFile = outroot + '.shifts'
 
