@@ -4176,18 +4176,20 @@ def clean_makecoo(_ce, _cc, refSrc, strSrc, aotsxyRef, radecRef,
         #yref = float(values[4])
 
         image_data = fits.getdata(_ce)
-        com = ndimage.center_of_mass(image_data[int(yref-cent_box/2):int(yref+cent_box/2),int(xref-cent_box/2):int(xref+cent_box/2)])
-        xref = xref-cent_box/2 + (com[1]+0.5)
-        yref = yref-cent_box/2 + (com[0]+0.5)
+        for _ in range(5):
+            com = ndimage.center_of_mass(image_data[int(yref-cent_box/2):int(yref+cent_box/2),int(xref-cent_box/2):int(xref+cent_box/2)])
+            xref = int(xref-cent_box/2) + com[1]
+            yref = int(yref-cent_box/2) + com[0]
 
         #text = ir.imcntr(_ce, xstr, ystr, cbox=cent_box, Stdout=1)
         #values = text[0].split()
         #xstr = float(values[2])
         #ystr = float(values[4])
 
-        com = ndimage.center_of_mass(image_data[int(ystr-cent_box/2):int(ystr+cent_box/2),int(xstr-cent_box/2):int(xstr+cent_box/2)])
-        xstr = xstr-cent_box/2 + (com[1]+0.5)
-        ystr = ystr-cent_box/2 + (com[0]+0.5)
+        for _ in range(5):
+            com = ndimage.center_of_mass(image_data[int(ystr-cent_box/2):int(ystr+cent_box/2),int(xstr-cent_box/2):int(xstr+cent_box/2)])
+            xstr = int(xstr-cent_box/2) + com[1]
+            ystr = int(ystr-cent_box/2) + com[0]
 
         print('clean_makecoo: xref, yref final = {0:.2f} {1:.2f}'.format(xref, yref))
 
