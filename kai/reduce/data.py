@@ -3231,12 +3231,18 @@ def combine_register(outroot, refImage, diffPA, plot_correlation = False, instru
         xshift = coo_file_ref['col2'] - coo_file['col2'] 
         yshift = coo_file_ref['col1'] - coo_file['col1']
         global_shift_img = shift(shift_img, (xshift, yshift), mode = 'constant')
-        _x = np.fft.fft2(ref_img)
-        _y = np.fft.fft2(global_shift_img).conj()
+
+        # Crop off edges of images to avoid edge effects contaminating the cross correlation
+        five_percent = int(np.shape(ref_img)[0]*0.05)
+        global_shift_img_noedge = global_shift_img[five_percent:-five_percent, five_percent:-five_percent]
+        ref_img_noedge = ref_img[five_percent:-five_percent, five_percent:-five_percent]
+        
+        _x = np.fft.fft2(ref_img_noedge)
+        _y = np.fft.fft2(global_shift_img_noedge).conj()
         
         corr = np.abs(np.fft.ifft2(_x * _y))
 
-        half_size = int(np.shape(ref_img)[0]/2)
+        half_size = int(np.shape(ref_img_noedge)[0]/2)
         concat_x = np.concatenate((corr[half_size:], corr[:half_size]))
         correlation_img = np.concatenate((concat_x[:,half_size:], concat_x[:,:half_size]), axis =1)
 
