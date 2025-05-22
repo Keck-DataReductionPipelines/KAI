@@ -326,7 +326,7 @@ class Analysis(object):
             # Copy over the starfinder FITS files to the current directory
             epoch_file_root = 'mag{0}_{1}'.format(self.epoch, self.filt)
 
-            if os.path.exists(self.dirCombo + epoch_file_root + '_back.fits') == False:
+            if os.path.exists(self.dirCombo + epoch_file_root + '_psf.fits') == False:
                 raise Exception('starfinder likely failed - see ' + self.dirCombo + 'starfinder/idlbatch_combo_{0}.log'.format(self.filt) + ' for more details')
             
             shutil.copyfile(self.dirCombo + epoch_file_root + '_back.fits',
@@ -593,8 +593,7 @@ class Analysis(object):
                 file_ext = '_' + self.filt
             else:
                 file_ext = self.filt
-            if os.path.exists(self.dirCombo + 'starfinder/align/align%s%s_%3.1f.scale' % (self.imgSuffix, file_ext, self.corrMain)) == False:
-                raise Exception('calibrateCombo() likely failed, see above printouts')
+            
 
             
             os.chdir(self.dirStart)
@@ -812,6 +811,9 @@ class Analysis(object):
                          raw=True, suffix=plotSuffix, magCutOff=self.plotPosMagCut)
 
             os.chdir(self.dirStart)
+
+            if os.path.exists(self.dirCombo + 'starfinder/align/align%s%s_%3.1f.scale' % (self.imgSuffix, file_ext, self.corrMain)) == False:
+                raise Exception('alignCombo() likely failed, see above printouts')
         except:
             os.chdir(self.dirStart)
             raise
