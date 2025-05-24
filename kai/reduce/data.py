@@ -4184,9 +4184,15 @@ def clean_makecoo(_ce, _cc, refSrc, strSrc, aotsxyRef, radecRef,
 
         image_data = fits.getdata(_ce)
         for _ in range(5):
-            com = ndimage.center_of_mass(image_data[int(yref-cent_box/2):int(yref+cent_box/2),int(xref-cent_box/2):int(xref+cent_box/2)])
-            xref = int(xref-cent_box/2) + com[1]
-            yref = int(yref-cent_box/2) + com[0]
+            x0 = int(np.round(xref - (cent_box - 1)/2))
+            y0 = int(np.round(yref - (cent_box - 1)/2))
+            cutout = image_data[
+                y0: y0 + cent_box,
+                x0: x0 + cent_box
+            ]
+            dy, dx = ndimage.center_of_mass(cutout)
+            xref = x0 + dx
+            yref = y0 + dy
 
         #text = ir.imcntr(_ce, xstr, ystr, cbox=cent_box, Stdout=1)
         #values = text[0].split()
@@ -4194,9 +4200,15 @@ def clean_makecoo(_ce, _cc, refSrc, strSrc, aotsxyRef, radecRef,
         #ystr = float(values[4])
 
         for _ in range(5):
-            com = ndimage.center_of_mass(image_data[int(ystr-cent_box/2):int(ystr+cent_box/2),int(xstr-cent_box/2):int(xstr+cent_box/2)])
-            xstr = int(xstr-cent_box/2) + com[1]
-            ystr = int(ystr-cent_box/2) + com[0]
+            x0 = int(np.round(xstr - (cent_box - 1)/2))
+            y0 = int(np.round(ystr - (cent_box - 1)/2))
+            cutout = image_data[
+                y0: y0 + cent_box,
+                x0: x0 + cent_box
+            ]
+            dy, dx = ndimage.center_of_mass(cutout)
+            xstr = x0 + dx
+            ystr = y0 + dy
 
         print('clean_makecoo: xref, yref final = {0:.2f} {1:.2f}'.format(xref, yref))
 
