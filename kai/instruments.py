@@ -5,6 +5,8 @@ import collections
 from astropy.io import fits
 import pdb
 from astropy.io.fits.hdu.image import _ImageBaseHDU
+from astropy.coordinates import SkyCoord
+import astropy.units as u
 
 module_dir = os.path.dirname(__file__)
 
@@ -58,6 +60,15 @@ class Instrument(object):
     def get_linearity_correction_coeffs(self):
         pass
 
+    def get_RA_Dec(self, hdr):
+        pass
+
+    def get_mjd(self, hdr):
+        pass
+
+    def get_mjd_header_name(self, hdr):
+        pass
+
     
 class NIRC2(Instrument):
     def __init__(self):
@@ -74,7 +85,6 @@ class NIRC2(Instrument):
         self.hdr_keys['nfowler'] = 'MULTISAM'
         self.hdr_keys['camera'] = 'CAMNAME'
         self.hdr_keys['shutter'] = 'SHRNAME'
-        self.hdr_keys['mjd'] = 'MJD-OBS'
         self.hdr_keys['elevation'] = 'EL'
 
         self.bad_pixel_mask = 'nirc2mask.fits'
@@ -87,6 +97,38 @@ class NIRC2(Instrument):
         self.telescope_diam = 10.5 # telescope diameter in meters
 
         return
+
+    def get_mjd(self, hdr):
+        date = hdr['DATE-OBS']
+        
+        if (float(date[0:4]) < 2025):
+            mjd = hdr['MJD-OBS']
+        elif (float(date[0:4]) >= 2025):
+            mjd = hdr['MJD']
+
+        return mjd
+
+    def get_mjd_header_name(self, hdr):
+        date = hdr['DATE-OBS']
+        
+        if (float(date[0:4]) < 2025):
+            mjd = 'MJD-OBS'
+        elif (float(date[0:4]) >= 2025):
+            mjd = 'MJD'
+
+        return mjd
+
+    def get_RA_Dec(self, hdr):
+        date = hdr['DATE-OBS']
+        
+        if (float(date[0:4]) < 2025):
+            ra, dec = float(hdr['RA']), float(hdr['DEC'])
+        elif (float(date[0:4]) >= 2025):
+            coords = SkyCoord(hdr['RA'], hdr['DEC'], unit=(u.hourangle, u.deg))
+            ra, dec = coords.ra.deg, coords.dec.deg
+
+        return ra, dec
+            
     
     def get_filter_name(self, hdr):
         filter1 = hdr['fwiname']
@@ -228,7 +270,7 @@ class OSIRIS(Instrument):
         self.hdr_keys['nfowler'] = 'numreads'
         self.hdr_keys['camera'] = 'instr'
         self.hdr_keys['shutter'] = 'ifilter'
-        self.hdr_keys['mjd'] = 'MJD-OBS'
+        #self.hdr_keys['mjd'] = 'MJD-OBS'
         self.hdr_keys['elevation'] = 'EL'
 
         self.bad_pixel_mask = 'osiris_img_mask.fits'
@@ -241,6 +283,17 @@ class OSIRIS(Instrument):
         self.telescope_diam = 10.5 # telescope diameter in meters
         
         return
+
+    def get_mjd(self, hdr):
+        mjd = hdr['MJD-OBS']
+        return mjd
+
+    def get_mjd_header_name(self, hdr):
+        return 'MJD-OBS'
+
+    def get_RA_Dec(self, hdr):
+        ra, dec = float(hdr['RA']), float(hdr['DEC'])
+        return ra, dec
     
     def get_filter_name(self, hdr):
         f = hdr['ifilter']

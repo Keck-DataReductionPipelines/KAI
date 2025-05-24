@@ -106,7 +106,7 @@ def getAotsxy(hdr):
             # Another special case: 09may01 UT had a AOTSX/Y linear drift.
             # Found drift with 09maylgs/clean/kp/coord.py
             if ((hdr['OUTDIR']).strip() == '/sdata903/nirc3/2009may01/'):
-                mjdobs = float(hdr['MJD-OBS'])
+                mjdobs = float(instrument.get_mjd(hdr))
                 # old distortion solution (pre-ship) gives:
                 #aotsxy[0] -= (1.895701e5*0.727) + (-3.449709*0.727) * mjdobs 
                 # new distortion solution (yelda et al. 2010)
@@ -119,7 +119,7 @@ def getAotsxy(hdr):
             # Another special case: 10jul06 UT had a AOTSX/Y linear drift.
             # Found drift with 10jullgs1/clean/kp/coord.py
             if ((hdr['OUTDIR']).strip() == '/sdata903/nirc3/2010jul06/'):
-                mjdobs = float(hdr['MJD-OBS'])
+                mjdobs = float(instrument.get_mjd(hdr))
                 # new distortion solution (yelda et al. 2010)
                 aotsxy[0] -= (2.039106e5*0.727) + (-3.681807*0.727) * mjdobs 
 

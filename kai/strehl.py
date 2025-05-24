@@ -100,10 +100,12 @@ def calc_strehl(file_list, out_file, apersize=0.3, instrument=instruments.defaul
         for ii in range(len(file_list)):
             strehl, fwhm, rmswfe = calc_strehl_single(file_list[ii], radius, 
                                                       dl_peak_flux_ratio, instrument=instrument)
+            hdr = fits.getheader(file_list[ii])
+            mjd_name = instrument.get_mjd_header_name(hdr)
             try:
-                mjd = fits.getval(file_list[ii], instrument.hdr_keys['mjd']) 
+                mjd = fits.getval(file_list[ii], mjd_name) 
             except KeyError:
-                mjd = fits.getval(file_list[ii], instrument.hdr_keys['mjd'], extname='SCI')
+                mjd = fits.getval(file_list[ii], mjd_name, extname='SCI')
             dirname, filename = os.path.split(file_list[ii])
 
             _out.write(fmt_dat.format(img=filename, strehl=strehl, rms=rmswfe, fwhm=fwhm, mjd=mjd))

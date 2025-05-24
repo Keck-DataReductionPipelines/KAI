@@ -8,6 +8,7 @@ from astropy.nddata.utils import Cutout2D
 from astropy.nddata import CCDData
 from astropy.nddata import block_replicate
 from astropy import units as u
+from astropy.coordinates import SkyCoord
 import ccdproc as ccdp
 import math
 import drizzle
@@ -201,7 +202,7 @@ def clean(files, nite, wave, refSrc, strSrc,
         # This is the image for which refSrc is relevant.
         firstFile = instrument.make_filenames([files[0]], rootDir=rawDir)[0]
         hdr1 = fits.getheader(firstFile, ignore_missing_end=True)
-        radecRef = [float(hdr1['RA']), float(hdr1['DEC'])]
+        radecRef = instrument.get_RA_Dec(hdr1)
         aotsxyRef = kai_util.getAotsxy(hdr1)
 
         if ref_offset_method == 'pcu':
@@ -554,7 +555,7 @@ def clean_iraf(files, nite, wave, refSrc, strSrc,
         # This is the image for which refSrc is relevant.
         firstFile = instrument.make_filenames([files[0]], rootDir=rawDir)[0]
         hdr1 = fits.getheader(firstFile, ignore_missing_end=True)
-        radecRef = [float(hdr1['RA']), float(hdr1['DEC'])]
+        radecRef = instrument.get_RA_Dec(hdr1)
         aotsxyRef = kai_util.getAotsxy(hdr1)
 
         if ref_offset_method == 'pcu':
@@ -1979,7 +1980,7 @@ def combine_drizzle(imgsize, cleanDir, roots, outroot, weights, shifts,
         exp_time = hdr_current_img[itime_keyword]
 
         # Read in MJD of current file from FITS header
-        mjd = float(hdr_current_img['MJD-OBS'])
+        mjd = float(instrument.get_mjd(hdr_current_img))#hdr_current_img['MJD-OBS'])
         mjd_weightedSum += weights[i] * mjd
 
         
@@ -2143,7 +2144,7 @@ def combine_drizzle(imgsize, cleanDir, roots, outroot, weights, shifts,
     time_obs = Time(mjd_weightedMean, format='mjd')
     
     fits_f[0].header.set(
-        'MJD-OBS', mjd_weightedMean,
+        instrument.get_mjd_header_name(fits_f[0].header), mjd_weightedMean,
         'Weighted modified julian date of combined observations'
     )
     
@@ -2276,7 +2277,7 @@ def combine_drizzle_iraf(imgsize, cleanDir, roots, outroot, weights, shifts,
 
         
         # Read in MJD of current file from FITS header
-        mjd = float(hdr['MJD-OBS'])
+        mjd = float(instrument.get_mjd(hdr))
         mjd_weightedSum += weights[i] * mjd
         
         # Drizzle this file ontop of all previous ones.
@@ -2359,7 +2360,7 @@ def combine_drizzle_iraf(imgsize, cleanDir, roots, outroot, weights, shifts,
     time_obs = Time(mjd_weightedMean, format='mjd')
     
     fits_f[0].header.set(
-        'MJD-OBS', mjd_weightedMean,
+        instrument.get_mjd_header_name(fits_f[0].header), mjd_weightedMean,
         'Weighted modified julian date of combined observations'
     )
     
@@ -2533,7 +2534,7 @@ def combine_submaps(
         exp_time = hdr['ITIME']
 
         # Read in MJD of current file from FITS header
-        mjd = float(hdr['MJD-OBS'])
+        mjd = float(instrument.get_mjd(hdr))
         mjd_weightedSums[sub] += weights[i] * mjd
         
         # Drizzle this file ontop of all previous ones.
@@ -2643,7 +2644,7 @@ def combine_submaps(
                               'Y Distortion Image')
         
         # Store weighted MJDs in header
-        fits_f[0].header.set('MJD-OBS', mjd_weightedMeans[s], 'Weighted modified julian date of combined observations')
+        fits_f[0].header.set(instrument.get_mjd_header_name(hdr), mjd_weightedMeans[s], 'Weighted modified julian date of combined observations')
     
         ## Also update date field in header
         fits_f[0].header.set('DATE', '{0}'.format(submaps_time_obs[s].fits), 'Weighted observation date')
@@ -2817,7 +2818,7 @@ def combine_submaps_iraf(
             ir.drizzle.ygeoim = distYgeoim
 
         # Read in MJD of current file from FITS header
-        mjd = float(hdr['MJD-OBS'])
+        mjd = float(instrument.get_mjd(hdr))#hdr['MJD-OBS'])
         mjd_weightedSums[sub] += weights[i] * mjd
         
         # Drizzle this file ontop of all previous ones.
@@ -2892,7 +2893,7 @@ def combine_submaps_iraf(
                               'Y Distortion Image')
         
         # Store weighted MJDs in header
-        fits_f[0].header.set('MJD-OBS', mjd_weightedMeans[s], 'Weighted modified julian date of combined observations')
+        fits_f[0].header.set(instrument.get_mjd_header_name(fits_f[0].header), mjd_weightedMeans[s], 'Weighted modified julian date of combined observations')
     
         ## Also update date field in header
         fits_f[0].header.set('DATE', '{0}'.format(submaps_time_obs[s].fits), 'Weighted observation date')
@@ -3696,7 +3697,7 @@ def clean_cosmicrays_iraf(_ff, _mask, wave):
     if os.path.exists(_mask + '.pl'): os.remove(_mask + '.pl')
 
 def cosmicray_median(ccd, error_image=None, thresh=5, mbox=11, gbox=0,
-                     rbox=0, fratio = 1):
+                     rbox=0, fratio = 1, star_thresh=2):
     """
     Modified from ccdproc
     
@@ -4140,8 +4141,8 @@ def clean_makecoo(_ce, _cc, refSrc, strSrc, aotsxyRef, radecRef,
         offsets may work better.
     """
     hdr = fits.getheader(_ce, ignore_missing_end=True)
-
-    radec = [float(hdr['RA']), float(hdr['DEC'])]
+    radec = instrument.get_RA_Dec(hdr)
+        
     aotsxy = kai_util.getAotsxy(hdr)
     if offset_method == 'pcu':
         pcuxy = [float(hdr['PCSFX']), float(hdr['PCSFY'])]  #New version may be PCUX and PCUY
