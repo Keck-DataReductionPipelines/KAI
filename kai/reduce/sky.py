@@ -122,7 +122,7 @@ def makesky(
     
     
     # Perform linearity correction
-    if instrument is 'NIRC2':
+    if instrument.name is 'NIRC2':
         for i in range(len(skies)):
             lin_correction.lin_correction(nn[i], instrument=instrument)
     
@@ -307,7 +307,7 @@ def makesky_lp(
         warnings.warn(warning_message)
     
     # Perform linearity correction
-    if instrument is 'NIRC2':
+    if instrument.name is 'NIRC2':
         for i in range(len(skies)):
             lin_correction.lin_correction(skies[i], instrument=instrument)
     

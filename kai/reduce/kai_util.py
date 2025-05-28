@@ -11,6 +11,9 @@ import numpy as np
 import math
 from kai import instruments
 from kai.reduce import util
+import warnings
+
+warnings.filterwarnings("ignore")
 
 def kailog(directory):
     makelog(directory, outfile='kai.log')
@@ -88,8 +91,11 @@ def makelog(directory, outfile='image_log.txt',
             if isinstance(instrument, instruments.OSIRIS):
                 f.write('%-6s ' % hdr['OBTDNAME'])
             
+            # Last column is size of image 
+            f.write(str(hdr["NAXIS1"]) + " X " + str(hdr["NAXIS2"]))
+
             # End of this line
-            f.write('\n')
+            f.write("\n")
             
 
     f.close()
