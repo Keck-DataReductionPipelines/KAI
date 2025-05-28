@@ -1,7 +1,7 @@
-kai.reduce.analysis
-===================
+kai.reduce.analysis_residual
+============================
 
-.. py:module:: kai.reduce.analysis
+.. py:module:: kai.reduce.analysis_residual
 
 
 Classes
@@ -9,7 +9,7 @@ Classes
 
 .. autoapisummary::
 
-   kai.reduce.analysis.Analysis
+   kai.reduce.analysis_residual.Analysis
 
 
 Functions
@@ -17,8 +17,7 @@ Functions
 
 .. autoapisummary::
 
-   kai.reduce.analysis.idl_process_run
-   kai.reduce.analysis.plotPosError
+   kai.reduce.analysis_residual.idl_process_run
 
 
 Module Contents
@@ -134,11 +133,6 @@ Module Contents
 
 
 
-   .. py:attribute:: labellist_accel
-      :value: True
-
-
-
    .. py:attribute:: orbitlist
       :value: '/g/lu/data/orion/source_list/orbits.dat'
 
@@ -150,6 +144,11 @@ Module Contents
 
 
    .. py:attribute:: instrument
+
+
+   .. py:attribute:: calStars
+      :value: ['irs16NW', 'S3-22', 'S2-22', 'S4-3', 'S1-1', 'S1-21', 'S1-12', 'S2-2', 'S3-88', 'S2-75',...
+
 
 
    .. py:attribute:: calFlags
@@ -263,59 +262,9 @@ Module Contents
    .. py:method:: analyzeCombo()
 
 
-   .. py:method:: analyzeClean()
-
-
-   .. py:method:: analyzeComboClean()
-
-
    .. py:method:: starfinderCombo(oldPsf=False)
-
-
-   .. py:method:: starfinderClean()
-
-
-   .. py:method:: starfinderCleanLoop()
 
 
    .. py:method:: calibrateCombo()
 
-
-   .. py:method:: calibrateClean()
-
-
-   .. py:method:: alignCombo()
-
-
-   .. py:method:: alignClean()
-
-
-.. py:function:: plotPosError(starlist, raw=False, suffix='', radius=4, magCutOff=15.0, title=True)
-
-   
-   Make three standard figures that show the data quality 
-   from  a *_rms.lis file. 
-
-   1. astrometric error as a function of magnitude.
-   2. photometric error as a function of magnitude.
-   3. histogram of number of stars vs. magnitude.
-
-   Use raw=True to plot the individual stars in plots 1 and 2.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-   ..
-       !! processed by numpydoc !!
 

@@ -83,6 +83,9 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">kai</span><span class="w"> </span><span class="kn">import</span> <span class="n">instruments</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">kai.reduce</span><span class="w"> </span><span class="kn">import</span> <span class="n">util</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
 
 <div class="viewcode-block" id="kailog">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/kai_util/index.html#kai.reduce.kai_util.kailog">[docs]</a>
@@ -165,8 +168,11 @@
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">instrument</span><span class="p">,</span> <span class="n">instruments</span><span class="o">.</span><span class="n">OSIRIS</span><span class="p">):</span>
                 <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%-6s</span><span class="s1"> &#39;</span> <span class="o">%</span> <span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;OBTDNAME&#39;</span><span class="p">])</span>
             
+            <span class="c1"># Last column is size of image </span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="s2">&quot;NAXIS1&quot;</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot; X &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="s2">&quot;NAXIS2&quot;</span><span class="p">]))</span>
+
             <span class="c1"># End of this line</span>
-            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
             
 
     <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>

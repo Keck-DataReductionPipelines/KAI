@@ -12,6 +12,7 @@ Submodules
 
    /autoapi/kai/reduce/align_rms/index
    /autoapi/kai/reduce/analysis/index
+   /autoapi/kai/reduce/analysis_residual/index
    /autoapi/kai/reduce/bfixpix/index
    /autoapi/kai/reduce/calib/index
    /autoapi/kai/reduce/calibrate/index
