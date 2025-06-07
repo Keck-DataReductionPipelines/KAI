@@ -220,9 +220,9 @@ def calc_peak_flux_ratio(img, coords, radius, skysub=True):
     img_cut = Cutout2D(img, coords, boxsize, mode='strict')
 
     # Determine the peak flux in this window.
-    peak_coords_cutout = np.unravel_index(np.argmax(img_cut.data, axis=None), img_cut.data.shape)
-    peak_coords = img_cut.to_original_position(peak_coords_cutout)
-    peak_flux = img[peak_coords[::-1]]
+    iy, ix = np.unravel_index(np.argmax(img_cut.data, axis=None), img_cut.data.shape)
+    ys, xs = img_cut.slices_original
+    peak_flux = img[ys.start + iy, xs.start + ix]
     
     # Calculate the Strehl by first finding the peak-pixel flux / wide-aperture flux.
     # Then normalize by the same thing from the reference DL image. 
