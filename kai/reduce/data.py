@@ -3739,6 +3739,20 @@ def cosmicray_median(ccd, input_mask, error_image=None, thresh=5, mbox=5, gbox=0
         be replaced.
         Default is ``0``.
 
+    fratio : int, optional
+        Flux ratio determination for cosmic rays in stars by comparing residual
+        to nearby median.
+        Default is ``3``.
+
+    star_thresh : int, optional
+        Threshold for determining if pixels belong to a star as compared to 
+        their 25th percentile background.
+        Default is ``5``.
+
+    thresh_in_star : int, optional
+        Threshold for cosmicrays in star.
+        Default is ``10".
+
     Notes
     -----
     Similar implementation to crmedian in iraf.imred.crutil.crmedian.
