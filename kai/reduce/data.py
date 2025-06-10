@@ -311,6 +311,12 @@ def clean(files, nite, wave, refSrc, strSrc,
             sky = skyObj.getSky(_cp)
 
             util.imarith(_cp, '-', sky, _ss)
+            
+            # Check if sky subtraction is correct 
+            # or if scale sky must be applied
+            ss = fits.getdata(_ss)
+            if np.median(ss) < -10:
+                raise Exception('Sky subtraction caused negative image. Rerun clean() with skyscale = True')
 
             ### Flat field ###
             util.imarith(_ss, '/', flat, _ff)
