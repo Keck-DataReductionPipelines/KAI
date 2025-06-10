@@ -601,11 +601,13 @@ def makeflat_iraf(
 
 
 
-def makemask(dark, flat, output, reduce_dir=None, instrument=instruments.default_inst):
+def makemask(dark, flat, output, reduce_dir=None, instrument=instruments.default_inst, mask_ref_pixels = True):
     """
     Make bad pixel mask for imaging data. Makes a calib/ directory
     and stores all output there. All output and temporary files
     will be created in a masks/ subdirectory.
+
+    Sets reference pixels to mask = 2.
     
     Parameters
     ----------
@@ -627,6 +629,9 @@ def makemask(dark, flat, output, reduce_dir=None, instrument=instruments.default
         If epoch_dir is None, then use the current working directory.
     instrument : instruments object, optional
         Instrument of data. Default is `instruments.default_inst`
+    mask_ref_pixels : bool, optional
+        Determines whether to add edge reference pixels to mask with mask value = 2.
+        Default is True.
     """
     rawDir, redDir = get_raw_reduce_directories(None, reduce_dir)
     calDir = redDir + 'calib/'
@@ -703,10 +708,15 @@ def makemask(dark, flat, output, reduce_dir=None, instrument=instruments.default
         mask = hot + dead + inst_mask
     else:
         mask = hot + dead
+
+    # mask out reference pixels
+    reference_pixels = instrument.get_reference_pixels(img_fl)
+    
     mask = (mask != 0)
     unmask = (mask == 0)
     ofile[0].data[unmask] = 0
     ofile[0].data[mask] = 1
+    ofile[0].data[reference_pixels] = 2
     ofile[0].writeto(_out, output_verify='silentfix')
 
     return

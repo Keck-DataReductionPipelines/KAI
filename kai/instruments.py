@@ -69,6 +69,9 @@ class Instrument(object):
     def get_mjd_header_name(self, hdr):
         pass
 
+    def get_reference_pixels(self, img):
+        pass
+
     
 class NIRC2(Instrument):
     def __init__(self):
@@ -249,6 +252,9 @@ class NIRC2(Instrument):
         
         lin_corr_coeffs = np.array([1.001, -6.9e-6, -0.70e-10])
         return lin_corr_coeffs
+
+    def get_reference_pixels(self, img):
+        return np.array([])
         
 
 
@@ -452,6 +458,15 @@ class OSIRIS(Instrument):
         new_img = img - np.array([ref_pix_median]).T
     
         return new_img
+
+    def get_reference_pixels(self, img):
+        border_mask = np.zeros_like(img, dtype=bool) 
+        border_mask[:4, :] = True
+        border_mask[-4:, :] = True
+        border_mask[:, :4] = True
+        border_mask[:, -4:] = True
+
+        return np.where(border_mask == True)
 
     def get_distortion_maps(self, hdr):
         """

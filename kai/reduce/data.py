@@ -331,7 +331,7 @@ def clean(files, nite, wave, refSrc, strSrc,
             util.rmall([_ff_s])
 
             ### Fix cosmic rays and make cosmic ray mask. ###
-            clean_cosmicrays(_ff_f, _crmask, wave)
+            clean_cosmicrays(_ff_f, _crmask, wave, _supermask)
 
             ### Combine static and cosmic ray mask ###
             # This will be used in combine later on.
@@ -3702,7 +3702,7 @@ def clean_cosmicrays_iraf(_ff, _mask, wave):
     ir.imcopy(_mask+'.pl', _mask, verbose='yes')
     if os.path.exists(_mask + '.pl'): os.remove(_mask + '.pl')
 
-def cosmicray_median(ccd, error_image=None, thresh=5, mbox=11, gbox=0,
+def cosmicray_median(ccd, input_mask, error_image=None, thresh=5, mbox=11, gbox=0,
                      rbox=0, fratio = 1, star_thresh=2):
     """
     Modified from ccdproc
@@ -3810,6 +3810,10 @@ def cosmicray_median(ccd, error_image=None, thresh=5, mbox=11, gbox=0,
     crarr = ((rarr > thresh + 5) & (rarr2 > 3) & (star_indicator > 5)) | ((rarr > thresh) & (star_indicator <= 5)) # & (rarr2 > fratio)
     #crarr = (rarr > thresh) & (rarr2 > fratio) & (star_indicator < 10)
 
+    # Remove reference pixels
+    ref_pixels = np.where(input_mask == 2)
+    crarr[ref_pixels] = 0
+
     # grow the pixels
     if gbox > 0:
         crarr = ndimage.maximum_filter(crarr, gbox)
@@ -3903,7 +3907,7 @@ def round_to_edge(min_box_val, max_box_val, min_val, max_val):
 
     return min_box_val, max_box_val
     
-def clean_cosmicrays(_ff, _mask, wave, thresh=5, mbox=5, rbox=10, fratio = 0.4, gbox = 0):
+def clean_cosmicrays(_ff, _mask, wave, _input_mask, thresh=5, mbox=5, rbox=10, fratio = 0.4, gbox = 0):
     """Clean the image of cosmicrays and make a mask containing the location
     of all the cosmicrays. The CR masks can later be used in combine() to
     keep cosmicrays from being included.
@@ -3922,6 +3926,8 @@ def clean_cosmicrays(_ff, _mask, wave, thresh=5, mbox=5, rbox=10, fratio = 0.4, 
     # background.
     ff_img = fits.getdata(_ff)
     ff_header = fits.getheader(_ff)
+
+    input_mask = fits.getdata(_input_mask)
     
     tmp_stats = stats.sigma_clipped_stats(ff_img,
                                           sigma_upper=2, sigma_lower=5,
@@ -3929,7 +3935,7 @@ def clean_cosmicrays(_ff, _mask, wave, thresh=5, mbox=5, rbox=10, fratio = 0.4, 
     mean = tmp_stats[0]
     stddev = tmp_stats[2]
     
-    newdata, crmask = cosmicray_median(ff_img, error_image = stddev, thresh=thresh, mbox=mbox, gbox=gbox, rbox=rbox, fratio=fratio)
+    newdata, crmask = cosmicray_median(ff_img, input_mask, error_image = stddev, thresh=thresh, mbox=mbox, gbox=gbox, rbox=rbox, fratio=fratio)
     #ndata, mdata, crarr= cosmicray_median(ff_img, error_image = stddev, thresh=thresh, mbox=mbox, gbox=gbox, rbox=rbox, fratio=fratio)
     #return ndata, mdata, crarr
     crmask = crmask.astype(int)
