@@ -187,7 +187,7 @@ class TestCosmicRayRemoval(unittest.TestCase):
     def test_run_clean_cosmicrays_noiraf(self):
         mod_path = os.path.dirname(os.path.abspath(data.__file__))
 
-        epoch_dir = mod_path + '/../data/test_epoch/noiraf/17may21/'
+        epoch_dir = mod_path + '/../data/test_epoch/noiraf/17may21_subset/'
         reduce_dir = epoch_dir + 'reduce/kp/sci_ob170095/'
 
         #for ii in range(7, 20):
@@ -200,6 +200,8 @@ class TestCosmicRayRemoval(unittest.TestCase):
         _statmask = reduce_dir + 'stat_mask' + img_root + '.fits'
         _ff_s = reduce_dir + 'ff' + img_root + '_s.fits'
 
+        _supermask = epoch_dir + 'reduce/calib/masks/supermask.fits'
+
         util.rmall([crmask_filename])
 
         ### Fix bad pixels ###
@@ -207,7 +209,7 @@ class TestCosmicRayRemoval(unittest.TestCase):
         bfixpix.bfixpix(to_clean_img_filename, _statmask)
         util.rmall([_ff_s])
 
-        data.clean_cosmicrays(_ff=clean_img_filename, _mask=crmask_filename, wave='kp', thresh=5, mbox=5, rbox=10, fratio = 0.4, gbox=0)
+        data.clean_cosmicrays(_ff=clean_img_filename, _mask=crmask_filename, wave='kp', _input_mask = _supermask)
         #shutil.move(clean_img_filename, clean_img_filename.replace('.fits', '_noiraf.fits'))
 
         return
@@ -233,7 +235,7 @@ class TestCosmicRayRemoval(unittest.TestCase):
         iraf_epoch_dir = mod_path + '/../data/test_epoch/17may21_iraf/'
         iraf_reduce_dir = iraf_epoch_dir + 'reduce/kp/sci_ob170095/'
 
-        noiraf_epoch_dir = mod_path + '/../data/test_epoch/17may21_noiraf/'
+        noiraf_epoch_dir = mod_path + '/../data/test_epoch/noiraf/17may21_subset/'
         noiraf_reduce_dir = noiraf_epoch_dir + 'reduce/kp/sci_ob170095/'
         
         img_root = '0007'

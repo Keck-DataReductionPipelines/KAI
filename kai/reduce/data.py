@@ -3702,8 +3702,8 @@ def clean_cosmicrays_iraf(_ff, _mask, wave):
     ir.imcopy(_mask+'.pl', _mask, verbose='yes')
     if os.path.exists(_mask + '.pl'): os.remove(_mask + '.pl')
 
-def cosmicray_median(ccd, input_mask, error_image=None, thresh=5, mbox=11, gbox=0,
-                     rbox=0, fratio = 1, star_thresh=2):
+def cosmicray_median(ccd, input_mask, error_image=None, thresh=5, mbox=5, gbox=0,
+                     rbox=0, fratio = 3, star_thresh=5, thresh_in_star = 10):
     """
     Modified from ccdproc
     
@@ -3807,8 +3807,7 @@ def cosmicray_median(ccd, input_mask, error_image=None, thresh=5, mbox=11, gbox=
     # identify all sources
     # Different criteria for stars (star indicator > star thresh) and for background (star indicator < star thresh)
     # Larger criteria to find a cosmic ray on a star
-    crarr = ((rarr > thresh + 5) & (rarr2 > 3) & (star_indicator > 5)) | ((rarr > thresh) & (star_indicator <= 5)) # & (rarr2 > fratio)
-    #crarr = (rarr > thresh) & (rarr2 > fratio) & (star_indicator < 10)
+    crarr = ((rarr > thresh_in_star) & (rarr2 > fratio) & (star_indicator > star_thresh)) | ((rarr > thresh) & (star_indicator <= star_thresh))
 
     # Remove reference pixels
     ref_pixels = np.where(input_mask == 2)
@@ -3907,7 +3906,7 @@ def round_to_edge(min_box_val, max_box_val, min_val, max_val):
 
     return min_box_val, max_box_val
     
-def clean_cosmicrays(_ff, _mask, wave, _input_mask, thresh=5, mbox=5, rbox=10, fratio = 0.4, gbox = 0):
+def clean_cosmicrays(_ff, _mask, wave, _input_mask, thresh=5, mbox=5, rbox=10, fratio = 3, gbox = 0, star_thresh=5, thresh_in_star = 10):
     """Clean the image of cosmicrays and make a mask containing the location
     of all the cosmicrays. The CR masks can later be used in combine() to
     keep cosmicrays from being included.
