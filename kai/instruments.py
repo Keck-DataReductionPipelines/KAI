@@ -254,7 +254,7 @@ class NIRC2(Instrument):
         return lin_corr_coeffs
 
     def get_reference_pixels(self, img):
-        return np.array([])
+        return np.full(img.shape, False)
         
 
 
