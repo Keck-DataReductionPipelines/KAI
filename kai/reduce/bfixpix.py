@@ -17,7 +17,10 @@ def bfixpix(image_file, mask_file, outsuffix='_f', msksuffix='_s'):
         input image file to fix bad pixels on
 
     mask_file : string
-        mask file (0 == good pixels, >0 == bad pixels
+        mask file (0 == good pixels, >0 == bad pixels)
+        Only fixes bad pixels = 1
+        pixel = 2 means that it's a reference pixel and will be 
+        filtered out in other steps but not "fixed."
 
     outsuffix : string
         suffix for fixed image. default = '_f'
