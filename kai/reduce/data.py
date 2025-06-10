@@ -3794,9 +3794,15 @@ def cosmicray_median(ccd, error_image=None, thresh=5, mbox=11, gbox=0,
     # Compare residual to the mean nearby
     # in order to exclude stars
     rarr2 = (data - marr) /marr
+
+    local_bg = ndimage.percentile_filter(data, 25, size=mbox*3)  # Larger box for background
+    star_indicator = (marr - local_bg) / error_image
                          
     # identify all sources
-    crarr = (rarr > thresh) & (rarr2 > fratio)
+    # Different criteria for stars (star indicator > star thresh) and for background (star indicator < star thresh)
+    # Larger criteria to find a cosmic ray on a star
+    crarr = ((rarr > thresh + 5) & (rarr2 > 3) & (star_indicator > 5)) | ((rarr > thresh) & (star_indicator <= 5)) # & (rarr2 > fratio)
+    #crarr = (rarr > thresh) & (rarr2 > fratio) & (star_indicator < 10)
 
     # grow the pixels
     if gbox > 0:

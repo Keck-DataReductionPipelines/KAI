@@ -250,7 +250,7 @@ class Analysis(object):
         try:
             print('COMBO starfinder')
             print('Coo Star: ' + self.cooStar)
-            
+             
             os.chdir(self.dirComboStf)
             if self.type == 'ao':
                 # Write an IDL batch file
@@ -325,7 +325,7 @@ class Analysis(object):
             
             # Copy over the starfinder FITS files to the current directory
             epoch_file_root = 'mag{0}_{1}'.format(self.epoch, self.filt)
-
+            
             if os.path.exists(self.dirCombo + epoch_file_root + '_psf.fits') == False:
                 raise Exception('starfinder likely failed - see ' + self.dirCombo + 'starfinder/idlbatch_combo_{0}.log'.format(self.filt) + ' for more details')
             
@@ -342,7 +342,7 @@ class Analysis(object):
                 epoch_file_root + '.fits', self.dirCombo,
                 epoch_file_root + '.fits', datetime.now())
             data_sources_file.write(out_line)
-            
+             
             # Copy over submap starfinder FITS files to the current directory
             epoch_sub_root = 'm{0}_{1}'.format(self.epoch, self.filt)
             
