@@ -3703,7 +3703,7 @@ def clean_cosmicrays_iraf(_ff, _mask, wave):
     if os.path.exists(_mask + '.pl'): os.remove(_mask + '.pl')
 
 def cosmicray_median(ccd, input_mask, error_image=None, thresh=5, mbox=5, gbox=0,
-                     rbox=0, fratio = 3, star_thresh=5, thresh_in_star = 10):
+                     rbox=0, fratio = 5, star_thresh=4, thresh_in_star = 10):
     """
     Modified from ccdproc
     
@@ -3742,12 +3742,12 @@ def cosmicray_median(ccd, input_mask, error_image=None, thresh=5, mbox=5, gbox=0
     fratio : int, optional
         Flux ratio determination for cosmic rays in stars by comparing residual
         to nearby median.
-        Default is ``3``.
+        Default is ``5``.
 
     star_thresh : int, optional
         Threshold for determining if pixels belong to a star as compared to 
         their 25th percentile background.
-        Default is ``5``.
+        Default is ``4``.
 
     thresh_in_star : int, optional
         Threshold for cosmicrays in star.
@@ -3802,6 +3802,7 @@ def cosmicray_median(ccd, input_mask, error_image=None, thresh=5, mbox=5, gbox=0
 
     # create the median image
     marr = ndimage.median_filter(data, size=(mbox, mbox))
+
 
     # Only look at the data array
     if isinstance(data, np.ma.MaskedArray):
@@ -3920,7 +3921,7 @@ def round_to_edge(min_box_val, max_box_val, min_val, max_val):
 
     return min_box_val, max_box_val
     
-def clean_cosmicrays(_ff, _mask, wave, _input_mask, thresh=5, mbox=5, rbox=10, fratio = 3, gbox = 0, star_thresh=5, thresh_in_star = 10):
+def clean_cosmicrays(_ff, _mask, wave, _input_mask, thresh=5, mbox=5, rbox=10, fratio = 5, gbox = 0, star_thresh=4, thresh_in_star = 10):
     """Clean the image of cosmicrays and make a mask containing the location
     of all the cosmicrays. The CR masks can later be used in combine() to
     keep cosmicrays from being included.
@@ -3948,7 +3949,8 @@ def clean_cosmicrays(_ff, _mask, wave, _input_mask, thresh=5, mbox=5, rbox=10, f
     mean = tmp_stats[0]
     stddev = tmp_stats[2]
     
-    newdata, crmask = cosmicray_median(ff_img, input_mask, error_image = stddev, thresh=thresh, mbox=mbox, gbox=gbox, rbox=rbox, fratio=fratio)
+    newdata, crmask = cosmicray_median(ff_img, input_mask, error_image = stddev, thresh=thresh, mbox=mbox, gbox=gbox, rbox=rbox, fratio=fratio,
+                                      star_thresh = star_thresh, thresh_in_star = thresh_in_star)
     #ndata, mdata, crarr= cosmicray_median(ff_img, error_image = stddev, thresh=thresh, mbox=mbox, gbox=gbox, rbox=rbox, fratio=fratio)
     #return ndata, mdata, crarr
     crmask = crmask.astype(int)
