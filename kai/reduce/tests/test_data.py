@@ -581,7 +581,7 @@ class TestCombineDrizzle(unittest.TestCase):
     def test_run_combine_drizzle_iraf():#self):
         # To be run in the reduce directory of the test_epoch
         mod_path = os.path.dirname(os.path.abspath(data.__file__))
-        epoch_dir = mod_path + '/../data/test_epoch/17may21_iraf/'
+        epoch_dir = mod_path + '/../data/test_epoch/iraf/17may21_subset/'
         cleanDir = epoch_dir + 'clean/ob170095_kp/'
         combo_dir = epoch_dir + 'combo/'
 
@@ -618,7 +618,7 @@ class TestCombineDrizzle(unittest.TestCase):
     def test_run_combine_drizzle_noiraf(self):
         # To be run in the reduce directory of the test_epoch
         mod_path = os.path.dirname(os.path.abspath(data.__file__))
-        epoch_dir = mod_path + '/../data/test_epoch/17may21_noiraf/'
+        epoch_dir = mod_path + '/../data/test_epoch/noiraf/17may21_subset/'
         cleanDir = epoch_dir + 'clean/ob170095_kp/'
         combo_dir = epoch_dir + 'combo/'
 
@@ -665,8 +665,8 @@ class TestCombineDrizzle(unittest.TestCase):
 
     def test_compare_combine_drizzle_iraf_noiraf(self):
         mod_path = os.path.dirname(os.path.abspath(data.__file__))
-        data_dir_iraf = mod_path + '/../data/test_epoch/17may21_iraf/combo/'
-        data_dir_noiraf = mod_path + '/../data/test_epoch/17may21_noiraf/combo/'
+        data_dir_iraf = mod_path + '/../data/test_epoch/iraf/17may21_subset/combo/'
+        data_dir_noiraf = mod_path + '/../data/test_epoch/noiraf/17may21_subset/combo/'
         
         iraf_drizzled_img = fits.open(data_dir_iraf + 'mag17may21_ob170095_kp.fits')
         noiraf_drizzled_img = fits.open(data_dir_noiraf + 'mag17may21_ob170095_kp.fits')

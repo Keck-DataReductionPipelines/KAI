@@ -2049,6 +2049,12 @@ def combine_drizzle(imgsize, cleanDir, roots, outroot, weights, shifts,
         img_hdu = fits.PrimaryHDU(data=out_img, header=hdr)
 
         # make header
+        if i == 0:
+            # set CRPIX by the first image
+            shift_crpix1 = wcs_out.wcs.crpix[0] + (imgsize - np.shape(cdwt_img)[0])/2 + xsh
+            shift_crpix2 = wcs_out.wcs.crpix[1] + (imgsize - np.shape(cdwt_img)[0])/2 + ysh
+            img_hdu.header.set('CRPIX1', shift_crpix1 + wcs_in.cpdis1.get_offset(shift_crpix1, shift_crpix2))
+            img_hdu.header.set('CRPIX2', shift_crpix2 + wcs_in.cpdis2.get_offset(shift_crpix1, shift_crpix2))
         img_hdu.header.set('D{0:03d}VER'.format(i + 1), 'DRIZZLE VERSION {}'.format(drizzle.__version__))
         img_hdu.header.set('D{0:03d}DATA'.format(i + 1), 'clean' + _cdwt.split('/clean')[1], 'Drizzle, input data image')
         img_hdu.header.set('D{0:03d}DEXP'.format(i + 1), exp_time, 'Drizzle, input image exposure time (s)')
@@ -2056,9 +2062,9 @@ def combine_drizzle(imgsize, cleanDir, roots, outroot, weights, shifts,
         img_hdu.header.set('D{0:03d}OUWE'.format(i + 1), 'combo' + _wgt.split('/combo')[1], 'Drizzle, output weighting image')
         img_hdu.header.set('D{0:03d}OUCO'.format(i + 1), '', 'Drizzle, output context image')
         if (mask == True):
-            img_hdu.header.set('D{0:03d}MASK'.format(i + 1), 'clean' + _mask.split('/clean')[1], 'Drizzle, input weighting image')
+            img_hdu.header.set('D{0:03d}MASK'.format(i + 1), 'clean' + _mask.split('/clean')[1], 'Drizzle, input mask')
         else:
-            img_hdu.header.set('D{0:03d}MASK'.format(i + 1), '', 'Drizzle, input weighting image')
+            img_hdu.header.set('D{0:03d}MASK'.format(i + 1), '', 'Drizzle, input mask')
         img_hdu.header.set('D{0:03d}WTSC'.format(i + 1), wht_scale, 'Drizzle, weighting factor for input image')
         img_hdu.header.set('D{0:03d}KERN'.format(i + 1), kernel, 'Drizzle, form of weight distribution kernel')
         img_hdu.header.set('D{0:03d}PIXF'.format(i + 1), pixfrac, 'Drizzle, linear size of drop')
@@ -2492,12 +2498,20 @@ def combine_submaps(
         log.write(time.ctime() + '\n')
         log.write('- {} is image {} to be drizzled'.format(roots[i], i) + '\n')
         
+        # For the first image of each submap, read in the header, otherwise use
+        # the loaded in header from the previously drizzled image
+        img_in_submap = int(i/submaps)
+        if img_in_submap == 0:
+            hdr = fits.getheader(_c, ignore_missing_end=True)
+        else:
+            hdr = fits.getheader(fits_im, ignore_missing_end=True)
+            
         # Read in PA of each file to feed into drizzle for rotation
-        hdr = fits.getheader(_c,ignore_missing_end=True)
+        hdr_current_img = fits.getheader(_c, ignore_missing_end=True)
         # Each submap will build its header on the first image in submap
         if bool(output_hdrs[sub]) == False:
-            output_hdrs[sub] = hdr
-        phi = instrument.get_position_angle(hdr)
+            output_hdrs[sub] = hdr_current_img
+        phi = instrument.get_position_angle(hdr_current_img)
         if (diffPA == 1):
             drizzle.rot = phi
 
@@ -2520,27 +2534,28 @@ def combine_submaps(
         if (fixDAR == True):
             darRoot = cdwt.replace('.fits', 'geo')
             print('submap: ',cdwt)
-            (xgeoim, ygeoim) = dar.darPlusDistortion(
+            (_xgeoim, _ygeoim) = dar.darPlusDistortion(
                                    cdwt, darRoot,
                                    xgeoim=distXgeoim,
                                    ygeoim=distYgeoim,
                                    instrument=instrument,
                                    use_koa_weather=use_koa_weather)
         else:
-            xgeoim = distXgeoim
-            ygeoim = distYgeoim
+            _xgeoim = distXgeoim
+            _ygeoim = distYgeoim
 
         log.write('- Input data image: clean' + cdwt.split('/clean')[1] + '\n')
-        log.write('- X-shift distortion image: clean' + xgeoim.split('/clean')[1] + '\n')
-        log.write('- Y-shift distortion image: clean' + ygeoim.split('/clean')[1] + '\n')
+        log.write('- X-shift distortion image: clean' + _xgeoim.split('/clean')[1] + '\n')
+        log.write('- Y-shift distortion image: clean' + _ygeoim.split('/clean')[1] + '\n')
 
         cdwt_img = fits.getdata(cdwt)
 
         # Get exposure time
-        exp_time = hdr['ITIME']
+        itime_keyword = 'ITIME'
+        exp_time = hdr_current_img[itime_keyword]
 
         # Read in MJD of current file from FITS header
-        mjd = float(instrument.get_mjd(hdr))
+        mjd = float(instrument.get_mjd(hdr_current_img))
         mjd_weightedSums[sub] += weights[i] * mjd
         
         # Drizzle this file ontop of all previous ones.
@@ -2557,16 +2572,16 @@ def combine_submaps(
             wgt_in = np.ones(np.shape(cdwt_img))
             
         # We tell it the input its distorted/shfited and we want to undistort it
-        wcs_in = wcs.WCS(hdr)
-        wcs_out = wcs.WCS(hdr)
+        wcs_in = wcs.WCS(hdr_current_img)
+        wcs_out = wcs.WCS(hdr_current_img)
 
         wcs_in.wcs.crpix = [wcs_in.wcs.crpix[0] - xsh, wcs_in.wcs.crpix[1] - ysh]
         log.write('- Shifting image. xshift = {0:8.2f}, yshift = {1:8.2f} \n'.format(xsh, ysh))
         # shift so output image is in the center of the produce image
         wcs_in.wcs.crpix = [wcs_in.wcs.crpix[0] - (imgsize - np.shape(cdwt_img)[0])/2, wcs_in.wcs.crpix[1] - (imgsize - np.shape(cdwt_img)[1])/2]
 
-        xgeoim = fits.getdata(xgeoim).astype('float32')
-        ygeoim = fits.getdata(ygeoim).astype('float32')
+        xgeoim = fits.getdata(_xgeoim).astype('float32')
+        ygeoim = fits.getdata(_ygeoim).astype('float32')
     
         xdist = wcs.DistortionLookupTable( xgeoim, [0, 0], [0, 0], [1, 1])
         ydist = wcs.DistortionLookupTable( ygeoim, [0, 0], [0, 0], [1, 1])
@@ -2576,19 +2591,59 @@ def combine_submaps(
     
         pixmap = drizzle.utils.calc_pixmap(wcs_in, wcs_out)
 
+        wht_scale = 1.0
+        pixfrac = 1.0
         driz[sub].add_image(cdwt_img, pixmap = pixmap, 
                             weight_map = wgt_in,
                             exptime = exp_time,
                             xmax = int(imgsize),
                             ymax = int(imgsize),
-                            wht_scale = 1.0,
-                            pixfrac = 1.0,
+                            wht_scale = wht_scale,
+                            pixfrac = pixfrac,
                             in_units = 'counts')
         log.write('- Drizzling onto full output image. Kernel: ' + kernel + '\n')
         
         #swtich from output cps to counts by multiplying by total counts
         out_img = driz[sub].out_img * driz[sub]._texptime
         img_hdu = fits.PrimaryHDU(data=out_img, header=hdr)
+
+        # make header
+        if img_in_submap == 0:
+            # set CRPIX by the first image
+            shift_crpix1 = wcs_out.wcs.crpix[0] + (imgsize - np.shape(cdwt_img)[0])/2 + xsh
+            shift_crpix2 = wcs_out.wcs.crpix[1] + (imgsize - np.shape(cdwt_img)[0])/2 + ysh
+            img_hdu.header.set('CRPIX1', shift_crpix1 + wcs_in.cpdis1.get_offset(shift_crpix1, shift_crpix2))
+            img_hdu.header.set('CRPIX2', shift_crpix2 + wcs_in.cpdis2.get_offset(shift_crpix1, shift_crpix2))
+        img_hdu.header.set('D{0:03d}VER'.format(img_in_submap + 1), 'DRIZZLE VERSION {}'.format(drizzle.__version__))
+        img_hdu.header.set('D{0:03d}DATA'.format(img_in_submap + 1), 'clean' + cdwt.split('/clean')[1], 'Drizzle, input data image')
+        img_hdu.header.set('D{0:03d}DEXP'.format(img_in_submap + 1), exp_time, 'Drizzle, input image exposure time (s)')
+        img_hdu.header.set('D{0:03d}OUDA'.format(img_in_submap + 1), 'combo' + fits_im.split('/combo')[1], 'Drizzle, output data image')
+        img_hdu.header.set('D{0:03d}OUWE'.format(img_in_submap + 1), 'combo' + wgt.split('/combo')[1], 'Drizzle, output weighting image')
+        img_hdu.header.set('D{0:03d}OUCO'.format(img_in_submap + 1), '', 'Drizzle, output context image')
+        if (mask == True):
+            img_hdu.header.set('D{0:03d}MASK'.format(img_in_submap + 1), 'clean' + _mask.split('/clean')[1], 'Drizzle, input mask')
+        else:
+            img_hdu.header.set('D{0:03d}MASK'.format(img_in_submap + 1), '', 'Drizzle, input mask')
+        img_hdu.header.set('D{0:03d}WTSC'.format(img_in_submap + 1), wht_scale, 'Drizzle, weighting factor for input image')
+        img_hdu.header.set('D{0:03d}KERN'.format(img_in_submap + 1), kernel, 'Drizzle, form of weight distribution kernel')
+        img_hdu.header.set('D{0:03d}PIXF'.format(img_in_submap + 1), pixfrac, 'Drizzle, linear size of drop')
+        img_hdu.header.set('D{0:03d}COEF'.format(img_in_submap + 1), '', 'Drizzle, coefficients file name')
+        img_hdu.header.set('D{0:03d}XGIM'.format(img_in_submap + 1), 'clean' + _xgeoim.split('/clean')[1], 'Drizzle, X distortion image name')
+        img_hdu.header.set('D{0:03d}YGIM'.format(img_in_submap + 1), 'clean' + _ygeoim.split('/clean')[1], 'Drizzle, Y distortion image name')
+        img_hdu.header.set('D{0:03d}SCAL'.format(img_in_submap + 1), 1, 'Drizzle, scale (pixel size) of output image')
+        if (diffPA == 1):
+            img_hdu.header.set('D{0:03d}ROT'.format(img_in_submap + 1), phi, 'Drizzle, rotation angle, degrees anticlockwise')
+        else:
+            img_hdu.header.set('D{0:03d}ROT'.format(img_in_submap + 1), 0, 'Drizzle, rotation angle, degrees anticlockwise')
+        img_hdu.header.set('D{0:03d}XSH'.format(img_in_submap + 1), xsh, 'Drizzle, X shift applied')
+        img_hdu.header.set('D{0:03d}YSH'.format(img_in_submap + 1), ysh, 'Drizzle, Y shift applied')
+        img_hdu.header.set('D{0:03d}SFTU'.format(img_in_submap + 1), 'pixels', 'Drizzle, units used for shifts (output or input)')
+        img_hdu.header.set('D{0:03d}SFTF'.format(img_in_submap + 1), 'pixels', 'Drizzle, frame in which shifts were applied') #this might be wrong
+        img_hdu.header.set('D{0:03d}EXKY'.format(img_in_submap + 1), itime_keyword, 'Drizzle, exposure keyword name in input image')
+        img_hdu.header.set('D{0:03d}INUN'.format(img_in_submap + 1), 'counts', 'Drizzle, units of input image - counts or cps')
+        img_hdu.header.set('D{0:03d}OUUN'.format(img_in_submap + 1), 'counts', 'Drizzle, units of output image - counts or cps')
+        img_hdu.header.set('D{0:03d}FVAL'.format(img_in_submap + 1), '0', 'Drizzle, fill value for zero weight output pixel')
+        
         img_hdu.writeto(fits_im, output_verify='ignore', 
                                     overwrite=True)
         
@@ -3501,6 +3556,16 @@ def clean_drizzle(xgeoim, ygeoim, _bp, _cd, _wgt, _dlog,
     itime_keyword = 'ITIME'
     exp_time = hdr[itime_keyword]
 
+    # Input image size
+    imgsizeX = float(hdr['NAXIS1'])
+    imgsizeY = float(hdr['NAXIS2'])
+    if (imgsizeX >= imgsizeY):
+        imgsize = imgsizeX
+    else:
+        imgsize = imgsizeY
+    outnx = imgsize
+    outny = imgsize
+
     if (fixDAR == True):
         darRoot = _cd.replace('.fits', 'geo')
 
@@ -3512,7 +3577,7 @@ def clean_drizzle(xgeoim, ygeoim, _bp, _cd, _wgt, _dlog,
         _xgeoim = distXgeoim
         _ygeoim = distYgeoim
 
-    wgt_in = np.ones((int(drizzle.outnx),int(drizzle.outny)))
+    wgt_in = np.ones((int(outnx),int(outny)))
     wcs_in = wcs.WCS(hdr)
     wcs_out = wcs.WCS(hdr)
 
@@ -3537,8 +3602,8 @@ def clean_drizzle(xgeoim, ygeoim, _bp, _cd, _wgt, _dlog,
     pixfrac = 1.0
     driz.add_image(bp_img, pixmap = pixmap, 
                         exptime = exp_time,
-                        xmax = int(drizzle.outnx),
-                        ymax = int(drizzle.outny),
+                        xmax = int(outnx),
+                        ymax = int(outny),
                         wht_scale = wht_scale,
                         pixfrac = pixfrac,
                         in_units = 'counts')
@@ -3547,8 +3612,9 @@ def clean_drizzle(xgeoim, ygeoim, _bp, _cd, _wgt, _dlog,
     out_img = driz.out_img * driz._texptime
     img_hdu = fits.PrimaryHDU(data=out_img, header=hdr)
 
-
     # make header
+    img_hdu.header.set('CRPIX1', wcs_in.wcs.crpix[0] + wcs_in.cpdis1.get_offset(wcs_in.wcs.crpix[0], wcs_in.wcs.crpix[1]))
+    img_hdu.header.set('CRPIX2', wcs_in.wcs.crpix[1] + wcs_in.cpdis2.get_offset(wcs_in.wcs.crpix[0], wcs_in.wcs.crpix[1]))
     img_hdu.header.set('NDRIZIM', 1, 'Drizzle, number of images drizzled onto this out')
     img_hdu.header.set('D001VER', 'DRIZZLE VERSION {}'.format(drizzle.__version__))
     img_hdu.header.set('D001DATA', _bp, 'Drizzle, input data image')
@@ -3890,6 +3956,8 @@ def clean_cosmicrays(_ff, _mask, wave, _input_mask, thresh=5, mbox=5, rbox=10, f
     #ndata, mdata, crarr= cosmicray_median(ff_img, error_image = stddev, thresh=thresh, mbox=mbox, gbox=gbox, rbox=rbox, fratio=fratio)
     #return ndata, mdata, crarr
     crmask = crmask.astype(int)
+
+    ff_header.set('CRCOR', 'removed={}, thresh={}, mbox={}, gbox={}, rbox={}, fratio={}, star_thresh={}, thresh_in_star={}'.format(np.sum(crmask), thresh, mbox, gbox, rbox, fratio, star_thresh, thresh_in_star))
 
     # Save to a temporary file.
     fits.writeto(_mask, crmask, output_verify=outputVerify)
