@@ -1,4 +1,3 @@
-# from pyraf import iraf
 import glob
 import numpy as np
 import pylab as py
