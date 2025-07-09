@@ -9,19 +9,16 @@ Installation instructions are below, while more detailed API documentation is av
 
 ## Installation
 
-1. Create a separate [conda](https://docs.conda.io/en/latest/miniconda.html) environment to run KAI. The pipeline uses IRAF/PyRAF, and we recommend using the [`environment_iraf27.yml`](environment_iraf27.yml) file in this repository to [create a conda environment](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#creating-an-environment-from-an-environment-yml-file) with the necessary dependencies correctly installed:
+1. We recommend creating a separate [mamba](https://mamba.readthedocs.io/en/latest/user_guide/mamba.html) or [conda](https://docs.conda.io/en/latest/miniconda.html) environment to run KAI. We recommend using the [`environment_kai.yml`](environment_kai.yml) file in this repository to create a [mamba environment](https://mamba.readthedocs.io/en/latest/user_guide/mamba.html#conda-yaml-spec-files) or [conda environment](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#creating-an-environment-from-an-environment-yml-file) with the necessary dependencies correctly installed. Since mamba has better package resolution, we will show the instructions using mamba.
 
    ```bash
-   conda env create -f environment_iraf27.yml
+   mamba env create -f environment_kai.yml
    ```
 
-   The environment file will create a new conda environment called `iraf27`, and must be activated before running KAI using
+   The environment file will create a new conda environment called `astro_kai`, and must be activated before running KAI using
 
    ```bash
-   conda activate iraf27
-   ```
-
-   **Note**: KAI's IRAF / PyRAF dependency currently requires Python 2.7 and operating systems that support 32-bit software.
+   mamba activate astro_kai
 
 2. Clone this git repository. For example:
 
@@ -33,7 +30,7 @@ Installation instructions are below, while more detailed API documentation is av
 3. Install KAI by going to your cloned repository and running the `setup.py` script. For example:
 
    ```bash
-   conda activate iraf27
+   mamba activate astro_kai
    cd ~/software/KAI/
    python setup.py install
    ```
