@@ -65,7 +65,6 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="../../../test_drizzle/index.html">test_drizzle</a></li>
 </ul>
 </li>
 </ul>
@@ -113,20 +112,23 @@
 <h2>Functions<a class="headerlink" href="#functions" title="Link to this heading"></a></h2>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.calib.makedark" title="kai.reduce.calib.makedark"><code class="xref py py-obj docutils literal notranslate"><span class="pre">makedark</span></code></a>(files, output[, raw_dir, instrument])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.calib.makedark" title="kai.reduce.calib.makedark"><code class="xref py py-obj docutils literal notranslate"><span class="pre">makedark</span></code></a>(files, output[, raw_dir, reduce_dir, instrument])</p></td>
 <td><p>Make dark image for imaging data. Makes a calib/ directory</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.calib.makeflat" title="kai.reduce.calib.makeflat"><code class="xref py py-obj docutils literal notranslate"><span class="pre">makeflat</span></code></a>(onFiles, offFiles, output[, dark_frame, ...])</p></td>
 <td><p>Make flat field image for imaging data. Makes a calib/ directory</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.calib.makemask" title="kai.reduce.calib.makemask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">makemask</span></code></a>(dark, flat, output[, instrument])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.calib.makemask" title="kai.reduce.calib.makemask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">makemask</span></code></a>(dark, flat, output[, reduce_dir, instrument, ...])</p></td>
 <td><p>Make bad pixel mask for imaging data. Makes a calib/ directory</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.calib.make_instrument_mask" title="kai.reduce.calib.make_instrument_mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_instrument_mask</span></code></a>(dark, flat, outDir[, instrument])</p></td>
 <td><p>Make the static bad pixel mask for the instrument. This only needs to be</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.calib.analyzeDarkCalib" title="kai.reduce.calib.analyzeDarkCalib"><code class="xref py py-obj docutils literal notranslate"><span class="pre">analyzeDarkCalib</span></code></a>(firstFrame[, skipcombo])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.calib.analyzeDarkCalib" title="kai.reduce.calib.analyzeDarkCalib"><code class="xref py py-obj docutils literal notranslate"><span class="pre">analyzeDarkCalib</span></code></a>(firstFrame[, raw_dir, reduce_dir, ...])</p></td>
 <td><p>Reduce data from the dark_calib script that should be run once</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.calib.get_raw_reduce_directories" title="kai.reduce.calib.get_raw_reduce_directories"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_raw_reduce_directories</span></code></a>(raw_dir, reduce_dir)</p></td>
+<td><p></p></td>
 </tr>
 </tbody>
 </table>
@@ -140,7 +142,7 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="kai.reduce.calib.makedark">
-<span class="sig-prename descclassname"><span class="pre">kai.reduce.calib.</span></span><span class="sig-name descname"><span class="pre">makedark</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">files</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raw_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instrument</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">instruments.default_inst</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/calib.html#makedark"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.calib.makedark" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.calib.</span></span><span class="sig-name descname"><span class="pre">makedark</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">files</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raw_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reduce_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instrument</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">instruments.default_inst</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/calib.html#makedark"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.calib.makedark" title="Link to this definition"></a></dt>
 <dd><p>Make dark image for imaging data. Makes a calib/ directory
 and stores all output there. All output and temporary files
 will be created in a darks/ subdirectory.</p>
@@ -154,6 +156,11 @@ will be created in a darks/ subdirectory.</p>
 <dt><strong>raw_dir</strong><span class="classifier">str, optional</span></dt><dd><p>Directory where raw files are stored. By default,
 assumes that raw files are stored in ‘../raw’</p>
 </dd>
+<dt><strong>reduce_dir</strong><span class="classifier">str, optional</span></dt><dd><p>Directory such as &lt;epoch&gt;/reduce/ with contents including
+the calib/, calib/darks/, etc. directories live.
+Files will be output into reduce_dir + calib/darks/.
+If epoch_dir is None, then use the current working directory.</p>
+</dd>
 <dt><strong>instrument</strong><span class="classifier">instruments object, optional</span></dt><dd><p>Instrument of data. Default is <cite>instruments.default_inst</cite></p>
 </dd>
 </dl>
@@ -163,7 +170,7 @@ assumes that raw files are stored in ‘../raw’</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="kai.reduce.calib.makeflat">
-<span class="sig-prename descclassname"><span class="pre">kai.reduce.calib.</span></span><span class="sig-name descname"><span class="pre">makeflat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">onFiles</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offFiles</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dark_frame</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalizeFirst</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raw_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instrument</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">instruments.default_inst</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/calib.html#makeflat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.calib.makeflat" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.calib.</span></span><span class="sig-name descname"><span class="pre">makeflat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">onFiles</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offFiles</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dark_frame</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalizeFirst</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raw_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reduce_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instrument</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">instruments.default_inst</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/calib.html#makeflat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.calib.makeflat" title="Link to this definition"></a></dt>
 <dd><p>Make flat field image for imaging data. Makes a calib/ directory
 and stores all output there. All output and temporary files
 will be created in a flats/ subdirectory.</p>
@@ -191,6 +198,11 @@ such as in the case of twilight flats.</p>
 <dt><strong>raw_dir</strong><span class="classifier">str, optional</span></dt><dd><p>Directory where raw files are stored. By default,
 assumes that raw files are stored in ‘../raw’</p>
 </dd>
+<dt><strong>reduce_dir</strong><span class="classifier">str, optional</span></dt><dd><p>Directory such as &lt;epoch&gt;/reduce/ with contents including
+the calib/, calib/darks/, etc. directories live.
+Files will be output into reduce_dir + calib/darks/.
+If epoch_dir is None, then use the current working directory.</p>
+</dd>
 <dt><strong>instrument</strong><span class="classifier">instruments object, optional</span></dt><dd><p>Instrument of data. Default is <cite>instruments.default_inst</cite></p>
 </dd>
 </dl>
@@ -200,10 +212,11 @@ assumes that raw files are stored in ‘../raw’</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="kai.reduce.calib.makemask">
-<span class="sig-prename descclassname"><span class="pre">kai.reduce.calib.</span></span><span class="sig-name descname"><span class="pre">makemask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dark</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instrument</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">instruments.default_inst</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/calib.html#makemask"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.calib.makemask" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.calib.</span></span><span class="sig-name descname"><span class="pre">makemask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dark</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reduce_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instrument</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">instruments.default_inst</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask_ref_pixels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/calib.html#makemask"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.calib.makemask" title="Link to this definition"></a></dt>
 <dd><p>Make bad pixel mask for imaging data. Makes a calib/ directory
 and stores all output there. All output and temporary files
 will be created in a masks/ subdirectory.</p>
+<p>Sets reference pixels to mask = 2.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
@@ -218,7 +231,15 @@ construct a dead pixel mask. The flat should be normalized.</p>
 <dt><strong>output</strong><span class="classifier">str</span></dt><dd><p>The output file name. This will be created in the masks/
 subdirectory.</p>
 </dd>
+<dt><strong>reduce_dir</strong><span class="classifier">str, optional</span></dt><dd><p>Directory such as &lt;epoch&gt;/reduce/ with contents including
+the calib/, calib/darks/, etc. directories live.
+Files will be output into reduce_dir + calib/darks/.
+If epoch_dir is None, then use the current working directory.</p>
+</dd>
 <dt><strong>instrument</strong><span class="classifier">instruments object, optional</span></dt><dd><p>Instrument of data. Default is <cite>instruments.default_inst</cite></p>
+</dd>
+<dt><strong>mask_ref_pixels</strong><span class="classifier">bool, optional</span></dt><dd><p>Determines whether to add edge reference pixels to mask with mask value = 2.
+Default is True.</p>
 </dd>
 </dl>
 </dd>
@@ -252,12 +273,32 @@ used to construct a dead pixel mask.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="kai.reduce.calib.analyzeDarkCalib">
-<span class="sig-prename descclassname"><span class="pre">kai.reduce.calib.</span></span><span class="sig-name descname"><span class="pre">analyzeDarkCalib</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">firstFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skipcombo</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/calib.html#analyzeDarkCalib"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.calib.analyzeDarkCalib" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.calib.</span></span><span class="sig-name descname"><span class="pre">analyzeDarkCalib</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">firstFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raw_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reduce_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skipcombo</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/calib.html#analyzeDarkCalib"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.calib.analyzeDarkCalib" title="Link to this definition"></a></dt>
 <dd><p>Reduce data from the dark_calib script that should be run once
 a summer in order to test the dark current and readnoise.</p>
 <p>This should be run in the reduce/calib/ directory for a particular
 run.</p>
+<section id="parameters">
+<h3>Parameters<a class="headerlink" href="#parameters" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>firstFrame<span class="classifier">float</span></dt><dd><p>Number of the first frame.</p>
+</dd>
+<dt>raw_dir<span class="classifier">str, optional</span></dt><dd><p>Directory where raw files are stored. By default,
+assumes that raw files are stored in ‘../raw’</p>
+</dd>
+<dt>reduce_dir<span class="classifier">str, optional</span></dt><dd><p>Directory such as &lt;epoch&gt;/reduce/ with contents including
+the calib/, calib/darks/, etc. directories live.
+Files will be output into reduce_dir + calib/darks/.
+If epoch_dir is None, then use the current working directory.</p>
+</dd>
+</dl>
+</section>
 </dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.reduce.calib.get_raw_reduce_directories">
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.calib.</span></span><span class="sig-name descname"><span class="pre">get_raw_reduce_directories</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">raw_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reduce_dir</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/calib.html#get_raw_reduce_directories"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.calib.get_raw_reduce_directories" title="Link to this definition"></a></dt>
+<dd></dd></dl>
 
 </section>
 </section>

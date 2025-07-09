@@ -204,7 +204,7 @@
             <span class="c1"># Another special case: 09may01 UT had a AOTSX/Y linear drift.</span>
             <span class="c1"># Found drift with 09maylgs/clean/kp/coord.py</span>
             <span class="k">if</span> <span class="p">((</span><span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;OUTDIR&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;/sdata903/nirc3/2009may01/&#39;</span><span class="p">):</span>
-                <span class="n">mjdobs</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;MJD-OBS&#39;</span><span class="p">])</span>
+                <span class="n">mjdobs</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">instrument</span><span class="o">.</span><span class="n">get_mjd</span><span class="p">(</span><span class="n">hdr</span><span class="p">))</span>
                 <span class="c1"># old distortion solution (pre-ship) gives:</span>
                 <span class="c1">#aotsxy[0] -= (1.895701e5*0.727) + (-3.449709*0.727) * mjdobs </span>
                 <span class="c1"># new distortion solution (yelda et al. 2010)</span>
@@ -217,7 +217,7 @@
             <span class="c1"># Another special case: 10jul06 UT had a AOTSX/Y linear drift.</span>
             <span class="c1"># Found drift with 10jullgs1/clean/kp/coord.py</span>
             <span class="k">if</span> <span class="p">((</span><span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;OUTDIR&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;/sdata903/nirc3/2010jul06/&#39;</span><span class="p">):</span>
-                <span class="n">mjdobs</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;MJD-OBS&#39;</span><span class="p">])</span>
+                <span class="n">mjdobs</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">instrument</span><span class="o">.</span><span class="n">get_mjd</span><span class="p">(</span><span class="n">hdr</span><span class="p">))</span>
                 <span class="c1"># new distortion solution (yelda et al. 2010)</span>
                 <span class="n">aotsxy</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-=</span> <span class="p">(</span><span class="mf">2.039106e5</span><span class="o">*</span><span class="mf">0.727</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="o">-</span><span class="mf">3.681807</span><span class="o">*</span><span class="mf">0.727</span><span class="p">)</span> <span class="o">*</span> <span class="n">mjdobs</span> 
 

@@ -101,12 +101,17 @@
     <span class="n">im_header</span> <span class="o">=</span> <span class="n">hdul</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span>
     <span class="n">im_data</span> <span class="o">=</span> <span class="n">hdul</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span>
     
+    <span class="c1"># Determine if we have linearity correction coefficients to apply.</span>
+    <span class="n">coeffs</span> <span class="o">=</span> <span class="n">instrument</span><span class="o">.</span><span class="n">get_linearity_correction_coeffs</span><span class="p">(</span><span class="n">im_header</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">coeffs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span>
+    
     <span class="c1"># Perform correction</span>
     <span class="n">num_coadds</span> <span class="o">=</span> <span class="n">im_header</span><span class="p">[</span><span class="s1">&#39;COADDS&#39;</span><span class="p">]</span>
     
     <span class="n">x</span> <span class="o">=</span> <span class="n">im_data</span> <span class="o">/</span> <span class="n">num_coadds</span>
-    <span class="n">coeffs</span> <span class="o">=</span> <span class="n">instrument</span><span class="o">.</span><span class="n">get_linearity_correction_coeffs</span><span class="p">(</span><span class="n">im_header</span><span class="p">)</span>
-    
+
     <span class="c1"># Determine order of polynomial correction</span>
     <span class="n">norm_poly_order</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">coeffs</span><span class="p">)</span>
     

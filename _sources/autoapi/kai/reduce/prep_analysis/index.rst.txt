@@ -361,7 +361,7 @@ Module Contents
    ..
        !! processed by numpydoc !!
 
-.. py:function:: plot_starlist_on_image_arcsec(starList, imagePath, refCoo, scale=9.942 / 1000, magCut=23, label=True, verbose=True, flip=False)
+.. py:function:: plot_starlist_on_image_arcsec(starList, imagePath, refCoo, scale=9.942 / 1000, magCut=23, label=True, verbose=True, flip=False, plot_circles=False)
 
    
    Plot a NIRC2 image and overlay a starlist. Input in relative arcsec coordinates.
@@ -377,6 +377,7 @@ Module Contents
    label - if True, adds labels. Defaults to true.
    verbose - if True, prints the astropy table inputted. Defaults to true.
    flip - if True, flips image in x (helps in case image is backwards).
+   plot_circles - if True, plots circles around each star
 
    Ensure that the image passed in is at a Position Angle of 0.
 

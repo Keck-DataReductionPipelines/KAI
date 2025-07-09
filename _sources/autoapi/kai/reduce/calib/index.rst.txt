@@ -22,6 +22,7 @@ Functions
    kai.reduce.calib.makemask
    kai.reduce.calib.make_instrument_mask
    kai.reduce.calib.analyzeDarkCalib
+   kai.reduce.calib.get_raw_reduce_directories
 
 
 Module Contents
@@ -29,7 +30,7 @@ Module Contents
 
 .. py:data:: module_dir
 
-.. py:function:: makedark(files, output, raw_dir=None, instrument=instruments.default_inst)
+.. py:function:: makedark(files, output, raw_dir=None, reduce_dir=None, instrument=instruments.default_inst)
 
    
    Make dark image for imaging data. Makes a calib/ directory
@@ -48,6 +49,12 @@ Module Contents
        **raw_dir** : str, optional
            Directory where raw files are stored. By default,
            assumes that raw files are stored in '../raw'
+
+       **reduce_dir** : str, optional
+           Directory such as <epoch>/reduce/ with contents including
+           the calib/, calib/darks/, etc. directories live.
+           Files will be output into reduce_dir + calib/darks/.
+           If epoch_dir is None, then use the current working directory.
 
        **instrument** : instruments object, optional
            Instrument of data. Default is `instruments.default_inst`
@@ -68,7 +75,7 @@ Module Contents
    ..
        !! processed by numpydoc !!
 
-.. py:function:: makeflat(onFiles, offFiles, output, dark_frame=None, normalizeFirst=False, raw_dir=None, instrument=instruments.default_inst)
+.. py:function:: makeflat(onFiles, offFiles, output, dark_frame=None, normalizeFirst=False, raw_dir=None, reduce_dir=None, instrument=instruments.default_inst)
 
    
    Make flat field image for imaging data. Makes a calib/ directory
@@ -105,6 +112,12 @@ Module Contents
            Directory where raw files are stored. By default,
            assumes that raw files are stored in '../raw'
 
+       **reduce_dir** : str, optional
+           Directory such as <epoch>/reduce/ with contents including
+           the calib/, calib/darks/, etc. directories live.
+           Files will be output into reduce_dir + calib/darks/.
+           If epoch_dir is None, then use the current working directory.
+
        **instrument** : instruments object, optional
            Instrument of data. Default is `instruments.default_inst`
 
@@ -124,13 +137,14 @@ Module Contents
    ..
        !! processed by numpydoc !!
 
-.. py:function:: makemask(dark, flat, output, instrument=instruments.default_inst)
+.. py:function:: makemask(dark, flat, output, reduce_dir=None, instrument=instruments.default_inst, mask_ref_pixels=True)
 
    
    Make bad pixel mask for imaging data. Makes a calib/ directory
    and stores all output there. All output and temporary files
    will be created in a masks/ subdirectory.
 
+   Sets reference pixels to mask = 2.
 
    :Parameters:
 
@@ -148,8 +162,18 @@ Module Contents
            The output file name. This will be created in the masks/
            subdirectory.
 
+       **reduce_dir** : str, optional
+           Directory such as <epoch>/reduce/ with contents including
+           the calib/, calib/darks/, etc. directories live.
+           Files will be output into reduce_dir + calib/darks/.
+           If epoch_dir is None, then use the current working directory.
+
        **instrument** : instruments object, optional
            Instrument of data. Default is `instruments.default_inst`
+
+       **mask_ref_pixels** : bool, optional
+           Determines whether to add edge reference pixels to mask with mask value = 2.
+           Default is True.
 
 
 
@@ -208,7 +232,7 @@ Module Contents
    ..
        !! processed by numpydoc !!
 
-.. py:function:: analyzeDarkCalib(firstFrame, skipcombo=False)
+.. py:function:: analyzeDarkCalib(firstFrame, raw_dir=None, reduce_dir=None, skipcombo=False)
 
    
    Reduce data from the dark_calib script that should be run once
@@ -216,6 +240,19 @@ Module Contents
 
    This should be run in the reduce/calib/ directory for a particular
    run.
+
+   Parameters
+   ------
+   firstFrame : float
+       Number of the first frame.
+   raw_dir : str, optional
+       Directory where raw files are stored. By default,
+       assumes that raw files are stored in '../raw'
+   reduce_dir : str, optional
+       Directory such as <epoch>/reduce/ with contents including
+       the calib/, calib/darks/, etc. directories live.
+       Files will be output into reduce_dir + calib/darks/.
+       If epoch_dir is None, then use the current working directory.
 
 
 
@@ -233,4 +270,6 @@ Module Contents
 
    ..
        !! processed by numpydoc !!
+
+.. py:function:: get_raw_reduce_directories(raw_dir, reduce_dir)
 

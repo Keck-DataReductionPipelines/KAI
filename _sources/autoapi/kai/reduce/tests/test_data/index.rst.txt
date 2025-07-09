@@ -1,0 +1,583 @@
+kai.reduce.tests.test_data
+==========================
+
+.. py:module:: kai.reduce.tests.test_data
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   kai.reduce.tests.test_data.TestClean
+   kai.reduce.tests.test_data.TestCombine
+   kai.reduce.tests.test_data.TestRotImg
+   kai.reduce.tests.test_data.TestCosmicRayRemoval
+   kai.reduce.tests.test_data.TestCombineRegister
+   kai.reduce.tests.test_data.TestCleanDrizzle
+   kai.reduce.tests.test_data.TestCombineDrizzle
+   kai.reduce.tests.test_data.TestCombineSubmaps
+   kai.reduce.tests.test_data.TestMosaicRegister
+
+
+Module Contents
+---------------
+
+.. py:class:: TestClean(methodName='runTest')
+
+   Bases: :py:obj:`unittest.TestCase`
+
+
+   
+   A class whose instances are single test cases.
+
+   By default, the test code itself should be placed in a method named
+   'runTest'.
+
+   If the fixture may be used for many test cases, create as
+   many test methods as are needed. When instantiating such a TestCase
+   subclass, specify in the constructor arguments the name of the test method
+   that the instance is to execute.
+
+   Test authors should subclass TestCase for their own tests. Construction
+   and deconstruction of the test's environment ('fixture') can be
+   implemented by overriding the 'setUp' and 'tearDown' methods respectively.
+
+   If it is necessary to override the __init__ method, the base class
+   __init__ method must always be called. It is important that subclasses
+   should not change the signature of their __init__ method, since instances
+   of the classes are instantiated automatically by parts of the framework
+   in order to be run.
+
+   When subclassing TestCase, you can set these attributes:
+   * failureException: determines which exception will be raised when
+       the instance's assertion methods fail; test methods raising this
+       exception will be deemed to have 'failed' rather than 'errored'.
+   * longMessage: determines whether long messages (including repr of
+       objects used in assert methods) will be printed on failure in *addition*
+       to any explicit message passed.
+   * maxDiff: sets the maximum length of a diff in failure messages
+       by assert methods using difflib. It is looked up as an instance
+       attribute so can be configured by individual tests if required.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+   .. py:method:: test_clean_iraf()
+
+
+   .. py:method:: test_clean()
+
+
+.. py:class:: TestCombine(methodName='runTest')
+
+   Bases: :py:obj:`unittest.TestCase`
+
+
+   
+   A class whose instances are single test cases.
+
+   By default, the test code itself should be placed in a method named
+   'runTest'.
+
+   If the fixture may be used for many test cases, create as
+   many test methods as are needed. When instantiating such a TestCase
+   subclass, specify in the constructor arguments the name of the test method
+   that the instance is to execute.
+
+   Test authors should subclass TestCase for their own tests. Construction
+   and deconstruction of the test's environment ('fixture') can be
+   implemented by overriding the 'setUp' and 'tearDown' methods respectively.
+
+   If it is necessary to override the __init__ method, the base class
+   __init__ method must always be called. It is important that subclasses
+   should not change the signature of their __init__ method, since instances
+   of the classes are instantiated automatically by parts of the framework
+   in order to be run.
+
+   When subclassing TestCase, you can set these attributes:
+   * failureException: determines which exception will be raised when
+       the instance's assertion methods fail; test methods raising this
+       exception will be deemed to have 'failed' rather than 'errored'.
+   * longMessage: determines whether long messages (including repr of
+       objects used in assert methods) will be printed on failure in *addition*
+       to any explicit message passed.
+   * maxDiff: sets the maximum length of a diff in failure messages
+       by assert methods using difflib. It is looked up as an instance
+       attribute so can be configured by individual tests if required.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+   .. py:method:: test_combine_iraf()
+
+
+   .. py:method:: test_combine_noiraf()
+
+
+.. py:class:: TestRotImg(methodName='runTest')
+
+   Bases: :py:obj:`unittest.TestCase`
+
+
+   
+   A class whose instances are single test cases.
+
+   By default, the test code itself should be placed in a method named
+   'runTest'.
+
+   If the fixture may be used for many test cases, create as
+   many test methods as are needed. When instantiating such a TestCase
+   subclass, specify in the constructor arguments the name of the test method
+   that the instance is to execute.
+
+   Test authors should subclass TestCase for their own tests. Construction
+   and deconstruction of the test's environment ('fixture') can be
+   implemented by overriding the 'setUp' and 'tearDown' methods respectively.
+
+   If it is necessary to override the __init__ method, the base class
+   __init__ method must always be called. It is important that subclasses
+   should not change the signature of their __init__ method, since instances
+   of the classes are instantiated automatically by parts of the framework
+   in order to be run.
+
+   When subclassing TestCase, you can set these attributes:
+   * failureException: determines which exception will be raised when
+       the instance's assertion methods fail; test methods raising this
+       exception will be deemed to have 'failed' rather than 'errored'.
+   * longMessage: determines whether long messages (including repr of
+       objects used in assert methods) will be printed on failure in *addition*
+       to any explicit message passed.
+   * maxDiff: sets the maximum length of a diff in failure messages
+       by assert methods using difflib. It is looked up as an instance
+       attribute so can be configured by individual tests if required.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+   .. py:method:: test_run_rot_img_noiraf()
+
+
+   .. py:method:: test_run_rot_img_iraf()
+
+
+   .. py:method:: test_compare_rot_img_iraf_noiraf()
+
+      
+      Compare IRAF vs. no IRAF image rotation routine.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+
+.. py:class:: TestCosmicRayRemoval(methodName='runTest')
+
+   Bases: :py:obj:`unittest.TestCase`
+
+
+   
+   A class whose instances are single test cases.
+
+   By default, the test code itself should be placed in a method named
+   'runTest'.
+
+   If the fixture may be used for many test cases, create as
+   many test methods as are needed. When instantiating such a TestCase
+   subclass, specify in the constructor arguments the name of the test method
+   that the instance is to execute.
+
+   Test authors should subclass TestCase for their own tests. Construction
+   and deconstruction of the test's environment ('fixture') can be
+   implemented by overriding the 'setUp' and 'tearDown' methods respectively.
+
+   If it is necessary to override the __init__ method, the base class
+   __init__ method must always be called. It is important that subclasses
+   should not change the signature of their __init__ method, since instances
+   of the classes are instantiated automatically by parts of the framework
+   in order to be run.
+
+   When subclassing TestCase, you can set these attributes:
+   * failureException: determines which exception will be raised when
+       the instance's assertion methods fail; test methods raising this
+       exception will be deemed to have 'failed' rather than 'errored'.
+   * longMessage: determines whether long messages (including repr of
+       objects used in assert methods) will be printed on failure in *addition*
+       to any explicit message passed.
+   * maxDiff: sets the maximum length of a diff in failure messages
+       by assert methods using difflib. It is looked up as an instance
+       attribute so can be configured by individual tests if required.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+   .. py:method:: test_run_clean_cosmicrays_iraf()
+
+
+   .. py:method:: test_run_clean_cosmicrays_noiraf()
+
+
+   .. py:method:: test_compare_clean_cosmicrays_iraf_noiraf()
+
+      
+      Compare IRAF vs. no IRAF cosmicray removal routine.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+
+.. py:class:: TestCombineRegister(methodName='runTest')
+
+   Bases: :py:obj:`unittest.TestCase`
+
+
+   
+   A class whose instances are single test cases.
+
+   By default, the test code itself should be placed in a method named
+   'runTest'.
+
+   If the fixture may be used for many test cases, create as
+   many test methods as are needed. When instantiating such a TestCase
+   subclass, specify in the constructor arguments the name of the test method
+   that the instance is to execute.
+
+   Test authors should subclass TestCase for their own tests. Construction
+   and deconstruction of the test's environment ('fixture') can be
+   implemented by overriding the 'setUp' and 'tearDown' methods respectively.
+
+   If it is necessary to override the __init__ method, the base class
+   __init__ method must always be called. It is important that subclasses
+   should not change the signature of their __init__ method, since instances
+   of the classes are instantiated automatically by parts of the framework
+   in order to be run.
+
+   When subclassing TestCase, you can set these attributes:
+   * failureException: determines which exception will be raised when
+       the instance's assertion methods fail; test methods raising this
+       exception will be deemed to have 'failed' rather than 'errored'.
+   * longMessage: determines whether long messages (including repr of
+       objects used in assert methods) will be printed on failure in *addition*
+       to any explicit message passed.
+   * maxDiff: sets the maximum length of a diff in failure messages
+       by assert methods using difflib. It is looked up as an instance
+       attribute so can be configured by individual tests if required.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+   .. py:method:: test_run_combine_register_iraf()
+
+
+   .. py:method:: test_run_combine_register_noiraf()
+
+
+   .. py:method:: test_compare_combine_register_iraf_noiraf()
+
+      
+      Compare IRAF vs. no IRAF combine register routine.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+
+.. py:class:: TestCleanDrizzle(methodName='runTest')
+
+   Bases: :py:obj:`unittest.TestCase`
+
+
+   
+   Tests create the drizzled files and weighting files and does basic
+   tests on no iraf version.
+   Note that we do not directly compare the iraf and no iraf cases.
+   The weighting file looks much more sharp/defined for the no iraf case
+   and more smooth for the iraf case. It's unclear which is more correct.
+   It causes differences in the nosie background but it shouldn't change
+   the star positions.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+   .. py:method:: test_run_clean_drizzle_iraf()
+
+
+   .. py:method:: test_run_clean_drizzle_noiraf()
+
+
+   .. py:method:: test_compare_clean_drizzle_iraf_no_iraf_headers()
+
+
+.. py:class:: TestCombineDrizzle(methodName='runTest')
+
+   Bases: :py:obj:`unittest.TestCase`
+
+
+   
+   Tests create the drizzled files and weighting files and compares output
+   data file and saturation file.
+
+   Note that we do not directly compare the iraf and no iraf cases weighting files.
+   The weighting file looks much more sharp/defined for the no iraf case
+   and more smooth for the iraf case. It's unclear which is more correct.
+   It causes differences in the nosie background but it shouldn't change
+   the star positions.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+   .. py:method:: test_run_combine_drizzle_iraf()
+
+
+   .. py:method:: test_run_combine_drizzle_noiraf()
+
+
+   .. py:method:: test_compare_combine_drizzle_iraf_noiraf()
+
+
+   .. py:method:: test_run_combine_drizzle_with_rotation_iraf()
+
+
+   .. py:method:: test_run_combine_drizzle_with_rotation_noiraf()
+
+
+.. py:class:: TestCombineSubmaps(methodName='runTest')
+
+   Bases: :py:obj:`unittest.TestCase`
+
+
+   
+   Tests create the drizzled files and weighting files and does basic
+   tests on no iraf version.
+   Note that we do not directly compare the iraf and no iraf cases.
+   The weighting file looks much more sharp/defined for the no iraf case
+   and more smooth for the iraf case. It's unclear which is more correct.
+   It causes differences in the nosie background but it shouldn't change
+   the star positions.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+   .. py:method:: test_run_submaps_iraf()
+
+
+   .. py:method:: test_run_submaps_noiraf()
+
+
+   .. py:method:: test_compare_combine_submaps_iraf_noiraf()
+
+
+.. py:class:: TestMosaicRegister(methodName='runTest')
+
+   Bases: :py:obj:`unittest.TestCase`
+
+
+   
+   A class whose instances are single test cases.
+
+   By default, the test code itself should be placed in a method named
+   'runTest'.
+
+   If the fixture may be used for many test cases, create as
+   many test methods as are needed. When instantiating such a TestCase
+   subclass, specify in the constructor arguments the name of the test method
+   that the instance is to execute.
+
+   Test authors should subclass TestCase for their own tests. Construction
+   and deconstruction of the test's environment ('fixture') can be
+   implemented by overriding the 'setUp' and 'tearDown' methods respectively.
+
+   If it is necessary to override the __init__ method, the base class
+   __init__ method must always be called. It is important that subclasses
+   should not change the signature of their __init__ method, since instances
+   of the classes are instantiated automatically by parts of the framework
+   in order to be run.
+
+   When subclassing TestCase, you can set these attributes:
+   * failureException: determines which exception will be raised when
+       the instance's assertion methods fail; test methods raising this
+       exception will be deemed to have 'failed' rather than 'errored'.
+   * longMessage: determines whether long messages (including repr of
+       objects used in assert methods) will be printed on failure in *addition*
+       to any explicit message passed.
+   * maxDiff: sets the maximum length of a diff in failure messages
+       by assert methods using difflib. It is looked up as an instance
+       attribute so can be configured by individual tests if required.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+   .. py:method:: test_run_mosaic_register_iraf()
+
+

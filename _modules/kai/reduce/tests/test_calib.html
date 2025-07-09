@@ -1,0 +1,186 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>kai.reduce.tests.test_calib &mdash; KAI  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            KAI
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../autoapi/index.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">KAI</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">kai.reduce.tests.test_calib</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for kai.reduce.tests.test_calib</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">unittest</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">kai.reduce</span><span class="w"> </span><span class="kn">import</span> <span class="n">calib</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">kai</span><span class="w"> </span><span class="kn">import</span> <span class="n">instruments</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">fits</span>
+
+<div class="viewcode-block" id="TestMakeDarks">
+<a class="viewcode-back" href="../../../../autoapi/kai/reduce/tests/test_calib/index.html#kai.reduce.tests.test_calib.TestMakeDarks">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestMakeDarks</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+<div class="viewcode-block" id="TestMakeDarks.test_makedark">
+<a class="viewcode-back" href="../../../../autoapi/kai/reduce/tests/test_calib/index.html#kai.reduce.tests.test_calib.TestMakeDarks.test_makedark">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_makedark</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">nirc2</span> <span class="o">=</span> <span class="n">instruments</span><span class="o">.</span><span class="n">NIRC2</span><span class="p">()</span>
+
+        <span class="n">mod_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">calib</span><span class="o">.</span><span class="vm">__file__</span><span class="p">))</span>
+
+        <span class="n">epoch_dir</span> <span class="o">=</span> <span class="n">mod_path</span> <span class="o">+</span> <span class="s1">&#39;/../data/test_epoch/17may21/&#39;</span>
+        <span class="n">reduce_dir</span> <span class="o">=</span> <span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">&#39;reduce/&#39;</span>
+        <span class="n">raw_dir</span> <span class="o">=</span> <span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">&#39;raw/&#39;</span>
+
+        <span class="n">dark_files</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">214</span><span class="p">,</span> <span class="mi">223</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">dark_out</span> <span class="o">=</span> <span class="s1">&#39;dark_30.0s_1ca.fits&#39;</span>
+        <span class="n">dark_out_full_path</span> <span class="o">=</span> <span class="n">reduce_dir</span> <span class="o">+</span> <span class="s1">&#39;calib/darks/&#39;</span> <span class="o">+</span> <span class="n">dark_out</span>  <span class="c1"># only use for testing</span>
+
+        <span class="c1"># If file exists, delete it.</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">dark_out_full_path</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">dark_out_full_path</span><span class="p">)</span>
+
+        <span class="n">calib</span><span class="o">.</span><span class="n">makedark</span><span class="p">(</span><span class="n">dark_files</span><span class="p">,</span> <span class="n">dark_out</span><span class="p">,</span>
+                       <span class="n">raw_dir</span><span class="o">=</span><span class="n">raw_dir</span><span class="p">,</span>
+                       <span class="n">reduce_dir</span><span class="o">=</span><span class="n">reduce_dir</span><span class="p">,</span>
+                       <span class="n">instrument</span><span class="o">=</span><span class="n">nirc2</span><span class="p">)</span>
+
+        <span class="c1"># Check that file was created.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">dark_out_full_path</span><span class="p">))</span>
+
+        <span class="c1"># Check the shape is right.</span>
+        <span class="n">dk_img</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getdata</span><span class="p">(</span><span class="n">dark_out_full_path</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">dk_img</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="p">(</span><span class="mi">1024</span><span class="p">,</span> <span class="mi">1024</span><span class="p">))</span>
+
+        <span class="k">return</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TestMakeFlats">
+<a class="viewcode-back" href="../../../../autoapi/kai/reduce/tests/test_calib/index.html#kai.reduce.tests.test_calib.TestMakeFlats">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestMakeFlats</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+<div class="viewcode-block" id="TestMakeFlats.test_makeflat">
+<a class="viewcode-back" href="../../../../autoapi/kai/reduce/tests/test_calib/index.html#kai.reduce.tests.test_calib.TestMakeFlats.test_makeflat">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_makeflat</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">nirc2</span> <span class="o">=</span> <span class="n">instruments</span><span class="o">.</span><span class="n">NIRC2</span><span class="p">()</span>
+
+        <span class="n">mod_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">calib</span><span class="o">.</span><span class="vm">__file__</span><span class="p">))</span>
+
+        <span class="n">epoch_dir</span> <span class="o">=</span> <span class="n">mod_path</span> <span class="o">+</span> <span class="s1">&#39;/../data/test_epoch/17may21/&#39;</span>
+        <span class="n">reduce_dir</span> <span class="o">=</span> <span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">&#39;reduce/&#39;</span>
+        <span class="n">raw_dir</span> <span class="o">=</span> <span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">&#39;raw/&#39;</span>
+
+        <span class="n">off_files</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">184</span><span class="p">,</span> <span class="mi">202</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">on_files</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">185</span><span class="p">,</span> <span class="mi">203</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">flat_out</span> <span class="o">=</span> <span class="s1">&#39;flat_kp_astr.fits&#39;</span>
+        <span class="n">flat_out_full_path</span> <span class="o">=</span> <span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">&#39;reduce/calib/flats/&#39;</span> <span class="o">+</span> <span class="n">flat_out</span>
+
+        <span class="c1"># If file exists, delete it.</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">flat_out_full_path</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">flat_out_full_path</span><span class="p">)</span>
+
+        <span class="n">calib</span><span class="o">.</span><span class="n">makeflat</span><span class="p">(</span><span class="n">on_files</span><span class="p">,</span> <span class="n">off_files</span><span class="p">,</span> <span class="n">flat_out</span><span class="p">,</span>
+                       <span class="n">raw_dir</span><span class="o">=</span><span class="n">raw_dir</span><span class="p">,</span>
+                       <span class="n">reduce_dir</span><span class="o">=</span><span class="n">reduce_dir</span><span class="p">,</span>
+                       <span class="n">instrument</span><span class="o">=</span><span class="n">nirc2</span><span class="p">)</span>
+
+        <span class="c1"># Check that file was created.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">flat_out_full_path</span><span class="p">))</span>
+
+        <span class="k">return</span></div>
+</div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">unittest</span><span class="o">.</span><span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, J. R. Lu, A. K. Gautam, T. Do.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

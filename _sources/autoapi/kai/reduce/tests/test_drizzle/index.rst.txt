@@ -1,7 +1,7 @@
-test_drizzle
-============
+kai.reduce.tests.test_drizzle
+=============================
 
-.. py:module:: test_drizzle
+.. py:module:: kai.reduce.tests.test_drizzle
 
 
 Attributes
@@ -9,7 +9,7 @@ Attributes
 
 .. autoapisummary::
 
-   test_drizzle.nirc2
+   kai.reduce.tests.test_drizzle.nirc2
 
 
 Functions
@@ -17,8 +17,8 @@ Functions
 
 .. autoapisummary::
 
-   test_drizzle.test_drizzle_single_iraf
-   test_drizzle.test_drizzle_single_py
+   kai.reduce.tests.test_drizzle.test_drizzle_single_iraf
+   kai.reduce.tests.test_drizzle.test_drizzle_single_py
 
 
 Module Contents

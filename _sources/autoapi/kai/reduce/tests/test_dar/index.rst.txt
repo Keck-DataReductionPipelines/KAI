@@ -1,0 +1,25 @@
+kai.reduce.tests.test_dar
+=========================
+
+.. py:module:: kai.reduce.tests.test_dar
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   kai.reduce.tests.test_dar.diffDarOnOff
+   kai.reduce.tests.test_dar.plotScalePosangOverNight
+   kai.reduce.tests.test_dar.plotDarCoeffsVsZenith
+
+
+Module Contents
+---------------
+
+.. py:function:: diffDarOnOff(cleanDir1, cleanDir2)
+
+.. py:function:: plotScalePosangOverNight(alignRoot, imgDir)
+
+.. py:function:: plotDarCoeffsVsZenith()
+

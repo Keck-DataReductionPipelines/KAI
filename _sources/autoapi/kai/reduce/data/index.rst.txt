@@ -33,6 +33,7 @@ Functions
    kai.reduce.data.clean_lp
    kai.reduce.data.combine
    kai.reduce.data.rot_img
+   kai.reduce.data.rotate_wcs
    kai.reduce.data.gcSourceXY
    kai.reduce.data.calcStrehl
    kai.reduce.data.weight_by_strehl
@@ -47,13 +48,18 @@ Functions
    kai.reduce.data.combine_ref
    kai.reduce.data.combine_coo
    kai.reduce.data.combine_lis
+   kai.reduce.data.xregister_correlation_fourier
+   kai.reduce.data.elliptical_gaussian_2d
+   kai.reduce.data.residuals
    kai.reduce.data.combine_register
    kai.reduce.data.combine_log
    kai.reduce.data.combine_size
    kai.reduce.data.setup_drizzle
    kai.reduce.data.clean_drizzle
+   kai.reduce.data.cosmicray_median
+   kai.reduce.data.loop_through_crs
+   kai.reduce.data.round_to_edge
    kai.reduce.data.clean_cosmicrays
-   kai.reduce.data.clean_cosmicrays2
    kai.reduce.data.clean_persistance
    kai.reduce.data.clean_bkgsubtract
    kai.reduce.data.clean_makecoo
@@ -327,6 +333,7 @@ Module Contents
 
        **fwhm_max** : float, default=0
            The maximum allowed FWHM for keeping frames when trimming is turned on.
+           If set to default=0 and trim=True, then we use FWHM < 1.25 * FWHM.min().
 
        **submaps** : int, default=0
            Set to the number of submaps to be made (def=0).
@@ -370,14 +377,27 @@ Module Contents
    ..
        !! processed by numpydoc !!
 
-.. py:function:: rot_img(root, phi, cleanDir)
+.. py:function:: rot_img(root, phi, cleanDir, edit_header_PA=False)
 
    
-   Rotate images to PA=0 if they have a different PA from one
-   another. If the entire data set is taken at a single PA, leave
-   it as is. Do this only if set includes various PAs.
+   Rotate image with scipy.ndimage.rotate. Only the image is rotated.
+   The header WCS is not modified. The output imageis pre-pended with 'r'
+   instead of 'c'.
 
 
+   :Parameters:
+
+       **root** : str
+           Root name of the file to rotate. Do not include the prefix (e.g. 'c').
+
+       **phi** : float
+           Angle to rotate the input image to get to PA=0.
+
+       **cleanDir** : str
+           The clean directory to find the input image and save the output rotated image.
+
+       **edit_header_PA** : bool
+           Default is False.
 
 
 
@@ -394,6 +414,8 @@ Module Contents
 
    ..
        !! processed by numpydoc !!
+
+.. py:function:: rotate_wcs(hdr, phi)
 
 .. py:function:: gcSourceXY(name, label_file='/Users/jlu/data/gc/source_list/label.dat')
 
@@ -709,7 +731,35 @@ Module Contents
 
 .. py:function:: combine_lis(outfile, cleanDir, roots, diffPA)
 
-.. py:function:: combine_register(outroot, refImage, diffPA)
+.. py:function:: xregister_correlation_fourier(I, R, Nx, Ny)
+
+   
+   Pythonified version of algorithm from iraf xregister
+   (see algorithms https://astro.uni-bonn.de/~sysstw/lfa_html/iraf/images.xregister.html)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: elliptical_gaussian_2d(params, x, y)
+
+.. py:function:: residuals(params, x, y, image)
+
+.. py:function:: combine_register(outroot, refImage, diffPA, plot_correlation=False, instrument=instruments.default_inst)
 
 .. py:function:: combine_log(outroot, roots, strehls, fwhm, weights)
 
@@ -780,21 +830,69 @@ Module Contents
 
 .. py:function:: clean_drizzle(xgeoim, ygeoim, _bp, _cd, _wgt, _dlog, fixDAR=True, instrument=instruments.default_inst, use_koa_weather=False)
 
-.. py:function:: clean_cosmicrays(_ff, _mask, wave)
+.. py:function:: cosmicray_median(ccd, input_mask, error_image=None, thresh=5, mbox=5, gbox=0, rbox=0, fratio=5, star_thresh=4, thresh_in_star=10)
 
    
-   Clean the image of cosmicrays and make a mask containing the location
-   of all the cosmicrays. The CR masks can later be used in combine() to
-   keep cosmicrays from being included.
+   Modified from ccdproc
 
-   @param _ff: Flat fielded file on which to fix cosmic rays. A new
-       image will be created with the _f appended to it.
-   @type _ff: string
-   @param _mask: The filename used for the resulting mask.
-   @type _mask: string
-   @parram wave: The filter of the observations (e.g. 'kp', 'lp'). This
-       is used to determine different thresholds for CR rejection.
-   @type wave: string
+   Identify cosmic rays through median technique. The median technique
+   identifies cosmic rays by identifying pixels by subtracting a median image
+   from the initial data array.
+
+   :Parameters:
+
+       **ccd** : `numpy.ndarray` or `numpy.ma.MaskedArray`
+           Data to have cosmic ray cleaned.
+
+       **thresh** : float, optional
+           Threshold for detecting cosmic rays.
+           Default is ``5``.
+
+       **error_image** : `numpy.ndarray`, float or None, optional
+           Error level. If None, the task will use the standard
+           deviation of the data. If an ndarray, it should have the same shape
+           as data.
+           Default is ``None``.
+
+       **mbox** : int, optional
+           Median box for detecting cosmic rays.
+           Default is ``11``.
+
+       **gbox** : int, optional
+           Box size to grow cosmic rays. If zero, no growing will be done.
+           Default is ``0``.
+
+       **rbox** : int, optional
+           Median box for calculating replacement values. If zero, no pixels will
+           be replaced.
+           Default is ``0``.
+
+       **fratio** : int, optional
+           Flux ratio determination for cosmic rays in stars by comparing residual
+           to nearby median.
+           Default is ``5``.
+
+       **star_thresh** : int, optional
+           Threshold for determining if pixels belong to a star as compared to 
+           their 25th percentile background.
+           Default is ``4``.
+
+       **thresh_in_star** : int, optional
+           Threshold for cosmicrays in star.
+           Default is ``10".
+
+
+
+   :Returns:
+
+       **nccd** : `~astropy.nddata.CCDData` or `numpy.ndarray`
+           An object of the same type as ccd is returned. If it is a
+           `~astropy.nddata.CCDData`, the mask attribute will also be updated with
+           areas identified with cosmic rays masked.
+
+       **nccd** : `numpy.ndarray`
+           If an `numpy.ndarray` is provided as ccd, a boolean ndarray with the
+           cosmic rays identified will also be returned.
 
 
 
@@ -803,17 +901,43 @@ Module Contents
 
 
 
+   .. rubric:: Notes
+
+   Similar implementation to crmedian in iraf.imred.crutil.crmedian.
 
 
+   .. rubric:: Examples
 
+   1) Given an numpy.ndarray object, the syntax for running
+      cosmicray_median would be:
 
+      >>> newdata, mask = cosmicray_median(data, error_image=error,
+      ...                                  thresh=5, mbox=11,
+      ...                                  rbox=11, gbox=5)   # doctest: +SKIP
 
+      where error is an array that is the same shape as data but
+      includes the pixel error. This would return a data array, newdata,
+      with the bad pixels replaced by the local median from a box of 11
+      pixels; and it would return a mask indicating the bad pixels.
 
+   2) Given an `~astropy.nddata.CCDData` object with an uncertainty frame, the syntax
+      for running cosmicray_median would be:
+
+      >>> newccd = cosmicray_median(ccd, thresh=5, mbox=11,
+      ...                           rbox=11, gbox=5)   # doctest: +SKIP
+
+      The newccd object will have bad pixels in its data array replace and the
+      mask of the object will be created if it did not previously exist or be
+      updated with the detected cosmic rays.
 
    ..
        !! processed by numpydoc !!
 
-.. py:function:: clean_cosmicrays2(_ff, _ff_cr, _mask, wave, instrument=instruments.default_inst)
+.. py:function:: loop_through_crs(data, crarr, search_box=5, interp_box=10, dim=1024)
+
+.. py:function:: round_to_edge(min_box_val, max_box_val, min_val, max_val)
+
+.. py:function:: clean_cosmicrays(_ff, _mask, wave, _input_mask, thresh=5, mbox=5, rbox=10, fratio=5, gbox=0, star_thresh=4, thresh_in_star=10)
 
    
    Clean the image of cosmicrays and make a mask containing the location
@@ -823,8 +947,6 @@ Module Contents
    @param _ff: Flat fielded file on which to fix cosmic rays. A new
        image will be created with the _f appended to it.
    @type _ff: string
-   @param _ff_cr: Output image with cosmicrays fixed.
-   @type _ff_cr: string
    @param _mask: The filename used for the resulting mask.
    @type _mask: string
    @parram wave: The filter of the observations (e.g. 'kp', 'lp'). This
@@ -1199,7 +1321,7 @@ Module Contents
 .. py:function:: mosaic_register(outroot, refImage, diffPA)
 
    
-   Register images for a mosaic. This only calculates the exact
+   BROKEN Register images for a mosaic. This only calculates the exact
    shifts between each image... it doesn't do the combining.
 
    @param outroot: The root for the output image. The resulting

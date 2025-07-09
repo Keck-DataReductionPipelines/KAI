@@ -26,6 +26,7 @@ Functions
    kai.reduce.util.cp_change_prefix
    kai.reduce.util.cp_change_suffix
    kai.reduce.util.update_header_coords
+   kai.reduce.util.imarith
 
 
 Module Contents
@@ -184,6 +185,30 @@ Module Contents
    and XSTREHL, and YSTREHL.
 
    fileList : list of files to update
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: imarith(img_list1, operator, img_list2, out_list)
+
+   
+   Replace the IRAF imarith functionality with exactly the same
+   thing implemented in python.
+
 
 
 

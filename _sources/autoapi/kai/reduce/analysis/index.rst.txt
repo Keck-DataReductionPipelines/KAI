@@ -284,6 +284,9 @@ Module Contents
    .. py:method:: calibrateClean()
 
 
+   .. py:method:: alignComboFlyStar()
+
+
    .. py:method:: alignCombo()
 
 

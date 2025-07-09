@@ -65,7 +65,6 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="../../test_drizzle/index.html">test_drizzle</a></li>
 </ul>
 </li>
 </ul>
@@ -102,14 +101,8 @@
 <h2>Functions<a class="headerlink" href="#functions" title="Link to this heading"></a></h2>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#kai.photometry.setup_phot" title="kai.photometry.setup_phot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setup_phot</span></code></a>(imageRoot[, silent, apertures, ...])</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#kai.photometry.run_phot" title="kai.photometry.run_phot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run_phot</span></code></a>(imageRoot[, silent, apertures, sky_annulus, ...])</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#kai.photometry.get_phot_output" title="kai.photometry.get_phot_output"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_phot_output</span></code></a>(output[, silent])</p></td>
-<td><p></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.photometry.run_phot" title="kai.photometry.run_phot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run_phot</span></code></a>(imageRoot[, silent, apertures, sky_annulus, ...])</p></td>
+<td><p>Run aperture photometry on a <a href="#id1"><span class="problematic" id="id2">*</span></a>.fits image at the coordinates specified in</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#kai.photometry.get_filter_profile" title="kai.photometry.get_filter_profile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_filter_profile</span></code></a>(filter)</p></td>
 <td><p>Returns the wavelength (in microns) and the transmission for</p></td>
@@ -126,19 +119,12 @@
 <section id="module-contents">
 <h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
 <dl class="py function">
-<dt class="sig sig-object py" id="kai.photometry.setup_phot">
-<span class="sig-prename descclassname"><span class="pre">kai.photometry.</span></span><span class="sig-name descname"><span class="pre">setup_phot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">imageRoot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">silent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">apertures</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[25,</span> <span class="pre">50,</span> <span class="pre">75,</span> <span class="pre">100,</span> <span class="pre">125,</span> <span class="pre">150,</span> <span class="pre">175,</span> <span class="pre">200]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sky_annulus</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">200</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sky_dannulus</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zmag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/photometry.html#setup_phot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.photometry.setup_phot" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
 <dt class="sig sig-object py" id="kai.photometry.run_phot">
 <span class="sig-prename descclassname"><span class="pre">kai.photometry.</span></span><span class="sig-name descname"><span class="pre">run_phot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">imageRoot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">silent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">apertures</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[25,</span> <span class="pre">50,</span> <span class="pre">75,</span> <span class="pre">100,</span> <span class="pre">125,</span> <span class="pre">150,</span> <span class="pre">175,</span> <span class="pre">200]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sky_annulus</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">200</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sky_dannulus</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zmag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/photometry.html#run_phot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.photometry.run_phot" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="kai.photometry.get_phot_output">
-<span class="sig-prename descclassname"><span class="pre">kai.photometry.</span></span><span class="sig-name descname"><span class="pre">get_phot_output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">silent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/photometry.html#get_phot_output"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.photometry.get_phot_output" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Run aperture photometry on a <a href="#id3"><span class="problematic" id="id4">*</span></a>.fits image at the coordinates specified in
+an accompanying <a href="#id5"><span class="problematic" id="id6">*</span></a>.coo file to make a curve of growth. Background/sky
+subtraction is done with a circular annulus.</p>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="kai.photometry.get_filter_profile">

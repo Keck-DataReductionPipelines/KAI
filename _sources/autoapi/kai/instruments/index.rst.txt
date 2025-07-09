@@ -81,6 +81,9 @@ Module Contents
    .. py:method:: get_mjd(hdr)
 
 
+   .. py:method:: get_reference_pixels(img)
+
+
 .. py:class:: NIRC2
 
    Bases: :py:obj:`Instrument`
@@ -626,6 +629,9 @@ Module Contents
 
 
    .. py:method:: subtract_reference_pixels(img)
+
+
+   .. py:method:: get_reference_pixels(img)
 
 
    .. py:method:: get_distortion_maps(hdr)

@@ -11,17 +11,16 @@ Functions
 
    kai.reduce.sky.makesky
    kai.reduce.sky.makesky_lp
-   kai.reduce.sky.makesky_lp2
    kai.reduce.sky.makesky_fromsci
-   kai.reduce.sky.makesky_lp_fromsci
    kai.reduce.sky.read_sky_rot_file
    kai.reduce.sky.write_sky_rot_file
+   kai.reduce.sky.get_raw_reduce_directories
 
 
 Module Contents
 ---------------
 
-.. py:function:: makesky(files, nite, wave, dark_frame=None, skyscale=True, raw_dir=None, instrument=instruments.default_inst)
+.. py:function:: makesky(files, nite, wave, dark_frame=None, skyscale=True, raw_dir=None, reduce_dir=None, instrument=instruments.default_inst)
 
    
    Make short wavelength (not L-band or longer) skies.
@@ -52,6 +51,12 @@ Module Contents
            Directory where raw files are stored. By default,
            assumes that raw files are stored in '../raw'
 
+       **reduce_dir** : str, optional
+           Directory such as <epoch>/reduce/ with contents including
+           the calib/, calib/darks/, etc. directories live.
+           Files will be output into reduce_dir + calib/darks/.
+           If epoch_dir is None, then use the current working directory.
+
        **instrument** : instruments object, optional
            Instrument of data. Default is `instruments.default_inst`
 
@@ -71,7 +76,7 @@ Module Contents
    ..
        !! processed by numpydoc !!
 
-.. py:function:: makesky_lp(files, nite, wave, dark_frame=None, number=3, rejectHsigma=None, raw_dir=None, instrument=instruments.default_inst)
+.. py:function:: makesky_lp(files, nite, wave, dark_frame=None, number=3, rejectHsigma=5, raw_dir=None, reduce_dir=None, instrument=instruments.default_inst)
 
    
    Make L' skies by carefully treating the ROTPPOSN angle
@@ -99,12 +104,18 @@ Module Contents
            Number of skies to be combined
 
        **rejectHsigma** : int, default:None
-           Flag to pass for rejectHsigma for IRAF imcombine
-           By default, no flags are passed
+           Apply a sigma_high threshold for sigma clipping. This works to
+           remove stars or galaxies when using science images to make the sky.
 
        **raw_dir** : str, optional
            Directory where raw files are stored. By default,
            assumes that raw files are stored in '../raw'
+
+       **reduce_dir** : str, optional
+           Directory such as <epoch>/reduce/ with contents including
+           the calib/, calib/darks/, etc. directories live.
+           Files will be output into reduce_dir + calib/darks/.
+           If epoch_dir is None, then use the current working directory.
 
        **instrument** : instruments object, optional
            Instrument of data. Default is `instruments.default_inst`
@@ -125,60 +136,38 @@ Module Contents
    ..
        !! processed by numpydoc !!
 
-.. py:function:: makesky_lp2(files, nite, wave)
+.. py:function:: makesky_fromsci(files, nite, wave, raw_dir=None, reduce_dir=None, instrument=instruments.default_inst)
 
    
-   Make L' skies by carefully treating the ROTPPOSN angle
-   of the K-mirror. Uses only 2 skies combined.
+   Make short wavelength (not L-band or longer) skies from the science exposures
+   themselves. We use strong clipping to get rid of stars. This should only be used
+   on sparser science fields.
 
 
+   :Parameters:
 
+       **files** : list of int
+           Integer list of the files. Does not require padded zeros.
 
+       **nite** : str
+           Name for night of observation (e.g.: "nite1"), used as suffix
+           inside the reduce sub-directories.
 
+       **wave** : str
+           Name for the observation passband (e.g.: "kp")
 
+       **raw_dir** : str, optional
+           Directory where raw files are stored. By default,
+           assumes that raw files are stored in '../raw'
 
+       **reduce_dir** : str, optional
+           Directory such as <epoch>/reduce/ with contents including
+           the calib/, calib/darks/, etc. directories live.
+           Files will be output into reduce_dir + calib/darks/.
+           If epoch_dir is None, then use the current working directory.
 
-
-
-
-
-
-
-
-
-   ..
-       !! processed by numpydoc !!
-
-.. py:function:: makesky_fromsci(files, nite, wave, instrument=instruments.default_inst)
-
-   
-   Make short wavelength (not L-band or longer) skies.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-   ..
-       !! processed by numpydoc !!
-
-.. py:function:: makesky_lp_fromsci(files, nite, wave, number=3, rejectHsigma=None)
-
-   
-   Make L' skies by carefully treating the ROTPPOSN angle
-   of the K-mirror. Uses 3 skies combined (set by number keyword).
-
-
+       **instrument** : instruments object, optional
+           Instrument of data. Default is `instruments.default_inst`
 
 
 
@@ -243,4 +232,6 @@ Module Contents
 
    ..
        !! processed by numpydoc !!
+
+.. py:function:: get_raw_reduce_directories(raw_dir, reduce_dir)
 

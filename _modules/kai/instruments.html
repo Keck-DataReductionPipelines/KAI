@@ -78,6 +78,8 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">pdb</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">astropy.io.fits.hdu.image</span><span class="w"> </span><span class="kn">import</span> <span class="n">_ImageBaseHDU</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">astropy.time</span><span class="w"> </span><span class="kn">import</span> <span class="n">Time</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy.coordinates</span><span class="w"> </span><span class="kn">import</span> <span class="n">SkyCoord</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">astropy.units</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">u</span>
 
 <div class="viewcode-block" id="module_dir">
 <a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.module_dir">[docs]</a>
@@ -188,6 +190,12 @@
 <a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.Instrument.get_mjd">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_mjd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hdr</span><span class="p">):</span>
         <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="Instrument.get_reference_pixels">
+<a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.Instrument.get_reference_pixels">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_reference_pixels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img</span><span class="p">):</span>
+        <span class="k">pass</span></div>
 </div>
 
 
@@ -250,7 +258,7 @@
 
 
         <span class="k">return</span>
-    
+
 <div class="viewcode-block" id="NIRC2.get_filter_name">
 <a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.NIRC2.get_filter_name">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_filter_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hdr</span><span class="p">):</span>
@@ -289,7 +297,12 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the sky PA in degrees East of North. </span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;ROTPOSN&#39;</span><span class="p">])</span> <span class="o">-</span> <span class="nb">float</span><span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;INSTANGL&#39;</span><span class="p">])</span></div>
+        <span class="c1"># This should be set by rot_img if specified</span>
+        <span class="k">if</span> <span class="s1">&#39;PA&#39;</span> <span class="ow">in</span> <span class="n">hdr</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">pa</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;PA&#39;</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">pa</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;ROTPOSN&#39;</span><span class="p">])</span> <span class="o">-</span> <span class="nb">float</span><span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;INSTANGL&#39;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">pa</span></div>
 
 
 <div class="viewcode-block" id="NIRC2.get_parallactic_angle">
@@ -436,20 +449,14 @@
         <span class="k">if</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">date</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">4</span><span class="p">])</span> <span class="o">&lt;</span> <span class="mi">2024</span><span class="p">):</span>
             <span class="c1"># Previous to 2023/2024 electronics upgrade, RA and DEC stored</span>
             <span class="c1"># as decimal degrees</span>
-            <span class="k">return</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;RA&#39;</span><span class="p">]),</span> <span class="nb">float</span><span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;DEC&#39;</span><span class="p">])]</span>
+            <span class="n">ra</span><span class="p">,</span> <span class="n">dec</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;RA&#39;</span><span class="p">]),</span> <span class="nb">float</span><span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;DEC&#39;</span><span class="p">])</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># New coordinates are in HH:MM:SS.SSS or DD:MM:SS.SSS, so have</span>
             <span class="c1"># to convert to decimals degrees</span>
-            <span class="n">RA_split</span> <span class="o">=</span> <span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;RA&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)</span>
-            <span class="n">RA_decimal_hrs</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">RA_split</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">+</span>\
-                <span class="nb">float</span><span class="p">(</span><span class="n">RA_split</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">/</span><span class="mf">60.</span> <span class="o">+</span> <span class="nb">float</span><span class="p">(</span><span class="n">RA_split</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span><span class="o">/</span><span class="mf">3600.</span>
-            <span class="n">RA_decimal_degs</span> <span class="o">=</span> <span class="p">(</span><span class="n">RA_decimal_hrs</span> <span class="o">/</span> <span class="mf">24.</span><span class="p">)</span> <span class="o">*</span> <span class="mf">360.</span>
+            <span class="n">coords</span> <span class="o">=</span> <span class="n">SkyCoord</span><span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;RA&#39;</span><span class="p">],</span> <span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;DEC&#39;</span><span class="p">],</span> <span class="n">unit</span><span class="o">=</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">hourangle</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">deg</span><span class="p">))</span>
+            <span class="n">ra</span><span class="p">,</span> <span class="n">dec</span> <span class="o">=</span> <span class="n">coords</span><span class="o">.</span><span class="n">ra</span><span class="o">.</span><span class="n">deg</span><span class="p">,</span> <span class="n">coords</span><span class="o">.</span><span class="n">dec</span><span class="o">.</span><span class="n">deg</span>
             
-            <span class="n">DEC_split</span> <span class="o">=</span> <span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;RA&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)</span>
-            <span class="n">DEC_decimal_degs</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">DEC_split</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">+</span>\
-                <span class="nb">float</span><span class="p">(</span><span class="n">DEC_split</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">/</span><span class="mf">60.</span> <span class="o">+</span> <span class="nb">float</span><span class="p">(</span><span class="n">DEC_split</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span><span class="o">/</span><span class="mf">3600.</span>
-            
-            <span class="k">return</span> <span class="p">[</span><span class="n">RA_decimal_degs</span><span class="p">,</span> <span class="n">DEC_decimal_degs</span><span class="p">]</span></div>
+        <span class="k">return</span> <span class="p">[</span><span class="n">ra</span><span class="p">,</span> <span class="n">dec</span><span class="p">]</span></div>
 
     
 <div class="viewcode-block" id="NIRC2.get_mjd">
@@ -493,7 +500,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">hdr_keys</span><span class="p">[</span><span class="s1">&#39;nfowler&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;numreads&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hdr_keys</span><span class="p">[</span><span class="s1">&#39;camera&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;instr&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hdr_keys</span><span class="p">[</span><span class="s1">&#39;shutter&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;ifilter&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">hdr_keys</span><span class="p">[</span><span class="s1">&#39;mjd&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;MJD-OBS&#39;</span>
+        <span class="c1">#self.hdr_keys[&#39;mjd&#39;] = &#39;MJD-OBS&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hdr_keys</span><span class="p">[</span><span class="s1">&#39;elevation&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;EL&#39;</span>
 
 <div class="viewcode-block" id="OSIRIS.bad_pixel_mask">
@@ -524,7 +531,7 @@
 
         
         <span class="k">return</span>
-    
+
 <div class="viewcode-block" id="OSIRIS.get_filter_name">
 <a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.OSIRIS.get_filter_name">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_filter_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hdr</span><span class="p">):</span>
@@ -573,8 +580,14 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the sky PA in degrees East of North. </span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="c1"># This should be set by rot_img if specified</span>
+        <span class="k">if</span> <span class="s1">&#39;PA&#39;</span> <span class="ow">in</span> <span class="n">hdr</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">pa</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;PA&#39;</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">pa</span> <span class="o">=</span> <span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;PA_IMAG&#39;</span><span class="p">]</span>
         <span class="c1"># pa = float(hdr[&#39;ROTPOSN&#39;]) - self.get_instrument_angle(hdr)</span>
-        <span class="n">pa</span> <span class="o">=</span> <span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;PA_IMAG&#39;</span><span class="p">]</span>
+        
 
         <span class="c1">#if in PCU mode, read the PCU rotation angle instead</span>
         <span class="k">if</span> <span class="s1">&#39;PCUZ&#39;</span> <span class="ow">in</span> <span class="n">hdr</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
@@ -711,6 +724,18 @@
         <span class="n">new_img</span> <span class="o">=</span> <span class="n">img</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">ref_pix_median</span><span class="p">])</span><span class="o">.</span><span class="n">T</span>
     
         <span class="k">return</span> <span class="n">new_img</span></div>
+
+
+<div class="viewcode-block" id="OSIRIS.get_reference_pixels">
+<a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.OSIRIS.get_reference_pixels">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_reference_pixels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img</span><span class="p">):</span>
+        <span class="n">border_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span> 
+        <span class="n">border_mask</span><span class="p">[:</span><span class="mi">4</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">border_mask</span><span class="p">[</span><span class="o">-</span><span class="mi">4</span><span class="p">:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">border_mask</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">border_mask</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">4</span><span class="p">:]</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">border_mask</span> <span class="o">==</span> <span class="kc">True</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="OSIRIS.get_distortion_maps">

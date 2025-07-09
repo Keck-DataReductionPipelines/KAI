@@ -1,0 +1,23 @@
+kai.reduce.tests
+================
+
+.. py:module:: kai.reduce.tests
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/kai/reduce/tests/test_align_rms/index
+   /autoapi/kai/reduce/tests/test_analysis/index
+   /autoapi/kai/reduce/tests/test_calib/index
+   /autoapi/kai/reduce/tests/test_dar/index
+   /autoapi/kai/reduce/tests/test_data/index
+   /autoapi/kai/reduce/tests/test_drizzle/index
+   /autoapi/kai/reduce/tests/test_lin_correction/index
+   /autoapi/kai/reduce/tests/test_sky/index
+   /autoapi/kai/reduce/tests/test_util/index
+
+

@@ -1,0 +1,19 @@
+kai.tests.test_photometry
+=========================
+
+.. py:module:: kai.tests.test_photometry
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   kai.tests.test_photometry.test_run_phot
+
+
+Module Contents
+---------------
+
+.. py:function:: test_run_phot()
+

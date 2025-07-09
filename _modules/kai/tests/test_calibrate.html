@@ -77,10 +77,10 @@
 <div class="viewcode-block" id="test_star_names">
 <a class="viewcode-back" href="../../../autoapi/kai/tests/test_calibrate/index.html#kai.tests.test_calibrate.test_star_names">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">test_star_names</span><span class="p">():</span>
-    <span class="n">mod_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">calibrate</span><span class="o">.</span><span class="vm">__file__</span><span class="p">)</span>
+    <span class="n">mod_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">calibrate</span><span class="o">.</span><span class="vm">__file__</span><span class="p">))</span>
 
-    <span class="n">photo_calib_file</span> <span class="o">=</span> <span class="n">mod_path</span> <span class="o">+</span> <span class="s1">&#39;../tests/test_calibrate/photo_calib.dat&#39;</span>
-    <span class="n">starlist</span> <span class="o">=</span> <span class="n">mod_path</span> <span class="o">+</span> <span class="s1">&#39;../tests/test_calibrate/mag95jun_0.8d_stf.lis&#39;</span>
+    <span class="n">photo_calib_file</span> <span class="o">=</span> <span class="n">mod_path</span> <span class="o">+</span> <span class="s1">&#39;/../tests/test_calibrate/photo_calib.dat&#39;</span>
+    <span class="n">starlist</span> <span class="o">=</span> <span class="n">mod_path</span> <span class="o">+</span> <span class="s1">&#39;/../tests/test_calibrate/mag95jun_0.8d_stf.lis&#39;</span>
     
     <span class="n">args</span> <span class="o">=</span> <span class="s1">&#39;-f 1 -R -N &#39;</span> <span class="o">+</span> <span class="n">photo_calib_file</span> <span class="o">+</span> <span class="s1">&#39; -M 7 -T 0.0 -V -S S3-24,S3-37,33E,S3-169,S1-54,S2-47,S2-2,S1-3,S3-108,S2-46,S2-82,S1-32,S1-23,33N -A 16C,16NW,16CC -c 1 &#39;</span> <span class="o">+</span> <span class="n">starlist</span>
 

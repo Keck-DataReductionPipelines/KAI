@@ -70,8 +70,7 @@
            <div itemprop="articleBody">
              
   <h1>Source code for kai.reduce.bfixpix</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pyraf</span><span class="w"> </span><span class="kn">import</span> <span class="n">iraf</span> <span class="k">as</span> <span class="n">ir</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">ndimage</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">ndimage</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">astropy.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">fits</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">util</span>
@@ -92,7 +91,10 @@
 <span class="sd">        input image file to fix bad pixels on</span>
 
 <span class="sd">    mask_file : string</span>
-<span class="sd">        mask file (0 == good pixels, &gt;0 == bad pixels</span>
+<span class="sd">        mask file (0 == good pixels, &gt;0 == bad pixels)</span>
+<span class="sd">        Only fixes bad pixels = 1</span>
+<span class="sd">        pixel = 2 means that it&#39;s a reference pixel and will be </span>
+<span class="sd">        filtered out in other steps but not &quot;fixed.&quot;</span>
 
 <span class="sd">    outsuffix : string</span>
 <span class="sd">        suffix for fixed image. default = &#39;_f&#39;</span>

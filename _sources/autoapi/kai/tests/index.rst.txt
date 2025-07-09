@@ -34,5 +34,6 @@ Submodules
    :maxdepth: 1
 
    /autoapi/kai/tests/test_calibrate/index
+   /autoapi/kai/tests/test_photometry/index
 
 

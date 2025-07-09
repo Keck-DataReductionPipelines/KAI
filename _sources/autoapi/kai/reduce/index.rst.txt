@@ -26,7 +26,7 @@ Submodules
    /autoapi/kai/reduce/reduce_template_osiris/index
    /autoapi/kai/reduce/sky/index
    /autoapi/kai/reduce/slalib/index
-   /autoapi/kai/reduce/test_dar/index
+   /autoapi/kai/reduce/tests/index
    /autoapi/kai/reduce/util/index
 
 
