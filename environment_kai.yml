@@ -1,4 +1,4 @@
-name: test_astro_kai
+name: astro_kai
 channels:
   - defaults
 dependencies:
