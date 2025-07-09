@@ -12,6 +12,7 @@ from kai import strehl
 from datetime import datetime
 import subprocess
 import pylab as py
+import pandas as pd
 import pdb
 from multiprocessing import Pool
 
@@ -33,6 +34,7 @@ def idl_process_run(batch_file):
     tmp = subp.communicate()
     
     return
+
 
 class Analysis(object):
     """
@@ -283,7 +285,7 @@ class Analysis(object):
         try:
             print('COMBO starfinder')
             print('Coo Star: ' + self.cooStar)
-            
+             
             os.chdir(self.dirComboStf)
             if self.type == 'ao':
                 # Write an IDL batch file for the main map and each submap
@@ -420,6 +422,9 @@ class Analysis(object):
             # Copy over the starfinder FITS files to the current directory
             epoch_file_root = 'mag{0}_{1}'.format(self.epoch, self.filt)
             
+            if os.path.exists(self.dirCombo + epoch_file_root + '_psf.fits') == False:
+                raise Exception('starfinder likely failed - see ' + self.dirCombo + 'starfinder/idlbatch_combo_{0}.log'.format(self.filt) + ' for more details')
+            
             shutil.copyfile(self.dirCombo + epoch_file_root + '_back.fits',
                             epoch_file_root + '_back.fits')
             shutil.copyfile(self.dirCombo + epoch_file_root + '_psf.fits',
@@ -433,7 +438,7 @@ class Analysis(object):
                 epoch_file_root + '.fits', self.dirCombo,
                 epoch_file_root + '.fits', datetime.now())
             data_sources_file.write(out_line)
-            
+             
             # Copy over submap starfinder FITS files to the current directory
             epoch_sub_root = 'm{0}_{1}'.format(self.epoch, self.filt)
             
@@ -675,7 +680,20 @@ class Analysis(object):
                 args = argsTmp.split()[1:]
                 calibrate.main(args)
 
+            # Checks that calibrateCombo() didn't fail
+            zer_file = pd.read_csv(fileSub[:-8] + '_stf_cal.zer', delim_whitespace = True, header = 3)
+            if np.isnan(zer_file['#ZeroPoint'][0]) == True:
+                raise Exception('calibrateCombo() likely failed and produced a nan zeropoint, see above printouts')
+                
+            if self.type == 'ao':
+                file_ext = '_' + self.filt
+            else:
+                file_ext = self.filt
+            
+
+            
             os.chdir(self.dirStart)
+            
         except:
             os.chdir(self.dirStart)
             raise
@@ -728,6 +746,50 @@ class Analysis(object):
         except:
             os.chdir(self.dirStart)
             raise
+
+    def alignComboFlyStar(self):
+        print('ALIGN_RMS combo')
+
+        from flystar import align, starlists, transforms
+
+        # Include filter for AO images
+        if self.type == 'ao':
+            file_ext = '_' + self.filt
+        else:
+            file_ext = self.filt
+
+        # Include deblend flag in starlist name
+        if self.deblend == 1:
+            deblend_str = 'd'
+        else:
+            deblend_str = ''
+
+        main_map_root = f'mag{self.epoch}{self.imgSuffix}{file_ext}'
+        main_map_root += '_{self.corrMain:3.1f}{deblend_str}'
+        main_map_root += '_stf_cal.lis'
+
+        sub_map_roots = []
+        for ss in range(self.numSubMaps):
+            sub_map_root = f'm{self.epoch}{self.imgSuffix}{file_ext}_{ss+1:d}'
+            sub_map_root += '_{self.corrSub:3.1f}{deblend_str}'
+            sub_map_root += '_stf_cal.lis'
+            sub_map_roots.append( sub_map_root )
+
+        main_list = starlists.StarList.from_lis_file(self.dirComboStf + main_map_root)
+        sub_lists = []
+        for ss in range(self.numSubMaps):
+            sub_lists.append( starlists.StarList.from_lis_file(self.dirComboStf + sub_map_roots[ss]) )
+
+        msc = align.MosaicToRef(main_list, sub_lists, ref_index=0, iters=2,
+                                  dr_tol=[1,1], dm_tol=[0.5,0.3],
+                                  trans_class=transforms.PolyTransform,
+                                  trans_args={'order':0},
+                                  verbose=True)
+        msc.fit()
+
+        # align_rms -- combo and make final list.
+
+        return
 
     def alignCombo(self):
         print('ALIGN_RMS combo')
@@ -787,12 +849,17 @@ class Analysis(object):
             # Make a named/labeled version
             cmd = 'java -Xmx1024m align %s ' % (self.alignFlags)
 
+            #cmd += '-N %s ' % self.labellist
+            #cmd += '-accel_file %s ' % self.labellist
+
+
             # Support label.dat files with or without accelerations.
             if self.labellist_accel:
                 cmd += '-accel_file %s ' % self.labellist
             else:
                 cmd += '-N %s ' % self.labellist
                 
+
             if (self.orbitlist != None) and (self.orbitlist != ''):
                 cmd += '-o %s ' % self.orbitlist
             
@@ -841,6 +908,9 @@ class Analysis(object):
                          raw=True, suffix=plotSuffix, magCutOff=self.plotPosMagCut)
 
             os.chdir(self.dirStart)
+
+            if os.path.exists(self.dirCombo + 'starfinder/align/align%s%s_%3.1f.scale' % (self.imgSuffix, file_ext, self.corrMain)) == False:
+                raise Exception('alignCombo() likely failed, see above printouts')
         except:
             os.chdir(self.dirStart)
             raise

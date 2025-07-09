@@ -5,7 +5,7 @@ from astropy.nddata import Cutout2D
 from astropy.modeling import models, fitting
 import astropy
 import os
-from photutils import CircularAperture, CircularAnnulus, aperture_photometry
+from photutils.aperture import CircularAperture, CircularAnnulus, aperture_photometry
 from kai import instruments
 import scipy, scipy.misc, scipy.ndimage
 import math

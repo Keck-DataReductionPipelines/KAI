@@ -27,12 +27,17 @@ def lin_correction(file, instrument=instruments.default_inst):
     im_header = hdul[0].header
     im_data = hdul[0].data
     
+    # Determine if we have linearity correction coefficients to apply.
+    coeffs = instrument.get_linearity_correction_coeffs(im_header)
+
+    if coeffs is None:
+        return
+    
     # Perform correction
     num_coadds = im_header['COADDS']
     
     x = im_data / num_coadds
-    coeffs = instrument.get_linearity_correction_coeffs(im_header)
-    
+
     # Determine order of polynomial correction
     norm_poly_order = len(coeffs)
     

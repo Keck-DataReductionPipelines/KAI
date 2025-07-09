@@ -6,6 +6,8 @@ from astropy.io import fits
 import pdb
 from astropy.io.fits.hdu.image import _ImageBaseHDU
 from astropy.time import Time
+from astropy.coordinates import SkyCoord
+import astropy.units as u
 
 module_dir = os.path.dirname(__file__)
 
@@ -65,6 +67,9 @@ class Instrument(object):
     def get_mjd(self, hdr):
         pass
 
+    def get_reference_pixels(self, img):
+        pass
+
     
 class NIRC2(Instrument):
     def __init__(self):
@@ -98,7 +103,7 @@ class NIRC2(Instrument):
         self.telescope_diam = 10.5 # telescope diameter in meters
 
         return
-    
+
     def get_filter_name(self, hdr):
         if 'fwiname' in hdr:
             filter1 = hdr['fwiname']
@@ -129,7 +134,12 @@ class NIRC2(Instrument):
         """
         Get the sky PA in degrees East of North. 
         """
-        return float(hdr['ROTPOSN']) - float(hdr['INSTANGL'])
+        # This should be set by rot_img if specified
+        if 'PA' in hdr.keys():
+            pa = float(hdr['PA'])
+        else:
+            pa = float(hdr['ROTPOSN']) - float(hdr['INSTANGL'])
+        return pa
 
     def get_parallactic_angle(self,hdr):
         """
@@ -246,20 +256,14 @@ class NIRC2(Instrument):
         if (float(date[0:4]) < 2024):
             # Previous to 2023/2024 electronics upgrade, RA and DEC stored
             # as decimal degrees
-            return [float(hdr['RA']), float(hdr['DEC'])]
+            ra, dec = float(hdr['RA']), float(hdr['DEC'])
         else:
             # New coordinates are in HH:MM:SS.SSS or DD:MM:SS.SSS, so have
             # to convert to decimals degrees
-            RA_split = hdr['RA'].split(':')
-            RA_decimal_hrs = float(RA_split[0]) +\
-                float(RA_split[1])/60. + float(RA_split[2])/3600.
-            RA_decimal_degs = (RA_decimal_hrs / 24.) * 360.
+            coords = SkyCoord(hdr['RA'], hdr['DEC'], unit=(u.hourangle, u.deg))
+            ra, dec = coords.ra.deg, coords.dec.deg
             
-            DEC_split = hdr['RA'].split(':')
-            DEC_decimal_degs = float(DEC_split[0]) +\
-                float(DEC_split[1])/60. + float(DEC_split[2])/3600.
-            
-            return [RA_decimal_degs, DEC_decimal_degs]
+        return [ra, dec]
     
     def get_mjd(self, hdr):
         """Return observation time in MJD"""
@@ -290,7 +294,7 @@ class OSIRIS(Instrument):
         self.hdr_keys['nfowler'] = 'numreads'
         self.hdr_keys['camera'] = 'instr'
         self.hdr_keys['shutter'] = 'ifilter'
-        self.hdr_keys['mjd'] = 'MJD-OBS'
+        #self.hdr_keys['mjd'] = 'MJD-OBS'
         self.hdr_keys['elevation'] = 'EL'
 
         self.bad_pixel_mask = 'osiris_img_mask.fits'
@@ -303,7 +307,7 @@ class OSIRIS(Instrument):
         self.telescope_diam = 10.5 # telescope diameter in meters
         
         return
-    
+
     def get_filter_name(self, hdr):
         f = hdr['ifilter']
         return f.split('-')[0]
@@ -338,8 +342,14 @@ class OSIRIS(Instrument):
         """
         Get the sky PA in degrees East of North. 
         """
+        
+        # This should be set by rot_img if specified
+        if 'PA' in hdr.keys():
+            pa = float(hdr['PA'])
+        else:
+            pa = hdr['PA_IMAG']
         # pa = float(hdr['ROTPOSN']) - self.get_instrument_angle(hdr)
-        pa = hdr['PA_IMAG']
+        
 
         #if in PCU mode, read the PCU rotation angle instead
         if 'PCUZ' in hdr.keys():
@@ -455,6 +465,15 @@ class OSIRIS(Instrument):
         new_img = img - np.array([ref_pix_median]).T
     
         return new_img
+
+    def get_reference_pixels(self, img):
+        border_mask = np.zeros_like(img, dtype=bool) 
+        border_mask[:4, :] = True
+        border_mask[-4:, :] = True
+        border_mask[:, :4] = True
+        border_mask[:, -4:] = True
+
+        return np.where(border_mask == True)
 
     def get_distortion_maps(self, hdr):
         """

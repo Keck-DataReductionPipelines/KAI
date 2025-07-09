@@ -274,7 +274,7 @@ def generate_list(imgPath, numPSFStars = 7, fwhm = 4.5, scale = 0.009942, targNa
     print("*************************************************")
     
 
-def plot_starlist_on_image_arcsec(starList, imagePath, refCoo, scale = (9.942/1000), magCut = 23, label = True, verbose=True, flip = False):
+def plot_starlist_on_image_arcsec(starList, imagePath, refCoo, scale = (9.942/1000), magCut = 23, label = True, verbose=True, flip = False, plot_circles = False):
     """
     Plot a NIRC2 image and overlay a starlist. Input in relative arcsec coordinates.
     @params
@@ -289,6 +289,7 @@ def plot_starlist_on_image_arcsec(starList, imagePath, refCoo, scale = (9.942/10
     label - if True, adds labels. Defaults to true.
     verbose - if True, prints the astropy table inputted. Defaults to true.
     flip - if True, flips image in x (helps in case image is backwards).
+    plot_circles - if True, plots circles around each star
     
     Ensure that the image passed in is at a Position Angle of 0.
     
@@ -344,6 +345,8 @@ def plot_starlist_on_image_arcsec(starList, imagePath, refCoo, scale = (9.942/10
 
     # Scatter the sources in starlist.
     sc = plt.scatter(xCoordList[idx], yCoordList[idx], c = mList[idx], s = 300, linewidth = 3)
+    if plot_circles:
+        plt.scatter(xCoordList[idx], yCoordList[idx], s = 300, linewidth = 2, marker = 'o', fc = 'none', ec = 'black')
     sc.set_facecolor('none')
     
     # Label the sources.
