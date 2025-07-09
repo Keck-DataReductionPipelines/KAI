@@ -100,12 +100,7 @@ def calc_strehl(file_list, out_file, apersize=0.3, instrument=instruments.defaul
         for ii in range(len(file_list)):
             strehl, fwhm, rmswfe = calc_strehl_single(file_list[ii], radius, 
                                                       dl_peak_flux_ratio, instrument=instrument)
-            hdr = fits.getheader(file_list[ii])
-            mjd_name = instrument.get_mjd_header_name(hdr)
-            try:
-                mjd = fits.getval(file_list[ii], mjd_name) 
-            except KeyError:
-                mjd = fits.getval(file_list[ii], mjd_name, extname='SCI')
+            mjd = instrument.get_mjd(fits.getheader(file_list[ii]))
             dirname, filename = os.path.split(file_list[ii])
 
             _out.write(fmt_dat.format(img=filename, strehl=strehl, rms=rmswfe, fwhm=fwhm, mjd=mjd))
@@ -225,9 +220,9 @@ def calc_peak_flux_ratio(img, coords, radius, skysub=True):
     img_cut = Cutout2D(img, coords, boxsize, mode='strict')
 
     # Determine the peak flux in this window.
-    peak_coords_cutout = np.unravel_index(np.argmax(img_cut.data, axis=None), img_cut.data.shape)
-    peak_coords = img_cut.to_original_position(peak_coords_cutout)
-    peak_flux = img[peak_coords[::-1]]
+    iy, ix = np.unravel_index(np.argmax(img_cut.data, axis=None), img_cut.data.shape)
+    ys, xs = img_cut.slices_original
+    peak_flux = img[ys.start + iy, xs.start + ix]
     
     # Calculate the Strehl by first finding the peak-pixel flux / wide-aperture flux.
     # Then normalize by the same thing from the reference DL image. 

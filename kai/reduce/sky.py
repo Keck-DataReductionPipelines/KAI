@@ -103,7 +103,8 @@ def makesky(files, nite, wave,
 
         warnings.warn(warning_message)
 
-    # Perform linearity correction
+    # Linearity correction called for all instruments 
+    # (it will pass through if none needed).
     for i in range(len(skies)):
         lin_correction.lin_correction(nn[i], instrument=instrument)
 

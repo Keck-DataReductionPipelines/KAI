@@ -202,7 +202,7 @@ def clean(files, nite, wave, refSrc, strSrc,
         # This is the image for which refSrc is relevant.
         firstFile = instrument.make_filenames([files[0]], rootDir=rawDir)[0]
         hdr1 = fits.getheader(firstFile, ignore_missing_end=True)
-        radecRef = instrument.get_RA_Dec(hdr1)
+        radecRef = instrument.get_radec(hdr1)
         aotsxyRef = kai_util.getAotsxy(hdr1)
 
         if ref_offset_method == 'pcu':
@@ -351,7 +351,9 @@ def clean(files, nite, wave, refSrc, strSrc,
             clean_drizzle(distXgeoim, distYgeoim, _bp, _ce, _wgt, _dlog,
                           fixDAR=fixDAR, instrument=instrument,
                           use_koa_weather=use_koa_weather)
-
+            
+            hdr = fits.getheader(_raw, ignore_missing_end=True)
+            
             ### Make .max file ###
             # Determine the non-linearity level. Raw data level of
             # non-linearity is 12,000 but we subtracted
@@ -361,8 +363,7 @@ def clean(files, nite, wave, refSrc, strSrc,
             nonlinSky = skyObj.getNonlinearCorrection(sky)
 
             coadds = fits.getval(_ss, instrument.hdr_keys['coadds'])
-            satLevel = (coadds*instrument.get_saturation_level()) - nonlinSky - bkg
-            #file(_max, 'w').write(str(satLevel))
+            satLevel = (coadds*instrument.get_saturation_level(hdr)) - nonlinSky - bkg
             open(_max, 'w').write(str(satLevel))
 
             ### Rename and clean up files ###
@@ -371,7 +372,6 @@ def clean(files, nite, wave, refSrc, strSrc,
 
             ### Make the *.coo file and update headers ###
             # First check if PA is not zero
-            hdr = fits.getheader(_raw, ignore_missing_end=True)
             phi = instrument.get_position_angle(hdr)
 
             clean_makecoo(_ce, _cc, refSrc, strSrc, aotsxyRef, radecRef,
@@ -650,6 +650,9 @@ def combine(files, wave, outroot, field=None, outSuffix=None,
             
             shutil.copy(source_clean_dir + 'c' + source_file_root + '.coo',
                         dest_clean_dir + 'c' + dest_file_root + '.coo')
+            
+            shutil.copy(source_clean_dir + 'c' + source_file_root + '.rcoo',
+                        dest_clean_dir + 'c' + dest_file_root + '.rcoo')
             
             shutil.copy(source_clean_dir + 'distort/cd' + source_file_root + '.fits',
                         dest_clean_dir + 'distort/cd' + dest_file_root + '.fits')
@@ -1275,7 +1278,7 @@ def combine_drizzle(imgsize, cleanDir, roots, outroot, weights, shifts,
         exp_time = hdr_current_img[itime_keyword]
 
         # Read in MJD of current file from FITS header
-        mjd = float(instrument.get_mjd(hdr_current_img))#hdr_current_img['MJD-OBS'])
+        mjd = instrument.get_mjd(hdr)
         mjd_weightedSum += weights[i] * mjd
 
         
@@ -1448,6 +1451,10 @@ def combine_drizzle(imgsize, cleanDir, roots, outroot, weights, shifts,
         instrument.get_mjd_header_name(fits_f[0].header), mjd_weightedMean,
         'Weighted modified julian date of combined observations'
     )
+    fits_f[0].header.set(
+        'MJD', mjd_weightedMean,
+        'Weighted modified julian date of combined observations'
+    )
     
     ## Also update date field in header
     fits_f[0].header.set(
@@ -1506,11 +1513,6 @@ def combine_submaps(
 
     util.rmall(_fits + _tmp + _wgt + _log + _max)
 
-    # Prep drizzle stuff
-    #setup_drizzle(imgsize)
-    #print('Drizzle imgsize = ', imgsize)
-    #ir.drizzle.outcont = ''
-
     satLvl_tot = np.zeros(submaps, dtype=float)
     satLvl_sub = np.zeros(submaps, dtype=float)
 
@@ -1526,21 +1528,6 @@ def combine_submaps(
     # Get the distortion maps for this instrument.
     hdr0 = fits.getheader(cleanDir + 'c' + roots[0] + '.fits')
     distXgeoim, distYgeoim = instrument.get_distortion_maps(hdr0)
-
-    # Set a cleanDir variable in IRAF. This avoids the long-filename problem.
-    #ir.set(cleanDir=cleanDir)
-
-    # Set a comboDir variable in IRAF. This avoids the long-filename problem.
-    #comboDir = os.path.dirname(_fits[0]) + '/'
-    #ir.set(comboDir=comboDir)
-
-    # these are the "shortened" alias filenames that will go into drizzle
-    #_tmp_ir = copy.copy(_tmp)
-    #_wgt_ir = copy.copy(_wgt)
-
-    #for ff in range(len(_tmp)):
-    #    _tmp_ir[ff] = _tmp[ff].replace(comboDir, 'comboDir$')
-    #    _wgt_ir[ff] = _wgt[ff].replace(comboDir, 'comboDir$')
 
     # Make one drizzle object per submap
     driz = []
@@ -1645,7 +1632,7 @@ def combine_submaps(
         exp_time = hdr_current_img[itime_keyword]
 
         # Read in MJD of current file from FITS header
-        mjd = float(instrument.get_mjd(hdr_current_img))
+        mjd = instrument.get_mjd(hdr)
         mjd_weightedSums[sub] += weights[i] * mjd
         
         # Drizzle this file ontop of all previous ones.
@@ -1774,15 +1761,9 @@ def combine_submaps(
         # Fix the ITIME header keyword so that it matches (weighted).
         itime = fits_f[0].header.get('ITIME')
         itime /= weightsTot[s]
-        #fits_f[0].header.update('ITIME', '%.5f' % itime)
-        #fits_f[0].header['ITIME'] = ('%.5f' % itime)
-
-        # Set the ROTPOSN value for the combined submaps.
-
         fits_f[0].header.set('ITIME', '%.5f' % itime)
         
         # Set the ROTPOSN value for the combined submaps. 
-
         if (diffPA == 1):
             phi = 0.7
             fits_f[0].header.set('ROTPOSN', "%.5f" % phi,
@@ -1795,12 +1776,25 @@ def combine_submaps(
                               'Y Distortion Image')
         
         # Store weighted MJDs in header
-        fits_f[0].header.set(instrument.get_mjd_header_name(hdr), mjd_weightedMeans[s], 'Weighted modified julian date of combined observations')
-    
+        fits_f[0].header.set(
+            'MJD-OBS',
+            mjd_weightedMeans[s],
+            'Weighted modified julian date of combined observations',
+        )
+        fits_f[0].header.set(
+            'MJD',
+            mjd_weightedMeans[s],
+            'Weighted modified julian date of combined observations',
+        )
+        
         ## Also update date field in header
-        fits_f[0].header.set('DATE', '{0}'.format(submaps_time_obs[s].fits), 'Weighted observation date')
+        fits_f[0].header.set(
+            'DATE',
+            '{0}'.format(submaps_time_obs[s].fits),
+            'Weighted observation date',
+        )
 
-        # Deletes ref pixels and strehl pixel ref
+        # Deletes ref pixels and strehl pixel ref on submaps
         # CRITICAL for making starfinder run
         del fits_f[0].header['XREF']
         del fits_f[0].header['YREF']
@@ -2224,10 +2218,6 @@ def setup_drizzle(imgsize):
     #from pyraf import iraf as ir
 
     # Setup the drizzle parameters we will use
-    #ir.module.load('stsdas', doprint=0, hush=1)
-    #ir.module.load('analysis', doprint=0, hush=1)
-    #ir.module.load('dither', doprint=0, hush=1)
-    #ir.unlearn('drizzle')
     drizzle.outweig = ''
     drizzle.in_mask = ''
     drizzle.wt_scl = 1
@@ -2706,9 +2696,9 @@ def clean_makecoo(_ce, _cc, refSrc, strSrc, aotsxyRef, radecRef,
         offsets may work better.
     """
     hdr = fits.getheader(_ce, ignore_missing_end=True)
-    radec = instrument.get_RA_Dec(hdr)
-        
+    radec = instrument.get_radec(hdr)
     aotsxy = kai_util.getAotsxy(hdr)
+    
     if offset_method == 'pcu':
         pcuxy = [float(hdr['PCSFX']), float(hdr['PCSFY'])]  #New version may be PCUX and PCUY
         pcu_scale = instrument.get_pcu_scale(hdr)
@@ -2741,12 +2731,6 @@ def clean_makecoo(_ce, _cc, refSrc, strSrc, aotsxyRef, radecRef,
 
     # re-center stars to get exact coordinates
     if check_loc:
-
-        #text = ir.imcntr(_ce, xref, yref, cbox=cent_box, Stdout=1)
-        #values = text[0].split()
-        #xref = float(values[2])
-        #yref = float(values[4])
-
         image_data = fits.getdata(_ce)
         for _ in range(5):
             x0 = int(np.round(xref - (cent_box - 1)/2))
@@ -2758,11 +2742,6 @@ def clean_makecoo(_ce, _cc, refSrc, strSrc, aotsxyRef, radecRef,
             dy, dx = ndimage.center_of_mass(cutout)
             xref = x0 + dx
             yref = y0 + dy
-
-        #text = ir.imcntr(_ce, xstr, ystr, cbox=cent_box, Stdout=1)
-        #values = text[0].split()
-        #xstr = float(values[2])
-        #ystr = float(values[4])
 
         for _ in range(5):
             x0 = int(np.round(xstr - (cent_box - 1)/2))
@@ -2928,7 +2907,6 @@ class Sky(object):
         # Edit the science image to contain the
         # original sky name that will be subtracted.
         skyOrigName = sky[sky.rfind('/')+1:]
-        #ir.hedit(_n, 'SKYSUB', skyOrigName, add='yes', show='no', verify='no')
 
 
         # Now scale the sky to the science image
@@ -2970,7 +2948,6 @@ class Sky(object):
             fits_sky[0].data *= fact
             fits_sky.writeto(self.skyName, output_verify=outputVerify)
         else:
-            #ir.imcopy(_sky, self.skyName)
             img = fits.getdata(_sky)
             fits.writeto(self.skyName, img, output_verify=outputVerify)
 
@@ -2991,8 +2968,6 @@ class Sky(object):
         # determine the best angle for sky or use manual file
 
         # -- Determine the rotpposn for this image
-        #sciAng_tmp = ir.hselect(_n, "ROTPPOSN", "yes", Stdout=1)
-        #sciAng = float(sciAng_tmp[0])
         sciAng = fits.getheader(_n)['ROTPPOSN']
 
         # -- Determine the best sky rotpposn.
@@ -3219,7 +3194,7 @@ def mosaic(files, wave, outroot, field=None, outSuffix=None,
 
 def mosaic_register(outroot, refImage, diffPA):
     """
-    Register images for a mosaic. This only calculates the exact
+    BROKEN Register images for a mosaic. This only calculates the exact
     shifts between each image... it doesn't do the combining.
 
     @param outroot: The root for the output image. The resulting
