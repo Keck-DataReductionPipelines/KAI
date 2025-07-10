@@ -275,6 +275,9 @@ class NIRC2(Instrument):
         else:
             return float(hdr['MJD'])
 
+    def get_reference_pixels(self, img):
+        return np.full(img.shape, False)
+
 
 class OSIRIS(Instrument):
     """
