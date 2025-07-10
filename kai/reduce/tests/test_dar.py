@@ -1,9 +1,8 @@
-from pyraf import iraf
 import glob, os
 import numpy as np
 import pylab as py
 import math, datetime
-import pyfits
+from astropy.io import fits
 from gcwork import objects
 from kai.reduce import dar
 
@@ -42,7 +41,7 @@ def plotScalePosangOverNight(alignRoot, imgDir):
         fitsFile = imgDir + lisFile.split('_')[0] + '.fits'
 
         # Get header info
-        hdr = pyfits.getheader( fitsFile )
+        hdr = fits.getheader( fitsFile )
         parang.append( hdr['PARANG'] )
 
     parang = np.array(parang)
