@@ -50,7 +50,7 @@ class TestMakeFlats(unittest.TestCase):
 
         off_files = range(184, 202 + 1, 2)
         on_files = range(185, 203 + 1, 2)
-        flat_out = 'flat_kp_astr.fits'
+        flat_out = 'flat.fits'
         flat_out_full_path = epoch_dir + 'reduce/calib/flats/' + flat_out
 
         # If file exists, delete it.
@@ -66,6 +66,35 @@ class TestMakeFlats(unittest.TestCase):
         self.assertTrue(os.path.exists(flat_out_full_path))
 
         return
+
+class TestMakeMask(unittest.TestCase):
+    def test_makemask(self):
+
+        mod_path = os.path.dirname(os.path.abspath(calib.__file__))
+
+        epoch_dir = mod_path + '/../data/test_epoch/17may21/'
+        reduce_dir = epoch_dir + 'reduce/'
+        raw_dir = epoch_dir + 'raw/'
+
+        mask_out = 'supermask.fits'
+        mask_out_full_path = epoch_dir + 'reduce/calib/masks/' + mask_out
+        
+        # If file exists, delete it.
+        if os.path.isfile(mask_out_full_path):
+            os.remove(mask_out_full_path)
+
+        os.chdir(reduce_dir)
+            
+        calib.makemask('dark_30.0s_1ca.fits', 'flat.fits',
+                   'supermask.fits')
+
+        # Check that file was created.
+        self.assertTrue(os.path.exists(mask_out_full_path))
+
+        # Verifies that not all pixels were set to reference pixels
+        # (i.e. border of OSIRIS image)
+        mask = fits.getdata(mask_out_full_path)
+        self.assertFalse(np.all(mask == 2))
 
 
 if __name__ == '__main__':

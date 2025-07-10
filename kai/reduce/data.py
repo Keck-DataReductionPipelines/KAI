@@ -1448,7 +1448,7 @@ def combine_drizzle(imgsize, cleanDir, roots, outroot, weights, shifts,
     time_obs = Time(mjd_weightedMean, format='mjd')
     
     fits_f[0].header.set(
-        instrument.get_mjd_header_name(fits_f[0].header), mjd_weightedMean,
+        'MJD-OBS', mjd_weightedMean,
         'Weighted modified julian date of combined observations'
     )
     fits_f[0].header.set(
@@ -2474,16 +2474,10 @@ def cosmicray_median(ccd, input_mask, error_image=None, thresh=5, mbox=5, gbox=0
         crarr = ndimage.maximum_filter(crarr, gbox)
 
     # replace bad pixels in the image
-    #ndata = data.copy()
     if rbox > 0:
         # Assert shape of data is a square
         assert np.shape(data)[0] == np.shape(data)[1]
         ndata = loop_through_crs(data, crarr, dim = np.shape(data)[0])
-
-        #data = np.ma.masked_array(data, (crarr == 1))
-        #mdata = ndimage.median_filter(data, rbox)
-        #return ndata, mdata, crarr
-        #ndata[crarr == 1] = mdata[crarr == 1]
 
     return ndata, crarr
 
@@ -2592,8 +2586,6 @@ def clean_cosmicrays(_ff, _mask, wave, _input_mask, thresh=5, mbox=5, rbox=10, f
     
     newdata, crmask = cosmicray_median(ff_img, input_mask, error_image = stddev, thresh=thresh, mbox=mbox, gbox=gbox, rbox=rbox, fratio=fratio,
                                       star_thresh = star_thresh, thresh_in_star = thresh_in_star)
-    #ndata, mdata, crarr= cosmicray_median(ff_img, error_image = stddev, thresh=thresh, mbox=mbox, gbox=gbox, rbox=rbox, fratio=fratio)
-    #return ndata, mdata, crarr
     crmask = crmask.astype(int)
 
     ff_header.set('CRCOR', 'removed={}, thresh={}, mbox={}, gbox={}, rbox={}, fratio={}, star_thresh={}, thresh_in_star={}'.format(np.sum(crmask), thresh, mbox, gbox, rbox, fratio, star_thresh, thresh_in_star))
