@@ -364,6 +364,9 @@ Module Contents
           !! processed by numpydoc !!
 
 
+   .. py:method:: get_reference_pixels(img)
+
+
 .. py:class:: OSIRIS
 
    Bases: :py:obj:`Instrument`

@@ -1573,7 +1573,7 @@
     <span class="n">time_obs</span> <span class="o">=</span> <span class="n">Time</span><span class="p">(</span><span class="n">mjd_weightedMean</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;mjd&#39;</span><span class="p">)</span>
     
     <span class="n">fits_f</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
-        <span class="n">instrument</span><span class="o">.</span><span class="n">get_mjd_header_name</span><span class="p">(</span><span class="n">fits_f</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">),</span> <span class="n">mjd_weightedMean</span><span class="p">,</span>
+        <span class="s1">&#39;MJD-OBS&#39;</span><span class="p">,</span> <span class="n">mjd_weightedMean</span><span class="p">,</span>
         <span class="s1">&#39;Weighted modified julian date of combined observations&#39;</span>
     <span class="p">)</span>
     <span class="n">fits_f</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
@@ -2644,16 +2644,10 @@
         <span class="n">crarr</span> <span class="o">=</span> <span class="n">ndimage</span><span class="o">.</span><span class="n">maximum_filter</span><span class="p">(</span><span class="n">crarr</span><span class="p">,</span> <span class="n">gbox</span><span class="p">)</span>
 
     <span class="c1"># replace bad pixels in the image</span>
-    <span class="c1">#ndata = data.copy()</span>
     <span class="k">if</span> <span class="n">rbox</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
         <span class="c1"># Assert shape of data is a square</span>
         <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">data</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">data</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
         <span class="n">ndata</span> <span class="o">=</span> <span class="n">loop_through_crs</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">crarr</span><span class="p">,</span> <span class="n">dim</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">data</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
-
-        <span class="c1">#data = np.ma.masked_array(data, (crarr == 1))</span>
-        <span class="c1">#mdata = ndimage.median_filter(data, rbox)</span>
-        <span class="c1">#return ndata, mdata, crarr</span>
-        <span class="c1">#ndata[crarr == 1] = mdata[crarr == 1]</span>
 
     <span class="k">return</span> <span class="n">ndata</span><span class="p">,</span> <span class="n">crarr</span></div>
 
@@ -2771,8 +2765,6 @@
     
     <span class="n">newdata</span><span class="p">,</span> <span class="n">crmask</span> <span class="o">=</span> <span class="n">cosmicray_median</span><span class="p">(</span><span class="n">ff_img</span><span class="p">,</span> <span class="n">input_mask</span><span class="p">,</span> <span class="n">error_image</span> <span class="o">=</span> <span class="n">stddev</span><span class="p">,</span> <span class="n">thresh</span><span class="o">=</span><span class="n">thresh</span><span class="p">,</span> <span class="n">mbox</span><span class="o">=</span><span class="n">mbox</span><span class="p">,</span> <span class="n">gbox</span><span class="o">=</span><span class="n">gbox</span><span class="p">,</span> <span class="n">rbox</span><span class="o">=</span><span class="n">rbox</span><span class="p">,</span> <span class="n">fratio</span><span class="o">=</span><span class="n">fratio</span><span class="p">,</span>
                                       <span class="n">star_thresh</span> <span class="o">=</span> <span class="n">star_thresh</span><span class="p">,</span> <span class="n">thresh_in_star</span> <span class="o">=</span> <span class="n">thresh_in_star</span><span class="p">)</span>
-    <span class="c1">#ndata, mdata, crarr= cosmicray_median(ff_img, error_image = stddev, thresh=thresh, mbox=mbox, gbox=gbox, rbox=rbox, fratio=fratio)</span>
-    <span class="c1">#return ndata, mdata, crarr</span>
     <span class="n">crmask</span> <span class="o">=</span> <span class="n">crmask</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
 
     <span class="n">ff_header</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s1">&#39;CRCOR&#39;</span><span class="p">,</span> <span class="s1">&#39;removed=</span><span class="si">{}</span><span class="s1">, thresh=</span><span class="si">{}</span><span class="s1">, mbox=</span><span class="si">{}</span><span class="s1">, gbox=</span><span class="si">{}</span><span class="s1">, rbox=</span><span class="si">{}</span><span class="s1">, fratio=</span><span class="si">{}</span><span class="s1">, star_thresh=</span><span class="si">{}</span><span class="s1">, thresh_in_star=</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">crmask</span><span class="p">),</span> <span class="n">thresh</span><span class="p">,</span> <span class="n">mbox</span><span class="p">,</span> <span class="n">gbox</span><span class="p">,</span> <span class="n">rbox</span><span class="p">,</span> <span class="n">fratio</span><span class="p">,</span> <span class="n">star_thresh</span><span class="p">,</span> <span class="n">thresh_in_star</span><span class="p">))</span>

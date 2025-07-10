@@ -132,7 +132,7 @@
 
         <span class="n">off_files</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">184</span><span class="p">,</span> <span class="mi">202</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
         <span class="n">on_files</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">185</span><span class="p">,</span> <span class="mi">203</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
-        <span class="n">flat_out</span> <span class="o">=</span> <span class="s1">&#39;flat_kp_astr.fits&#39;</span>
+        <span class="n">flat_out</span> <span class="o">=</span> <span class="s1">&#39;flat.fits&#39;</span>
         <span class="n">flat_out_full_path</span> <span class="o">=</span> <span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">&#39;reduce/calib/flats/&#39;</span> <span class="o">+</span> <span class="n">flat_out</span>
 
         <span class="c1"># If file exists, delete it.</span>
@@ -148,6 +148,41 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">flat_out_full_path</span><span class="p">))</span>
 
         <span class="k">return</span></div>
+</div>
+
+
+<div class="viewcode-block" id="TestMakeMask">
+<a class="viewcode-back" href="../../../../autoapi/kai/reduce/tests/test_calib/index.html#kai.reduce.tests.test_calib.TestMakeMask">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestMakeMask</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+<div class="viewcode-block" id="TestMakeMask.test_makemask">
+<a class="viewcode-back" href="../../../../autoapi/kai/reduce/tests/test_calib/index.html#kai.reduce.tests.test_calib.TestMakeMask.test_makemask">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_makemask</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="n">mod_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">calib</span><span class="o">.</span><span class="vm">__file__</span><span class="p">))</span>
+
+        <span class="n">epoch_dir</span> <span class="o">=</span> <span class="n">mod_path</span> <span class="o">+</span> <span class="s1">&#39;/../data/test_epoch/17may21/&#39;</span>
+        <span class="n">reduce_dir</span> <span class="o">=</span> <span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">&#39;reduce/&#39;</span>
+        <span class="n">raw_dir</span> <span class="o">=</span> <span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">&#39;raw/&#39;</span>
+
+        <span class="n">mask_out</span> <span class="o">=</span> <span class="s1">&#39;supermask.fits&#39;</span>
+        <span class="n">mask_out_full_path</span> <span class="o">=</span> <span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">&#39;reduce/calib/masks/&#39;</span> <span class="o">+</span> <span class="n">mask_out</span>
+        
+        <span class="c1"># If file exists, delete it.</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">mask_out_full_path</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">mask_out_full_path</span><span class="p">)</span>
+
+        <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">reduce_dir</span><span class="p">)</span>
+            
+        <span class="n">calib</span><span class="o">.</span><span class="n">makemask</span><span class="p">(</span><span class="s1">&#39;dark_30.0s_1ca.fits&#39;</span><span class="p">,</span> <span class="s1">&#39;flat.fits&#39;</span><span class="p">,</span>
+                   <span class="s1">&#39;supermask.fits&#39;</span><span class="p">)</span>
+
+        <span class="c1"># Check that file was created.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">mask_out_full_path</span><span class="p">))</span>
+
+        <span class="c1"># Verifies that not all pixels were set to reference pixels</span>
+        <span class="c1"># (i.e. border of OSIRIS image)</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getdata</span><span class="p">(</span><span class="n">mask_out_full_path</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertFalse</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">mask</span> <span class="o">==</span> <span class="mi">2</span><span class="p">))</span></div>
 </div>
 
 
