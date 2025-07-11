@@ -284,9 +284,9 @@ def clean(files, nite, wave, refSrc, strSrc,
             if os.path.exists(_cp): os.remove(_cp)
             shutil.copy(_raw, _cp)
 
-            # Add KAI version to header
-            with fits.open(_cp, mode="update") as filehandle:
-                filehandle[0].header['ORIGIN'] = 'KAI v' + kai.__version__
+            # FIXME Add KAI version to header
+            #with fits.open(_cp, mode="update") as filehandle:
+            #    filehandle[0].header['ORIGIN'] = 'KAI v' + kai.__version__
             
             
 
