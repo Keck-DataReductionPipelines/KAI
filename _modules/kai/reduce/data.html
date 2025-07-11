@@ -367,9 +367,9 @@
             <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">_cp</span><span class="p">):</span> <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">_cp</span><span class="p">)</span>
             <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">_raw</span><span class="p">,</span> <span class="n">_cp</span><span class="p">)</span>
 
-            <span class="c1"># Add KAI version to header</span>
-            <span class="k">with</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">_cp</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;update&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">filehandle</span><span class="p">:</span>
-                <span class="n">filehandle</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;ORIGIN&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;KAI v&#39;</span> <span class="o">+</span> <span class="n">kai</span><span class="o">.</span><span class="n">__version__</span>
+            <span class="c1"># FIXME Add KAI version to header</span>
+            <span class="c1">#with fits.open(_cp, mode=&quot;update&quot;) as filehandle:</span>
+            <span class="c1">#    filehandle[0].header[&#39;ORIGIN&#39;] = &#39;KAI v&#39; + kai.__version__</span>
             
             
 
