@@ -909,8 +909,13 @@ class Analysis(object):
 
             os.chdir(self.dirStart)
 
-            if os.path.exists(self.dirCombo + 'starfinder/align/align%s%s_%3.1f.scale' % (self.imgSuffix, file_ext, self.corrMain)) == False:
-                raise Exception('alignCombo() likely failed, see above printouts')
+            if type(self.corrMain) == list:
+                for val in self.corrMain:
+                    if os.path.exists(self.dirCombo + 'starfinder/align/align%s%s_%3.1f.scale' % (self.imgSuffix, file_ext, val)) == False:
+                        raise Exception('alignCombo() likely failed, see above printouts')
+            else:
+                if os.path.exists(self.dirCombo + 'starfinder/align/align%s%s_%3.1f.scale' % (self.imgSuffix, file_ext, self.corrMain)) == False:
+                    raise Exception('alignCombo() likely failed, see above printouts')
         except:
             os.chdir(self.dirStart)
             raise
