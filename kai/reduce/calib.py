@@ -74,7 +74,7 @@ def makedark(files, output,
     print(f'makedark: Making dark {_out} with the following images:')
     for ii in range(len(darks_orig)):
         print(f'\t{darks_orig[ii]}')
-        img, hdr = fits.getdata(darks_orig[ii], header=True)
+        img, hdr = fits.getdata(darks_orig[ii], header=True, ignore_missing_end=True)
         img_stack.append(img)
         hdr_stack.append(hdr)
     img_stack = np.array(img_stack)
