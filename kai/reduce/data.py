@@ -2920,13 +2920,13 @@ class Sky(object):
 
         # scale sky to science frame
         if self.scale:
-            n_img = fits.getdata(_n)
+            n_img = fits.getdata(_n, ignore_missing_end=True)
             sci_stats = stats.sigma_clipped_stats(n_img,
                                                   sigma_upper=1, sigma_lower=10,
                                                   maxiters=20)
             sci_mean = sci_stats[0]
 
-            sky_img = fits.getdata(_sky)
+            sky_img = fits.getdata(_sky, ignore_missing_end=True)
             sky_stats = stats.sigma_clipped_stats(sky_img,
                                                   sigma_upper=5, sigma_lower=15,
                                                   maxiters=5)

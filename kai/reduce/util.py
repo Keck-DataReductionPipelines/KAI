@@ -194,9 +194,9 @@ def imarith(img_list1, operator, img_list2, out_list):
     # Loop through files and apply the operations.
     for ii in range(lo):
         if l1 == lo:
-            img1, hdr1 = fits.getdata(img_list1[ii], header=True)
+            img1, hdr1 = fits.getdata(img_list1[ii], header=True, ignore_missing_end=True)
         elif ii == 0:
-            img1, hdr1 = fits.getdata(img_list1[0], header=True)
+            img1, hdr1 = fits.getdata(img_list1[0], header=True, ignore_missing_end=True)
 
         if l2 == lo:
             img2 = fits.getdata(img_list2[ii])
