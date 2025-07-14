@@ -3149,13 +3149,13 @@
 
         <span class="c1"># scale sky to science frame</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale</span><span class="p">:</span>
-            <span class="n">n_img</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getdata</span><span class="p">(</span><span class="n">_n</span><span class="p">)</span>
+            <span class="n">n_img</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getdata</span><span class="p">(</span><span class="n">_n</span><span class="p">,</span> <span class="n">ignore_missing_end</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
             <span class="n">sci_stats</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">sigma_clipped_stats</span><span class="p">(</span><span class="n">n_img</span><span class="p">,</span>
                                                   <span class="n">sigma_upper</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">sigma_lower</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
                                                   <span class="n">maxiters</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
             <span class="n">sci_mean</span> <span class="o">=</span> <span class="n">sci_stats</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
-            <span class="n">sky_img</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getdata</span><span class="p">(</span><span class="n">_sky</span><span class="p">)</span>
+            <span class="n">sky_img</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getdata</span><span class="p">(</span><span class="n">_sky</span><span class="p">,</span> <span class="n">ignore_missing_end</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
             <span class="n">sky_stats</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">sigma_clipped_stats</span><span class="p">(</span><span class="n">sky_img</span><span class="p">,</span>
                                                   <span class="n">sigma_upper</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">sigma_lower</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span>
                                                   <span class="n">maxiters</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
