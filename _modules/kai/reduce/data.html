@@ -365,7 +365,14 @@
 
             <span class="c1">### Copy the raw file to local directory ###</span>
             <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">_cp</span><span class="p">):</span> <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">_cp</span><span class="p">)</span>
-            <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">_raw</span><span class="p">,</span> <span class="n">_cp</span><span class="p">)</span>
+            <span class="c1"># Save as the primary HDU since Osiris saves as SCI by default</span>
+            <span class="n">raw_file</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">_raw</span><span class="p">,</span> <span class="n">ignore_missing_end</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">cp_primary_hdu</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">PrimaryHDU</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">raw_file</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="n">raw_file</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">)</span>
+            <span class="n">cp_primary_hdu</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;PRIMARY&#39;</span>
+            <span class="n">cp_primary_hdu</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;EXTNAME&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="n">cp_primary_hdu</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;EXTVER&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="n">cp_primary_hdu</span><span class="o">.</span><span class="n">writeto</span><span class="p">(</span><span class="n">_cp</span><span class="p">,</span> <span class="n">output_verify</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+            <span class="c1">#shutil.copy(_raw, _cp)</span>
 
             <span class="c1"># FIXME Add KAI version to header</span>
             <span class="c1">#with fits.open(_cp, mode=&quot;update&quot;) as filehandle:</span>
