@@ -282,7 +282,14 @@ def clean(files, nite, wave, refSrc, strSrc,
 
             ### Copy the raw file to local directory ###
             if os.path.exists(_cp): os.remove(_cp)
-            shutil.copy(_raw, _cp)
+            # Save as the primary HDU since Osiris saves as SCI by default
+            raw_file = fits.open(_raw, ignore_missing_end=True)
+            cp_primary_hdu = fits.PrimaryHDU(data=raw_file[0].data, header=raw_file[0].header)
+            cp_primary_hdu.name = 'PRIMARY'
+            cp_primary_hdu.header.pop('EXTNAME', None)
+            cp_primary_hdu.header.pop('EXTVER', None)
+            cp_primary_hdu.writeto(_cp, output_verify='ignore')
+            #shutil.copy(_raw, _cp)
 
             # FIXME Add KAI version to header
             #with fits.open(_cp, mode="update") as filehandle:
