@@ -956,8 +956,6 @@
 
     <span class="c1"># Rotate the image</span>
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Rotating frame: &#39;</span><span class="p">,</span><span class="n">root</span><span class="p">)</span>
-    <span class="c1">#import pdb</span>
-    <span class="c1">#pdb.set_trace()</span>
     <span class="c1">#in_img[np.where(np.isnan(in_img) == True)] = 0</span>
     <span class="n">out_img</span> <span class="o">=</span> <span class="n">rotate</span><span class="p">(</span><span class="n">in_img</span><span class="p">,</span> <span class="o">-</span><span class="n">phi</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;constant&#39;</span><span class="p">,</span> <span class="n">cval</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">reshape</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     
@@ -1456,16 +1454,30 @@
         <span class="n">pixmap</span> <span class="o">=</span> <span class="n">drizzle</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">calc_pixmap</span><span class="p">(</span><span class="n">wcs_in</span><span class="p">,</span> <span class="n">wcs_out</span><span class="p">)</span>
         
         <span class="c1"># Drizzle this file ontop of all previous ones</span>
-        <span class="n">wht_scale</span> <span class="o">=</span> <span class="mf">1.0</span>
-        <span class="n">pixfrac</span> <span class="o">=</span> <span class="mf">1.0</span>
-        <span class="n">driz</span><span class="o">.</span><span class="n">add_image</span><span class="p">(</span><span class="n">cdwt_img</span><span class="p">,</span> <span class="n">pixmap</span> <span class="o">=</span> <span class="n">pixmap</span><span class="p">,</span>  <span class="c1">#cdwt_img</span>
-                            <span class="n">weight_map</span> <span class="o">=</span> <span class="n">wgt_in</span><span class="p">,</span>
-                            <span class="n">exptime</span> <span class="o">=</span> <span class="n">exp_time</span><span class="p">,</span>
-                            <span class="n">xmax</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">imgsize</span><span class="p">),</span>
-                            <span class="n">ymax</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">imgsize</span><span class="p">),</span>
-                            <span class="n">wht_scale</span> <span class="o">=</span> <span class="n">wht_scale</span><span class="p">,</span>
-                            <span class="n">pixfrac</span> <span class="o">=</span> <span class="n">pixfrac</span><span class="p">,</span>
-                            <span class="n">in_units</span> <span class="o">=</span> <span class="s1">&#39;counts&#39;</span><span class="p">)</span>
+        
+        <span class="c1"># Catches case when exposure time is a fraction of a second</span>
+        <span class="k">if</span> <span class="n">exp_time</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">exp_time</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">wht_scale</span> <span class="o">=</span> <span class="n">exp_time</span>
+            <span class="n">pixfrac</span> <span class="o">=</span> <span class="mf">1.0</span>
+            <span class="n">driz</span><span class="o">.</span><span class="n">add_image</span><span class="p">(</span><span class="n">cdwt_img</span><span class="p">,</span> <span class="n">pixmap</span> <span class="o">=</span> <span class="n">pixmap</span><span class="p">,</span> 
+                                <span class="n">weight_map</span> <span class="o">=</span> <span class="n">wgt_in</span><span class="p">,</span>
+                                <span class="n">exptime</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+                                <span class="n">xmax</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">imgsize</span><span class="p">),</span>
+                                <span class="n">ymax</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">imgsize</span><span class="p">),</span>
+                                <span class="n">wht_scale</span> <span class="o">=</span> <span class="n">wht_scale</span><span class="p">,</span>
+                                <span class="n">pixfrac</span> <span class="o">=</span> <span class="n">pixfrac</span><span class="p">,</span>
+                                <span class="n">in_units</span> <span class="o">=</span> <span class="s1">&#39;counts&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">wht_scale</span> <span class="o">=</span> <span class="mf">1.0</span>
+            <span class="n">pixfrac</span> <span class="o">=</span> <span class="mf">1.0</span>
+            <span class="n">driz</span><span class="o">.</span><span class="n">add_image</span><span class="p">(</span><span class="n">cdwt_img</span><span class="p">,</span> <span class="n">pixmap</span> <span class="o">=</span> <span class="n">pixmap</span><span class="p">,</span>  <span class="c1">#cdwt_img</span>
+                                <span class="n">weight_map</span> <span class="o">=</span> <span class="n">wgt_in</span><span class="p">,</span>
+                                <span class="n">exptime</span> <span class="o">=</span> <span class="n">exp_time</span><span class="p">,</span>
+                                <span class="n">xmax</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">imgsize</span><span class="p">),</span>
+                                <span class="n">ymax</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">imgsize</span><span class="p">),</span>
+                                <span class="n">wht_scale</span> <span class="o">=</span> <span class="n">wht_scale</span><span class="p">,</span>
+                                <span class="n">pixfrac</span> <span class="o">=</span> <span class="n">pixfrac</span><span class="p">,</span>
+                                <span class="n">in_units</span> <span class="o">=</span> <span class="s1">&#39;counts&#39;</span><span class="p">)</span>
         <span class="n">f_dlog</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;- Drizzling onto full output image. Kernel: &#39;</span> <span class="o">+</span> <span class="n">kernel</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
     
         <span class="c1">#swtich from output cps to counts by multiplying by total counts</span>
@@ -1803,16 +1815,29 @@
     
         <span class="n">pixmap</span> <span class="o">=</span> <span class="n">drizzle</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">calc_pixmap</span><span class="p">(</span><span class="n">wcs_in</span><span class="p">,</span> <span class="n">wcs_out</span><span class="p">)</span>
 
-        <span class="n">wht_scale</span> <span class="o">=</span> <span class="mf">1.0</span>
-        <span class="n">pixfrac</span> <span class="o">=</span> <span class="mf">1.0</span>
-        <span class="n">driz</span><span class="p">[</span><span class="n">sub</span><span class="p">]</span><span class="o">.</span><span class="n">add_image</span><span class="p">(</span><span class="n">cdwt_img</span><span class="p">,</span> <span class="n">pixmap</span> <span class="o">=</span> <span class="n">pixmap</span><span class="p">,</span> 
-                            <span class="n">weight_map</span> <span class="o">=</span> <span class="n">wgt_in</span><span class="p">,</span>
-                            <span class="n">exptime</span> <span class="o">=</span> <span class="n">exp_time</span><span class="p">,</span>
-                            <span class="n">xmax</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">imgsize</span><span class="p">),</span>
-                            <span class="n">ymax</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">imgsize</span><span class="p">),</span>
-                            <span class="n">wht_scale</span> <span class="o">=</span> <span class="n">wht_scale</span><span class="p">,</span>
-                            <span class="n">pixfrac</span> <span class="o">=</span> <span class="n">pixfrac</span><span class="p">,</span>
-                            <span class="n">in_units</span> <span class="o">=</span> <span class="s1">&#39;counts&#39;</span><span class="p">)</span>
+        <span class="c1"># Catches case when exposure time is a fraction of a second</span>
+        <span class="k">if</span> <span class="n">exp_time</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">exp_time</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">wht_scale</span> <span class="o">=</span> <span class="n">exp_time</span>
+            <span class="n">pixfrac</span> <span class="o">=</span> <span class="mf">1.0</span>
+            <span class="n">driz</span><span class="p">[</span><span class="n">sub</span><span class="p">]</span><span class="o">.</span><span class="n">add_image</span><span class="p">(</span><span class="n">cdwt_img</span><span class="p">,</span> <span class="n">pixmap</span> <span class="o">=</span> <span class="n">pixmap</span><span class="p">,</span> 
+                                <span class="n">weight_map</span> <span class="o">=</span> <span class="n">wgt_in</span><span class="p">,</span>
+                                <span class="n">exptime</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+                                <span class="n">xmax</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">imgsize</span><span class="p">),</span>
+                                <span class="n">ymax</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">imgsize</span><span class="p">),</span>
+                                <span class="n">wht_scale</span> <span class="o">=</span> <span class="n">wht_scale</span><span class="p">,</span>
+                                <span class="n">pixfrac</span> <span class="o">=</span> <span class="n">pixfrac</span><span class="p">,</span>
+                                <span class="n">in_units</span> <span class="o">=</span> <span class="s1">&#39;counts&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">wht_scale</span> <span class="o">=</span> <span class="mf">1.0</span>
+            <span class="n">pixfrac</span> <span class="o">=</span> <span class="mf">1.0</span>
+            <span class="n">driz</span><span class="p">[</span><span class="n">sub</span><span class="p">]</span><span class="o">.</span><span class="n">add_image</span><span class="p">(</span><span class="n">cdwt_img</span><span class="p">,</span> <span class="n">pixmap</span> <span class="o">=</span> <span class="n">pixmap</span><span class="p">,</span> 
+                                <span class="n">weight_map</span> <span class="o">=</span> <span class="n">wgt_in</span><span class="p">,</span>
+                                <span class="n">exptime</span> <span class="o">=</span> <span class="n">exp_time</span><span class="p">,</span>
+                                <span class="n">xmax</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">imgsize</span><span class="p">),</span>
+                                <span class="n">ymax</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">imgsize</span><span class="p">),</span>
+                                <span class="n">wht_scale</span> <span class="o">=</span> <span class="n">wht_scale</span><span class="p">,</span>
+                                <span class="n">pixfrac</span> <span class="o">=</span> <span class="n">pixfrac</span><span class="p">,</span>
+                                <span class="n">in_units</span> <span class="o">=</span> <span class="s1">&#39;counts&#39;</span><span class="p">)</span>
         <span class="n">log</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;- Drizzling onto full output image. Kernel: &#39;</span> <span class="o">+</span> <span class="n">kernel</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
         
         <span class="c1">#swtich from output cps to counts by multiplying by total counts</span>
@@ -2462,15 +2487,27 @@
                                     <span class="n">fillval</span> <span class="o">=</span> <span class="mi">0</span>
                                     <span class="p">)</span>
 
-    <span class="n">wht_scale</span> <span class="o">=</span> <span class="mf">1.0</span>
-    <span class="n">pixfrac</span> <span class="o">=</span> <span class="mf">1.0</span>
-    <span class="n">driz</span><span class="o">.</span><span class="n">add_image</span><span class="p">(</span><span class="n">bp_img</span><span class="p">,</span> <span class="n">pixmap</span> <span class="o">=</span> <span class="n">pixmap</span><span class="p">,</span> 
-                        <span class="n">exptime</span> <span class="o">=</span> <span class="n">exp_time</span><span class="p">,</span>
-                        <span class="n">xmax</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">outnx</span><span class="p">),</span>
-                        <span class="n">ymax</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">outny</span><span class="p">),</span>
-                        <span class="n">wht_scale</span> <span class="o">=</span> <span class="n">wht_scale</span><span class="p">,</span>
-                        <span class="n">pixfrac</span> <span class="o">=</span> <span class="n">pixfrac</span><span class="p">,</span>
-                        <span class="n">in_units</span> <span class="o">=</span> <span class="s1">&#39;counts&#39;</span><span class="p">)</span>
+    <span class="c1"># Catches case when exposure time is a fraction of a second</span>
+    <span class="k">if</span> <span class="n">exp_time</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">exp_time</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">wht_scale</span> <span class="o">=</span> <span class="n">exp_time</span>
+        <span class="n">pixfrac</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="n">driz</span><span class="o">.</span><span class="n">add_image</span><span class="p">(</span><span class="n">bp_img</span><span class="p">,</span> <span class="n">pixmap</span> <span class="o">=</span> <span class="n">pixmap</span><span class="p">,</span> 
+                            <span class="n">exptime</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+                            <span class="n">xmax</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">outnx</span><span class="p">),</span>
+                            <span class="n">ymax</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">outny</span><span class="p">),</span>
+                            <span class="n">wht_scale</span> <span class="o">=</span> <span class="n">wht_scale</span><span class="p">,</span>
+                            <span class="n">pixfrac</span> <span class="o">=</span> <span class="n">pixfrac</span><span class="p">,</span>
+                            <span class="n">in_units</span> <span class="o">=</span> <span class="s1">&#39;counts&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">wht_scale</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="n">pixfrac</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="n">driz</span><span class="o">.</span><span class="n">add_image</span><span class="p">(</span><span class="n">bp_img</span><span class="p">,</span> <span class="n">pixmap</span> <span class="o">=</span> <span class="n">pixmap</span><span class="p">,</span> 
+                            <span class="n">exptime</span> <span class="o">=</span> <span class="n">exp_time</span><span class="p">,</span>
+                            <span class="n">xmax</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">outnx</span><span class="p">),</span>
+                            <span class="n">ymax</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">outny</span><span class="p">),</span>
+                            <span class="n">wht_scale</span> <span class="o">=</span> <span class="n">wht_scale</span><span class="p">,</span>
+                            <span class="n">pixfrac</span> <span class="o">=</span> <span class="n">pixfrac</span><span class="p">,</span>
+                            <span class="n">in_units</span> <span class="o">=</span> <span class="s1">&#39;counts&#39;</span><span class="p">)</span>
 
     <span class="c1">#swtich from output cps to counts by multiplying by total counts</span>
     <span class="n">out_img</span> <span class="o">=</span> <span class="n">driz</span><span class="o">.</span><span class="n">out_img</span> <span class="o">*</span> <span class="n">driz</span><span class="o">.</span><span class="n">_texptime</span>
