@@ -645,12 +645,16 @@ class Analysis(object):
                 fileMain = 'mag%s_%3.1f_stf.lis' % \
                 (self.epoch, self.corrMain)
             else:
+                if type(self.corrMain) == float:
+                    corrMain_val = self.corrMain
+                else:
+                    corrMain_val = self.corrMain[0]
                 if self.deblend == 1:
                     fileMain = 'mag%s%s_%s_%3.1fd_stf.lis' % \
-                    (self.epoch, self.imgSuffix, self.filt, self.corrMain[0])
+                    (self.epoch, self.imgSuffix, self.filt, corrMain_val)
                 else:
                     fileMain = 'mag%s%s_%s_%3.1f_stf.lis' % \
-                    (self.epoch, self.imgSuffix, self.filt, self.corrMain[0])
+                    (self.epoch, self.imgSuffix, self.filt, corrMain_val)
             print(cmd + fileMain)
 
             # Now call from within python... don't bother with command line anymore.
@@ -667,12 +671,16 @@ class Analysis(object):
                     fileSub = 'm%s_%d_%3.1f_stf.lis' % \
                         (self.epoch, ss+1, self.corrSub[0])
                 else:
+                    if type(self.corrSub) == float:
+                        corrSub_val = self.corrSub
+                    else:
+                        corrSub_val = self.corrSub[0]
                     if self.deblend == 1:
                         fileSub = 'm%s%s_%s_%d_%3.1fd_stf.lis' % \
-                        (self.epoch, self.imgSuffix, self.filt, ss+1, self.corrSub[0])
+                        (self.epoch, self.imgSuffix, self.filt, ss+1, corrSub_val)
                     else:
                         fileSub = 'm%s%s_%s_%d_%3.1f_stf.lis' % \
-                        (self.epoch, self.imgSuffix, self.filt, ss+1, self.corrSub[0])
+                        (self.epoch, self.imgSuffix, self.filt, ss+1, corrSub_val)
 
                 print(cmd + fileSub)
                 
@@ -813,24 +821,32 @@ class Analysis(object):
             os.chdir(self.dirComboAln)
 
             # Put the files in to the align*.list file
-            alnList1 = 'align%s%s_%3.1f.list' % (self.imgSuffix, file_ext, self.corrMain[0])
-            alnList2 = 'align%s%s_%3.1f_named.list' % (self.imgSuffix, file_ext, self.corrMain[0])
+            if type(self.corrMain) == float:
+                corrMain_val = self.corrMain
+            else:
+                corrMain_val = self.corrMain[0]
+            alnList1 = 'align%s%s_%3.1f.list' % (self.imgSuffix, file_ext, corrMain_val)
+            alnList2 = 'align%s%s_%3.1f_named.list' % (self.imgSuffix, file_ext, corrMain_val)
 
 
             _list = open(alnList1, 'w')
             if self.deblend == 1:
                 _list.write('../mag%s%s%s_%3.1fd_stf_cal.lis %d ref\n' %
-                            (self.epoch, self.imgSuffix, file_ext, self.corrMain[0], alignType))
+                            (self.epoch, self.imgSuffix, file_ext, corrMain_val, alignType))
             else:
                 _list.write('../mag%s%s%s_%3.1f_stf_cal.lis %d ref\n' %
-                            (self.epoch, self.imgSuffix, file_ext, self.corrMain[0], alignType))
+                            (self.epoch, self.imgSuffix, file_ext, corrMain_val, alignType))
             for ss in range(self.numSubMaps):
+                if type(self.corrSub) == float:
+                        corrSub_val = self.corrSub
+                else:
+                    corrSub_val = self.corrSub[0]
                 if self.deblend == 1:
                     _list.write('../m%s%s%s_%d_%3.1fd_stf_cal.lis %d\n' %
-                                (self.epoch, self.imgSuffix, file_ext, ss+1, self.corrSub[0], alignType))
+                                (self.epoch, self.imgSuffix, file_ext, ss+1, corrSub_val, alignType))
                 else:
                     _list.write('../m%s%s%s_%d_%3.1f_stf_cal.lis %d\n' %
-                                (self.epoch, self.imgSuffix, file_ext, ss+1, self.corrSub[0], alignType))
+                                (self.epoch, self.imgSuffix, file_ext, ss+1, corrSub_val, alignType))
 
                     
             _list.close()
@@ -839,7 +855,7 @@ class Analysis(object):
 
             # Make an unlabeled version
             cmd = 'java -Xmx1024m align %s ' % (self.alignFlags)
-            cmd += '-r align%s%s_%3.1f ' % (self.imgSuffix, file_ext, self.corrMain[0])
+            cmd += '-r align%s%s_%3.1f ' % (self.imgSuffix, file_ext, corrMain_val)
             cmd += alnList1
             print(cmd)
             #os.system(cmd)
@@ -863,7 +879,7 @@ class Analysis(object):
             if (self.orbitlist != None) and (self.orbitlist != ''):
                 cmd += '-o %s ' % self.orbitlist
             
-            cmd += '-r align%s%s_%3.1f_named ' % (self.imgSuffix, file_ext, self.corrMain[0])
+            cmd += '-r align%s%s_%3.1f_named ' % (self.imgSuffix, file_ext, corrMain_val)
 
             cmd += alnList2
             print(cmd)
@@ -873,33 +889,33 @@ class Analysis(object):
 
 
             align_options = 'align%s%s_%3.1f %d -e' % \
-              (self.imgSuffix, file_ext, self.corrMain[0], self.minSubMaps)
+              (self.imgSuffix, file_ext, corrMain_val, self.minSubMaps)
             align_rms.run(align_options.split())
 
             align_options = 'align%s%s_%3.1f_named %d -e' % \
-              (self.imgSuffix, file_ext, self.corrMain[0], self.minSubMaps)
+              (self.imgSuffix, file_ext, corrMain_val, self.minSubMaps)
             align_rms.run(align_options.split())
 
 
             # Move the resulting files to their final resting place
             os.rename('align%s%s_%3.1f_rms.lis' % 
-                      (self.imgSuffix, file_ext, self.corrMain[0]),
+                      (self.imgSuffix, file_ext, corrMain_val),
                       '../mag%s%s%s_rms.lis' % 
                       (self.epoch, self.imgSuffix, file_ext))
             os.rename('align%s%s_%3.1f_named_rms.lis' % 
-                      (self.imgSuffix, file_ext, self.corrMain[0]),
+                      (self.imgSuffix, file_ext, corrMain_val),
                       '../mag%s%s%s_rms_named.lis' % 
                       (self.epoch, self.imgSuffix, file_ext))
 
             # Copy over the label.dat and orbit.dat file that was used.
             shutil.copyfile(self.labellist,
                             'align%s%s_%3.1f_named_label_list.txt' % 
-                            (self.imgSuffix, file_ext, self.corrMain[0]))
+                            (self.imgSuffix, file_ext, corrMain_val))
                             
             if (self.orbitlist != None) and (self.orbitlist != ''):
                 shutil.copyfile(self.orbitlist,
                                 'align%s%s_%3.1f_named_orbit_list.txt' % 
-                                (self.imgSuffix, file_ext, self.corrMain[0]))
+                                (self.imgSuffix, file_ext, corrMain_val))
 
             # Now plot up the results
             plotSuffix = self.imgSuffix + file_ext
