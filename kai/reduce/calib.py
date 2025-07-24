@@ -206,7 +206,7 @@ def makeflat(onFiles, offFiles, output,
         # Linearity correction
         lin_correction.lin_correction(lampson_copied[i], instrument=instrument)
 
-    print(f'makeflat: Making flat lamps on with the following images:')
+    print(f'makeflat: Making flat lamps off with the following images:')
     for i in range(len(lampsoff_copied)):
         print(f'\t{lampsoff_copied[i]}')
 
