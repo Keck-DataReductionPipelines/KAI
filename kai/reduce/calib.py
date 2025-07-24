@@ -208,7 +208,7 @@ def makeflat(onFiles, offFiles, output,
 
     print(f'makeflat: Making flat lamps on with the following images:')
     for i in range(len(lampsoff_copied)):
-        print(f'\t{lampson_copied[i]}')
+        print(f'\t{lampsoff_copied[i]}')
 
         # Dark subtraction
         if dark_frame is not None:
