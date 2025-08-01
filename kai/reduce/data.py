@@ -858,8 +858,6 @@ def rot_img(root, phi, cleanDir, edit_header_PA = False):
 
     # Rotate the image
     print('Rotating frame: ',root)
-    #import pdb
-    #pdb.set_trace()
     #in_img[np.where(np.isnan(in_img) == True)] = 0
     out_img = rotate(in_img, -phi, order=3, mode='constant', cval=0, reshape=False)
     
@@ -1331,16 +1329,30 @@ def combine_drizzle(imgsize, cleanDir, roots, outroot, weights, shifts,
         pixmap = drizzle.utils.calc_pixmap(wcs_in, wcs_out)
         
         # Drizzle this file ontop of all previous ones
-        wht_scale = 1.0
-        pixfrac = 1.0
-        driz.add_image(cdwt_img, pixmap = pixmap,  #cdwt_img
-                            weight_map = wgt_in,
-                            exptime = exp_time,
-                            xmax = int(imgsize),
-                            ymax = int(imgsize),
-                            wht_scale = wht_scale,
-                            pixfrac = pixfrac,
-                            in_units = 'counts')
+        
+        # Catches case when exposure time is a fraction of a second
+        if exp_time > 0 and exp_time < 1:
+            wht_scale = exp_time
+            pixfrac = 1.0
+            driz.add_image(cdwt_img, pixmap = pixmap, 
+                                weight_map = wgt_in,
+                                exptime = 1,
+                                xmax = int(imgsize),
+                                ymax = int(imgsize),
+                                wht_scale = wht_scale,
+                                pixfrac = pixfrac,
+                                in_units = 'counts')
+        else:
+            wht_scale = 1.0
+            pixfrac = 1.0
+            driz.add_image(cdwt_img, pixmap = pixmap,  #cdwt_img
+                                weight_map = wgt_in,
+                                exptime = exp_time,
+                                xmax = int(imgsize),
+                                ymax = int(imgsize),
+                                wht_scale = wht_scale,
+                                pixfrac = pixfrac,
+                                in_units = 'counts')
         f_dlog.write('- Drizzling onto full output image. Kernel: ' + kernel + '\n')
     
         #swtich from output cps to counts by multiplying by total counts
@@ -1675,16 +1687,29 @@ def combine_submaps(
     
         pixmap = drizzle.utils.calc_pixmap(wcs_in, wcs_out)
 
-        wht_scale = 1.0
-        pixfrac = 1.0
-        driz[sub].add_image(cdwt_img, pixmap = pixmap, 
-                            weight_map = wgt_in,
-                            exptime = exp_time,
-                            xmax = int(imgsize),
-                            ymax = int(imgsize),
-                            wht_scale = wht_scale,
-                            pixfrac = pixfrac,
-                            in_units = 'counts')
+        # Catches case when exposure time is a fraction of a second
+        if exp_time > 0 and exp_time < 1:
+            wht_scale = exp_time
+            pixfrac = 1.0
+            driz[sub].add_image(cdwt_img, pixmap = pixmap, 
+                                weight_map = wgt_in,
+                                exptime = 1,
+                                xmax = int(imgsize),
+                                ymax = int(imgsize),
+                                wht_scale = wht_scale,
+                                pixfrac = pixfrac,
+                                in_units = 'counts')
+        else:
+            wht_scale = 1.0
+            pixfrac = 1.0
+            driz[sub].add_image(cdwt_img, pixmap = pixmap, 
+                                weight_map = wgt_in,
+                                exptime = exp_time,
+                                xmax = int(imgsize),
+                                ymax = int(imgsize),
+                                wht_scale = wht_scale,
+                                pixfrac = pixfrac,
+                                in_units = 'counts')
         log.write('- Drizzling onto full output image. Kernel: ' + kernel + '\n')
         
         #swtich from output cps to counts by multiplying by total counts
@@ -2295,15 +2320,27 @@ def clean_drizzle(xgeoim, ygeoim, _bp, _cd, _wgt, _dlog,
                                     fillval = 0
                                     )
 
-    wht_scale = 1.0
-    pixfrac = 1.0
-    driz.add_image(bp_img, pixmap = pixmap, 
-                        exptime = exp_time,
-                        xmax = int(outnx),
-                        ymax = int(outny),
-                        wht_scale = wht_scale,
-                        pixfrac = pixfrac,
-                        in_units = 'counts')
+    # Catches case when exposure time is a fraction of a second
+    if exp_time > 0 and exp_time < 1:
+        wht_scale = exp_time
+        pixfrac = 1.0
+        driz.add_image(bp_img, pixmap = pixmap, 
+                            exptime = 1,
+                            xmax = int(outnx),
+                            ymax = int(outny),
+                            wht_scale = wht_scale,
+                            pixfrac = pixfrac,
+                            in_units = 'counts')
+    else:
+        wht_scale = 1.0
+        pixfrac = 1.0
+        driz.add_image(bp_img, pixmap = pixmap, 
+                            exptime = exp_time,
+                            xmax = int(outnx),
+                            ymax = int(outny),
+                            wht_scale = wht_scale,
+                            pixfrac = pixfrac,
+                            in_units = 'counts')
 
     #swtich from output cps to counts by multiplying by total counts
     out_img = driz.out_img * driz._texptime
