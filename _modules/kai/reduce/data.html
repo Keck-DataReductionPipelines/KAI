@@ -3256,7 +3256,7 @@
             <span class="n">diff</span> <span class="o">=</span> <span class="p">[</span><span class="nb">abs</span><span class="p">(</span><span class="n">skyAngle</span> <span class="o">-</span> <span class="n">skyBest</span><span class="p">)</span> <span class="k">for</span> <span class="n">skyAngle</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">skyAng</span><span class="p">]</span>
             <span class="n">skyidx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">diff</span><span class="p">)</span>
 
-        <span class="n">sky</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">skyDir</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">skies</span><span class="p">[</span><span class="n">skyidx</span><span class="p">]</span>
+        <span class="n">sky</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">skyDir</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">skies</span><span class="p">[</span><span class="n">skyidx</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;.fits&quot;</span>
 
         <span class="nb">print</span><span class="p">((</span><span class="s1">&#39;Science = &#39;</span><span class="p">,</span> <span class="n">_n</span><span class="p">))</span>
         <span class="nb">print</span><span class="p">((</span><span class="s1">&#39;Sky image = &#39;</span><span class="p">,</span> <span class="n">sky</span><span class="p">))</span>

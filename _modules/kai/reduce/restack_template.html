@@ -1,0 +1,209 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>kai.reduce.restack_template &mdash; KAI  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            KAI
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../autoapi/index.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">KAI</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">kai.reduce.restack_template</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for kai.reduce.restack_template</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+
+<span class="c1"># restack.py</span>
+<span class="c1"># ---</span>
+<span class="c1"># Re-stack coadds</span>
+
+<span class="c1"># Modification history</span>
+<span class="c1"># Sean Granados: 08/18/2025 -- created file</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This script is meant to be ran in a raw directory containing the unprocessed fits files from NIRC2</span>
+<span class="sd">(e.g. n_unp_0500.fits). </span>
+
+<span class="sd">Ensure the raw and clean directory of the processed fits files (e.g. n0500.fits and c0500.fits respectively) </span>
+<span class="sd">exists before running restack.py as it uses the .coo files created in the clean script as a starting point </span>
+<span class="sd">in re-centering the coadds.</span>
+
+<span class="sd">{dr_root_dir}: root directory where the data exists</span>
+
+<span class="sd">Inputs:</span>
+<span class="sd">clean_directory (string): location of the clean directory of the processed fits files</span>
+<span class="sd">raw_directory (string): location of the raw directory of the processed fits files</span>
+<span class="sd">raw_unp_directory (string): location of the raw directory of the un-processed fits files which should</span>
+<span class="sd">contain the restack.py script</span>
+
+<span class="sd">Outputs:</span>
+<span class="sd">restack.log (text file): text file with information on the x and y shifts of the coadds</span>
+<span class="sd">n####.fits (fits file): restacked fits file</span>
+
+<span class="sd">optional outputs:</span>
+<span class="sd">restack_diagnostics (directory): directory containing plots and gif images of the coadd shifts</span>
+<span class="sd">coadds.fits (fits file): fits file of each coadd</span>
+
+<span class="sd">-----------</span>
+<span class="sd">An example setup may be:</span>
+<span class="sd">------------</span>
+<span class="sd">*The directories below should already exist*</span>
+
+<span class="sd">The following contains n####.fits files</span>
+<span class="sd">{dr_root_dir}/raw/20250512nirc2/</span>
+
+<span class="sd">The following contains c####.fits and .coo files where the clean script was ran</span>
+<span class="sd">{dr_root_dir}/clean/20250512nirc2/</span>
+
+<span class="sd">*The directory below should be created*</span>
+
+<span class="sd">The following contains n_unp_####.fits files and restack.py, the restacked coadds (outputted as n####.fits) will be</span>
+<span class="sd">placed here by the script restack.py</span>
+<span class="sd">{dr_root_dir}/raw/20250512nirc2_st/</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1"># Import our own custom modules</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">kai.reduce</span><span class="w"> </span><span class="kn">import</span> <span class="n">kai_util</span>
+
+<span class="c1"># Root directory</span>
+<div class="viewcode-block" id="dr_root_dir">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/restack_template/index.html#kai.reduce.restack_template.dr_root_dir">[docs]</a>
+<span class="n">dr_root_dir</span> <span class="o">=</span> <span class="s1">&#39;/g/ghez/data/dr/dr2/&#39;</span></div>
+
+
+<span class="c1"># Date name for the observations containing </span>
+<div class="viewcode-block" id="date_name">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/restack_template/index.html#kai.reduce.restack_template.date_name">[docs]</a>
+<span class="n">date_name</span> <span class="o">=</span> <span class="s1">&#39;20250512nirc2&#39;</span></div>
+
+
+<span class="c1"># Stacked date name</span>
+<div class="viewcode-block" id="stacked_name">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/restack_template/index.html#kai.reduce.restack_template.stacked_name">[docs]</a>
+<span class="n">stacked_name</span> <span class="o">=</span> <span class="s1">&#39;20250512nirc2_st&#39;</span></div>
+
+
+<span class="c1"># clean directory where the processed fits files were cleaned</span>
+<div class="viewcode-block" id="clean_directory">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/restack_template/index.html#kai.reduce.restack_template.clean_directory">[docs]</a>
+<span class="n">clean_directory</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{0}</span><span class="s1">/clean/</span><span class="si">{1}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dr_root_dir</span><span class="p">,</span> <span class="n">date_name</span><span class="p">)</span></div>
+
+
+<span class="c1"># raw directory where the processed fits files live</span>
+<div class="viewcode-block" id="raw_directory">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/restack_template/index.html#kai.reduce.restack_template.raw_directory">[docs]</a>
+<span class="n">raw_directory</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{0}</span><span class="s1">/raw/</span><span class="si">{1}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dr_root_dir</span><span class="p">,</span> <span class="n">date_name</span><span class="p">)</span></div>
+
+
+<span class="c1"># raw_unp_directory where the unprocessed fits files live and the restacked coadds will go</span>
+<div class="viewcode-block" id="raw_unp_directory">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/restack_template/index.html#kai.reduce.restack_template.raw_unp_directory">[docs]</a>
+<span class="n">raw_unp_directory</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{0}</span><span class="s1">/raw/</span><span class="si">{1}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dr_root_dir</span><span class="p">,</span> <span class="n">stacked_name</span><span class="p">)</span></div>
+
+
+
+<span class="c1"># flags</span>
+
+<span class="c1"># save_diagnostics (boolean): save some diagnostics like a coadd gif and plot showing the positional shift</span>
+<div class="viewcode-block" id="save_diagnostics">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/restack_template/index.html#kai.reduce.restack_template.save_diagnostics">[docs]</a>
+<span class="n">save_diagnostics</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+
+<span class="c1"># save_coadds (boolean): save each coadd as a fits file</span>
+<div class="viewcode-block" id="save_coadds">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/restack_template/index.html#kai.reduce.restack_template.save_coadds">[docs]</a>
+<span class="n">save_coadds</span> <span class="o">=</span> <span class="kc">False</span></div>
+
+
+<span class="c1"># Call restackCoadd function in kai_util</span>
+<span class="n">kai_util</span><span class="o">.</span><span class="n">restackCoadd</span><span class="p">(</span><span class="n">clean_directory</span><span class="p">,</span> <span class="n">raw_directory</span><span class="p">,</span> <span class="n">raw_unp_directory</span><span class="p">,</span> <span class="n">save_diagnostics</span> <span class="o">=</span> <span class="n">save_diagnostics</span><span class="p">,</span> <span class="n">save_coadds</span> <span class="o">=</span> <span class="n">save_coadds</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, J. R. Lu, A. K. Gautam, T. Do.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

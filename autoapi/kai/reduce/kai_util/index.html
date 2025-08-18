@@ -157,6 +157,9 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.kai_util.plotKeyword" title="kai.reduce.kai_util.plotKeyword"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plotKeyword</span></code></a>(keyword1, keyword2, imgList)</p></td>
 <td><p>Pass in a file containing a list of images. For each of these</p></td>
 </tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.kai_util.restackCoadd" title="kai.reduce.kai_util.restackCoadd"><code class="xref py py-obj docutils literal notranslate"><span class="pre">restackCoadd</span></code></a>(clean_directory, raw_directory, ...[, ...])</p></td>
+<td><p>Process unprocessed FITS frames and coadds to align star positions, stack them,</p></td>
+</tr>
 </tbody>
 </table>
 </section>
@@ -278,6 +281,23 @@ containing images at different PAs.</p>
 <dd><p>Pass in a file containing a list of images. For each of these
 images, read out the values of the header keywords specified.
 Then plot each of the keywords against each other.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.reduce.kai_util.restackCoadd">
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.kai_util.</span></span><span class="sig-name descname"><span class="pre">restackCoadd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">clean_directory</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raw_directory</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raw_unp_directory</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_diagnostics</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_coadds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/kai_util.html#restackCoadd"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.kai_util.restackCoadd" title="Link to this definition"></a></dt>
+<dd><p>Process unprocessed FITS frames and coadds to align star positions, stack them,
+and optionally save diagnostics and intermediate outputs. This stacks to the first coadd.</p>
+<p>&#64;param clean_directory: Path to directory containing .coo files with reference star positions.
+&#64;type clean_directory: str
+&#64;param raw_directory: Path to directory containing raw FITS frames.
+&#64;type raw_directory: str
+&#64;param raw_unp_directory: Path to directory containing unprocessed FITS files (n_unp_###.fits).
+&#64;type raw_unp_directory: str
+&#64;param save_diagnostics: If True, saves intermediate plots and motion diagnostics.
+&#64;type save_diagnostics: bool
+&#64;param save_coadds: If True, saves individual coadd FITS frames.
+&#64;type save_coadds: bool</p>
 </dd></dl>
 
 </section>

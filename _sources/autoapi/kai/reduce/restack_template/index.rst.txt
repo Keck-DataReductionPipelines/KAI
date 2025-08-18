@@ -1,0 +1,101 @@
+kai.reduce.restack_template
+===========================
+
+.. py:module:: kai.reduce.restack_template
+
+.. autoapi-nested-parse::
+
+   This script is meant to be ran in a raw directory containing the unprocessed fits files from NIRC2
+   (e.g. n_unp_0500.fits). 
+
+   Ensure the raw and clean directory of the processed fits files (e.g. n0500.fits and c0500.fits respectively) 
+   exists before running restack.py as it uses the .coo files created in the clean script as a starting point 
+   in re-centering the coadds.
+
+   {dr_root_dir}: root directory where the data exists
+
+   Inputs:
+   clean_directory (string): location of the clean directory of the processed fits files
+   raw_directory (string): location of the raw directory of the processed fits files
+   raw_unp_directory (string): location of the raw directory of the un-processed fits files which should
+   contain the restack.py script
+
+   Outputs:
+   restack.log (text file): text file with information on the x and y shifts of the coadds
+   n####.fits (fits file): restacked fits file
+
+   optional outputs:
+   restack_diagnostics (directory): directory containing plots and gif images of the coadd shifts
+   coadds.fits (fits file): fits file of each coadd
+
+   -----------
+   An example setup may be:
+   ------------
+   *The directories below should already exist*
+
+   The following contains n####.fits files
+   {dr_root_dir}/raw/20250512nirc2/
+
+   The following contains c####.fits and .coo files where the clean script was ran
+   {dr_root_dir}/clean/20250512nirc2/
+
+   *The directory below should be created*
+
+   The following contains n_unp_####.fits files and restack.py, the restacked coadds (outputted as n####.fits) will be
+   placed here by the script restack.py
+   {dr_root_dir}/raw/20250512nirc2_st/
+
+   ..
+       !! processed by numpydoc !!
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   kai.reduce.restack_template.dr_root_dir
+   kai.reduce.restack_template.date_name
+   kai.reduce.restack_template.stacked_name
+   kai.reduce.restack_template.clean_directory
+   kai.reduce.restack_template.raw_directory
+   kai.reduce.restack_template.raw_unp_directory
+   kai.reduce.restack_template.save_diagnostics
+   kai.reduce.restack_template.save_coadds
+
+
+Module Contents
+---------------
+
+.. py:data:: dr_root_dir
+   :value: '/g/ghez/data/dr/dr2/'
+
+
+.. py:data:: date_name
+   :value: '20250512nirc2'
+
+
+.. py:data:: stacked_name
+   :value: '20250512nirc2_st'
+
+
+.. py:data:: clean_directory
+   :value: '/g/ghez/data/dr/dr2//clean/20250512nirc2'
+
+
+.. py:data:: raw_directory
+   :value: '/g/ghez/data/dr/dr2//raw/20250512nirc2'
+
+
+.. py:data:: raw_unp_directory
+   :value: '/g/ghez/data/dr/dr2//raw/20250512nirc2_st'
+
+
+.. py:data:: save_diagnostics
+   :value: True
+
+
+.. py:data:: save_coadds
+   :value: False
+
+

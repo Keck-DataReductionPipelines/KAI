@@ -1,0 +1,234 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>kai.reduce.restack_template &mdash; KAI  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="kai.reduce.sky" href="../sky/index.html" />
+    <link rel="prev" title="kai.reduce.reduce_template_osiris" href="../reduce_template_osiris/index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            KAI
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">kai</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../../index.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../../_astropy_init/index.html">kai._astropy_init</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../conditions/index.html">kai.conditions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../conftest/index.html">kai.conftest</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../constants/index.html">kai.constants</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../extern/index.html">kai.extern</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../instruments/index.html">kai.instruments</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../mtf/index.html">kai.mtf</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../photometry/index.html">kai.photometry</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../plot/index.html">kai.plot</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../index.html">kai.reduce</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../strehl/index.html">kai.strehl</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../tests/index.html">kai.tests</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../utils/index.html">kai.utils</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">KAI</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">kai</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">kai.reduce</a></li>
+      <li class="breadcrumb-item active">kai.reduce.restack_template</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/autoapi/kai/reduce/restack_template/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-kai.reduce.restack_template">
+<span id="kai-reduce-restack-template"></span><h1>kai.reduce.restack_template<a class="headerlink" href="#module-kai.reduce.restack_template" title="Link to this heading"></a></h1>
+<p>This script is meant to be ran in a raw directory containing the unprocessed fits files from NIRC2
+(e.g. n_unp_0500.fits).</p>
+<p>Ensure the raw and clean directory of the processed fits files (e.g. n0500.fits and c0500.fits respectively)
+exists before running restack.py as it uses the .coo files created in the clean script as a starting point
+in re-centering the coadds.</p>
+<p>{dr_root_dir}: root directory where the data exists</p>
+<p>Inputs:
+clean_directory (string): location of the clean directory of the processed fits files
+raw_directory (string): location of the raw directory of the processed fits files
+raw_unp_directory (string): location of the raw directory of the un-processed fits files which should
+contain the restack.py script</p>
+<p>Outputs:
+restack.log (text file): text file with information on the x and y shifts of the coadds
+n####.fits (fits file): restacked fits file</p>
+<p>optional outputs:
+restack_diagnostics (directory): directory containing plots and gif images of the coadd shifts
+coadds.fits (fits file): fits file of each coadd</p>
+<p><em>The directories below should already exist</em></p>
+<p>The following contains n####.fits files
+{dr_root_dir}/raw/20250512nirc2/</p>
+<p>The following contains c####.fits and .coo files where the clean script was ran
+{dr_root_dir}/clean/20250512nirc2/</p>
+<p><em>The directory below should be created</em></p>
+<p>The following contains n_unp_####.fits files and restack.py, the restacked coadds (outputted as n####.fits) will be
+placed here by the script restack.py
+{dr_root_dir}/raw/20250512nirc2_st/</p>
+<section id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.restack_template.dr_root_dir" title="kai.reduce.restack_template.dr_root_dir"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dr_root_dir</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.restack_template.date_name" title="kai.reduce.restack_template.date_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">date_name</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.restack_template.stacked_name" title="kai.reduce.restack_template.stacked_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stacked_name</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.restack_template.clean_directory" title="kai.reduce.restack_template.clean_directory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clean_directory</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.restack_template.raw_directory" title="kai.reduce.restack_template.raw_directory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">raw_directory</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.restack_template.raw_unp_directory" title="kai.reduce.restack_template.raw_unp_directory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">raw_unp_directory</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.restack_template.save_diagnostics" title="kai.reduce.restack_template.save_diagnostics"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_diagnostics</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.restack_template.save_coadds" title="kai.reduce.restack_template.save_coadds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_coadds</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
+<dl class="py data">
+<dt class="sig sig-object py" id="kai.reduce.restack_template.dr_root_dir">
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.restack_template.</span></span><span class="sig-name descname"><span class="pre">dr_root_dir</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'/g/ghez/data/dr/dr2/'</span></em><a class="reference internal" href="../../../../_modules/kai/reduce/restack_template.html#dr_root_dir"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.restack_template.dr_root_dir" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="kai.reduce.restack_template.date_name">
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.restack_template.</span></span><span class="sig-name descname"><span class="pre">date_name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'20250512nirc2'</span></em><a class="reference internal" href="../../../../_modules/kai/reduce/restack_template.html#date_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.restack_template.date_name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="kai.reduce.restack_template.stacked_name">
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.restack_template.</span></span><span class="sig-name descname"><span class="pre">stacked_name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'20250512nirc2_st'</span></em><a class="reference internal" href="../../../../_modules/kai/reduce/restack_template.html#stacked_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.restack_template.stacked_name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="kai.reduce.restack_template.clean_directory">
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.restack_template.</span></span><span class="sig-name descname"><span class="pre">clean_directory</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'/g/ghez/data/dr/dr2//clean/20250512nirc2'</span></em><a class="reference internal" href="../../../../_modules/kai/reduce/restack_template.html#clean_directory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.restack_template.clean_directory" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="kai.reduce.restack_template.raw_directory">
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.restack_template.</span></span><span class="sig-name descname"><span class="pre">raw_directory</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'/g/ghez/data/dr/dr2//raw/20250512nirc2'</span></em><a class="reference internal" href="../../../../_modules/kai/reduce/restack_template.html#raw_directory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.restack_template.raw_directory" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="kai.reduce.restack_template.raw_unp_directory">
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.restack_template.</span></span><span class="sig-name descname"><span class="pre">raw_unp_directory</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'/g/ghez/data/dr/dr2//raw/20250512nirc2_st'</span></em><a class="reference internal" href="../../../../_modules/kai/reduce/restack_template.html#raw_unp_directory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.restack_template.raw_unp_directory" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="kai.reduce.restack_template.save_diagnostics">
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.restack_template.</span></span><span class="sig-name descname"><span class="pre">save_diagnostics</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="reference internal" href="../../../../_modules/kai/reduce/restack_template.html#save_diagnostics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.restack_template.save_diagnostics" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="kai.reduce.restack_template.save_coadds">
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.restack_template.</span></span><span class="sig-name descname"><span class="pre">save_coadds</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="reference internal" href="../../../../_modules/kai/reduce/restack_template.html#save_coadds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.restack_template.save_coadds" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../reduce_template_osiris/index.html" class="btn btn-neutral float-left" title="kai.reduce.reduce_template_osiris" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../sky/index.html" class="btn btn-neutral float-right" title="kai.reduce.sky" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, J. R. Lu, A. K. Gautam, T. Do.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

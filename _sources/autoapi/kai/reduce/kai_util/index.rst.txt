@@ -32,6 +32,7 @@ Functions
    kai.reduce.kai_util.getCentralWavelength
    kai.reduce.kai_util.calcOverhead
    kai.reduce.kai_util.plotKeyword
+   kai.reduce.kai_util.restackCoadd
 
 
 Module Contents
@@ -227,6 +228,40 @@ Module Contents
    images, read out the values of the header keywords specified.
    Then plot each of the keywords against each other.
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: restackCoadd(clean_directory, raw_directory, raw_unp_directory, save_diagnostics=False, save_coadds=False)
+
+   
+   Process unprocessed FITS frames and coadds to align star positions, stack them,
+   and optionally save diagnostics and intermediate outputs. This stacks to the first coadd.
+
+   @param clean_directory: Path to directory containing .coo files with reference star positions.
+   @type clean_directory: str
+   @param raw_directory: Path to directory containing raw FITS frames.
+   @type raw_directory: str
+   @param raw_unp_directory: Path to directory containing unprocessed FITS files (n_unp_###.fits).
+   @type raw_unp_directory: str
+   @param save_diagnostics: If True, saves intermediate plots and motion diagnostics.
+   @type save_diagnostics: bool
+   @param save_coadds: If True, saves individual coadd FITS frames.
+   @type save_coadds: bool
 
 
 

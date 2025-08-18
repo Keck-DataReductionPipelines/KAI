@@ -84,6 +84,12 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">kai</span><span class="w"> </span><span class="kn">import</span> <span class="n">instruments</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">kai.reduce</span><span class="w"> </span><span class="kn">import</span> <span class="n">util</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.ndimage</span><span class="w"> </span><span class="kn">import</span> <span class="n">shift</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.patches</span><span class="w"> </span><span class="kn">import</span> <span class="n">Circle</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">photutils.centroids</span><span class="w"> </span><span class="kn">import</span> <span class="n">centroid_com</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy.nddata</span><span class="w"> </span><span class="kn">import</span> <span class="n">Cutout2D</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">imageio</span>
 
 <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
 
@@ -204,7 +210,7 @@
             <span class="c1"># Another special case: 09may01 UT had a AOTSX/Y linear drift.</span>
             <span class="c1"># Found drift with 09maylgs/clean/kp/coord.py</span>
             <span class="k">if</span> <span class="p">((</span><span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;OUTDIR&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;/sdata903/nirc3/2009may01/&#39;</span><span class="p">):</span>
-                <span class="n">mjdobs</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">instrument</span><span class="o">.</span><span class="n">get_mjd</span><span class="p">(</span><span class="n">hdr</span><span class="p">))</span>
+                <span class="n">mjdobs</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;MJD-OBS&#39;</span><span class="p">])</span>
                 <span class="c1"># old distortion solution (pre-ship) gives:</span>
                 <span class="c1">#aotsxy[0] -= (1.895701e5*0.727) + (-3.449709*0.727) * mjdobs </span>
                 <span class="c1"># new distortion solution (yelda et al. 2010)</span>
@@ -217,7 +223,7 @@
             <span class="c1"># Another special case: 10jul06 UT had a AOTSX/Y linear drift.</span>
             <span class="c1"># Found drift with 10jullgs1/clean/kp/coord.py</span>
             <span class="k">if</span> <span class="p">((</span><span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;OUTDIR&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;/sdata903/nirc3/2010jul06/&#39;</span><span class="p">):</span>
-                <span class="n">mjdobs</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">instrument</span><span class="o">.</span><span class="n">get_mjd</span><span class="p">(</span><span class="n">hdr</span><span class="p">))</span>
+                <span class="n">mjdobs</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;MJD-OBS&#39;</span><span class="p">])</span>
                 <span class="c1"># new distortion solution (yelda et al. 2010)</span>
                 <span class="n">aotsxy</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-=</span> <span class="p">(</span><span class="mf">2.039106e5</span><span class="o">*</span><span class="mf">0.727</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="o">-</span><span class="mf">3.681807</span><span class="o">*</span><span class="mf">0.727</span><span class="p">)</span> <span class="o">*</span> <span class="n">mjdobs</span> 
 
@@ -478,6 +484,257 @@
     <span class="n">py</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="n">keyword2</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="p">(</span><span class="n">value1</span><span class="p">,</span> <span class="n">value2</span><span class="p">)</span></div>
+
+    
+    
+<div class="viewcode-block" id="restackCoadd">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/kai_util/index.html#kai.reduce.kai_util.restackCoadd">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">restackCoadd</span><span class="p">(</span><span class="n">clean_directory</span><span class="p">,</span> <span class="n">raw_directory</span><span class="p">,</span> <span class="n">raw_unp_directory</span><span class="p">,</span> <span class="n">save_diagnostics</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">save_coadds</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Process unprocessed FITS frames and coadds to align star positions, stack them,</span>
+<span class="sd">    and optionally save diagnostics and intermediate outputs. This stacks to the first coadd.</span>
+
+<span class="sd">    @param clean_directory: Path to directory containing .coo files with reference star positions.</span>
+<span class="sd">    @type clean_directory: str</span>
+<span class="sd">    @param raw_directory: Path to directory containing raw FITS frames.</span>
+<span class="sd">    @type raw_directory: str</span>
+<span class="sd">    @param raw_unp_directory: Path to directory containing unprocessed FITS files (n_unp_###.fits).</span>
+<span class="sd">    @type raw_unp_directory: str</span>
+<span class="sd">    @param save_diagnostics: If True, saves intermediate plots and motion diagnostics.</span>
+<span class="sd">    @type save_diagnostics: bool</span>
+<span class="sd">    @param save_coadds: If True, saves individual coadd FITS frames.</span>
+<span class="sd">    @type save_coadds: bool</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">recenter_star</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">x_init</span><span class="p">,</span> <span class="n">y_init</span><span class="p">,</span> <span class="n">box</span><span class="o">=</span><span class="mi">12</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Recenter a star near (x_init, y_init) using centroiding on a small cutout.</span>
+
+<span class="sd">        @param image_path: Path to the FITS file to measure.</span>
+<span class="sd">        @type image_path: str</span>
+<span class="sd">        @param x_init: Initial x estimate for the star.</span>
+<span class="sd">        @type x_init: float</span>
+<span class="sd">        @param y_init: Initial y estimate for the star.</span>
+<span class="sd">        @type y_init: float</span>
+<span class="sd">        @param box: Half-size of the cutout box in pixels (e.g., 12 = 24x24 window).</span>
+<span class="sd">        @type box: int</span>
+<span class="sd">        @return: Refined (x, y) coordinates.</span>
+<span class="sd">        @rtype: tuple(float, float)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Make a cutout around the initial guess</span>
+            <span class="n">position</span> <span class="o">=</span> <span class="p">(</span><span class="n">x_init</span><span class="p">,</span> <span class="n">y_init</span><span class="p">)</span>
+            <span class="n">cutout</span> <span class="o">=</span> <span class="n">Cutout2D</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="n">position</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">2</span><span class="o">*</span><span class="n">box</span><span class="p">)</span>
+
+            <span class="c1"># Compute centroid in the cutout frame</span>
+            <span class="n">cx</span><span class="p">,</span> <span class="n">cy</span> <span class="o">=</span> <span class="n">centroid_com</span><span class="p">(</span><span class="n">cutout</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+
+            <span class="c1"># Convert back to full-image coordinates</span>
+            <span class="n">x_refined</span> <span class="o">=</span> <span class="n">cx</span> <span class="o">+</span> <span class="n">cutout</span><span class="o">.</span><span class="n">origin_original</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">y_refined</span> <span class="o">=</span> <span class="n">cy</span> <span class="o">+</span> <span class="n">cutout</span><span class="o">.</span><span class="n">origin_original</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+            <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">x_refined</span><span class="p">),</span> <span class="nb">float</span><span class="p">(</span><span class="n">y_refined</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Centroiding failed: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">x_init</span><span class="p">,</span> <span class="n">y_init</span>
+            
+    <span class="c1"># Create log file for tracking offset measurements of IRS16C</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">raw_unp_directory</span> <span class="o">+</span> <span class="s1">&#39;/restack.log&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%16s</span><span class="s1">  &#39;</span> <span class="o">%</span> <span class="s1">&#39;#frame&#39;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%16s</span><span class="s1">  &#39;</span> <span class="o">%</span> <span class="s1">&#39;frame_x&#39;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%16s</span><span class="s1">  &#39;</span> <span class="o">%</span> <span class="s1">&#39;frame_y&#39;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%16s</span><span class="s1">  &#39;</span> <span class="o">%</span> <span class="s1">&#39;coadd&#39;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%16s</span><span class="s1">  &#39;</span> <span class="o">%</span> <span class="s1">&#39;coadd_x&#39;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%16s</span><span class="s1">  &#39;</span> <span class="o">%</span> <span class="s1">&#39;coadd_y&#39;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%16s</span><span class="s1">  &#39;</span> <span class="o">%</span> <span class="s1">&#39;dx&#39;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%16s</span><span class="s1">  &#39;</span> <span class="o">%</span> <span class="s1">&#39;dy&#39;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    
+    <span class="n">stack_mode</span> <span class="o">=</span> <span class="s1">&#39;per_coadd&#39;</span>
+    <span class="n">unp_loc</span> <span class="o">=</span> <span class="n">raw_unp_directory</span>
+    
+    <span class="c1"># Organize raw frame indices</span>
+    <span class="n">unp_files</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">/n_unp_*.fits&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">unp_loc</span><span class="p">)))</span>
+    <span class="n">wildcards</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">([</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">f</span><span class="p">)[</span><span class="mi">6</span><span class="p">:</span><span class="o">-</span><span class="mi">5</span><span class="p">]</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">unp_files</span><span class="p">])</span>
+
+    <span class="c1"># Create folders to save diagnostics in for each frame</span>
+    <span class="k">if</span> <span class="n">save_diagnostics</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">/restack_diagnostics/&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">unp_loc</span><span class="p">)):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">/restack_diagnostics/&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">unp_loc</span><span class="p">))</span>
+    
+        <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">wildcards</span><span class="p">:</span>
+            <span class="n">dir_path</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">/restack_diagnostics/n</span><span class="si">{}</span><span class="s1">/&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">unp_loc</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">dir_path</span><span class="p">):</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">dir_path</span><span class="p">)</span>
+
+    <span class="c1"># Loop through the unprocessed fits files</span>
+    <span class="k">for</span> <span class="n">cur_file</span><span class="p">,</span> <span class="n">w</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">unp_files</span><span class="p">,</span> <span class="n">wildcards</span><span class="p">):</span>
+        <span class="c1"># Instrument</span>
+        <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span>
+        
+        <span class="c1"># Get reference raw header from raw_directory</span>
+        <span class="n">ref_header</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getheader</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">/n</span><span class="si">{}</span><span class="s1">.fits&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">raw_directory</span><span class="p">,</span> <span class="n">w</span><span class="p">))</span>
+        <span class="n">filt</span> <span class="o">=</span> <span class="n">instrument</span><span class="o">.</span><span class="n">get_filter_name</span><span class="p">(</span><span class="n">ref_header</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        
+
+        <span class="c1"># Get initial reference position from clean_directory .coo file</span>
+        <span class="n">ref_coo</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">/</span><span class="si">{}</span><span class="s1">/c</span><span class="si">{}</span><span class="s1">.coo&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">clean_directory</span><span class="p">,</span> <span class="n">filt</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">ref_coo</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">: .coo file not found. Make sure this exists, or create one manually.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ref_coo</span><span class="p">))</span>
+            <span class="k">continue</span>
+
+        <span class="n">ref_x</span><span class="p">,</span> <span class="n">ref_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">ref_coo</span><span class="p">)</span>
+        
+        <span class="c1"># Build difference reads for each coadd</span>
+        <span class="k">with</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">cur_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">hdul</span><span class="p">:</span>
+            <span class="n">num_coadds</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">hdul</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+            <span class="n">diff_frames</span> <span class="o">=</span> <span class="p">[]</span>
+        
+            <span class="k">for</span> <span class="n">coadd_index</span> <span class="ow">in</span> <span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">num_coadds</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)):</span>
+                <span class="n">read_data</span> <span class="o">=</span> <span class="n">hdul</span><span class="p">[</span><span class="n">coadd_index</span><span class="p">]</span><span class="o">.</span><span class="n">data</span> 
+                <span class="n">num_reads</span> <span class="o">=</span> <span class="n">read_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">header</span> <span class="o">=</span> <span class="n">hdul</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span>
+
+                <span class="k">if</span> <span class="n">stack_mode</span> <span class="o">==</span> <span class="s1">&#39;per_coadd&#39;</span><span class="p">:</span>
+                    <span class="n">n_half</span> <span class="o">=</span> <span class="n">num_reads</span> <span class="o">//</span> <span class="mi">2</span>
+                    <span class="n">avg_initial</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">read_data</span><span class="p">[:</span><span class="n">n_half</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+                    <span class="n">avg_final</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">read_data</span><span class="p">[</span><span class="o">-</span><span class="n">n_half</span><span class="p">:],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+                    <span class="n">frame</span> <span class="o">=</span> <span class="n">avg_final</span> <span class="o">-</span> <span class="n">avg_initial</span>
+                    <span class="n">diff_frames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
+
+        <span class="c1"># Align and stack coadds</span>
+        <span class="n">stack</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">dx_positions</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">dy_positions</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">x_positions</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">y_positions</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">frame</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">diff_frames</span><span class="p">):</span>
+
+
+
+            <span class="c1"># Get updated coordinate position of IRS16C for current coadd</span>
+            <span class="n">x_new</span><span class="p">,</span> <span class="n">y_new</span> <span class="o">=</span> <span class="n">recenter_star</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">ref_x</span><span class="p">,</span> <span class="n">ref_y</span><span class="p">,</span> <span class="n">box</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+            
+            <span class="c1"># Log motion diagnostics</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%16s</span><span class="s1">  &#39;</span> <span class="o">%</span> <span class="s1">&#39;n</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">w</span><span class="p">))</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%16s</span><span class="s1">  &#39;</span> <span class="o">%</span> <span class="n">ref_x</span><span class="p">)</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%16s</span><span class="s1">  &#39;</span> <span class="o">%</span> <span class="n">ref_y</span><span class="p">)</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%16s</span><span class="s1">  &#39;</span> <span class="o">%</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">idx</span><span class="p">))</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%16s</span><span class="s1">  &#39;</span> <span class="o">%</span> <span class="nb">round</span><span class="p">(</span><span class="n">x_new</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%16s</span><span class="s1">  &#39;</span> <span class="o">%</span> <span class="nb">round</span><span class="p">(</span><span class="n">y_new</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+            
+            <span class="n">dx</span> <span class="o">=</span> <span class="n">ref_x</span> <span class="o">-</span> <span class="n">x_new</span>
+            <span class="n">dy</span> <span class="o">=</span> <span class="n">ref_y</span> <span class="o">-</span> <span class="n">y_new</span>
+            
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%16s</span><span class="s1">  &#39;</span> <span class="o">%</span> <span class="nb">round</span><span class="p">(</span><span class="n">dx</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%16s</span><span class="s1">  &#39;</span> <span class="o">%</span> <span class="nb">round</span><span class="p">(</span><span class="n">dy</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+            
+            <span class="n">dx_positions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ref_x</span> <span class="o">-</span> <span class="n">x_new</span><span class="p">)</span>
+            <span class="n">dy_positions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ref_y</span> <span class="o">-</span> <span class="n">y_new</span><span class="p">)</span>
+            <span class="n">x_positions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x_new</span><span class="p">)</span>
+            <span class="n">y_positions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">y_new</span><span class="p">)</span>
+            
+            <span class="c1"># Shift and stack coadd</span>
+            <span class="n">shifted</span> <span class="o">=</span> <span class="n">shift</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">shift</span><span class="o">=</span><span class="p">(</span><span class="n">dy</span><span class="p">,</span> <span class="n">dx</span><span class="p">),</span> <span class="n">order</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+            <span class="n">stack</span> <span class="o">=</span> <span class="n">shifted</span> <span class="k">if</span> <span class="n">stack</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">stack</span> <span class="o">+</span> <span class="n">shifted</span>
+        
+            <span class="c1"># Save individual coadd if flag is on</span>
+            <span class="k">if</span> <span class="n">save_coadds</span><span class="p">:</span>
+                <span class="n">header</span> <span class="o">=</span> <span class="n">ref_header</span>
+                <span class="n">header</span><span class="p">[</span><span class="s2">&quot;COADD&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">idx</span>
+                <span class="n">hdu</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">PrimaryHDU</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">frame</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="n">header</span><span class="p">)</span>
+                <span class="n">hdu</span><span class="o">.</span><span class="n">writeto</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">/n</span><span class="si">{}</span><span class="s1">_</span><span class="si">{}</span><span class="s1">.fits&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">unp_loc</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">idx</span><span class="p">)),</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Saved FRAME: n</span><span class="si">{}</span><span class="s2"> -- COADD: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">idx</span><span class="p">)))</span>
+                
+            <span class="c1"># Plot motion diagnostics if flag is on</span>
+            <span class="k">if</span> <span class="n">save_diagnostics</span><span class="p">:</span>
+                <span class="n">box_size</span> <span class="o">=</span> <span class="mi">200</span>
+                <span class="n">half_box</span> <span class="o">=</span> <span class="n">box_size</span> <span class="o">//</span> <span class="mi">2</span>
+
+                <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="s1">&#39;lower&#39;</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">,</span>
+                          <span class="n">vmin</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="n">vmax</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="mi">99</span><span class="p">))</span>
+
+                <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">ref_x</span> <span class="o">-</span> <span class="n">half_box</span><span class="p">,</span> <span class="n">ref_x</span> <span class="o">+</span> <span class="n">half_box</span><span class="p">)</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">ref_y</span> <span class="o">-</span> <span class="n">half_box</span><span class="p">,</span> <span class="n">ref_y</span> <span class="o">+</span> <span class="n">half_box</span><span class="p">)</span>
+
+                <span class="n">ax</span><span class="o">.</span><span class="n">add_patch</span><span class="p">(</span><span class="n">Circle</span><span class="p">((</span><span class="n">ref_x</span><span class="p">,</span> <span class="n">ref_y</span><span class="p">),</span> <span class="n">radius</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Frame .coo&#39;</span><span class="p">))</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">add_patch</span><span class="p">(</span><span class="n">Circle</span><span class="p">((</span><span class="n">x_new</span><span class="p">,</span> <span class="n">y_new</span><span class="p">),</span> <span class="n">radius</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Coadd .coo&#39;</span><span class="p">))</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;COADD: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">idx</span><span class="p">)))</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">/restack_diagnostics/n</span><span class="si">{}</span><span class="s1">/coadd</span><span class="si">{:04d}</span><span class="s1">.png&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">unp_loc</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">idx</span><span class="p">)))</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            
+        <span class="c1"># Plot shifts in x and y if flag is on</span>
+        <span class="k">if</span> <span class="n">save_diagnostics</span><span class="p">:</span>
+            <span class="n">x_offsets</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">subtract</span><span class="p">(</span><span class="n">x_positions</span><span class="p">,</span> <span class="n">x_positions</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">y_offsets</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">subtract</span><span class="p">(</span><span class="n">y_positions</span><span class="p">,</span> <span class="n">y_positions</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">all_offsets</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">x_offsets</span><span class="p">,</span> <span class="n">y_offsets</span><span class="p">])</span>
+            <span class="n">ymin</span><span class="p">,</span> <span class="n">ymax</span> <span class="o">=</span> <span class="n">all_offsets</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">all_offsets</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+            <span class="n">padding</span> <span class="o">=</span> <span class="mf">0.05</span> <span class="o">*</span> <span class="p">(</span><span class="n">ymax</span> <span class="o">-</span> <span class="n">ymin</span><span class="p">)</span>
+            <span class="n">ymin</span> <span class="o">-=</span> <span class="n">padding</span>
+            <span class="n">ymax</span> <span class="o">+=</span> <span class="n">padding</span>
+            <span class="c1"># Plot Δx and Δy over time (frame index)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_offsets</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;blue&#39;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Coadd number&#39;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;x Offset [pixels]&#39;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">linestyle</span> <span class="o">=</span> <span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;red&#39;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;x over coadds&#39;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="n">ymin</span><span class="p">,</span> <span class="n">ymax</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
+            <span class="c1"># Quiver plot: motion vectors</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">y_offsets</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;green&#39;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Coadd number&#39;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;y Offset [pixels]&#39;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;y over coadds&#39;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">linestyle</span> <span class="o">=</span> <span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;red&#39;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="n">ymin</span><span class="p">,</span> <span class="n">ymax</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
+            <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">/restack_diagnostics/n</span><span class="si">{}</span><span class="s1">/movement_per_coadd.png&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">unp_loc</span><span class="p">,</span> <span class="n">w</span><span class="p">))</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Saved motion diagnostics plot&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Final re-stacked image output</span>
+        <span class="n">ref_header</span><span class="p">[</span><span class="s1">&#39;STACKED&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">ref_header</span><span class="p">[</span><span class="s1">&#39;NFRAMES&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">diff_frames</span><span class="p">)</span>
+        <span class="n">hdu</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">PrimaryHDU</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">stack</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="n">ref_header</span><span class="p">)</span>
+
+        <span class="c1"># Save to subdir</span>
+        <span class="n">final_fits_path</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">/n</span><span class="si">{}</span><span class="s1">.fits&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">unp_loc</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span>
+        <span class="n">hdu</span><span class="o">.</span><span class="n">writeto</span><span class="p">(</span><span class="n">final_fits_path</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Re-stacked frame: n</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">w</span><span class="p">))</span>
+
+        <span class="c1"># Make GIF of coadd shifting if flag is on</span>
+        <span class="k">if</span> <span class="n">save_diagnostics</span><span class="p">:</span>
+            <span class="c1"># Make GIF from coadd images</span>
+            <span class="n">coadd_pngs</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">/restack_diagnostics/n</span><span class="si">{}</span><span class="s1">/coadd*.png&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">unp_loc</span><span class="p">,</span> <span class="n">w</span><span class="p">)))</span>
+            <span class="n">gif_path</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">/restack_diagnostics/n</span><span class="si">{}</span><span class="s1">/n</span><span class="si">{}</span><span class="s1">_coadds.gif&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">unp_loc</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span>
+
+            <span class="n">images</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">png</span> <span class="ow">in</span> <span class="n">coadd_pngs</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">images</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">imageio</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">png</span><span class="p">))</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Skipping </span><span class="si">{}</span><span class="s2"> — </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">png</span><span class="p">,</span> <span class="n">e</span><span class="p">))</span>
+
+            <span class="k">if</span> <span class="n">images</span><span class="p">:</span>
+                <span class="n">imageio</span><span class="o">.</span><span class="n">mimsave</span><span class="p">(</span><span class="n">gif_path</span><span class="p">,</span> <span class="n">images</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;GIF saved to </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">gif_path</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No valid PNGs found for </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">w</span><span class="p">))</span>
+
+        
+    <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
     
 </pre></div>
