@@ -1806,6 +1806,10 @@ def combine_submaps(
                               'X Distortion Image')
         fits_f[0].header.set('DISTORTY', "%s" % distYgeoim,
                               'Y Distortion Image')
+
+        # Fix the DATASEC header keyword, if it exists.
+        if 'DATASEC' in fits_f[0].header:
+            fits_f[0].header['DATASEC'] = '[1:{0:d},1:{0:d}]'.format(imgsize)
         
         # Store weighted MJDs in header
         fits_f[0].header.set(
