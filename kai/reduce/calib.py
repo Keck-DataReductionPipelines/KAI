@@ -199,7 +199,7 @@ def makeflat(onFiles, offFiles, output,
         # Dark subtraction
         if dark_frame is not None:
             cur_flat = fits.open(lampson_copied[i], mode='update', ignore_missing_end=True, output_verify='ignore')
-            cur_flat[0].data -= dark_data
+            cur_flat[0].data = cur_flat[0].data.astype("float64") - dark_data
             cur_flat.flush(output_verify='ignore')
             cur_flat.close(output_verify='ignore')
 
@@ -213,7 +213,7 @@ def makeflat(onFiles, offFiles, output,
         # Dark subtraction
         if dark_frame is not None:
             cur_flat = fits.open(lampsoff_copied[i], mode='update', ignore_missing_end=True, output_verify='ignore')
-            cur_flat[0].data -= dark_data
+            cur_flat[0].data = cur_flat[0].data.astype("float64") - dark_data
             cur_flat.flush(output_verify='ignore')
             cur_flat.close(output_verify='ignore')
 
@@ -253,7 +253,7 @@ def makeflat(onFiles, offFiles, output,
 
         # Subtract the off-lamps (if we have them)
         if off_med is not None:
-            img -= off_med
+            img = img.astype("float64") - off_med.astype("float64")
 
         # Normalize before combining if specified.
         if normalizeFirst:
@@ -285,7 +285,7 @@ def makeflat(onFiles, offFiles, output,
     on_med /= norm_value
 
     # Save to an output file.
-    fits.writeto(_out, on_med, header=hdr)
+    fits.writeto(_out, on_med, header=hdr, overwrite=True)
 
     # Save some records of which files went into the stack.
     f_on = open(_onlis, 'w')

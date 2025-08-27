@@ -23,7 +23,7 @@ Installation instructions are below, while more detailed API documentation is av
 2. Clone this git repository. For example:
 
    ```bash
-   cd ~/software/KAI
+   cd ~/software/
    git clone git@github.com:Keck-DataReductionPipelines/KAI.git
    ```
 

@@ -340,7 +340,7 @@ def makesky_lp(files, nite, wave,
         img_stack = []
         hdr_stack = []
         for j in range(len(list)):
-            img, hdr = fits.getdata(list[j], header=True)
+            img, hdr = fits.getdata(list[j], header=True, ignore_missing_end = True)
             img_stack.append(img)
             hdr_stack.append(hdr)
         img_stack = np.array(img_stack)

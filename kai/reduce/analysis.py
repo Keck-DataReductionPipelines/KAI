@@ -107,7 +107,7 @@ class Analysis(object):
         # Keep track of the instrument these images are from.
         # We need this to get things like plate scale, etc.
         self.instrument = instrument
-        if 'lp' in filt:
+        if 'lp' in filt or 'ms' in filt:
             self.calStars = [
                 'S3-22', 'S1-23', 'S1-3', 'S1-14', 'S1-1', 'S1-12', 'S1-13',
                 'S1-15'

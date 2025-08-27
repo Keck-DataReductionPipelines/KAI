@@ -1,6 +1,7 @@
 name: astro_kai
 channels:
   - defaults
+  - conda-forge
 dependencies:
   - python=3.11
   - numpy=1.24.3

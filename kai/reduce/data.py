@@ -3028,7 +3028,7 @@ class Sky(object):
             diff = [abs(skyAngle - skyBest) for skyAngle in self.skyAng]
             skyidx = np.argmin(diff)
 
-        sky = self.skyDir + self.skies[skyidx]
+        sky = self.skyDir + self.skies[skyidx] + ".fits"
 
         print(('Science = ', _n))
         print(('Sky image = ', sky))
