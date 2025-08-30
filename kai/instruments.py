@@ -8,6 +8,7 @@ from astropy.io.fits.hdu.image import _ImageBaseHDU
 from astropy.time import Time
 from astropy.coordinates import SkyCoord
 import astropy.units as u
+import logging
 
 module_dir = os.path.dirname(__file__)
 
@@ -422,7 +423,10 @@ class OSIRIS(Instrument):
         """
         Flip images (as they come from the detector flipped) and
         subtract reference pixels.
+        Adds WCS and catches issues where the PA_IMAG output is not reported correctly.
         """
+        from kai.reduce import kai_util
+        
         for ff in range(len(files)):
             old_file = files[ff]
             new_file = files[ff].replace('.fits', '_flip.fits')
@@ -449,6 +453,16 @@ class OSIRIS(Instrument):
             # Need to modify PA_IMAG to account for the flip. Added 2023-10-30 by J. Lu.
             pa_orig = hdu_list[0].header['PA_IMAG']
             hdu_list[0].header['PA_IMAG'] = 360.0 - pa_orig
+
+            pa_header = hdu_list[0].header['PA_IMAG']
+            calculated_pa = 360 - (hdu_list[0].header['ROTPOSN'] - hdu_list[0].header['INSTANGL'] + 42.5)
+            if pa_header != calculated_pa:
+                logging.warning('PA_IMAG does not match calculation via ROTPOSN and INSTANGL for {}. Changing from {} -> {}'.format(files[ff], pa_header, calculated_pa))
+                hdu_list[0].header['PA_IMAG'] = calculated_pa
+
+            hdu_list[0].header['PA_IMAG'] = hdu_list[0].header['PA_IMAG'] % 360
+
+            hdu_list[0].header = kai_util.add_wcs_keywords(hdu_list[0].header, self)
 
             hdu_list.writeto(new_file, overwrite=True)
 

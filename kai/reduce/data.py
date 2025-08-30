@@ -789,6 +789,7 @@ def combine(files, wave, outroot, field=None, outSuffix=None,
     # Keep record of files that went into this combine
     combine_lis(_out + '.lis', cleanDir, roots, diffPA)
 
+
     # Register images to get shifts.
     shiftsTab = combine_register(_out, refImage, diffPA, instrument=instrument)
     #shiftsTab = Table.read('../combo/mag19apr21os_ob140613_kp.shifts', format = 'ascii')

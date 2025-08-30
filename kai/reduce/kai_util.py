@@ -613,4 +613,86 @@ def restackCoadd(clean_directory, raw_directory, raw_unp_directory, save_diagnos
 
         
     f.close()
+
+def add_wcs_keywords(header, instrument):
+    """
+    Adds WCS keywords to file. 
+    If WCS exists, this overwrites it.
+
+    Parameters
+    ----------
+    header: fits header
+        Fits header of file to be updated
+
+    instrument: instrument object
+        Instrument obejct from kai.instruments
+    """
+    ra, dec = instrument.get_radec(header)
+    rotposn = instrument.get_position_angle(header)
+    pixel_scale = instrument.get_plate_scale(header)
+    naxis1 = header['NAXIS1']
+    naxis2 = header['NAXIS2']
+
+    crpix1 = naxis1/2 + 0.5
+    crpix2 = naxis2/2 + 0.5
+
+    #pixel scale to degrees
+    cdelt = pixel_scale/3600
+
+    # Calculate CD matrix for rotation
+    rot_rad = np.radians(rotposn)
+    cos_rot = np.cos(rot_rad)
+    sin_rot = np.sin(rot_rad)
     
+    cd1_1 = -cdelt * cos_rot  # Negative for standard orientation
+    cd1_2 = cdelt * sin_rot
+    cd2_1 = cdelt * sin_rot
+    cd2_2 = cdelt * cos_rot
+    
+    # Add/update WCS keywords
+    wcs_keywords = {
+        # Coordinate system
+        'CTYPE1': 'RA---TAN',
+        'CTYPE2': 'DEC--TAN',
+        
+        # Reference coordinates
+        'CRVAL1': ra,
+        'CRVAL2': dec,
+        
+        # Reference pixels
+        'CRPIX1': crpix1,
+        'CRPIX2': crpix2,
+        
+        # CD matrix (includes scale and rotation)
+        'CD1_1': cd1_1,
+        'CD1_2': cd1_2,
+        'CD2_1': cd2_1,
+        'CD2_2': cd2_2,
+        
+        # Coordinate system
+        'RADESYS': 'ICRS',
+        'EQUINOX': 2000.0,
+        
+        # WCS comments
+        'CUNIT1': 'deg',
+        'CUNIT2': 'deg'
+    }
+
+    print('Adding WCS to ', header['DATAFILE'])
+    for key, value in wcs_keywords.items():
+        header[key] = value
+        print(f"  {key} = {value}")
+    
+    # Add comments for clarity
+    header.comments['CTYPE1'] = 'Coordinate type for axis 1'
+    header.comments['CTYPE2'] = 'Coordinate type for axis 2'
+    header.comments['CRVAL1'] = 'Reference RA in decimal degrees'
+    header.comments['CRVAL2'] = 'Reference Dec in decimal degrees'
+    header.comments['CRPIX1'] = 'Reference pixel for axis 1'
+    header.comments['CRPIX2'] = 'Reference pixel for axis 2'
+    header.comments['CD1_1'] = 'Transformation matrix element'
+    header.comments['CD1_2'] = 'Transformation matrix element'
+    header.comments['CD2_1'] = 'Transformation matrix element'
+    header.comments['CD2_2'] = 'Transformation matrix element'
+
+    return header
