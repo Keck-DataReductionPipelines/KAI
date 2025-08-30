@@ -468,7 +468,8 @@ this observation in microns.</p>
 <dt class="sig sig-object py" id="kai.instruments.OSIRIS.flip_images">
 <span class="sig-name descname"><span class="pre">flip_images</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">files</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rootDir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/kai/instruments.html#OSIRIS.flip_images"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.instruments.OSIRIS.flip_images" title="Link to this definition"></a></dt>
 <dd><p>Flip images (as they come from the detector flipped) and
-subtract reference pixels.</p>
+subtract reference pixels.
+Adds WCS and catches issues where the PA_IMAG output is not reported correctly.</p>
 </dd></dl>
 
 <dl class="py method">

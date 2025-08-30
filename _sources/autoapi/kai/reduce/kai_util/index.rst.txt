@@ -33,6 +33,7 @@ Functions
    kai.reduce.kai_util.calcOverhead
    kai.reduce.kai_util.plotKeyword
    kai.reduce.kai_util.restackCoadd
+   kai.reduce.kai_util.add_wcs_keywords
 
 
 Module Contents
@@ -263,6 +264,37 @@ Module Contents
    @param save_coadds: If True, saves individual coadd FITS frames.
    @type save_coadds: bool
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: add_wcs_keywords(header, instrument)
+
+   
+   Adds WCS keywords to file. 
+   If WCS exists, this overwrites it.
+
+
+   :Parameters:
+
+       **header: fits header**
+           Fits header of file to be updated
+
+       **instrument: instrument object**
+           Instrument obejct from kai.instruments
 
 
 

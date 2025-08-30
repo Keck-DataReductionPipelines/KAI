@@ -80,6 +80,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">astropy.time</span><span class="w"> </span><span class="kn">import</span> <span class="n">Time</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">astropy.coordinates</span><span class="w"> </span><span class="kn">import</span> <span class="n">SkyCoord</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">astropy.units</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">u</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
 
 <div class="viewcode-block" id="module_dir">
 <a class="viewcode-back" href="../../autoapi/kai/instruments/index.html#kai.instruments.module_dir">[docs]</a>
@@ -681,7 +682,10 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Flip images (as they come from the detector flipped) and</span>
 <span class="sd">        subtract reference pixels.</span>
+<span class="sd">        Adds WCS and catches issues where the PA_IMAG output is not reported correctly.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">kai.reduce</span><span class="w"> </span><span class="kn">import</span> <span class="n">kai_util</span>
+        
         <span class="k">for</span> <span class="n">ff</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">files</span><span class="p">)):</span>
             <span class="n">old_file</span> <span class="o">=</span> <span class="n">files</span><span class="p">[</span><span class="n">ff</span><span class="p">]</span>
             <span class="n">new_file</span> <span class="o">=</span> <span class="n">files</span><span class="p">[</span><span class="n">ff</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.fits&#39;</span><span class="p">,</span> <span class="s1">&#39;_flip.fits&#39;</span><span class="p">)</span>
@@ -708,6 +712,16 @@
             <span class="c1"># Need to modify PA_IMAG to account for the flip. Added 2023-10-30 by J. Lu.</span>
             <span class="n">pa_orig</span> <span class="o">=</span> <span class="n">hdu_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;PA_IMAG&#39;</span><span class="p">]</span>
             <span class="n">hdu_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;PA_IMAG&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">360.0</span> <span class="o">-</span> <span class="n">pa_orig</span>
+
+            <span class="n">pa_header</span> <span class="o">=</span> <span class="n">hdu_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;PA_IMAG&#39;</span><span class="p">]</span>
+            <span class="n">calculated_pa</span> <span class="o">=</span> <span class="mi">360</span> <span class="o">-</span> <span class="p">(</span><span class="n">hdu_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;ROTPOSN&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">hdu_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;INSTANGL&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="mf">42.5</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">pa_header</span> <span class="o">!=</span> <span class="n">calculated_pa</span><span class="p">:</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;PA_IMAG does not match calculation via ROTPOSN and INSTANGL for </span><span class="si">{}</span><span class="s1">. Changing from </span><span class="si">{}</span><span class="s1"> -&gt; </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">files</span><span class="p">[</span><span class="n">ff</span><span class="p">],</span> <span class="n">pa_header</span><span class="p">,</span> <span class="n">calculated_pa</span><span class="p">))</span>
+                <span class="n">hdu_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;PA_IMAG&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">calculated_pa</span>
+
+            <span class="n">hdu_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;PA_IMAG&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">hdu_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;PA_IMAG&#39;</span><span class="p">]</span> <span class="o">%</span> <span class="mi">360</span>
+
+            <span class="n">hdu_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span> <span class="o">=</span> <span class="n">kai_util</span><span class="o">.</span><span class="n">add_wcs_keywords</span><span class="p">(</span><span class="n">hdu_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
 
             <span class="n">hdu_list</span><span class="o">.</span><span class="n">writeto</span><span class="p">(</span><span class="n">new_file</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 

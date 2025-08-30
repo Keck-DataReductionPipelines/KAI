@@ -736,7 +736,92 @@
         
     <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
+
+<div class="viewcode-block" id="add_wcs_keywords">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/kai_util/index.html#kai.reduce.kai_util.add_wcs_keywords">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_wcs_keywords</span><span class="p">(</span><span class="n">header</span><span class="p">,</span> <span class="n">instrument</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Adds WCS keywords to file. </span>
+<span class="sd">    If WCS exists, this overwrites it.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    header: fits header</span>
+<span class="sd">        Fits header of file to be updated</span>
+
+<span class="sd">    instrument: instrument object</span>
+<span class="sd">        Instrument obejct from kai.instruments</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ra</span><span class="p">,</span> <span class="n">dec</span> <span class="o">=</span> <span class="n">instrument</span><span class="o">.</span><span class="n">get_radec</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
+    <span class="n">rotposn</span> <span class="o">=</span> <span class="n">instrument</span><span class="o">.</span><span class="n">get_position_angle</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
+    <span class="n">pixel_scale</span> <span class="o">=</span> <span class="n">instrument</span><span class="o">.</span><span class="n">get_plate_scale</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
+    <span class="n">naxis1</span> <span class="o">=</span> <span class="n">header</span><span class="p">[</span><span class="s1">&#39;NAXIS1&#39;</span><span class="p">]</span>
+    <span class="n">naxis2</span> <span class="o">=</span> <span class="n">header</span><span class="p">[</span><span class="s1">&#39;NAXIS2&#39;</span><span class="p">]</span>
+
+    <span class="n">crpix1</span> <span class="o">=</span> <span class="n">naxis1</span><span class="o">/</span><span class="mi">2</span> <span class="o">+</span> <span class="mf">0.5</span>
+    <span class="n">crpix2</span> <span class="o">=</span> <span class="n">naxis2</span><span class="o">/</span><span class="mi">2</span> <span class="o">+</span> <span class="mf">0.5</span>
+
+    <span class="c1">#pixel scale to degrees</span>
+    <span class="n">cdelt</span> <span class="o">=</span> <span class="n">pixel_scale</span><span class="o">/</span><span class="mi">3600</span>
+
+    <span class="c1"># Calculate CD matrix for rotation</span>
+    <span class="n">rot_rad</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">rotposn</span><span class="p">)</span>
+    <span class="n">cos_rot</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">rot_rad</span><span class="p">)</span>
+    <span class="n">sin_rot</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">rot_rad</span><span class="p">)</span>
     
+    <span class="n">cd1_1</span> <span class="o">=</span> <span class="o">-</span><span class="n">cdelt</span> <span class="o">*</span> <span class="n">cos_rot</span>  <span class="c1"># Negative for standard orientation</span>
+    <span class="n">cd1_2</span> <span class="o">=</span> <span class="n">cdelt</span> <span class="o">*</span> <span class="n">sin_rot</span>
+    <span class="n">cd2_1</span> <span class="o">=</span> <span class="n">cdelt</span> <span class="o">*</span> <span class="n">sin_rot</span>
+    <span class="n">cd2_2</span> <span class="o">=</span> <span class="n">cdelt</span> <span class="o">*</span> <span class="n">cos_rot</span>
+    
+    <span class="c1"># Add/update WCS keywords</span>
+    <span class="n">wcs_keywords</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="c1"># Coordinate system</span>
+        <span class="s1">&#39;CTYPE1&#39;</span><span class="p">:</span> <span class="s1">&#39;RA---TAN&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;CTYPE2&#39;</span><span class="p">:</span> <span class="s1">&#39;DEC--TAN&#39;</span><span class="p">,</span>
+        
+        <span class="c1"># Reference coordinates</span>
+        <span class="s1">&#39;CRVAL1&#39;</span><span class="p">:</span> <span class="n">ra</span><span class="p">,</span>
+        <span class="s1">&#39;CRVAL2&#39;</span><span class="p">:</span> <span class="n">dec</span><span class="p">,</span>
+        
+        <span class="c1"># Reference pixels</span>
+        <span class="s1">&#39;CRPIX1&#39;</span><span class="p">:</span> <span class="n">crpix1</span><span class="p">,</span>
+        <span class="s1">&#39;CRPIX2&#39;</span><span class="p">:</span> <span class="n">crpix2</span><span class="p">,</span>
+        
+        <span class="c1"># CD matrix (includes scale and rotation)</span>
+        <span class="s1">&#39;CD1_1&#39;</span><span class="p">:</span> <span class="n">cd1_1</span><span class="p">,</span>
+        <span class="s1">&#39;CD1_2&#39;</span><span class="p">:</span> <span class="n">cd1_2</span><span class="p">,</span>
+        <span class="s1">&#39;CD2_1&#39;</span><span class="p">:</span> <span class="n">cd2_1</span><span class="p">,</span>
+        <span class="s1">&#39;CD2_2&#39;</span><span class="p">:</span> <span class="n">cd2_2</span><span class="p">,</span>
+        
+        <span class="c1"># Coordinate system</span>
+        <span class="s1">&#39;RADESYS&#39;</span><span class="p">:</span> <span class="s1">&#39;ICRS&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;EQUINOX&#39;</span><span class="p">:</span> <span class="mf">2000.0</span><span class="p">,</span>
+        
+        <span class="c1"># WCS comments</span>
+        <span class="s1">&#39;CUNIT1&#39;</span><span class="p">:</span> <span class="s1">&#39;deg&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;CUNIT2&#39;</span><span class="p">:</span> <span class="s1">&#39;deg&#39;</span>
+    <span class="p">}</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Adding WCS to &#39;</span><span class="p">,</span> <span class="n">header</span><span class="p">[</span><span class="s1">&#39;DATAFILE&#39;</span><span class="p">])</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">wcs_keywords</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">header</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    
+    <span class="c1"># Add comments for clarity</span>
+    <span class="n">header</span><span class="o">.</span><span class="n">comments</span><span class="p">[</span><span class="s1">&#39;CTYPE1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Coordinate type for axis 1&#39;</span>
+    <span class="n">header</span><span class="o">.</span><span class="n">comments</span><span class="p">[</span><span class="s1">&#39;CTYPE2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Coordinate type for axis 2&#39;</span>
+    <span class="n">header</span><span class="o">.</span><span class="n">comments</span><span class="p">[</span><span class="s1">&#39;CRVAL1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Reference RA in decimal degrees&#39;</span>
+    <span class="n">header</span><span class="o">.</span><span class="n">comments</span><span class="p">[</span><span class="s1">&#39;CRVAL2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Reference Dec in decimal degrees&#39;</span>
+    <span class="n">header</span><span class="o">.</span><span class="n">comments</span><span class="p">[</span><span class="s1">&#39;CRPIX1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Reference pixel for axis 1&#39;</span>
+    <span class="n">header</span><span class="o">.</span><span class="n">comments</span><span class="p">[</span><span class="s1">&#39;CRPIX2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Reference pixel for axis 2&#39;</span>
+    <span class="n">header</span><span class="o">.</span><span class="n">comments</span><span class="p">[</span><span class="s1">&#39;CD1_1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Transformation matrix element&#39;</span>
+    <span class="n">header</span><span class="o">.</span><span class="n">comments</span><span class="p">[</span><span class="s1">&#39;CD1_2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Transformation matrix element&#39;</span>
+    <span class="n">header</span><span class="o">.</span><span class="n">comments</span><span class="p">[</span><span class="s1">&#39;CD2_1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Transformation matrix element&#39;</span>
+    <span class="n">header</span><span class="o">.</span><span class="n">comments</span><span class="p">[</span><span class="s1">&#39;CD2_2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Transformation matrix element&#39;</span>
+
+    <span class="k">return</span> <span class="n">header</span></div>
+
 </pre></div>
 
            </div>

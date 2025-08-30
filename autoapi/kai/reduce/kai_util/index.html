@@ -160,6 +160,9 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.kai_util.restackCoadd" title="kai.reduce.kai_util.restackCoadd"><code class="xref py py-obj docutils literal notranslate"><span class="pre">restackCoadd</span></code></a>(clean_directory, raw_directory, ...[, ...])</p></td>
 <td><p>Process unprocessed FITS frames and coadds to align star positions, stack them,</p></td>
 </tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.kai_util.add_wcs_keywords" title="kai.reduce.kai_util.add_wcs_keywords"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_wcs_keywords</span></code></a>(header, instrument)</p></td>
+<td><p>Adds WCS keywords to file.</p></td>
+</tr>
 </tbody>
 </table>
 </section>
@@ -298,6 +301,23 @@ and optionally save diagnostics and intermediate outputs. This stacks to the fir
 &#64;type save_diagnostics: bool
 &#64;param save_coadds: If True, saves individual coadd FITS frames.
 &#64;type save_coadds: bool</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.reduce.kai_util.add_wcs_keywords">
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.kai_util.</span></span><span class="sig-name descname"><span class="pre">add_wcs_keywords</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">header</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instrument</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/kai_util.html#add_wcs_keywords"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.kai_util.add_wcs_keywords" title="Link to this definition"></a></dt>
+<dd><p>Adds WCS keywords to file.
+If WCS exists, this overwrites it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>header: fits header</strong></dt><dd><p>Fits header of file to be updated</p>
+</dd>
+<dt><strong>instrument: instrument object</strong></dt><dd><p>Instrument obejct from kai.instruments</p>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 </section>

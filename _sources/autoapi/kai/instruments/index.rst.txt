@@ -611,6 +611,7 @@ Module Contents
       
       Flip images (as they come from the detector flipped) and
       subtract reference pixels.
+      Adds WCS and catches issues where the PA_IMAG output is not reported correctly.
 
 
 
