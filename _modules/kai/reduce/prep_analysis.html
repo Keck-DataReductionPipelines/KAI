@@ -483,7 +483,8 @@
 
 <div class="viewcode-block" id="plot_starlist_on_image_pixel">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/prep_analysis/index.html#kai.reduce.prep_analysis.plot_starlist_on_image_pixel">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">plot_starlist_on_image_pixel</span><span class="p">(</span><span class="n">starList</span><span class="p">,</span> <span class="n">imagePath</span><span class="p">,</span> <span class="n">refStar</span><span class="p">,</span> <span class="n">scale</span> <span class="o">=</span> <span class="p">(</span><span class="mf">9.942</span><span class="o">/</span><span class="mi">1000</span><span class="p">),</span> <span class="n">magCut</span> <span class="o">=</span> <span class="mi">23</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">flip</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="s2">&quot;pixel&quot;</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_starlist_on_image_pixel</span><span class="p">(</span><span class="n">starList</span><span class="p">,</span> <span class="n">imagePath</span><span class="p">,</span> <span class="n">refStar</span><span class="p">,</span> <span class="n">scale</span> <span class="o">=</span> <span class="p">(</span><span class="mf">9.942</span><span class="o">/</span><span class="mi">1000</span><span class="p">),</span> <span class="n">magCut</span> <span class="o">=</span> <span class="mi">23</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">flip</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> 
+                                 <span class="n">axes</span> <span class="o">=</span> <span class="s2">&quot;pixel&quot;</span><span class="p">,</span> <span class="n">plot_circles</span><span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Plot a NIRC2 image and overlay a starlist. Input in pixel coordinates.</span>
 <span class="sd">    @params</span>
@@ -499,6 +500,7 @@
 <span class="sd">    verbose - if True, prints the astropy table inputted. Defaults to true.</span>
 <span class="sd">    flip - if True, flips image in x (helps in case image is backwards).</span>
 <span class="sd">    axes - determines units on the axes of plot (pixel or arcsec). Defaults to pixel.</span>
+<span class="sd">    plot_circles - if True, plots circles around each star. Defaults to False.</span>
 <span class="sd">    </span>
 <span class="sd">    Ensure that the image passed in is at a Position Angle of 0.</span>
 <span class="sd">    </span>
@@ -569,6 +571,8 @@
 
     <span class="c1"># Scatter the sources in starlist.</span>
     <span class="n">sc</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">xCoordList</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">yCoordList</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">c</span> <span class="o">=</span> <span class="n">mList</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">s</span> <span class="o">=</span> <span class="mi">300</span><span class="p">,</span> <span class="n">linewidth</span> <span class="o">=</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">plot_circles</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">xCoordList</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">yCoordList</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">s</span> <span class="o">=</span> <span class="mi">300</span><span class="p">,</span> <span class="n">linewidth</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">marker</span> <span class="o">=</span> <span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">fc</span> <span class="o">=</span> <span class="s1">&#39;none&#39;</span><span class="p">,</span> <span class="n">ec</span> <span class="o">=</span> <span class="s1">&#39;black&#39;</span><span class="p">)</span>
     <span class="n">sc</span><span class="o">.</span><span class="n">set_facecolor</span><span class="p">(</span><span class="s1">&#39;none&#39;</span><span class="p">)</span>
     
     <span class="c1"># Label the sources.</span>

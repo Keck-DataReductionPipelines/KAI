@@ -401,7 +401,7 @@ Module Contents
    ..
        !! processed by numpydoc !!
 
-.. py:function:: plot_starlist_on_image_pixel(starList, imagePath, refStar, scale=9.942 / 1000, magCut=23, label=True, verbose=True, flip=False, axes='pixel')
+.. py:function:: plot_starlist_on_image_pixel(starList, imagePath, refStar, scale=9.942 / 1000, magCut=23, label=True, verbose=True, flip=False, axes='pixel', plot_circles=False)
 
    
    Plot a NIRC2 image and overlay a starlist. Input in pixel coordinates.
@@ -418,6 +418,7 @@ Module Contents
    verbose - if True, prints the astropy table inputted. Defaults to true.
    flip - if True, flips image in x (helps in case image is backwards).
    axes - determines units on the axes of plot (pixel or arcsec). Defaults to pixel.
+   plot_circles - if True, plots circles around each star. Defaults to False.
 
    Ensure that the image passed in is at a Position Angle of 0.
 
