@@ -229,8 +229,19 @@ class OSIRIS(Instrument):
         self.bad_pixel_mask = 'osiris_img_mask.fits'
 
         self.distCoef = ''
-        self.distXgeoim = module_dir + '/reduce/distortion/OSIRIS_im_x_2021.fits'
-        self.distYgeoim = module_dir + '/reduce/distortion/OSIRIS_im_y_2021.fits'
+        date_float = float(date[0:4])
+        if (date_float <= 2020):
+            self.distXgeoim = module_dir + '/reduce/distortion/OSIRIS_im_x_2020.fits'
+            self.distYgeoim = module_dir + '/reduce/distortion/OSIRIS_im_y_2020.fits'
+        if (date_float > 2020) & (date_float <= 2022):
+            self.distXgeoim = module_dir + '/reduce/distortion/OSIRIS_im_x_2021.fits'
+            self.distYgeoim = module_dir + '/reduce/distortion/OSIRIS_im_y_2021.fits'
+        if (date_float > 2022) & (date_float <= 2023):
+            self.distXgeoim = module_dir + '/reduce/distortion/OSIRIS_im_x_pcu_20230413.fits'
+            self.distYgeoim = module_dir + '/reduce/distortion/OSIRIS_im_y_pcu_20230413.fits'
+        if (date_float > 2023):
+            self.distXgeoim = module_dir + '/reduce/distortion/OSIRIS_im_x_pcu_20240804.fits'
+            self.distYgeoim = module_dir + '/reduce/distortion/OSIRIS_im_y_pcu_20240804.fits'
 
         self.telescope = 'Keck'
         self.telescope_diam = 10.5 # telescope diameter in meters
@@ -397,12 +408,21 @@ class OSIRIS(Instrument):
             Date in string format such as '2015-10-02'.
         """
         date = hdr['DATE-OBS']
-        if (float(date[0:4]+date[5:7]+date[8:10]) < 20201116):
+        date_float = float(date[0:4])
+        date_float = float(date[0:4] + date[5:7] + date[8:10]
+        if (date_float < 20201116):
             self.distXgeoim = module_dir + '/reduce/distortion/OSIRIS_im_x_2020.fits'
             self.distYgeoim = module_dir + '/reduce/distortion/OSIRIS_im_y_2020.fits'
-        elif (float(date[0:4]+date[5:7]+date[8:10]) >= 20201116):
+        if (date_float > 20201116) & (date_float <= 20220000):
             self.distXgeoim = module_dir + '/reduce/distortion/OSIRIS_im_x_2021.fits'
             self.distYgeoim = module_dir + '/reduce/distortion/OSIRIS_im_y_2021.fits'
+        if (date_float > 20220000) & (date_float <= 20230000):
+            self.distXgeoim = module_dir + '/reduce/distortion/OSIRIS_im_x_pcu_20230413.fits'
+            self.distYgeoim = module_dir + '/reduce/distortion/OSIRIS_im_y_pcu_20230413.fits'
+        if (date_float > 20230000):
+            self.distXgeoim = module_dir + '/reduce/distortion/OSIRIS_im_x_pcu_20240804.fits'
+            self.distYgeoim = module_dir + '/reduce/distortion/OSIRIS_im_y_pcu_20240804.fits'
+            
         return self.distXgeoim, self.distYgeoim
 
 
