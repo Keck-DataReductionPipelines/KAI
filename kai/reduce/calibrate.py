@@ -106,6 +106,8 @@ def main(argv=None):
     
     # Read in the photometric calibrators
     calibs = read_photo_calib_file(options)
+    if isinstance(calibs, type(None)):
+        raise Exception('photo.dat file failed to be read. See above printed statements')
     
     # Read in the starlist
     stars = input_data(options)
@@ -314,7 +316,6 @@ def read_photo_calib_file(options, verbose=False):
     # Read in the data portion of the file.
     #
     ##########
-    #pdb.set_trace()
     tab = Table.read(options.calib_file, format='ascii.commented_header', delimiter='\s', header_start=-1)
     
     name_col = tab['Star']
@@ -439,7 +440,7 @@ def read_photo_calib_file(options, verbose=False):
 
             if options.verbose:
                 print( 'Found calibrator: ', name_col[idx], ' ', calib_stars_search[calib_search_index] )
-    
+
     return calibs
     
 def input_data(options):

@@ -5,6 +5,10 @@ import collections
 from astropy.io import fits
 import pdb
 from astropy.io.fits.hdu.image import _ImageBaseHDU
+from astropy.time import Time
+from astropy.coordinates import SkyCoord
+import astropy.units as u
+import logging
 
 module_dir = os.path.dirname(__file__)
 
@@ -52,15 +56,29 @@ class Instrument(object):
     def get_align_type(self, errors=False):
         pass
 
-    def get_saturation_level(self):
+    def get_saturation_level(self, hdr):
         pass
     
-    def get_lin_corr_coeffs(self):
+    def get_linearity_correction_coeffs(self, hdr):
+        pass
+    
+    def get_radec(self, hdr):
+        pass
+    
+    def get_mjd(self, hdr):
+        pass
+
+    def get_reference_pixels(self, img):
         pass
 
     
 class NIRC2(Instrument):
     def __init__(self):
+        """
+        NIRC2 Instrument object. During initialization, the observation year
+        can be specified in order to help KAI account for NIRC2 instrument
+        upgrade(s).
+        """    
         self.name = 'NIRC2'
         
         # Define header keywords
@@ -74,7 +92,6 @@ class NIRC2(Instrument):
         self.hdr_keys['nfowler'] = 'MULTISAM'
         self.hdr_keys['camera'] = 'CAMNAME'
         self.hdr_keys['shutter'] = 'SHRNAME'
-        self.hdr_keys['mjd'] = 'MJD-OBS'
         self.hdr_keys['elevation'] = 'EL'
 
         self.bad_pixel_mask = 'nirc2mask.fits'
@@ -87,15 +104,18 @@ class NIRC2(Instrument):
         self.telescope_diam = 10.5 # telescope diameter in meters
 
         return
-    
-    def get_filter_name(self, hdr):
-        filter1 = hdr['fwiname']
-        filter2 = hdr['fwoname']
-        filt = filter1
-        if (filter1.startswith('PK')):
-            filt = filter2
 
-        return filt
+    def get_filter_name(self, hdr):
+        if 'fwiname' in hdr:
+            filter1 = hdr['fwiname']
+            filter2 = hdr['fwoname']
+            filt = filter1
+            if (filter1.startswith('PK')):
+                filt = filter2
+
+            return filt
+        else:
+            return 'None'
 
     def get_plate_scale(self, hdr):
         """
@@ -115,7 +135,12 @@ class NIRC2(Instrument):
         """
         Get the sky PA in degrees East of North. 
         """
-        return float(hdr['ROTPOSN']) - float(hdr['INSTANGL'])
+        # This should be set by rot_img if specified
+        if 'PA' in hdr.keys():
+            pa = float(hdr['PA'])
+        else:
+            pa = float(hdr['ROTPOSN']) - float(hdr['INSTANGL'])
+        return pa
 
     def get_parallactic_angle(self,hdr):
         """
@@ -179,13 +204,18 @@ class NIRC2(Instrument):
 
         return atype
 
-    def get_saturation_level(self):
+    def get_saturation_level(self, hdr):
         """
         Set to the 95% saturation threshold in DN.
         """
-        return 12000.0
+        date = hdr['DATE-OBS']
+        
+        if (float(date[0:4]) >= 2024):
+            return 6000.0
+        else:
+            return 12000.0
     
-    def get_linearity_correction_coeffs(self):
+    def get_linearity_correction_coeffs(self, hdr):
         """
         Returns coefficients (`coeffs`, as defined below)
         in order to perform linearity correction
@@ -201,8 +231,53 @@ class NIRC2(Instrument):
         """
         
         lin_corr_coeffs = np.array([1.001, -6.9e-6, -0.70e-10])
-        return lin_corr_coeffs
         
+        # Post 2024 upgrade to NIRC2 electronics, gain is ~2x compared to the
+        # values calculated by Metchev+ (i.e. gain is now ~8 e-/DN rather ~4
+        # e-/DN, and so nonlinearity now starts at ~4000 DN/coadd rather than
+        # ~8000 DN/coadd)
+        # Therefore, x can be multiplied by 2 for the same coeffs,
+        # or equivalently: coeffs can be multiplied by 2^n: [2^0, 2^1, 2^2]
+        
+        date = hdr['DATE-OBS']
+        if (float(date[0:4]) >= 2024):
+            lin_corr_coeffs = np.array([
+                1.001 * 2**0,
+                -6.9e-6 * 2**1,
+                -0.70e-10 * 2**2,
+            ])
+        
+        return lin_corr_coeffs
+     
+    def get_radec(self, hdr):
+        """Return list of RA and Dec as decimal degrees"""
+        
+        date = hdr['DATE-OBS']
+        
+        if (float(date[0:4]) < 2024):
+            # Previous to 2023/2024 electronics upgrade, RA and DEC stored
+            # as decimal degrees
+            ra, dec = float(hdr['RA']), float(hdr['DEC'])
+        else:
+            # New coordinates are in HH:MM:SS.SSS or DD:MM:SS.SSS, so have
+            # to convert to decimals degrees
+            coords = SkyCoord(hdr['RA'], hdr['DEC'], unit=(u.hourangle, u.deg))
+            ra, dec = coords.ra.deg, coords.dec.deg
+            
+        return [ra, dec]
+    
+    def get_mjd(self, hdr):
+        """Return observation time in MJD"""
+        
+        date = hdr['DATE-OBS']
+        
+        if (float(date[0:4]) < 2024):
+            return float(hdr['MJD-OBS'])
+        else:
+            return float(hdr['MJD'])
+
+    def get_reference_pixels(self, img):
+        return np.full(img.shape, False)
 
 
 class OSIRIS(Instrument):
@@ -223,7 +298,7 @@ class OSIRIS(Instrument):
         self.hdr_keys['nfowler'] = 'numreads'
         self.hdr_keys['camera'] = 'instr'
         self.hdr_keys['shutter'] = 'ifilter'
-        self.hdr_keys['mjd'] = 'MJD-OBS'
+        #self.hdr_keys['mjd'] = 'MJD-OBS'
         self.hdr_keys['elevation'] = 'EL'
 
         self.bad_pixel_mask = 'osiris_img_mask.fits'
@@ -247,7 +322,7 @@ class OSIRIS(Instrument):
         self.telescope_diam = 10.5 # telescope diameter in meters
         
         return
-    
+
     def get_filter_name(self, hdr):
         f = hdr['ifilter']
         return f.split('-')[0]
@@ -282,12 +357,18 @@ class OSIRIS(Instrument):
         """
         Get the sky PA in degrees East of North. 
         """
+        
+        # This should be set by rot_img if specified
+        if 'PA' in hdr.keys():
+            pa = float(hdr['PA'])
+        else:
+            pa = hdr['PA_IMAG']
         # pa = float(hdr['ROTPOSN']) - self.get_instrument_angle(hdr)
-        pa = hdr['PA_IMAG']
+        
 
         #if in PCU mode, read the PCU rotation angle instead
         if 'PCUZ' in hdr.keys():
-            if hdr['PCUZ'] > 20:  
+            if float(hdr['PCUZ']) > 20.0:  
                 pcu_angle = float(hdr['PCUR'])
                 pinhole_angle = 65.703 #the angle at which the pihole mask is horizontal.
                 # rotator_angle = hdr['ROTPPOSN']
@@ -353,7 +434,10 @@ class OSIRIS(Instrument):
         """
         Flip images (as they come from the detector flipped) and
         subtract reference pixels.
+        Adds WCS and catches issues where the PA_IMAG output is not reported correctly.
         """
+        from kai.reduce import kai_util
+        
         for ff in range(len(files)):
             old_file = files[ff]
             new_file = files[ff].replace('.fits', '_flip.fits')
@@ -381,6 +465,16 @@ class OSIRIS(Instrument):
             pa_orig = hdu_list[0].header['PA_IMAG']
             hdu_list[0].header['PA_IMAG'] = 360.0 - pa_orig
 
+            pa_header = hdu_list[0].header['PA_IMAG']
+            calculated_pa = 360 - (hdu_list[0].header['ROTPOSN'] - hdu_list[0].header['INSTANGL'] + 42.5)
+            if pa_header != calculated_pa:
+                logging.warning('PA_IMAG does not match calculation via ROTPOSN and INSTANGL for {}. Changing from {} -> {}'.format(files[ff], pa_header, calculated_pa))
+                hdu_list[0].header['PA_IMAG'] = calculated_pa
+
+            hdu_list[0].header['PA_IMAG'] = hdu_list[0].header['PA_IMAG'] % 360
+
+            hdu_list[0].header = kai_util.add_wcs_keywords(hdu_list[0].header, self)
+
             hdu_list.writeto(new_file, overwrite=True)
 
             # Add header values. 
@@ -399,6 +493,15 @@ class OSIRIS(Instrument):
         new_img = img - np.array([ref_pix_median]).T
     
         return new_img
+
+    def get_reference_pixels(self, img):
+        border_mask = np.zeros_like(img, dtype=bool) 
+        border_mask[:4, :] = True
+        border_mask[-4:, :] = True
+        border_mask[:, :4] = True
+        border_mask[:, -4:] = True
+
+        return np.where(border_mask == True)
 
     def get_distortion_maps(self, hdr):
         """
@@ -434,11 +537,21 @@ class OSIRIS(Instrument):
 
         return atype
     
-    def get_saturation_level(self):
+    def get_saturation_level(self, hdr):
         """
         Set to the 95% saturation threshold in DN.
         """
         return 17000.0
+    
+    def get_radec(self, hdr):
+        """Return list of RA and Dec as decimal degrees"""
+        
+        return [float(hdr['RA']), float(hdr['DEC'])]
+    
+    def get_mjd(self, hdr):
+        """Return observation time in MJD"""
+        
+        return float(hdr['MJD-OBS'])
 
 ##################################################
 #

@@ -19,7 +19,6 @@
 ##################################################
 
 # Import python and iraf modules
-from pyraf import iraf as ir
 import numpy as np
 import os, sys
 import glob

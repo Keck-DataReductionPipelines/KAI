@@ -1,0 +1,23 @@
+commit 31681b57a42fa9e68dc40aae8ffb6282f63af0a3
+Author: Sean Granados <95511189+Upsilonlabsean@users.noreply.github.com>
+Date:   Wed Aug 27 11:55:54 2025 -0700
+
+    removed the string around version number to make setup.py work, fixed diffrac limited fits image for brckett gamma file given new keywords
+
+diff --git a/kai/data/diffrac_lim_img/Keck/br_gamma.fits b/kai/data/diffrac_lim_img/Keck/br_gamma.fits
+new file mode 100755
+index 0000000..c118e31
+Binary files /dev/null and b/kai/data/diffrac_lim_img/Keck/br_gamma.fits differ
+diff --git a/setup.cfg b/setup.cfg
+index 2c1bcff..d33ecaa 100644
+--- a/setup.cfg
++++ b/setup.cfg
+@@ -10,7 +10,7 @@ long_description = file: README.rst
+ long_description_content_type = text/x-rst
+ edit_on_github = False
+ github_project = Keck-DataReductionPipelines/KAI
+-version = '2.0.0'
++version = 2.0.0
+ 
+ [options]
+ zip_safe = False
