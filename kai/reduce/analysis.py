@@ -285,7 +285,7 @@ class Analysis(object):
         try:
             print('COMBO starfinder')
             print('Coo Star: ' + self.cooStar)
-             
+            
             os.chdir(self.dirComboStf)
             if self.type == 'ao':
                 # Write an IDL batch file for the main map and each submap
@@ -414,7 +414,7 @@ class Analysis(object):
                 #os.system(cmd)
                 subp = subprocess.Popen(cmd, shell=True, executable="/bin/tcsh")
                 tmp = subp.communicate()
-            
+             
             # Write data_sources file
             data_sources_file = open(self.dirComboStf + '/data_sources.txt', 'w')
             data_sources_file.write('---\n# Starfinder run on image files\n')
