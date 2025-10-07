@@ -58,6 +58,9 @@ class Instrument(object):
 
     def get_saturation_level(self, hdr):
         pass
+
+    def get_saturation_level_units(self):
+        pass
     
     def get_linearity_correction_coeffs(self, hdr):
         pass
@@ -214,6 +217,12 @@ class NIRC2(Instrument):
             return 6000.0
         else:
             return 12000.0
+
+    def get_saturation_level_units(self):
+        """
+        Units of saturation value are data number
+        """
+        return 'DN'
     
     def get_linearity_correction_coeffs(self, hdr):
         """
@@ -530,6 +539,12 @@ class OSIRIS(Instrument):
         Set to the 95% saturation threshold in DN.
         """
         return 17000.0
+
+    def get_saturation_level_units(self):
+        """
+        Units of saturation value are data number/coadd
+        """
+        return 'DN/coadd'
     
     def get_radec(self, hdr):
         """Return list of RA and Dec as decimal degrees"""

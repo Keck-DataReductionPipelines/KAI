@@ -370,8 +370,13 @@ def clean(files, nite, wave, refSrc, strSrc,
             nonlinSky = skyObj.getNonlinearCorrection(sky)
 
             coadds = fits.getval(_ss, instrument.hdr_keys['coadds'])
-            satLevel = (coadds*instrument.get_saturation_level(hdr)) - nonlinSky - bkg
-            open(_max, 'w').write(str(satLevel))
+            sat_level_units = instrument.get_saturation_level_units()
+            if sat_level_units == 'DN':
+                satLevel = (coadds*instrument.get_saturation_level(hdr)) - nonlinSky - bkg
+                open(_max, 'w').write(str(satLevel))
+            elif sat_level_units == 'DN/coadd':
+                satLevel = (instrument.get_saturation_level(hdr)) - nonlinSky - bkg
+                open(_max, 'w').write(str(satLevel))
 
             ### Rename and clean up files ###
             shutil.move(_bp, _cd)
