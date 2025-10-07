@@ -72,6 +72,9 @@ Module Contents
    .. py:method:: get_saturation_level(hdr)
 
 
+   .. py:method:: get_saturation_level_units()
+
+
    .. py:method:: get_linearity_correction_coeffs(hdr)
 
 
@@ -263,6 +266,30 @@ Module Contents
 
       
       Set to the 95% saturation threshold in DN.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+
+   .. py:method:: get_saturation_level_units()
+
+      
+      Units of saturation value are data number
 
 
 
@@ -669,6 +696,30 @@ Module Contents
 
       
       Set to the 95% saturation threshold in DN.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+
+   .. py:method:: get_saturation_level_units()
+
+      
+      Units of saturation value are data number/coadd
 
 
 
