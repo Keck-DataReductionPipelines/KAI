@@ -464,12 +464,27 @@ class OSIRIS(Instrument):
             hdu_list[0].header['PA_IMAG'] = 360.0 - pa_orig
 
             pa_header = hdu_list[0].header['PA_IMAG']
-            calculated_pa = 360 - (hdu_list[0].header['ROTPOSN'] - hdu_list[0].header['INSTANGL'] + 42.5)
-            if pa_header != calculated_pa:
-                logging.warning('PA_IMAG does not match calculation via ROTPOSN and INSTANGL for {}. Changing from {} -> {}'.format(files[ff], pa_header, calculated_pa))
-                hdu_list[0].header['PA_IMAG'] = calculated_pa
+            if year < 2022:
+                rot_corr = 42.5
+            elif year > 2022:
+                rot_corr = 43.4
+            elif year == 2022:
+                if month < 5:
+                    rot_corr = 42.5
+                elif month > 5:
+                    rot_corr = 43.4
+                elif month == 5:
+                    rot_corr = 'unknown'
+                    
+            if rot_corr == 'unknown':
+                logging.warning('In month with unknown rotation correction. Will default to PA_IMAG')
+            else:
+                calculated_pa = 360 - (hdu_list[0].header['ROTPOSN'] - hdu_list[0].header['INSTANGL'] + rot_corr)
+                if pa_header != calculated_pa:
+                    logging.warning('PA_IMAG does not match calculation via ROTPOSN and INSTANGL for {}. Changing from {} -> {}'.format(files[ff], pa_header, calculated_pa))
+                    hdu_list[0].header['PA_IMAG'] = calculated_pa
 
-            hdu_list[0].header['PA_IMAG'] = hdu_list[0].header['PA_IMAG'] % 360
+                hdu_list[0].header['PA_IMAG'] = hdu_list[0].header['PA_IMAG'] % 360
 
             hdu_list[0].header = kai_util.add_wcs_keywords(hdu_list[0].header, self)
 
