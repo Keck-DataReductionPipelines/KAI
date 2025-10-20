@@ -689,8 +689,8 @@ class Analysis(object):
                 calibrate.main(args)
 
             # Checks that calibrateCombo() didn't fail
-            zer_file = pd.read_csv(fileSub[:-8] + '_stf_cal.zer', delim_whitespace = True, header = 3)
-            if np.isnan(zer_file['#ZeroPoint'][0]) == True:
+            zp_val = np.loadtxt(fileSub[:-8] + '_stf_cal.zer', comments="#", usecols=(0,))
+            if np.isnan(zp_val) == True:
                 raise Exception('calibrateCombo() likely failed and produced a nan zeropoint, see above printouts')
                 
             if self.type == 'ao':
