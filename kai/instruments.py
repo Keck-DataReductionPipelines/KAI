@@ -366,12 +366,23 @@ class OSIRIS(Instrument):
 
         #if in PCU mode, read the PCU rotation angle instead
         if 'PCUZ' in hdr.keys():
-            if float(hdr['PCUZ']) > 20.0:  
-                pcu_angle = float(hdr['PCUR'])
-                pinhole_angle = 65.703 #the angle at which the pihole mask is horizontal.
-                # rotator_angle = hdr['ROTPPOSN']
-                # default_rotator_angle = 90
-                pa = pcu_angle - pinhole_angle       
+            if float(hdr['PCUZ']) > 20.0:  # keep this exact threshold check
+                pinhole_angle = 65.703  # angle at which the pinhole mask is horizontal
+         
+                # Try to read the PCU angle from (in order): PCUR, PCUPR
+                pcu_angle = None
+                for key in ('PCUR', 'PCUPR'):
+                    if key in hdr.keys() and hdr[key] not in (None, '', 'NaN'):
+                        try:
+                            pcu_angle = float(hdr[key])
+                            break
+                        except (ValueError, TypeError):
+                            pass
+         
+                # Fallback: if not found or not parseable, default to pinhole_angle
+                if pcu_angle is None:
+                    pcu_angle = pinhole_angle
+                pa = pcu_angle - pinhole_angle
         return pa
     
     def get_instrument_angle(self, hdr):
