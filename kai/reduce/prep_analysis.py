@@ -351,8 +351,8 @@ def plot_starlist_on_image_arcsec(starList, imagePath, refCoo, scale = (9.942/10
     
     # Label the sources.
     if label:
-        for i, txt in enumerate(nameList[idx]):
-            plt.annotate(txt, (xCoordList[i], yCoordList[i] + 0.3))
+        for i, txt in enumerate(nameList[idx]):  
+            plt.annotate(txt, (xCoordList[idx][i], yCoordList[idx][i] + 0.3))
     
     # Add titles, etc.
     plt.colorbar(label='Starlist Magnitude (mag)')
@@ -463,9 +463,9 @@ def plot_starlist_on_image_pixel(starList, imagePath, refStar, scale = (9.942/10
     if label:
         for i, txt in enumerate(nameList[idx]):
             if axes == "pixel":
-                plt.annotate(txt, (xCoordList[i], yCoordList[i] + (0.3 / scale)))
+                plt.annotate(txt, (xCoordList[idx][i], yCoordList[idx][i] + (0.3 / scale)))
             elif axes == "arcsec":
-                plt.annotate(txt, (xCoordList[i], yCoordList[i] + 0.3))
+                plt.annotate(txt, (xCoordList[idx][i], yCoordList[idx][i] + 0.3))
             else:
                 raise ValueError("'axes' variable must be 'pixel' or 'arcsec'")
     
