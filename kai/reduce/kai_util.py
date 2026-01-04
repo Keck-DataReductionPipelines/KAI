@@ -18,6 +18,7 @@ from matplotlib.patches import Circle
 from photutils.centroids import centroid_com
 from astropy.nddata import Cutout2D
 import imageio
+from kai import instruments
 
 warnings.filterwarnings("ignore")
 
@@ -288,15 +289,25 @@ def xyarcsec2pix(xyarcsec, phi, scale):
     
     return [d_x, d_y]
 
-def rotate_coo(x, y, phi):
+def rotate_coo(x, y, phi, instrument=instruments.default_inst):
     """Rotate the coordinates in the *.coo files for data sets
     containing images at different PAs.
     """
     # Rotate around center of image, and keep origin at center
-    xin = 512.
-    yin = 512.
-    xout = 512.
-    yout = 512.
+    if instrument.name == 'NIRC2':
+        xin = 512.
+        yin = 512.
+        xout = 512.
+        yout = 512.
+        
+    elif instrument.name == 'OSIRIS':
+        xin = 1024.
+        yin = 1024.
+        xout = 1024.
+        yout = 1024.
+
+    else:
+        raise Exception('Inst not supported. Edit kai_util.rotate_coo to specify center of new instrument')
   
     cos = math.cos(math.radians(phi))
     sin = math.sin(math.radians(phi))
