@@ -758,8 +758,11 @@
             <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">source_clean_dir</span> <span class="o">+</span> <span class="s1">&#39;c&#39;</span> <span class="o">+</span> <span class="n">source_file_root</span> <span class="o">+</span> <span class="s1">&#39;.coo&#39;</span><span class="p">,</span>
                         <span class="n">dest_clean_dir</span> <span class="o">+</span> <span class="s1">&#39;c&#39;</span> <span class="o">+</span> <span class="n">dest_file_root</span> <span class="o">+</span> <span class="s1">&#39;.coo&#39;</span><span class="p">)</span>
             
-            <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">source_clean_dir</span> <span class="o">+</span> <span class="s1">&#39;c&#39;</span> <span class="o">+</span> <span class="n">source_file_root</span> <span class="o">+</span> <span class="s1">&#39;.rcoo&#39;</span><span class="p">,</span>
+            <span class="k">try</span><span class="p">:</span> 
+                <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">source_clean_dir</span> <span class="o">+</span> <span class="s1">&#39;c&#39;</span> <span class="o">+</span> <span class="n">source_file_root</span> <span class="o">+</span> <span class="s1">&#39;.rcoo&#39;</span><span class="p">,</span>
                         <span class="n">dest_clean_dir</span> <span class="o">+</span> <span class="s1">&#39;c&#39;</span> <span class="o">+</span> <span class="n">dest_file_root</span> <span class="o">+</span> <span class="s1">&#39;.rcoo&#39;</span><span class="p">)</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;No rcoo files to copy&#39;</span><span class="p">)</span>
             
             <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">source_clean_dir</span> <span class="o">+</span> <span class="s1">&#39;distort/cd&#39;</span> <span class="o">+</span> <span class="n">source_file_root</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">,</span>
                         <span class="n">dest_clean_dir</span> <span class="o">+</span> <span class="s1">&#39;distort/cd&#39;</span> <span class="o">+</span> <span class="n">dest_file_root</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">)</span>
@@ -879,7 +882,7 @@
 
     <span class="c1"># See if all images are at same PA, if not, rotate all to PA = 0</span>
     <span class="c1"># temporarily. This needs to be done to get correct shifts.</span>
-    <span class="n">diffPA</span> <span class="o">=</span> <span class="n">combine_rotation</span><span class="p">(</span><span class="n">cleanDir</span><span class="p">,</span> <span class="n">roots</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">instrument</span><span class="p">)</span>
+    <span class="n">diffPA</span><span class="p">,</span> <span class="n">phis</span> <span class="o">=</span> <span class="n">combine_rotation</span><span class="p">(</span><span class="n">cleanDir</span><span class="p">,</span> <span class="n">roots</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">instrument</span><span class="p">)</span>
 
     <span class="c1"># Make a table of coordinates for the reference source.</span>
     <span class="c1"># These serve as initial estimates for the shifts.</span>
@@ -897,7 +900,7 @@
     <span class="c1">#                  shiftsTab[&#39;col2&#39;][shiftsTab[&#39;col0&#39;] == &#39;ci190421_a015003_flip.fits&#39;]])</span>
 
     <span class="c1"># Determine the size of the output image from max shifts</span>
-    <span class="n">xysize</span> <span class="o">=</span> <span class="n">combine_size</span><span class="p">(</span><span class="n">shiftsTab</span><span class="p">,</span> <span class="n">refImage</span><span class="p">,</span> <span class="n">_out</span><span class="p">,</span> <span class="n">_sub</span><span class="p">,</span> <span class="n">submaps</span><span class="p">)</span>
+    <span class="n">xysize</span> <span class="o">=</span> <span class="n">combine_size</span><span class="p">(</span><span class="n">shiftsTab</span><span class="p">,</span> <span class="n">refImage</span><span class="p">,</span> <span class="n">_out</span><span class="p">,</span> <span class="n">_sub</span><span class="p">,</span> <span class="n">submaps</span><span class="p">,</span> <span class="n">phis</span><span class="p">)</span>
 
     <span class="c1">##########</span>
     <span class="c1"># Sort frames -- recall that submaps assume sorted by FWHM.</span>
@@ -918,11 +921,11 @@
 
     <span class="c1"># Remove *.lis_r file &amp; rotated rcoo files, if any - these</span>
     <span class="c1"># were just needed to get the proper shifts for xregister</span>
-    <span class="n">_lisr</span> <span class="o">=</span> <span class="n">_out</span> <span class="o">+</span> <span class="s1">&#39;.lis_r&#39;</span>
-    <span class="n">util</span><span class="o">.</span><span class="n">rmall</span><span class="p">([</span><span class="n">_lisr</span><span class="p">])</span>
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">allroots</span><span class="p">)):</span>
-        <span class="n">_rcoo</span> <span class="o">=</span> <span class="n">cleanDir</span> <span class="o">+</span> <span class="s1">&#39;c&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">allroots</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;.rcoo&#39;</span>
-        <span class="n">util</span><span class="o">.</span><span class="n">rmall</span><span class="p">([</span><span class="n">_rcoo</span><span class="p">])</span>
+    <span class="c1">#_lisr = _out + &#39;.lis_r&#39;</span>
+    <span class="c1">#util.rmall([_lisr])</span>
+    <span class="c1">#for i in range(len(allroots)):</span>
+    <span class="c1">#    _rcoo = cleanDir + &#39;c&#39; + str(allroots[i]) + &#39;.rcoo&#39;</span>
+    <span class="c1">#    util.rmall([_rcoo])</span>
     
     <span class="c1"># Change back to original directory</span>
     <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">redDir</span><span class="p">)</span></div>
@@ -1328,7 +1331,7 @@
                     <span class="n">wave</span><span class="p">,</span> <span class="n">diffPA</span><span class="p">,</span> <span class="n">fixDAR</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">use_koa_weather</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                     <span class="n">mask</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">,</span>
                    <span class="p">):</span>
-
+    
     <span class="n">_fits</span> <span class="o">=</span> <span class="n">outroot</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span>
     <span class="n">_tmpfits</span> <span class="o">=</span> <span class="n">outroot</span> <span class="o">+</span> <span class="s1">&#39;_tmp.fits&#39;</span>
     <span class="n">_wgt</span> <span class="o">=</span> <span class="n">outroot</span> <span class="o">+</span> <span class="s1">&#39;_sig.fits&#39;</span>
@@ -1365,7 +1368,6 @@
         <span class="c1"># Cleaned but distorted image</span>
         <span class="n">_cd</span> <span class="o">=</span> <span class="n">cleanDir</span> <span class="o">+</span> <span class="s1">&#39;distort/cd&#39;</span> <span class="o">+</span> <span class="n">roots</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span>
         <span class="n">_cdwt</span> <span class="o">=</span> <span class="n">cleanDir</span> <span class="o">+</span> <span class="s1">&#39;weight/cdwt&#39;</span> <span class="o">+</span> <span class="n">roots</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span>
-
 
         <span class="n">util</span><span class="o">.</span><span class="n">rmall</span><span class="p">([</span><span class="n">_cdwt</span><span class="p">])</span>
 
@@ -1438,15 +1440,56 @@
         <span class="c1"># We tell it the input its distorted/shfited and we want to undistort it</span>
         <span class="n">wcs_in</span> <span class="o">=</span> <span class="n">wcs</span><span class="o">.</span><span class="n">WCS</span><span class="p">(</span><span class="n">hdr_current_img</span><span class="p">)</span>
         <span class="n">wcs_out</span> <span class="o">=</span> <span class="n">wcs</span><span class="o">.</span><span class="n">WCS</span><span class="p">(</span><span class="n">hdr_current_img</span><span class="p">)</span>
-
-        <span class="n">wcs_in</span><span class="o">.</span><span class="n">wcs</span><span class="o">.</span><span class="n">crpix</span> <span class="o">=</span> <span class="p">[</span><span class="n">wcs_in</span><span class="o">.</span><span class="n">wcs</span><span class="o">.</span><span class="n">crpix</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">xsh</span><span class="p">,</span> <span class="n">wcs_in</span><span class="o">.</span><span class="n">wcs</span><span class="o">.</span><span class="n">crpix</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">ysh</span><span class="p">]</span>
-        <span class="n">f_dlog</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;- Shifting image. xshift = </span><span class="si">{0:8.2f}</span><span class="s1">, yshift = </span><span class="si">{1:8.2f}</span><span class="s1"> </span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">xsh</span><span class="p">,</span> <span class="n">ysh</span><span class="p">))</span>
-        <span class="c1"># shift so output image is in the center of the produce image</span>
-        <span class="n">wcs_in</span><span class="o">.</span><span class="n">wcs</span><span class="o">.</span><span class="n">crpix</span> <span class="o">=</span> <span class="p">[</span><span class="n">wcs_in</span><span class="o">.</span><span class="n">wcs</span><span class="o">.</span><span class="n">crpix</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="p">(</span><span class="n">imgsize</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">cdwt_img</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">wcs_in</span><span class="o">.</span><span class="n">wcs</span><span class="o">.</span><span class="n">crpix</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="p">(</span><span class="n">imgsize</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">cdwt_img</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span><span class="o">/</span><span class="mi">2</span><span class="p">]</span>
+        
 
         <span class="k">if</span> <span class="p">(</span><span class="n">diffPA</span> <span class="o">==</span> <span class="mi">1</span><span class="p">):</span>
             <span class="n">f_dlog</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;- Rotating image. phi = </span><span class="si">{}</span><span class="s1"> </span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">phi</span><span class="p">))</span>
             <span class="n">wcs_in</span><span class="o">.</span><span class="n">wcs</span><span class="o">.</span><span class="n">cd</span> <span class="o">=</span> <span class="n">cd_mat</span>
+            <span class="c1"># Calculate padding shifts</span>
+            <span class="n">pad_xsh</span> <span class="o">=</span> <span class="p">(</span><span class="n">imgsize</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">cdwt_img</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="mi">2</span>
+            <span class="n">pad_ysh</span> <span class="o">=</span> <span class="p">(</span><span class="n">imgsize</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">cdwt_img</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span><span class="o">/</span><span class="mi">2</span>
+    
+            <span class="c1"># Unrotate the rotated coos</span>
+            <span class="c1"># We&#39;ll later rotate them with the padding</span>
+            <span class="n">phi_rad</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="n">phi</span><span class="p">)</span>
+            <span class="n">unrotated_xsh</span> <span class="o">=</span> <span class="n">xsh</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="o">-</span><span class="n">phi_rad</span><span class="p">)</span> <span class="o">-</span> <span class="n">ysh</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="o">-</span><span class="n">phi_rad</span><span class="p">)</span>
+            <span class="n">unrotated_ysh</span> <span class="o">=</span> <span class="n">xsh</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="o">-</span><span class="n">phi_rad</span><span class="p">)</span> <span class="o">+</span> <span class="n">ysh</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="o">-</span><span class="n">phi_rad</span><span class="p">)</span>
+            
+            <span class="c1"># Combine star alignment shifts with padding shifts BEFORE rotating</span>
+            <span class="n">total_xsh</span> <span class="o">=</span> <span class="n">unrotated_xsh</span> <span class="o">+</span> <span class="n">pad_xsh</span>
+            <span class="n">total_ysh</span> <span class="o">=</span> <span class="n">unrotated_ysh</span> <span class="o">+</span> <span class="n">pad_ysh</span>
+            
+            <span class="c1"># Rotate the TOTAL shifts </span>
+            
+            <span class="n">xsh_rot</span> <span class="o">=</span> <span class="n">total_xsh</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">phi_rad</span><span class="p">)</span> <span class="o">-</span> <span class="n">total_ysh</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">phi_rad</span><span class="p">)</span>
+            <span class="n">ysh_rot</span> <span class="o">=</span> <span class="n">total_xsh</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">phi_rad</span><span class="p">)</span> <span class="o">+</span> <span class="n">total_ysh</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">phi_rad</span><span class="p">)</span>
+            
+            <span class="c1"># Original CRPIX</span>
+            <span class="n">x0</span><span class="p">,</span> <span class="n">y0</span> <span class="o">=</span> <span class="n">wcs_in</span><span class="o">.</span><span class="n">wcs</span><span class="o">.</span><span class="n">crpix</span>
+            
+            <span class="c1"># Apply the combined rotated shift</span>
+            <span class="n">x_shifted</span> <span class="o">=</span> <span class="n">x0</span> <span class="o">-</span> <span class="n">xsh_rot</span>
+            <span class="n">y_shifted</span> <span class="o">=</span> <span class="n">y0</span> <span class="o">-</span> <span class="n">ysh_rot</span>
+
+            <span class="n">f_dlog</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;- Shifting image. xshift = </span><span class="si">{0:8.2f}</span><span class="s1">, yshift = </span><span class="si">{1:8.2f}</span><span class="s1"> </span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">xsh_rot</span><span class="p">,</span> <span class="n">ysh_rot</span><span class="p">))</span>
+            
+            <span class="c1"># Account for rotation around the image center</span>
+            <span class="n">cx</span> <span class="o">=</span> <span class="n">imgsize</span><span class="o">/</span><span class="mi">2</span>
+            <span class="n">cy</span> <span class="o">=</span> <span class="n">imgsize</span><span class="o">/</span><span class="mi">2</span>
+            
+            <span class="n">dx</span> <span class="o">=</span> <span class="n">x_shifted</span> <span class="o">-</span> <span class="n">cx</span>
+            <span class="n">dy</span> <span class="o">=</span> <span class="n">y_shifted</span> <span class="o">-</span> <span class="n">cy</span>
+            
+            <span class="n">x1</span> <span class="o">=</span> <span class="n">cx</span> <span class="o">+</span> <span class="n">dx</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">phi_rad</span><span class="p">)</span> <span class="o">+</span> <span class="n">dy</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">phi_rad</span><span class="p">)</span>
+            <span class="n">y1</span> <span class="o">=</span> <span class="n">cy</span> <span class="o">-</span> <span class="n">dx</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">phi_rad</span><span class="p">)</span> <span class="o">+</span> <span class="n">dy</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">phi_rad</span><span class="p">)</span>
+            
+            <span class="n">wcs_in</span><span class="o">.</span><span class="n">wcs</span><span class="o">.</span><span class="n">crpix</span> <span class="o">=</span> <span class="p">[</span><span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Non-rotated case</span>
+            <span class="n">f_dlog</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;- Shifting image. xshift = </span><span class="si">{0:8.2f}</span><span class="s1">, yshift = </span><span class="si">{1:8.2f}</span><span class="s1"> </span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">xsh</span><span class="p">,</span> <span class="n">ysh</span><span class="p">))</span>
+            <span class="n">wcs_in</span><span class="o">.</span><span class="n">wcs</span><span class="o">.</span><span class="n">crpix</span> <span class="o">=</span> <span class="p">[</span><span class="n">wcs_in</span><span class="o">.</span><span class="n">wcs</span><span class="o">.</span><span class="n">crpix</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">xsh</span><span class="p">,</span> <span class="n">wcs_in</span><span class="o">.</span><span class="n">wcs</span><span class="o">.</span><span class="n">crpix</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">ysh</span><span class="p">]</span>
+            <span class="n">wcs_in</span><span class="o">.</span><span class="n">wcs</span><span class="o">.</span><span class="n">crpix</span> <span class="o">=</span> <span class="p">[</span><span class="n">wcs_in</span><span class="o">.</span><span class="n">wcs</span><span class="o">.</span><span class="n">crpix</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="p">(</span><span class="n">imgsize</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">cdwt_img</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> 
+                                <span class="n">wcs_in</span><span class="o">.</span><span class="n">wcs</span><span class="o">.</span><span class="n">crpix</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="p">(</span><span class="n">imgsize</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">cdwt_img</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span><span class="o">/</span><span class="mi">2</span><span class="p">]</span>
     
         <span class="n">xgeoim</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getdata</span><span class="p">(</span><span class="n">_xgeoim</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;float32&#39;</span><span class="p">)</span>
         <span class="n">ygeoim</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getdata</span><span class="p">(</span><span class="n">_ygeoim</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;float32&#39;</span><span class="p">)</span>
@@ -1743,7 +1786,7 @@
             <span class="n">output_hdrs</span><span class="p">[</span><span class="n">sub</span><span class="p">]</span> <span class="o">=</span> <span class="n">hdr_current_img</span>
         <span class="n">phi</span> <span class="o">=</span> <span class="n">instrument</span><span class="o">.</span><span class="n">get_position_angle</span><span class="p">(</span><span class="n">hdr_current_img</span><span class="p">)</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">diffPA</span> <span class="o">==</span> <span class="mi">1</span><span class="p">):</span>
-            <span class="n">drizzle</span><span class="o">.</span><span class="n">rot</span> <span class="o">=</span> <span class="n">phi</span>
+             <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">cd_mat</span> <span class="o">=</span> <span class="n">rotate_wcs</span><span class="p">(</span><span class="n">hdr_current_img</span><span class="p">,</span> <span class="n">phi</span><span class="p">)</span>
 
         <span class="c1"># Calculate saturation level for submaps</span>
         <span class="c1"># by weighting each individual satLevel and summing.</span>
@@ -1805,11 +1848,56 @@
         <span class="n">wcs_in</span> <span class="o">=</span> <span class="n">wcs</span><span class="o">.</span><span class="n">WCS</span><span class="p">(</span><span class="n">hdr_current_img</span><span class="p">)</span>
         <span class="n">wcs_out</span> <span class="o">=</span> <span class="n">wcs</span><span class="o">.</span><span class="n">WCS</span><span class="p">(</span><span class="n">hdr_current_img</span><span class="p">)</span>
 
-        <span class="n">wcs_in</span><span class="o">.</span><span class="n">wcs</span><span class="o">.</span><span class="n">crpix</span> <span class="o">=</span> <span class="p">[</span><span class="n">wcs_in</span><span class="o">.</span><span class="n">wcs</span><span class="o">.</span><span class="n">crpix</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">xsh</span><span class="p">,</span> <span class="n">wcs_in</span><span class="o">.</span><span class="n">wcs</span><span class="o">.</span><span class="n">crpix</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">ysh</span><span class="p">]</span>
-        <span class="n">log</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;- Shifting image. xshift = </span><span class="si">{0:8.2f}</span><span class="s1">, yshift = </span><span class="si">{1:8.2f}</span><span class="s1"> </span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">xsh</span><span class="p">,</span> <span class="n">ysh</span><span class="p">))</span>
-        <span class="c1"># shift so output image is in the center of the produce image</span>
-        <span class="n">wcs_in</span><span class="o">.</span><span class="n">wcs</span><span class="o">.</span><span class="n">crpix</span> <span class="o">=</span> <span class="p">[</span><span class="n">wcs_in</span><span class="o">.</span><span class="n">wcs</span><span class="o">.</span><span class="n">crpix</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="p">(</span><span class="n">imgsize</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">cdwt_img</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">wcs_in</span><span class="o">.</span><span class="n">wcs</span><span class="o">.</span><span class="n">crpix</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="p">(</span><span class="n">imgsize</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">cdwt_img</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span><span class="o">/</span><span class="mi">2</span><span class="p">]</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">diffPA</span> <span class="o">==</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;- Rotating image. phi = </span><span class="si">{}</span><span class="s1"> </span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">phi</span><span class="p">))</span>
+            <span class="n">wcs_in</span><span class="o">.</span><span class="n">wcs</span><span class="o">.</span><span class="n">cd</span> <span class="o">=</span> <span class="n">cd_mat</span>
+            <span class="c1"># Calculate padding shifts</span>
+            <span class="n">pad_xsh</span> <span class="o">=</span> <span class="p">(</span><span class="n">imgsize</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">cdwt_img</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="mi">2</span>
+            <span class="n">pad_ysh</span> <span class="o">=</span> <span class="p">(</span><span class="n">imgsize</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">cdwt_img</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span><span class="o">/</span><span class="mi">2</span>
+    
+            <span class="c1"># Unrotate the rotated coos</span>
+            <span class="c1"># We&#39;ll later rotate them with the padding</span>
+            <span class="n">phi_rad</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="n">phi</span><span class="p">)</span>
+            <span class="n">unrotated_xsh</span> <span class="o">=</span> <span class="n">xsh</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="o">-</span><span class="n">phi_rad</span><span class="p">)</span> <span class="o">-</span> <span class="n">ysh</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="o">-</span><span class="n">phi_rad</span><span class="p">)</span>
+            <span class="n">unrotated_ysh</span> <span class="o">=</span> <span class="n">xsh</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="o">-</span><span class="n">phi_rad</span><span class="p">)</span> <span class="o">+</span> <span class="n">ysh</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="o">-</span><span class="n">phi_rad</span><span class="p">)</span>
+            
+            <span class="c1"># Combine star alignment shifts with padding shifts BEFORE rotating</span>
+            <span class="n">total_xsh</span> <span class="o">=</span> <span class="n">unrotated_xsh</span> <span class="o">+</span> <span class="n">pad_xsh</span>
+            <span class="n">total_ysh</span> <span class="o">=</span> <span class="n">unrotated_ysh</span> <span class="o">+</span> <span class="n">pad_ysh</span>
+            
+            <span class="c1"># Rotate the TOTAL shifts </span>
+            
+            <span class="n">xsh_rot</span> <span class="o">=</span> <span class="n">total_xsh</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">phi_rad</span><span class="p">)</span> <span class="o">-</span> <span class="n">total_ysh</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">phi_rad</span><span class="p">)</span>
+            <span class="n">ysh_rot</span> <span class="o">=</span> <span class="n">total_xsh</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">phi_rad</span><span class="p">)</span> <span class="o">+</span> <span class="n">total_ysh</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">phi_rad</span><span class="p">)</span>
+            
+            <span class="c1"># Original CRPIX</span>
+            <span class="n">x0</span><span class="p">,</span> <span class="n">y0</span> <span class="o">=</span> <span class="n">wcs_in</span><span class="o">.</span><span class="n">wcs</span><span class="o">.</span><span class="n">crpix</span>
+            
+            <span class="c1"># Apply the combined rotated shift</span>
+            <span class="n">x_shifted</span> <span class="o">=</span> <span class="n">x0</span> <span class="o">-</span> <span class="n">xsh_rot</span>
+            <span class="n">y_shifted</span> <span class="o">=</span> <span class="n">y0</span> <span class="o">-</span> <span class="n">ysh_rot</span>
 
+            <span class="n">log</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;- Shifting image. xshift = </span><span class="si">{0:8.2f}</span><span class="s1">, yshift = </span><span class="si">{1:8.2f}</span><span class="s1"> </span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">xsh_rot</span><span class="p">,</span> <span class="n">ysh_rot</span><span class="p">))</span>
+            
+            <span class="c1"># Account for rotation around the image center</span>
+            <span class="n">cx</span> <span class="o">=</span> <span class="n">imgsize</span><span class="o">/</span><span class="mi">2</span>
+            <span class="n">cy</span> <span class="o">=</span> <span class="n">imgsize</span><span class="o">/</span><span class="mi">2</span>
+            
+            <span class="n">dx</span> <span class="o">=</span> <span class="n">x_shifted</span> <span class="o">-</span> <span class="n">cx</span>
+            <span class="n">dy</span> <span class="o">=</span> <span class="n">y_shifted</span> <span class="o">-</span> <span class="n">cy</span>
+            
+            <span class="n">x1</span> <span class="o">=</span> <span class="n">cx</span> <span class="o">+</span> <span class="n">dx</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">phi_rad</span><span class="p">)</span> <span class="o">+</span> <span class="n">dy</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">phi_rad</span><span class="p">)</span>
+            <span class="n">y1</span> <span class="o">=</span> <span class="n">cy</span> <span class="o">-</span> <span class="n">dx</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">phi_rad</span><span class="p">)</span> <span class="o">+</span> <span class="n">dy</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">phi_rad</span><span class="p">)</span>
+            
+            <span class="n">wcs_in</span><span class="o">.</span><span class="n">wcs</span><span class="o">.</span><span class="n">crpix</span> <span class="o">=</span> <span class="p">[</span><span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Non-rotated case</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;- Shifting image. xshift = </span><span class="si">{0:8.2f}</span><span class="s1">, yshift = </span><span class="si">{1:8.2f}</span><span class="s1"> </span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">xsh</span><span class="p">,</span> <span class="n">ysh</span><span class="p">))</span>
+            <span class="n">wcs_in</span><span class="o">.</span><span class="n">wcs</span><span class="o">.</span><span class="n">crpix</span> <span class="o">=</span> <span class="p">[</span><span class="n">wcs_in</span><span class="o">.</span><span class="n">wcs</span><span class="o">.</span><span class="n">crpix</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">xsh</span><span class="p">,</span> <span class="n">wcs_in</span><span class="o">.</span><span class="n">wcs</span><span class="o">.</span><span class="n">crpix</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">ysh</span><span class="p">]</span>
+            <span class="c1"># shift so output image is in the center of the produce image</span>
+            <span class="n">wcs_in</span><span class="o">.</span><span class="n">wcs</span><span class="o">.</span><span class="n">crpix</span> <span class="o">=</span> <span class="p">[</span><span class="n">wcs_in</span><span class="o">.</span><span class="n">wcs</span><span class="o">.</span><span class="n">crpix</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="p">(</span><span class="n">imgsize</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">cdwt_img</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> 
+                                <span class="n">wcs_in</span><span class="o">.</span><span class="n">wcs</span><span class="o">.</span><span class="n">crpix</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="p">(</span><span class="n">imgsize</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">cdwt_img</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span><span class="o">/</span><span class="mi">2</span><span class="p">]</span>
+            
         <span class="n">xgeoim</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getdata</span><span class="p">(</span><span class="n">_xgeoim</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;float32&#39;</span><span class="p">)</span>
         <span class="n">ygeoim</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getdata</span><span class="p">(</span><span class="n">_ygeoim</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;float32&#39;</span><span class="p">)</span>
     
@@ -2007,10 +2095,12 @@
     <span class="n">diffPA</span> <span class="o">=</span> <span class="mi">0</span>
 
     <span class="n">clean_files</span> <span class="o">=</span> <span class="n">instrument</span><span class="o">.</span><span class="n">make_filenames</span><span class="p">(</span><span class="n">roots</span><span class="p">,</span> <span class="n">rootDir</span><span class="o">=</span><span class="n">cleanDir</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;c&#39;</span><span class="p">)</span>
+    <span class="n">phis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">clean_files</span><span class="p">))</span>
 
     <span class="k">for</span> <span class="n">cc</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">clean_files</span><span class="p">)):</span>
         <span class="n">hdr</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getheader</span><span class="p">(</span><span class="n">clean_files</span><span class="p">[</span><span class="n">cc</span><span class="p">],</span> <span class="n">ignore_missing_end</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">phi</span> <span class="o">=</span> <span class="n">instrument</span><span class="o">.</span><span class="n">get_position_angle</span><span class="p">(</span><span class="n">hdr</span><span class="p">)</span>
+        <span class="n">phis</span><span class="p">[</span><span class="n">cc</span><span class="p">]</span> <span class="o">=</span> <span class="n">phi</span>
 
         <span class="k">if</span> <span class="n">cc</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">phiRef</span> <span class="o">=</span> <span class="n">phi</span>
@@ -2026,9 +2116,10 @@
         <span class="k">for</span> <span class="n">cc</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">clean_files</span><span class="p">)):</span>
             <span class="n">hdr</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getheader</span><span class="p">(</span><span class="n">clean_files</span><span class="p">[</span><span class="n">cc</span><span class="p">],</span> <span class="n">ignore_missing_end</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
             <span class="n">phi</span> <span class="o">=</span> <span class="n">instrument</span><span class="o">.</span><span class="n">get_position_angle</span><span class="p">(</span><span class="n">hdr</span><span class="p">)</span>
+            <span class="n">phis</span><span class="p">[</span><span class="n">cc</span><span class="p">]</span> <span class="o">=</span> <span class="n">phi</span>
             <span class="n">rot_img</span><span class="p">(</span><span class="n">roots</span><span class="p">[</span><span class="n">cc</span><span class="p">],</span> <span class="n">phi</span><span class="p">,</span> <span class="n">cleanDir</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="p">(</span><span class="n">diffPA</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="p">(</span><span class="n">diffPA</span><span class="p">,</span> <span class="n">phis</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="sort_frames">
@@ -2207,18 +2298,17 @@
     <span class="c1"># coo file starts with c even if image was rotated</span>
     <span class="n">refImage_filename</span> <span class="o">=</span> <span class="n">refImage</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
     <span class="k">if</span> <span class="n">refImage_filename</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;r&#39;</span><span class="p">:</span>
-        <span class="n">coo_file_ref</span> <span class="o">=</span> <span class="n">Table</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">refImage</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">refImage_filename</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;c&#39;</span> <span class="o">+</span> <span class="n">refImage_filename</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">5</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.coo&#39;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;ascii&#39;</span><span class="p">,</span> <span class="n">header_start</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">coo_file_ref</span> <span class="o">=</span> <span class="n">Table</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">refImage</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">refImage_filename</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;c&#39;</span> <span class="o">+</span> <span class="n">refImage_filename</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">5</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.rcoo&#39;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;ascii&#39;</span><span class="p">,</span> <span class="n">header_start</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">coo_file_ref</span> <span class="o">=</span> <span class="n">Table</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">refImage</span><span class="p">[:</span><span class="o">-</span><span class="mi">5</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.coo&#39;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;ascii&#39;</span><span class="p">,</span> <span class="n">header_start</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-    
-    <span class="n">coords</span> <span class="o">=</span> <span class="n">Table</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">outroot</span> <span class="o">+</span> <span class="s1">&#39;.coo&#39;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;ascii&#39;</span><span class="p">,</span> <span class="n">header_start</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 
-    <span class="n">fileNames</span> <span class="o">=</span> <span class="n">Table</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="nb">input</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;ascii.no_header&#39;</span><span class="p">)</span> <span class="c1"># removed , header_start=None</span>
+    <span class="n">fileNames</span> <span class="o">=</span> <span class="n">Table</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="nb">input</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;ascii.no_header&#39;</span><span class="p">)</span>
     <span class="n">fileNames</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">fileNames</span><span class="p">)</span>
     <span class="n">fileNames</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">fileNames</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;S&#39;</span><span class="p">)</span>
-    <span class="n">coords</span> <span class="o">=</span> <span class="n">Table</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">outroot</span> <span class="o">+</span> <span class="s1">&#39;.coo&#39;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;ascii&#39;</span><span class="p">,</span> <span class="n">header_start</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    
+    <span class="n">coords</span> <span class="o">=</span> <span class="n">Table</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">outroot</span> <span class="o">+</span> <span class="s1">&#39;.coo&#39;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;ascii&#39;</span><span class="p">,</span> <span class="n">header_start</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>        
     <span class="n">shiftsTable_empty</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">fileNames</span><span class="p">),</span> <span class="mi">3</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
-    <span class="n">shiftsTable</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">shiftsTable_empty</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;S50&#39;</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">))</span> <span class="c1">#dtype=(float, float, &#39;S50&#39;)</span>
+    <span class="n">shiftsTable</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">shiftsTable_empty</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;S50&#39;</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">))</span>
     
     <span class="n">hdrRef</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getheader</span><span class="p">(</span><span class="n">refImage</span><span class="p">,</span> <span class="n">ignore_missing_end</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">plate_scale</span> <span class="o">=</span> <span class="n">instrument</span><span class="o">.</span><span class="n">get_plate_scale</span><span class="p">(</span><span class="n">hdrRef</span><span class="p">)</span> <span class="c1">#arcsec/pixels</span>
@@ -2230,7 +2320,7 @@
         <span class="n">shift_img</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getdata</span><span class="p">(</span><span class="n">fileName</span><span class="p">)</span>
         <span class="n">fileName_filename</span> <span class="o">=</span> <span class="n">fileName</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">fileName_filename</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;r&#39;</span><span class="p">:</span>
-            <span class="n">coo_name</span> <span class="o">=</span> <span class="n">fileName</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">fileName_filename</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;c&#39;</span> <span class="o">+</span> <span class="n">fileName_filename</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">5</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.coo&#39;</span>
+            <span class="n">coo_name</span> <span class="o">=</span> <span class="n">fileName</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">fileName_filename</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;c&#39;</span> <span class="o">+</span> <span class="n">fileName_filename</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">5</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.rcoo&#39;</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">coo_name</span> <span class="o">=</span> <span class="n">fileName</span><span class="p">[:</span><span class="o">-</span><span class="mi">5</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.coo&#39;</span>
         <span class="n">coo_file</span> <span class="o">=</span> <span class="n">Table</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">coo_name</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;ascii&#39;</span><span class="p">,</span> <span class="n">header_start</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
@@ -2351,10 +2441,11 @@
 
 <div class="viewcode-block" id="combine_size">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/data/index.html#kai.reduce.data.combine_size">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">combine_size</span><span class="p">(</span><span class="n">shiftsTable</span><span class="p">,</span> <span class="n">refImage</span><span class="p">,</span> <span class="n">outroot</span><span class="p">,</span> <span class="n">subroot</span><span class="p">,</span> <span class="n">submaps</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Determine the final size of the fully combined image. Use the</span>
-<span class="sd">    shifts stored in the shiftsTable.</span>
-
+<span class="k">def</span><span class="w"> </span><span class="nf">combine_size</span><span class="p">(</span><span class="n">shiftsTable</span><span class="p">,</span> <span class="n">refImage</span><span class="p">,</span> <span class="n">outroot</span><span class="p">,</span> <span class="n">subroot</span><span class="p">,</span> <span class="n">submaps</span><span class="p">,</span> <span class="n">phis</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Determine the final size of the fully combined image, accounting for</span>
+<span class="sd">    both shifts and rotations. Use the shifts stored in the shiftsTable and</span>
+<span class="sd">    rotation angles in phis.</span>
+<span class="sd">    </span>
 <span class="sd">    @param shiftsTable: Table with x and y shifts for each image</span>
 <span class="sd">    @type shiftsTable: ascii table</span>
 <span class="sd">    @param refImage: The reference image from which the shifts are</span>
@@ -2366,47 +2457,86 @@
 <span class="sd">    @param subroot: Same as outroot but for submaps</span>
 <span class="sd">    @type subroot: string</span>
 <span class="sd">    @param submaps: number of submaps</span>
-<span class="sd">    @type sbumaps: int</span>
+<span class="sd">    @type submaps: int</span>
+<span class="sd">    @param phis: Array of rotation angles in degrees for each image</span>
+<span class="sd">    @type phis: array-like</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">x_allShifts</span> <span class="o">=</span> <span class="n">shiftsTable</span><span class="p">[</span><span class="s1">&#39;col1&#39;</span><span class="p">]</span>
-    <span class="n">y_allShifts</span> <span class="o">=</span> <span class="n">shiftsTable</span><span class="p">[</span><span class="s1">&#39;col2&#39;</span><span class="p">]</span>
-
-
-    <span class="n">xhi</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">x_allShifts</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
-    <span class="n">xlo</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">x_allShifts</span><span class="o">.</span><span class="n">min</span><span class="p">())</span>
-    <span class="n">yhi</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">y_allShifts</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
-    <span class="n">ylo</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">y_allShifts</span><span class="o">.</span><span class="n">min</span><span class="p">())</span>
-
-    <span class="c1"># Make sure to include the edges of all images.</span>
-    <span class="c1"># Might require some extra padding on one side.</span>
-    <span class="n">maxoffset</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span><span class="n">xlo</span><span class="p">,</span> <span class="n">xhi</span><span class="p">,</span> <span class="n">ylo</span><span class="p">,</span> <span class="n">yhi</span><span class="p">])</span>
-
+    <span class="n">x_allShifts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">shiftsTable</span><span class="p">[</span><span class="s1">&#39;col1&#39;</span><span class="p">])</span>
+    <span class="n">y_allShifts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">shiftsTable</span><span class="p">[</span><span class="s1">&#39;col2&#39;</span><span class="p">])</span>
+    <span class="n">phis_rad</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">phis</span><span class="p">))</span>
+    
+    <span class="c1"># Get original image size</span>
     <span class="n">orig_img</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getdata</span><span class="p">(</span><span class="n">refImage</span><span class="p">)</span>
     <span class="n">orig_size</span> <span class="o">=</span> <span class="p">(</span><span class="n">orig_img</span><span class="o">.</span><span class="n">shape</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">half_size</span> <span class="o">=</span> <span class="n">orig_size</span> <span class="o">/</span> <span class="mf">2.0</span>
+    
+
+    <span class="c1"># Calculate the four corners of the original image relative to its center</span>
+    <span class="n">corners</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+        <span class="p">[</span><span class="o">-</span><span class="n">half_size</span><span class="p">,</span> <span class="o">-</span><span class="n">half_size</span><span class="p">],</span>
+        <span class="p">[</span><span class="n">half_size</span><span class="p">,</span> <span class="o">-</span><span class="n">half_size</span><span class="p">],</span>
+        <span class="p">[</span><span class="n">half_size</span><span class="p">,</span> <span class="n">half_size</span><span class="p">],</span>
+        <span class="p">[</span><span class="o">-</span><span class="n">half_size</span><span class="p">,</span> <span class="n">half_size</span><span class="p">]</span>
+    <span class="p">])</span>  <span class="c1"># Shape: (4, 2)</span>
+    
+    <span class="c1"># Compute cos and sin for all angles</span>
+    <span class="n">cos_phi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">phis_rad</span><span class="p">)</span>  <span class="c1"># Shape: (n_images,)</span>
+    <span class="n">sin_phi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">phis_rad</span><span class="p">)</span>  <span class="c1"># Shape: (n_images,)</span>
+    
+    <span class="c1"># Rotate corners for all images at once</span>
+    <span class="n">corners_x</span> <span class="o">=</span> <span class="n">corners</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">][:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>  <span class="c1"># Shape: (4, 1)</span>
+    <span class="n">corners_y</span> <span class="o">=</span> <span class="n">corners</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">][:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>  <span class="c1"># Shape: (4, 1)</span>
+
+    <span class="c1"># Unrotate shifts (inverse rotation)</span>
+    <span class="n">unrotated_xsh</span> <span class="o">=</span> <span class="n">x_allShifts</span> <span class="o">*</span> <span class="n">cos_phi</span> <span class="o">+</span> <span class="n">y_allShifts</span> <span class="o">*</span> <span class="n">sin_phi</span>
+    <span class="n">unrotated_ysh</span> <span class="o">=</span> <span class="o">-</span><span class="n">x_allShifts</span> <span class="o">*</span> <span class="n">sin_phi</span> <span class="o">+</span> <span class="n">y_allShifts</span> <span class="o">*</span> <span class="n">cos_phi</span>
+    
+    <span class="c1"># Add unrotated shifts to corners</span>
+    <span class="n">shifted_x</span> <span class="o">=</span> <span class="n">corners_x</span> <span class="o">+</span> <span class="n">unrotated_xsh</span>
+    <span class="n">shifted_y</span> <span class="o">=</span> <span class="n">corners_y</span> <span class="o">+</span> <span class="n">unrotated_ysh</span>
+
+    <span class="c1">#shifted_x = corners_x + x_allShifts</span>
+    <span class="c1">#shifted_y = corners_y + y_allShifts</span>
+    
+    <span class="n">rotated_x</span> <span class="o">=</span> <span class="n">shifted_x</span> <span class="o">*</span> <span class="n">cos_phi</span> <span class="o">-</span> <span class="n">shifted_y</span> <span class="o">*</span> <span class="n">sin_phi</span>  <span class="c1"># Shape: (4, n_images)</span>
+    <span class="n">rotated_y</span> <span class="o">=</span> <span class="n">shifted_x</span> <span class="o">*</span> <span class="n">sin_phi</span> <span class="o">+</span> <span class="n">shifted_y</span> <span class="o">*</span> <span class="n">cos_phi</span>  <span class="c1"># Shape: (4, n_images)</span>
+    
+    <span class="c1"># Find the range needed: max positive and max negative extent</span>
+    <span class="n">xmax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">rotated_x</span><span class="p">)</span>
+    <span class="n">xmin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">rotated_x</span><span class="p">)</span>
+    <span class="n">ymax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">rotated_y</span><span class="p">)</span>
+    <span class="n">ymin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">rotated_y</span><span class="p">)</span>
+
+    <span class="c1"># Maximum offset needed from center in any direction</span>
+    <span class="n">maxoffset</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">xmax</span><span class="p">),</span> <span class="nb">abs</span><span class="p">(</span><span class="n">xmin</span><span class="p">),</span> <span class="nb">abs</span><span class="p">(</span><span class="n">ymax</span><span class="p">),</span> <span class="nb">abs</span><span class="p">(</span><span class="n">ymin</span><span class="p">))</span>
+    
+    <span class="c1"># Add padding</span>
     <span class="n">padd</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">orig_size</span> <span class="o">*</span> <span class="mf">0.01</span><span class="p">))</span>
 
+    
     <span class="c1"># Read in the reference star&#39;s position in the ref image and translate</span>
     <span class="c1"># it into the coordinates of the final main and sub maps.</span>
     <span class="n">hdr</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getheader</span><span class="p">(</span><span class="n">refImage</span><span class="p">,</span> <span class="n">ignore_missing_end</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">xrefSrc</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;XREF&#39;</span><span class="p">])</span>
     <span class="n">yrefSrc</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;YREF&#39;</span><span class="p">])</span>
-
     <span class="n">xrefSrc</span> <span class="o">=</span> <span class="n">xrefSrc</span> <span class="o">+</span> <span class="p">(</span><span class="n">maxoffset</span> <span class="o">+</span> <span class="n">padd</span><span class="p">)</span>
     <span class="n">yrefSrc</span> <span class="o">=</span> <span class="n">yrefSrc</span> <span class="o">+</span> <span class="p">(</span><span class="n">maxoffset</span> <span class="o">+</span> <span class="n">padd</span><span class="p">)</span>
-
+    
     <span class="n">cooMain</span> <span class="o">=</span> <span class="p">[</span><span class="n">outroot</span> <span class="o">+</span> <span class="s1">&#39;.coo&#39;</span><span class="p">]</span>
     <span class="n">cooSubs</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">_</span><span class="si">%d</span><span class="s1">.coo&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">subroot</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">submaps</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span>
     <span class="n">cooAll</span> <span class="o">=</span> <span class="n">cooMain</span> <span class="o">+</span> <span class="n">cooSubs</span>
-
     <span class="n">util</span><span class="o">.</span><span class="n">rmall</span><span class="p">(</span><span class="n">cooAll</span><span class="p">)</span>
+    
     <span class="k">for</span> <span class="n">coo</span> <span class="ow">in</span> <span class="n">cooAll</span><span class="p">:</span>
         <span class="n">_allCoo</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">coo</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
         <span class="n">_allCoo</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%9.3f</span><span class="s1"> </span><span class="si">%9.3f</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">xrefSrc</span><span class="p">,</span> <span class="n">yrefSrc</span><span class="p">))</span>
         <span class="n">_allCoo</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
-    <span class="n">xysize</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">orig_size</span><span class="p">)</span> <span class="o">+</span> <span class="p">((</span><span class="n">maxoffset</span> <span class="o">+</span> <span class="n">padd</span><span class="p">)</span> <span class="o">*</span> <span class="mf">2.0</span><span class="p">))</span>
+    
+    <span class="n">xysize</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">maxoffset</span> <span class="o">+</span> <span class="n">padd</span><span class="p">)</span> <span class="o">*</span> <span class="mf">2.0</span><span class="p">)</span> <span class="c1">#int(float(orig_size) + ((maxoffset + padd) * 2.0))</span>
+    
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;combine: Size of output image is </span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">xysize</span><span class="p">)</span>
-
+    
     <span class="k">return</span> <span class="n">xysize</span></div>
 
 
@@ -3008,11 +3138,11 @@
 
     <span class="c1"># Make a temporary rotated coo file, in case there are any data sets</span>
     <span class="c1"># with various PAs; needed for xregister; remove later</span>
-    <span class="n">xyRef_rot</span> <span class="o">=</span> <span class="n">kai_util</span><span class="o">.</span><span class="n">rotate_coo</span><span class="p">(</span><span class="n">xref</span><span class="p">,</span> <span class="n">yref</span><span class="p">,</span> <span class="n">phi</span><span class="p">)</span>
+    <span class="n">xyRef_rot</span> <span class="o">=</span> <span class="n">kai_util</span><span class="o">.</span><span class="n">rotate_coo</span><span class="p">(</span><span class="n">xref</span><span class="p">,</span> <span class="n">yref</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">instrument</span><span class="p">)</span>
     <span class="n">xref_r</span> <span class="o">=</span> <span class="n">xyRef_rot</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">yref_r</span> <span class="o">=</span> <span class="n">xyRef_rot</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
-    <span class="n">xyStr_rot</span> <span class="o">=</span> <span class="n">kai_util</span><span class="o">.</span><span class="n">rotate_coo</span><span class="p">(</span><span class="n">xstr</span><span class="p">,</span> <span class="n">ystr</span><span class="p">,</span> <span class="n">phi</span><span class="p">)</span>
+    <span class="n">xyStr_rot</span> <span class="o">=</span> <span class="n">kai_util</span><span class="o">.</span><span class="n">rotate_coo</span><span class="p">(</span><span class="n">xstr</span><span class="p">,</span> <span class="n">ystr</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">instrument</span><span class="p">)</span>
     <span class="n">xstr_r</span> <span class="o">=</span> <span class="n">xyStr_rot</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">ystr_r</span> <span class="o">=</span> <span class="n">xyStr_rot</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 

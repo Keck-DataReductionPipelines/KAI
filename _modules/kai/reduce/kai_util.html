@@ -90,6 +90,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">photutils.centroids</span><span class="w"> </span><span class="kn">import</span> <span class="n">centroid_com</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">astropy.nddata</span><span class="w"> </span><span class="kn">import</span> <span class="n">Cutout2D</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">imageio</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">kai</span><span class="w"> </span><span class="kn">import</span> <span class="n">instruments</span>
 
 <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
 
@@ -392,15 +393,25 @@
 
 <div class="viewcode-block" id="rotate_coo">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/kai_util/index.html#kai.reduce.kai_util.rotate_coo">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">rotate_coo</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">phi</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">rotate_coo</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Rotate the coordinates in the *.coo files for data sets</span>
 <span class="sd">    containing images at different PAs.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Rotate around center of image, and keep origin at center</span>
-    <span class="n">xin</span> <span class="o">=</span> <span class="mf">512.</span>
-    <span class="n">yin</span> <span class="o">=</span> <span class="mf">512.</span>
-    <span class="n">xout</span> <span class="o">=</span> <span class="mf">512.</span>
-    <span class="n">yout</span> <span class="o">=</span> <span class="mf">512.</span>
+    <span class="k">if</span> <span class="n">instrument</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;NIRC2&#39;</span><span class="p">:</span>
+        <span class="n">xin</span> <span class="o">=</span> <span class="mf">512.</span>
+        <span class="n">yin</span> <span class="o">=</span> <span class="mf">512.</span>
+        <span class="n">xout</span> <span class="o">=</span> <span class="mf">512.</span>
+        <span class="n">yout</span> <span class="o">=</span> <span class="mf">512.</span>
+        
+    <span class="k">elif</span> <span class="n">instrument</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;OSIRIS&#39;</span><span class="p">:</span>
+        <span class="n">xin</span> <span class="o">=</span> <span class="mf">1024.</span>
+        <span class="n">yin</span> <span class="o">=</span> <span class="mf">1024.</span>
+        <span class="n">xout</span> <span class="o">=</span> <span class="mf">1024.</span>
+        <span class="n">yout</span> <span class="o">=</span> <span class="mf">1024.</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Inst not supported. Edit kai_util.rotate_coo to specify center of new instrument&#39;</span><span class="p">)</span>
   
     <span class="n">cos</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">phi</span><span class="p">))</span>
     <span class="n">sin</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">phi</span><span class="p">))</span>

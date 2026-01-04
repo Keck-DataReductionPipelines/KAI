@@ -139,7 +139,7 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.kai_util.xyarcsec2pix" title="kai.reduce.kai_util.xyarcsec2pix"><code class="xref py py-obj docutils literal notranslate"><span class="pre">xyarcsec2pix</span></code></a>(xyarcsec, phi, scale)</p></td>
 <td><p>Determine pixel shifts from E and N offsets from Sgr A*.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.kai_util.rotate_coo" title="kai.reduce.kai_util.rotate_coo"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rotate_coo</span></code></a>(x, y, phi)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.kai_util.rotate_coo" title="kai.reduce.kai_util.rotate_coo"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rotate_coo</span></code></a>(x, y, phi[, instrument])</p></td>
 <td><p>Rotate the coordinates in the <a href="#id1"><span class="problematic" id="id2">*</span></a>.coo files for data sets</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.kai_util.getScale" title="kai.reduce.kai_util.getScale"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getScale</span></code></a>(hdr[, instrument])</p></td>
@@ -253,7 +253,7 @@ scale: arcsec per pixel.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="kai.reduce.kai_util.rotate_coo">
-<span class="sig-prename descclassname"><span class="pre">kai.reduce.kai_util.</span></span><span class="sig-name descname"><span class="pre">rotate_coo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phi</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/kai_util.html#rotate_coo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.kai_util.rotate_coo" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.kai_util.</span></span><span class="sig-name descname"><span class="pre">rotate_coo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instrument</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">instruments.default_inst</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/kai_util.html#rotate_coo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.kai_util.rotate_coo" title="Link to this definition"></a></dt>
 <dd><p>Rotate the coordinates in the <a href="#id3"><span class="problematic" id="id4">*</span></a>.coo files for data sets
 containing images at different PAs.</p>
 </dd></dl>

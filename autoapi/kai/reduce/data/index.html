@@ -207,7 +207,7 @@
 <td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.data.combine_size" title="kai.reduce.data.combine_size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">combine_size</span></code></a>(shiftsTable, refImage, outroot, subroot, ...)</p></td>
-<td><p>Determine the final size of the fully combined image. Use the</p></td>
+<td><p>Determine the final size of the fully combined image, accounting for</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.data.setup_drizzle" title="kai.reduce.data.setup_drizzle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setup_drizzle</span></code></a>(imgsize)</p></td>
 <td><p>Setup drizzle parameters for NIRC2 data.</p></td>
@@ -658,9 +658,10 @@ is rotated to PA = 0.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="kai.reduce.data.combine_size">
-<span class="sig-prename descclassname"><span class="pre">kai.reduce.data.</span></span><span class="sig-name descname"><span class="pre">combine_size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shiftsTable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">refImage</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outroot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subroot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">submaps</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/data.html#combine_size"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.data.combine_size" title="Link to this definition"></a></dt>
-<dd><p>Determine the final size of the fully combined image. Use the
-shifts stored in the shiftsTable.</p>
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.data.</span></span><span class="sig-name descname"><span class="pre">combine_size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shiftsTable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">refImage</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outroot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subroot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">submaps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phis</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/data.html#combine_size"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.data.combine_size" title="Link to this definition"></a></dt>
+<dd><p>Determine the final size of the fully combined image, accounting for
+both shifts and rotations. Use the shifts stored in the shiftsTable and
+rotation angles in phis.</p>
 <p>&#64;param shiftsTable: Table with x and y shifts for each image
 &#64;type shiftsTable: ascii table
 &#64;param refImage: The reference image from which the shifts are</p>
@@ -676,7 +677,9 @@ shifts stored in the shiftsTable.</p>
 &#64;param subroot: Same as outroot but for submaps
 &#64;type subroot: string
 &#64;param submaps: number of submaps
-&#64;type sbumaps: int</p>
+&#64;type submaps: int
+&#64;param phis: Array of rotation angles in degrees for each image
+&#64;type phis: array-like</p>
 </dd></dl>
 
 <dl class="py function">

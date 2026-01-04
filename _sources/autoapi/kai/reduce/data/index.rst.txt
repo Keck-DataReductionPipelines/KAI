@@ -763,11 +763,12 @@ Module Contents
 
 .. py:function:: combine_log(outroot, roots, strehls, fwhm, weights)
 
-.. py:function:: combine_size(shiftsTable, refImage, outroot, subroot, submaps)
+.. py:function:: combine_size(shiftsTable, refImage, outroot, subroot, submaps, phis)
 
    
-   Determine the final size of the fully combined image. Use the
-   shifts stored in the shiftsTable.
+   Determine the final size of the fully combined image, accounting for
+   both shifts and rotations. Use the shifts stored in the shiftsTable and
+   rotation angles in phis.
 
    @param shiftsTable: Table with x and y shifts for each image
    @type shiftsTable: ascii table
@@ -780,7 +781,9 @@ Module Contents
    @param subroot: Same as outroot but for submaps
    @type subroot: string
    @param submaps: number of submaps
-   @type sbumaps: int
+   @type submaps: int
+   @param phis: Array of rotation angles in degrees for each image
+   @type phis: array-like
 
 
 

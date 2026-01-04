@@ -190,7 +190,7 @@ Module Contents
    ..
        !! processed by numpydoc !!
 
-.. py:function:: rotate_coo(x, y, phi)
+.. py:function:: rotate_coo(x, y, phi, instrument=instruments.default_inst)
 
    
    Rotate the coordinates in the *.coo files for data sets
