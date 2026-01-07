@@ -2494,9 +2494,6 @@
     <span class="c1"># Add unrotated shifts to corners</span>
     <span class="n">shifted_x</span> <span class="o">=</span> <span class="n">corners_x</span> <span class="o">+</span> <span class="n">unrotated_xsh</span>
     <span class="n">shifted_y</span> <span class="o">=</span> <span class="n">corners_y</span> <span class="o">+</span> <span class="n">unrotated_ysh</span>
-
-    <span class="c1">#shifted_x = corners_x + x_allShifts</span>
-    <span class="c1">#shifted_y = corners_y + y_allShifts</span>
     
     <span class="n">rotated_x</span> <span class="o">=</span> <span class="n">shifted_x</span> <span class="o">*</span> <span class="n">cos_phi</span> <span class="o">-</span> <span class="n">shifted_y</span> <span class="o">*</span> <span class="n">sin_phi</span>  <span class="c1"># Shape: (4, n_images)</span>
     <span class="n">rotated_y</span> <span class="o">=</span> <span class="n">shifted_x</span> <span class="o">*</span> <span class="n">sin_phi</span> <span class="o">+</span> <span class="n">shifted_y</span> <span class="o">*</span> <span class="n">cos_phi</span>  <span class="c1"># Shape: (4, n_images)</span>
@@ -2519,8 +2516,8 @@
     <span class="n">hdr</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getheader</span><span class="p">(</span><span class="n">refImage</span><span class="p">,</span> <span class="n">ignore_missing_end</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">xrefSrc</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;XREF&#39;</span><span class="p">])</span>
     <span class="n">yrefSrc</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;YREF&#39;</span><span class="p">])</span>
-    <span class="n">xrefSrc</span> <span class="o">=</span> <span class="n">xrefSrc</span> <span class="o">+</span> <span class="p">(</span><span class="n">maxoffset</span> <span class="o">+</span> <span class="n">padd</span><span class="p">)</span>
-    <span class="n">yrefSrc</span> <span class="o">=</span> <span class="n">yrefSrc</span> <span class="o">+</span> <span class="p">(</span><span class="n">maxoffset</span> <span class="o">+</span> <span class="n">padd</span><span class="p">)</span>
+    <span class="n">xrefSrc</span> <span class="o">=</span> <span class="n">xrefSrc</span> <span class="o">+</span> <span class="p">((</span><span class="n">maxoffset</span> <span class="o">+</span> <span class="n">padd</span><span class="p">)</span> <span class="o">-</span> <span class="n">half_size</span><span class="p">)</span>
+    <span class="n">yrefSrc</span> <span class="o">=</span> <span class="n">yrefSrc</span> <span class="o">+</span> <span class="p">((</span><span class="n">maxoffset</span> <span class="o">+</span> <span class="n">padd</span><span class="p">)</span> <span class="o">-</span> <span class="n">half_size</span><span class="p">)</span>
     
     <span class="n">cooMain</span> <span class="o">=</span> <span class="p">[</span><span class="n">outroot</span> <span class="o">+</span> <span class="s1">&#39;.coo&#39;</span><span class="p">]</span>
     <span class="n">cooSubs</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">_</span><span class="si">%d</span><span class="s1">.coo&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">subroot</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">submaps</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span>

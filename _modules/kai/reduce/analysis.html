@@ -663,7 +663,6 @@
             <span class="n">outPsfs</span> <span class="o">=</span> <span class="s1">&#39;mag</span><span class="si">%s%s</span><span class="s1">_</span><span class="si">%s</span><span class="s1">_psf_list.txt&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">epoch</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">imgSuffix</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">filt</span><span class="p">)</span>
             <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">starlist</span><span class="p">,</span> <span class="n">outPsfs</span><span class="p">)</span>
             
-            
             <span class="c1"># Run the Strehl calculator to calculate Strehl on StarFinder PSFs</span>
             <span class="c1"># Need list of PSFs file and coo files associated with each PSF file</span>
             <span class="n">psf_file_list</span> <span class="o">=</span> <span class="p">[]</span>
