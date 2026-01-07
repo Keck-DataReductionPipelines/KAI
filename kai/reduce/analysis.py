@@ -467,7 +467,6 @@ class Analysis(object):
             outPsfs = 'mag%s%s_%s_psf_list.txt' % (self.epoch, self.imgSuffix, self.filt)
             shutil.copyfile(self.starlist, outPsfs)
             
-            
             # Run the Strehl calculator to calculate Strehl on StarFinder PSFs
             # Need list of PSFs file and coo files associated with each PSF file
             psf_file_list = []

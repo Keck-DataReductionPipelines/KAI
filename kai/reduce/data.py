@@ -2333,9 +2333,6 @@ def combine_size(shiftsTable, refImage, outroot, subroot, submaps, phis):
     # Add unrotated shifts to corners
     shifted_x = corners_x + unrotated_xsh
     shifted_y = corners_y + unrotated_ysh
-
-    #shifted_x = corners_x + x_allShifts
-    #shifted_y = corners_y + y_allShifts
     
     rotated_x = shifted_x * cos_phi - shifted_y * sin_phi  # Shape: (4, n_images)
     rotated_y = shifted_x * sin_phi + shifted_y * cos_phi  # Shape: (4, n_images)
@@ -2358,8 +2355,8 @@ def combine_size(shiftsTable, refImage, outroot, subroot, submaps, phis):
     hdr = fits.getheader(refImage, ignore_missing_end=True)
     xrefSrc = float(hdr['XREF'])
     yrefSrc = float(hdr['YREF'])
-    xrefSrc = xrefSrc + (maxoffset + padd)
-    yrefSrc = yrefSrc + (maxoffset + padd)
+    xrefSrc = xrefSrc + ((maxoffset + padd) - half_size)
+    yrefSrc = yrefSrc + ((maxoffset + padd) - half_size)
     
     cooMain = [outroot + '.coo']
     cooSubs = ['%s_%d.coo' % (subroot, i) for i in range(submaps+1)]
