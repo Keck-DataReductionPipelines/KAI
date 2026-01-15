@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>kai.reduce.data &mdash; KAI  documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
 
   
@@ -161,91 +161,94 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.data.trim_on_fwhm" title="kai.reduce.data.trim_on_fwhm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">trim_on_fwhm</span></code></a>(roots, strehls, fwhm[, fwhm_max])</p></td>
 <td><p>Take a list of files and trim based on the FWHM. All files that have a</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.data.readWeightsFile" title="kai.reduce.data.readWeightsFile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">readWeightsFile</span></code></a>(roots, weightFile)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.data.trim_on_strehl" title="kai.reduce.data.trim_on_strehl"><code class="xref py py-obj docutils literal notranslate"><span class="pre">trim_on_strehl</span></code></a>(roots, strehls, fwhm, strehl_trim_min)</p></td>
+<td><p>Take a list of files and trim based on the strehl.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.data.readWeightsFile" title="kai.reduce.data.readWeightsFile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">readWeightsFile</span></code></a>(roots, weightFile)</p></td>
 <td><p>Expects a file of the format:</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.data.loadStrehl" title="kai.reduce.data.loadStrehl"><code class="xref py py-obj docutils literal notranslate"><span class="pre">loadStrehl</span></code></a>(cleanDir, roots)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.data.loadStrehl" title="kai.reduce.data.loadStrehl"><code class="xref py py-obj docutils literal notranslate"><span class="pre">loadStrehl</span></code></a>(cleanDir, roots)</p></td>
 <td><p>Load Strehl and FWHM info. The file format will be</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.data.trim_table_by_name" title="kai.reduce.data.trim_table_by_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">trim_table_by_name</span></code></a>(outroots, tableFileName)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.data.trim_table_by_name" title="kai.reduce.data.trim_table_by_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">trim_table_by_name</span></code></a>(outroots, tableFileName)</p></td>
 <td><p>Takes a list of values (listed in tableFileName) and trim them down based on</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.data.combine_drizzle" title="kai.reduce.data.combine_drizzle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">combine_drizzle</span></code></a>(imgsize, cleanDir, roots, outroot, ...)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.data.combine_drizzle" title="kai.reduce.data.combine_drizzle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">combine_drizzle</span></code></a>(imgsize, cleanDir, roots, outroot, ...)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.data.combine_submaps" title="kai.reduce.data.combine_submaps"><code class="xref py py-obj docutils literal notranslate"><span class="pre">combine_submaps</span></code></a>(imgsize, cleanDir, roots, outroot, ...)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.data.combine_submaps" title="kai.reduce.data.combine_submaps"><code class="xref py py-obj docutils literal notranslate"><span class="pre">combine_submaps</span></code></a>(imgsize, cleanDir, roots, outroot, ...)</p></td>
 <td><p>Assumes the list of roots are pre-sorted based on quality. Images are then</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.data.combine_rotation" title="kai.reduce.data.combine_rotation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">combine_rotation</span></code></a>(cleanDir, roots[, instrument])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.data.combine_rotation" title="kai.reduce.data.combine_rotation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">combine_rotation</span></code></a>(cleanDir, roots[, instrument])</p></td>
 <td><p>Determine if images are different PAs. If so, then</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.data.sort_frames" title="kai.reduce.data.sort_frames"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sort_frames</span></code></a>(roots, strehls, fwhm, weights, shiftsTab)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.data.sort_frames" title="kai.reduce.data.sort_frames"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sort_frames</span></code></a>(roots, strehls, fwhm, weights, shiftsTab)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.data.combine_ref" title="kai.reduce.data.combine_ref"><code class="xref py py-obj docutils literal notranslate"><span class="pre">combine_ref</span></code></a>(coofile, cleanDir, roots, diffPA[, ...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.data.combine_ref" title="kai.reduce.data.combine_ref"><code class="xref py py-obj docutils literal notranslate"><span class="pre">combine_ref</span></code></a>(coofile, cleanDir, roots, diffPA[, ...])</p></td>
 <td><p>Pulls reference star coordinates from image header keywords.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.data.combine_coo" title="kai.reduce.data.combine_coo"><code class="xref py py-obj docutils literal notranslate"><span class="pre">combine_coo</span></code></a>(coofile, cleanDir, roots, diffPA[, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.data.combine_coo" title="kai.reduce.data.combine_coo"><code class="xref py py-obj docutils literal notranslate"><span class="pre">combine_coo</span></code></a>(coofile, cleanDir, roots, diffPA[, ...])</p></td>
 <td><p>Pulls reference star coordinates from <a href="#id1"><span class="problematic" id="id2">*</span></a>.coo files.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.data.combine_lis" title="kai.reduce.data.combine_lis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">combine_lis</span></code></a>(outfile, cleanDir, roots, diffPA)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.data.combine_lis" title="kai.reduce.data.combine_lis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">combine_lis</span></code></a>(outfile, cleanDir, roots, diffPA)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.data.xregister_correlation_fourier" title="kai.reduce.data.xregister_correlation_fourier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">xregister_correlation_fourier</span></code></a>(I, R, Nx, Ny)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.data.xregister_correlation_fourier" title="kai.reduce.data.xregister_correlation_fourier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">xregister_correlation_fourier</span></code></a>(I, R, Nx, Ny)</p></td>
 <td><p>Pythonified version of algorithm from iraf xregister</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.data.elliptical_gaussian_2d" title="kai.reduce.data.elliptical_gaussian_2d"><code class="xref py py-obj docutils literal notranslate"><span class="pre">elliptical_gaussian_2d</span></code></a>(params, x, y)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.data.elliptical_gaussian_2d" title="kai.reduce.data.elliptical_gaussian_2d"><code class="xref py py-obj docutils literal notranslate"><span class="pre">elliptical_gaussian_2d</span></code></a>(params, x, y)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.data.residuals" title="kai.reduce.data.residuals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">residuals</span></code></a>(params, x, y, image)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.data.residuals" title="kai.reduce.data.residuals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">residuals</span></code></a>(params, x, y, image)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.data.combine_register" title="kai.reduce.data.combine_register"><code class="xref py py-obj docutils literal notranslate"><span class="pre">combine_register</span></code></a>(outroot, refImage, diffPA[, ...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.data.combine_register" title="kai.reduce.data.combine_register"><code class="xref py py-obj docutils literal notranslate"><span class="pre">combine_register</span></code></a>(outroot, refImage, diffPA[, ...])</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.data.combine_log" title="kai.reduce.data.combine_log"><code class="xref py py-obj docutils literal notranslate"><span class="pre">combine_log</span></code></a>(outroot, roots, strehls, fwhm, weights)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.data.combine_log" title="kai.reduce.data.combine_log"><code class="xref py py-obj docutils literal notranslate"><span class="pre">combine_log</span></code></a>(outroot, roots, strehls, fwhm, weights)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.data.combine_size" title="kai.reduce.data.combine_size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">combine_size</span></code></a>(shiftsTable, refImage, outroot, subroot, ...)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.data.combine_size" title="kai.reduce.data.combine_size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">combine_size</span></code></a>(shiftsTable, refImage, outroot, subroot, ...)</p></td>
 <td><p>Determine the final size of the fully combined image, accounting for</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.data.setup_drizzle" title="kai.reduce.data.setup_drizzle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setup_drizzle</span></code></a>(imgsize)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.data.setup_drizzle" title="kai.reduce.data.setup_drizzle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setup_drizzle</span></code></a>(imgsize)</p></td>
 <td><p>Setup drizzle parameters for NIRC2 data.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.data.clean_drizzle" title="kai.reduce.data.clean_drizzle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clean_drizzle</span></code></a>(xgeoim, ygeoim, _bp, _cd, _wgt, _dlog[, ...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.data.clean_drizzle" title="kai.reduce.data.clean_drizzle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clean_drizzle</span></code></a>(xgeoim, ygeoim, _bp, _cd, _wgt, _dlog[, ...])</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.data.cosmicray_median" title="kai.reduce.data.cosmicray_median"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cosmicray_median</span></code></a>(ccd, input_mask[, error_image, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.data.cosmicray_median" title="kai.reduce.data.cosmicray_median"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cosmicray_median</span></code></a>(ccd, input_mask[, error_image, ...])</p></td>
 <td><p>Modified from ccdproc</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.data.loop_through_crs" title="kai.reduce.data.loop_through_crs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">loop_through_crs</span></code></a>(data, crarr[, search_box, ...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.data.loop_through_crs" title="kai.reduce.data.loop_through_crs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">loop_through_crs</span></code></a>(data, crarr[, search_box, ...])</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.data.round_to_edge" title="kai.reduce.data.round_to_edge"><code class="xref py py-obj docutils literal notranslate"><span class="pre">round_to_edge</span></code></a>(min_box_val, max_box_val, min_val, max_val)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.data.round_to_edge" title="kai.reduce.data.round_to_edge"><code class="xref py py-obj docutils literal notranslate"><span class="pre">round_to_edge</span></code></a>(min_box_val, max_box_val, min_val, max_val)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.data.clean_cosmicrays" title="kai.reduce.data.clean_cosmicrays"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clean_cosmicrays</span></code></a>(_ff, _mask, wave, _input_mask[, ...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.data.clean_cosmicrays" title="kai.reduce.data.clean_cosmicrays"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clean_cosmicrays</span></code></a>(_ff, _mask, wave, _input_mask[, ...])</p></td>
 <td><p>Clean the image of cosmicrays and make a mask containing the location</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.data.clean_persistance" title="kai.reduce.data.clean_persistance"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clean_persistance</span></code></a>(_n, _pers[, instrument])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.data.clean_persistance" title="kai.reduce.data.clean_persistance"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clean_persistance</span></code></a>(_n, _pers[, instrument])</p></td>
 <td><p>Make masks of the persistance to be used in combining the images</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.data.clean_bkgsubtract" title="kai.reduce.data.clean_bkgsubtract"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clean_bkgsubtract</span></code></a>(_ff_f, _bp)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.data.clean_bkgsubtract" title="kai.reduce.data.clean_bkgsubtract"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clean_bkgsubtract</span></code></a>(_ff_f, _bp)</p></td>
 <td><p>Do additional background subtraction of any excess background</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.data.clean_makecoo" title="kai.reduce.data.clean_makecoo"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clean_makecoo</span></code></a>(_ce, _cc, refSrc, strSrc, aotsxyRef, ...)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.data.clean_makecoo" title="kai.reduce.data.clean_makecoo"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clean_makecoo</span></code></a>(_ce, _cc, refSrc, strSrc, aotsxyRef, ...)</p></td>
 <td><p>Make the <a href="#id3"><span class="problematic" id="id4">*</span></a>.coo file for this science image. Use the difference</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.data.mosaic_ref" title="kai.reduce.data.mosaic_ref"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mosaic_ref</span></code></a>(outFile, cleanDir, roots, diffPA[, instrument])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.data.mosaic_ref" title="kai.reduce.data.mosaic_ref"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mosaic_ref</span></code></a>(outFile, cleanDir, roots, diffPA[, instrument])</p></td>
 <td><p>Calculate an initial guess at the offsets between mosaic frames.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.data.mosaic" title="kai.reduce.data.mosaic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mosaic</span></code></a>(files, wave, outroot[, field, outSuffix, trim, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.data.mosaic" title="kai.reduce.data.mosaic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mosaic</span></code></a>(files, wave, outroot[, field, outSuffix, trim, ...])</p></td>
 <td><p>Accepts a list of cleaned images and does a weighted combining after</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.data.mosaic_register" title="kai.reduce.data.mosaic_register"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mosaic_register</span></code></a>(outroot, refImage, diffPA)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.data.mosaic_register" title="kai.reduce.data.mosaic_register"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mosaic_register</span></code></a>(outroot, refImage, diffPA)</p></td>
 <td><p>BROKEN Register images for a mosaic. This only calculates the exact</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.data.mosaic_size" title="kai.reduce.data.mosaic_size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mosaic_size</span></code></a>(shiftsTable, refImage, outroot, subroot, ...)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.data.mosaic_size" title="kai.reduce.data.mosaic_size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mosaic_size</span></code></a>(shiftsTable, refImage, outroot, subroot, ...)</p></td>
 <td><p>Determine the final size for the completed mosaic.</p></td>
 </tr>
 </tbody>
@@ -394,7 +397,7 @@ You should use clean() instead.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="kai.reduce.data.combine">
-<span class="sig-prename descclassname"><span class="pre">kai.reduce.data.</span></span><span class="sig-name descname"><span class="pre">combine</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">files</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wave</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outroot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outSuffix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fwhm_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">submaps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fixDAR</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_koa_weather</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clean_dirs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">combo_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instrument</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">instruments.default_inst</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/data.html#combine"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.data.combine" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.data.</span></span><span class="sig-name descname"><span class="pre">combine</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">files</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wave</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outroot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outSuffix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fwhm_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strehl_trim_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">submaps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fixDAR</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_koa_weather</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clean_dirs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">combo_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instrument</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">instruments.default_inst</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/data.html#combine"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.data.combine" title="Link to this definition"></a></dt>
 <dd><p>Accepts a list of cleaned images and does a weighted combining after
 performing frame selection based on the Strehl and FWHM.</p>
 <p>Each image must have an associated <a href="#id5"><span class="problematic" id="id6">*</span></a>.coo file which gives the rough
@@ -433,6 +436,12 @@ Default = None, no weighting.</p>
 </dd>
 <dt><strong>fwhm_max</strong><span class="classifier">float, default=0</span></dt><dd><p>The maximum allowed FWHM for keeping frames when trimming is turned on.
 If set to default=0 and trim=True, then we use FWHM &lt; 1.25 * FWHM.min().</p>
+</dd>
+<dt><strong>strehl_trim_min</strong><span class="classifier">float or None, default = None</span></dt><dd><p>The minimum strehl value allowed when trimming is turned on. When a value
+is specified, both FWHM and strehl trimming are performed.
+Recommended <em>ONLY</em> when AO performance is bad leading to a tight core, but
+very poor PSF otherwise.
+If None, then will not trim on strehl.</p>
 </dd>
 <dt><strong>submaps</strong><span class="classifier">int, default=0</span></dt><dd><p>Set to the number of submaps to be made (def=0).</p>
 </dd>
@@ -548,6 +557,13 @@ This does some intelligent handling for REALLY bad data quality.</p>
 <dd><p>Take a list of files and trim based on the FWHM. All files that have a
 FWHM &lt; 1.25 * FWHM.min()
 are kept.</p>
+<p>The returned arrays contain only those files that pass the above criteria.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.reduce.data.trim_on_strehl">
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.data.</span></span><span class="sig-name descname"><span class="pre">trim_on_strehl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">roots</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strehls</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fwhm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strehl_trim_min</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/data.html#trim_on_strehl"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.data.trim_on_strehl" title="Link to this definition"></a></dt>
+<dd><p>Take a list of files and trim based on the strehl.</p>
 <p>The returned arrays contain only those files that pass the above criteria.</p>
 </dd></dl>
 

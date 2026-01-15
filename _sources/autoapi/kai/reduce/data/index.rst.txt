@@ -38,6 +38,7 @@ Functions
    kai.reduce.data.calcStrehl
    kai.reduce.data.weight_by_strehl
    kai.reduce.data.trim_on_fwhm
+   kai.reduce.data.trim_on_strehl
    kai.reduce.data.readWeightsFile
    kai.reduce.data.loadStrehl
    kai.reduce.data.trim_table_by_name
@@ -283,7 +284,7 @@ Module Contents
    ..
        !! processed by numpydoc !!
 
-.. py:function:: combine(files, wave, outroot, field=None, outSuffix=None, trim=False, weight=None, fwhm_max=0, submaps=0, fixDAR=True, use_koa_weather=False, mask=True, clean_dirs=None, combo_dir=None, instrument=instruments.default_inst)
+.. py:function:: combine(files, wave, outroot, field=None, outSuffix=None, trim=False, weight=None, fwhm_max=0, strehl_trim_min=None, submaps=0, fixDAR=True, use_koa_weather=False, mask=True, clean_dirs=None, combo_dir=None, instrument=instruments.default_inst)
 
    
    Accepts a list of cleaned images and does a weighted combining after
@@ -334,6 +335,13 @@ Module Contents
        **fwhm_max** : float, default=0
            The maximum allowed FWHM for keeping frames when trimming is turned on.
            If set to default=0 and trim=True, then we use FWHM < 1.25 * FWHM.min().
+
+       **strehl_trim_min** : float or None, default = None
+           The minimum strehl value allowed when trimming is turned on. When a value
+           is specified, both FWHM and strehl trimming are performed.
+           Recommended *ONLY* when AO performance is bad leading to a tight core, but
+           very poor PSF otherwise.
+           If None, then will not trim on strehl. 
 
        **submaps** : int, default=0
            Set to the number of submaps to be made (def=0).
@@ -527,6 +535,30 @@ Module Contents
    Take a list of files and trim based on the FWHM. All files that have a
    FWHM < 1.25 * FWHM.min()
    are kept.
+
+   The returned arrays contain only those files that pass the above criteria.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: trim_on_strehl(roots, strehls, fwhm, strehl_trim_min)
+
+   
+   Take a list of files and trim based on the strehl. 
 
    The returned arrays contain only those files that pass the above criteria.
 
