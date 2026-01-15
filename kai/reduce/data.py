@@ -492,7 +492,8 @@ def clean_lp(files, nite, wave, refSrc, strSrc, angOff, skyfile):
           angOff=angOff, skyfile=skyfile)
 
 def combine(files, wave, outroot, field=None, outSuffix=None,
-            trim=False, weight=None, fwhm_max=0, submaps=0,
+            trim=False, weight=None, fwhm_max=0, strehl_trim_min = None,
+            submaps=0,
             fixDAR=True, use_koa_weather=False,
             mask=True,
             clean_dirs=None, combo_dir=None,
@@ -540,6 +541,12 @@ def combine(files, wave, outroot, field=None, outSuffix=None,
     fwhm_max : float, default=0
         The maximum allowed FWHM for keeping frames when trimming is turned on.
         If set to default=0 and trim=True, then we use FWHM < 1.25 * FWHM.min().
+    strehl_trim_min : float or None, default = None
+        The minimum strehl value allowed when trimming is turned on. When a value
+        is specified, both FWHM and strehl trimming are performed.
+        Recommended *ONLY* when AO performance is bad leading to a tight core, but
+        very poor PSF otherwise.
+        If None, then will not trim on strehl. 
     submaps : int, default=0
         Set to the number of submaps to be made (def=0).
     fixDAR : boolean, default = True
@@ -757,6 +764,8 @@ def combine(files, wave, outroot, field=None, outSuffix=None,
     if trim:
         roots, strehls, fwhm, weights = trim_on_fwhm(roots, strehls, fwhm,
                                                      fwhm_max=fwhm_max)
+        if strehl_trim_min is not None:
+            roots, strehls, fwhm, weights = trim_on_strehl(roots, strehls, fwhm, strehl_trim_min)
 
     ##########
     # Weighting
@@ -1134,6 +1143,24 @@ def trim_on_fwhm(roots, strehls, fwhm, fwhm_max=0):
 
     print('combine: Keeping %d frames with FWHM < %4.1f' \
         % (len(roots), fwhm_max))
+
+    return (roots, strehls, fwhm, weights)
+
+def trim_on_strehl(roots, strehls, fwhm, strehl_trim_min):
+    """
+    Take a list of files and trim based on the strehl. 
+
+    The returned arrays contain only those files that pass the above criteria.
+    """
+    # Pull out those we want to include in the combining
+    keep = np.where(strehls >= strehl_trim_min)[0]
+    strehls = strehls[keep]
+    fwhm = fwhm[keep]
+    roots = [roots[i] for i in keep]
+    weights = np.array( [1.0/len(roots)] * len(roots) )
+
+    print('combine: Keeping %d frames with strehl > %4.1f' \
+        % (len(roots), strehl_trim_min))
 
     return (roots, strehls, fwhm, weights)
 
