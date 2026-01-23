@@ -492,7 +492,8 @@ def clean_lp(files, nite, wave, refSrc, strSrc, angOff, skyfile):
           angOff=angOff, skyfile=skyfile)
 
 def combine(files, wave, outroot, field=None, outSuffix=None,
-            trim=False, weight=None, fwhm_max=0, submaps=0,
+            trim=False, weight=None, fwhm_max=0, strehl_trim_min = None,
+            submaps=0,
             fixDAR=True, use_koa_weather=False,
             mask=True,
             clean_dirs=None, combo_dir=None,
@@ -540,6 +541,12 @@ def combine(files, wave, outroot, field=None, outSuffix=None,
     fwhm_max : float, default=0
         The maximum allowed FWHM for keeping frames when trimming is turned on.
         If set to default=0 and trim=True, then we use FWHM < 1.25 * FWHM.min().
+    strehl_trim_min : float or None, default = None
+        The minimum strehl value allowed when trimming is turned on. When a value
+        is specified, both FWHM and strehl trimming are performed.
+        Recommended *ONLY* when AO performance is bad leading to a tight core, but
+        very poor PSF otherwise.
+        If None, then will not trim on strehl. 
     submaps : int, default=0
         Set to the number of submaps to be made (def=0).
     fixDAR : boolean, default = True
@@ -663,8 +670,11 @@ def combine(files, wave, outroot, field=None, outSuffix=None,
             shutil.copy(source_clean_dir + 'c' + source_file_root + '.coo',
                         dest_clean_dir + 'c' + dest_file_root + '.coo')
             
-            shutil.copy(source_clean_dir + 'c' + source_file_root + '.rcoo',
+            try: 
+                shutil.copy(source_clean_dir + 'c' + source_file_root + '.rcoo',
                         dest_clean_dir + 'c' + dest_file_root + '.rcoo')
+            except:
+                print('No rcoo files to copy')
             
             shutil.copy(source_clean_dir + 'distort/cd' + source_file_root + '.fits',
                         dest_clean_dir + 'distort/cd' + dest_file_root + '.fits')
@@ -754,6 +764,8 @@ def combine(files, wave, outroot, field=None, outSuffix=None,
     if trim:
         roots, strehls, fwhm, weights = trim_on_fwhm(roots, strehls, fwhm,
                                                      fwhm_max=fwhm_max)
+        if strehl_trim_min is not None:
+            roots, strehls, fwhm, weights = trim_on_strehl(roots, strehls, fwhm, strehl_trim_min)
 
     ##########
     # Weighting
@@ -784,7 +796,7 @@ def combine(files, wave, outroot, field=None, outSuffix=None,
 
     # See if all images are at same PA, if not, rotate all to PA = 0
     # temporarily. This needs to be done to get correct shifts.
-    diffPA = combine_rotation(cleanDir, roots, instrument=instrument)
+    diffPA, phis = combine_rotation(cleanDir, roots, instrument=instrument)
 
     # Make a table of coordinates for the reference source.
     # These serve as initial estimates for the shifts.
@@ -802,7 +814,7 @@ def combine(files, wave, outroot, field=None, outSuffix=None,
     #                  shiftsTab['col2'][shiftsTab['col0'] == 'ci190421_a015003_flip.fits']])
 
     # Determine the size of the output image from max shifts
-    xysize = combine_size(shiftsTab, refImage, _out, _sub, submaps)
+    xysize = combine_size(shiftsTab, refImage, _out, _sub, submaps, phis)
 
     ##########
     # Sort frames -- recall that submaps assume sorted by FWHM.
@@ -823,11 +835,11 @@ def combine(files, wave, outroot, field=None, outSuffix=None,
 
     # Remove *.lis_r file & rotated rcoo files, if any - these
     # were just needed to get the proper shifts for xregister
-    _lisr = _out + '.lis_r'
-    util.rmall([_lisr])
-    for i in range(len(allroots)):
-        _rcoo = cleanDir + 'c' + str(allroots[i]) + '.rcoo'
-        util.rmall([_rcoo])
+    #_lisr = _out + '.lis_r'
+    #util.rmall([_lisr])
+    #for i in range(len(allroots)):
+    #    _rcoo = cleanDir + 'c' + str(allroots[i]) + '.rcoo'
+    #    util.rmall([_rcoo])
     
     # Change back to original directory
     os.chdir(redDir)
@@ -1134,6 +1146,24 @@ def trim_on_fwhm(roots, strehls, fwhm, fwhm_max=0):
 
     return (roots, strehls, fwhm, weights)
 
+def trim_on_strehl(roots, strehls, fwhm, strehl_trim_min):
+    """
+    Take a list of files and trim based on the strehl. 
+
+    The returned arrays contain only those files that pass the above criteria.
+    """
+    # Pull out those we want to include in the combining
+    keep = np.where(strehls >= strehl_trim_min)[0]
+    strehls = strehls[keep]
+    fwhm = fwhm[keep]
+    roots = [roots[i] for i in keep]
+    weights = np.array( [1.0/len(roots)] * len(roots) )
+
+    print('combine: Keeping %d frames with strehl > %4.1f' \
+        % (len(roots), strehl_trim_min))
+
+    return (roots, strehls, fwhm, weights)
+
 
 def readWeightsFile(roots, weightFile):
     """
@@ -1203,7 +1233,7 @@ def combine_drizzle(imgsize, cleanDir, roots, outroot, weights, shifts,
                     wave, diffPA, fixDAR=True, use_koa_weather=False,
                     mask=True, instrument=instruments.default_inst,
                    ):
-
+    
     _fits = outroot + '.fits'
     _tmpfits = outroot + '_tmp.fits'
     _wgt = outroot + '_sig.fits'
@@ -1240,7 +1270,6 @@ def combine_drizzle(imgsize, cleanDir, roots, outroot, weights, shifts,
         # Cleaned but distorted image
         _cd = cleanDir + 'distort/cd' + roots[i] + '.fits'
         _cdwt = cleanDir + 'weight/cdwt' + roots[i] + '.fits'
-
 
         util.rmall([_cdwt])
 
@@ -1313,15 +1342,56 @@ def combine_drizzle(imgsize, cleanDir, roots, outroot, weights, shifts,
         # We tell it the input its distorted/shfited and we want to undistort it
         wcs_in = wcs.WCS(hdr_current_img)
         wcs_out = wcs.WCS(hdr_current_img)
-
-        wcs_in.wcs.crpix = [wcs_in.wcs.crpix[0] - xsh, wcs_in.wcs.crpix[1] - ysh]
-        f_dlog.write('- Shifting image. xshift = {0:8.2f}, yshift = {1:8.2f} \n'.format(xsh, ysh))
-        # shift so output image is in the center of the produce image
-        wcs_in.wcs.crpix = [wcs_in.wcs.crpix[0] - (imgsize - np.shape(cdwt_img)[0])/2, wcs_in.wcs.crpix[1] - (imgsize - np.shape(cdwt_img)[1])/2]
+        
 
         if (diffPA == 1):
             f_dlog.write('- Rotating image. phi = {} \n'.format(phi))
             wcs_in.wcs.cd = cd_mat
+            # Calculate padding shifts
+            pad_xsh = (imgsize - np.shape(cdwt_img)[0])/2
+            pad_ysh = (imgsize - np.shape(cdwt_img)[1])/2
+    
+            # Unrotate the rotated coos
+            # We'll later rotate them with the padding
+            phi_rad = np.deg2rad(phi)
+            unrotated_xsh = xsh * np.cos(-phi_rad) - ysh * np.sin(-phi_rad)
+            unrotated_ysh = xsh * np.sin(-phi_rad) + ysh * np.cos(-phi_rad)
+            
+            # Combine star alignment shifts with padding shifts BEFORE rotating
+            total_xsh = unrotated_xsh + pad_xsh
+            total_ysh = unrotated_ysh + pad_ysh
+            
+            # Rotate the TOTAL shifts 
+            
+            xsh_rot = total_xsh * np.cos(phi_rad) - total_ysh * np.sin(phi_rad)
+            ysh_rot = total_xsh * np.sin(phi_rad) + total_ysh * np.cos(phi_rad)
+            
+            # Original CRPIX
+            x0, y0 = wcs_in.wcs.crpix
+            
+            # Apply the combined rotated shift
+            x_shifted = x0 - xsh_rot
+            y_shifted = y0 - ysh_rot
+
+            f_dlog.write('- Shifting image. xshift = {0:8.2f}, yshift = {1:8.2f} \n'.format(xsh_rot, ysh_rot))
+            
+            # Account for rotation around the image center
+            cx = imgsize/2
+            cy = imgsize/2
+            
+            dx = x_shifted - cx
+            dy = y_shifted - cy
+            
+            x1 = cx + dx*np.cos(phi_rad) + dy*np.sin(phi_rad)
+            y1 = cy - dx*np.sin(phi_rad) + dy*np.cos(phi_rad)
+            
+            wcs_in.wcs.crpix = [x1, y1]
+        else:
+            # Non-rotated case
+            f_dlog.write('- Shifting image. xshift = {0:8.2f}, yshift = {1:8.2f} \n'.format(xsh, ysh))
+            wcs_in.wcs.crpix = [wcs_in.wcs.crpix[0] - xsh, wcs_in.wcs.crpix[1] - ysh]
+            wcs_in.wcs.crpix = [wcs_in.wcs.crpix[0] - (imgsize - np.shape(cdwt_img)[0])/2, 
+                                wcs_in.wcs.crpix[1] - (imgsize - np.shape(cdwt_img)[1])/2]
     
         xgeoim = fits.getdata(_xgeoim).astype('float32')
         ygeoim = fits.getdata(_ygeoim).astype('float32')
@@ -1615,7 +1685,7 @@ def combine_submaps(
             output_hdrs[sub] = hdr_current_img
         phi = instrument.get_position_angle(hdr_current_img)
         if (diffPA == 1):
-            drizzle.rot = phi
+             _, _, cd_mat = rotate_wcs(hdr_current_img, phi)
 
         # Calculate saturation level for submaps
         # by weighting each individual satLevel and summing.
@@ -1677,11 +1747,56 @@ def combine_submaps(
         wcs_in = wcs.WCS(hdr_current_img)
         wcs_out = wcs.WCS(hdr_current_img)
 
-        wcs_in.wcs.crpix = [wcs_in.wcs.crpix[0] - xsh, wcs_in.wcs.crpix[1] - ysh]
-        log.write('- Shifting image. xshift = {0:8.2f}, yshift = {1:8.2f} \n'.format(xsh, ysh))
-        # shift so output image is in the center of the produce image
-        wcs_in.wcs.crpix = [wcs_in.wcs.crpix[0] - (imgsize - np.shape(cdwt_img)[0])/2, wcs_in.wcs.crpix[1] - (imgsize - np.shape(cdwt_img)[1])/2]
+        if (diffPA == 1):
+            log.write('- Rotating image. phi = {} \n'.format(phi))
+            wcs_in.wcs.cd = cd_mat
+            # Calculate padding shifts
+            pad_xsh = (imgsize - np.shape(cdwt_img)[0])/2
+            pad_ysh = (imgsize - np.shape(cdwt_img)[1])/2
+    
+            # Unrotate the rotated coos
+            # We'll later rotate them with the padding
+            phi_rad = np.deg2rad(phi)
+            unrotated_xsh = xsh * np.cos(-phi_rad) - ysh * np.sin(-phi_rad)
+            unrotated_ysh = xsh * np.sin(-phi_rad) + ysh * np.cos(-phi_rad)
+            
+            # Combine star alignment shifts with padding shifts BEFORE rotating
+            total_xsh = unrotated_xsh + pad_xsh
+            total_ysh = unrotated_ysh + pad_ysh
+            
+            # Rotate the TOTAL shifts 
+            
+            xsh_rot = total_xsh * np.cos(phi_rad) - total_ysh * np.sin(phi_rad)
+            ysh_rot = total_xsh * np.sin(phi_rad) + total_ysh * np.cos(phi_rad)
+            
+            # Original CRPIX
+            x0, y0 = wcs_in.wcs.crpix
+            
+            # Apply the combined rotated shift
+            x_shifted = x0 - xsh_rot
+            y_shifted = y0 - ysh_rot
 
+            log.write('- Shifting image. xshift = {0:8.2f}, yshift = {1:8.2f} \n'.format(xsh_rot, ysh_rot))
+            
+            # Account for rotation around the image center
+            cx = imgsize/2
+            cy = imgsize/2
+            
+            dx = x_shifted - cx
+            dy = y_shifted - cy
+            
+            x1 = cx + dx*np.cos(phi_rad) + dy*np.sin(phi_rad)
+            y1 = cy - dx*np.sin(phi_rad) + dy*np.cos(phi_rad)
+            
+            wcs_in.wcs.crpix = [x1, y1]
+        else:
+            # Non-rotated case
+            log.write('- Shifting image. xshift = {0:8.2f}, yshift = {1:8.2f} \n'.format(xsh, ysh))
+            wcs_in.wcs.crpix = [wcs_in.wcs.crpix[0] - xsh, wcs_in.wcs.crpix[1] - ysh]
+            # shift so output image is in the center of the produce image
+            wcs_in.wcs.crpix = [wcs_in.wcs.crpix[0] - (imgsize - np.shape(cdwt_img)[0])/2, 
+                                wcs_in.wcs.crpix[1] - (imgsize - np.shape(cdwt_img)[1])/2]
+            
         xgeoim = fits.getdata(_xgeoim).astype('float32')
         ygeoim = fits.getdata(_ygeoim).astype('float32')
     
@@ -1876,10 +1991,12 @@ def combine_rotation(cleanDir, roots, instrument=instruments.default_inst):
     diffPA = 0
 
     clean_files = instrument.make_filenames(roots, rootDir=cleanDir, prefix='c')
+    phis = np.zeros(len(clean_files))
 
     for cc in range(len(clean_files)):
         hdr = fits.getheader(clean_files[cc], ignore_missing_end=True)
         phi = instrument.get_position_angle(hdr)
+        phis[cc] = phi
 
         if cc == 0:
             phiRef = phi
@@ -1895,9 +2012,10 @@ def combine_rotation(cleanDir, roots, instrument=instruments.default_inst):
         for cc in range(len(clean_files)):
             hdr = fits.getheader(clean_files[cc], ignore_missing_end=True)
             phi = instrument.get_position_angle(hdr)
+            phis[cc] = phi
             rot_img(roots[cc], phi, cleanDir)
 
-    return (diffPA)
+    return (diffPA, phis)
 
 def sort_frames(roots, strehls, fwhm, weights, shiftsTab):
     sidx = np.argsort(fwhm)
@@ -2052,18 +2170,17 @@ def combine_register(outroot, refImage, diffPA, plot_correlation = False, instru
     # coo file starts with c even if image was rotated
     refImage_filename = refImage.split('/')[-1]
     if refImage_filename[0] == 'r':
-        coo_file_ref = Table.read(refImage.split(refImage_filename)[0] + 'c' + refImage_filename[1:-5] + '.coo', format='ascii', header_start=None)
+        coo_file_ref = Table.read(refImage.split(refImage_filename)[0] + 'c' + refImage_filename[1:-5] + '.rcoo', format='ascii', header_start=None)
     else:
         coo_file_ref = Table.read(refImage[:-5] + '.coo', format='ascii', header_start=None)
-    
-    coords = Table.read(outroot + '.coo', format='ascii', header_start=None)
 
-    fileNames = Table.read(input[1:], format='ascii.no_header') # removed , header_start=None
+    fileNames = Table.read(input[1:], format='ascii.no_header')
     fileNames = np.array(fileNames)
     fileNames = np.array(fileNames, dtype='S')
-    coords = Table.read(outroot + '.coo', format='ascii', header_start=None)
+    
+    coords = Table.read(outroot + '.coo', format='ascii', header_start=None)        
     shiftsTable_empty = np.zeros((len(fileNames), 3), dtype=float)
-    shiftsTable = Table(shiftsTable_empty, dtype=('S50', float, float)) #dtype=(float, float, 'S50')
+    shiftsTable = Table(shiftsTable_empty, dtype=('S50', float, float))
     
     hdrRef = fits.getheader(refImage, ignore_missing_end=True)
     plate_scale = instrument.get_plate_scale(hdrRef) #arcsec/pixels
@@ -2075,7 +2192,7 @@ def combine_register(outroot, refImage, diffPA, plot_correlation = False, instru
         shift_img = fits.getdata(fileName)
         fileName_filename = fileName.split('/')[-1]
         if fileName_filename[0] == 'r':
-            coo_name = fileName.split(fileName_filename)[0] + 'c' + fileName_filename[1:-5] + '.coo'
+            coo_name = fileName.split(fileName_filename)[0] + 'c' + fileName_filename[1:-5] + '.rcoo'
         else:
             coo_name = fileName[:-5] + '.coo'
         coo_file = Table.read(coo_name, format='ascii', header_start=None)
@@ -2190,10 +2307,11 @@ def combine_log(outroot, roots, strehls, fwhm, weights):
 
     f_log.close()
 
-def combine_size(shiftsTable, refImage, outroot, subroot, submaps):
-    """Determine the final size of the fully combined image. Use the
-    shifts stored in the shiftsTable.
-
+def combine_size(shiftsTable, refImage, outroot, subroot, submaps, phis):
+    """Determine the final size of the fully combined image, accounting for
+    both shifts and rotations. Use the shifts stored in the shiftsTable and
+    rotation angles in phis.
+    
     @param shiftsTable: Table with x and y shifts for each image
     @type shiftsTable: ascii table
     @param refImage: The reference image from which the shifts are
@@ -2205,47 +2323,83 @@ def combine_size(shiftsTable, refImage, outroot, subroot, submaps):
     @param subroot: Same as outroot but for submaps
     @type subroot: string
     @param submaps: number of submaps
-    @type sbumaps: int
+    @type submaps: int
+    @param phis: Array of rotation angles in degrees for each image
+    @type phis: array-like
     """
-    x_allShifts = shiftsTable['col1']
-    y_allShifts = shiftsTable['col2']
-
-
-    xhi = abs(x_allShifts.max())
-    xlo = abs(x_allShifts.min())
-    yhi = abs(y_allShifts.max())
-    ylo = abs(y_allShifts.min())
-
-    # Make sure to include the edges of all images.
-    # Might require some extra padding on one side.
-    maxoffset = max([xlo, xhi, ylo, yhi])
-
+    x_allShifts = np.array(shiftsTable['col1'])
+    y_allShifts = np.array(shiftsTable['col2'])
+    phis_rad = np.deg2rad(np.array(phis))
+    
+    # Get original image size
     orig_img = fits.getdata(refImage)
     orig_size = (orig_img.shape)[0]
+    half_size = orig_size / 2.0
+    
+
+    # Calculate the four corners of the original image relative to its center
+    corners = np.array([
+        [-half_size, -half_size],
+        [half_size, -half_size],
+        [half_size, half_size],
+        [-half_size, half_size]
+    ])  # Shape: (4, 2)
+    
+    # Compute cos and sin for all angles
+    cos_phi = np.cos(phis_rad)  # Shape: (n_images,)
+    sin_phi = np.sin(phis_rad)  # Shape: (n_images,)
+    
+    # Rotate corners for all images at once
+    corners_x = corners[:, 0][:, np.newaxis]  # Shape: (4, 1)
+    corners_y = corners[:, 1][:, np.newaxis]  # Shape: (4, 1)
+
+    # Unrotate shifts (inverse rotation)
+    unrotated_xsh = x_allShifts * cos_phi + y_allShifts * sin_phi
+    unrotated_ysh = -x_allShifts * sin_phi + y_allShifts * cos_phi
+    
+    # Add unrotated shifts to corners
+    shifted_x = corners_x + unrotated_xsh
+    shifted_y = corners_y + unrotated_ysh
+    
+    rotated_x = shifted_x * cos_phi - shifted_y * sin_phi  # Shape: (4, n_images)
+    rotated_y = shifted_x * sin_phi + shifted_y * cos_phi  # Shape: (4, n_images)
+    
+    # Find the range needed: max positive and max negative extent
+    xmax = np.max(rotated_x)
+    xmin = np.min(rotated_x)
+    ymax = np.max(rotated_y)
+    ymin = np.min(rotated_y)
+
+    # Maximum offset needed from center in any direction
+    maxoffset = max(abs(xmax), abs(xmin), abs(ymax), abs(ymin))
+    
+    # Add padding
     padd = int(np.floor(orig_size * 0.01))
 
+    
     # Read in the reference star's position in the ref image and translate
     # it into the coordinates of the final main and sub maps.
     hdr = fits.getheader(refImage, ignore_missing_end=True)
     xrefSrc = float(hdr['XREF'])
     yrefSrc = float(hdr['YREF'])
-
-    xrefSrc = xrefSrc + (maxoffset + padd)
-    yrefSrc = yrefSrc + (maxoffset + padd)
-
+    xrefSrc = xrefSrc + ((maxoffset + padd) - half_size)
+    yrefSrc = yrefSrc + ((maxoffset + padd) - half_size)
+    
     cooMain = [outroot + '.coo']
     cooSubs = ['%s_%d.coo' % (subroot, i) for i in range(submaps+1)]
     cooAll = cooMain + cooSubs
-
     util.rmall(cooAll)
+    
     for coo in cooAll:
         _allCoo = open(coo, 'w')
         _allCoo.write('%9.3f %9.3f\n' % (xrefSrc, yrefSrc))
         _allCoo.close()
 
-    xysize = int(float(orig_size) + ((maxoffset + padd) * 2.0))
+    
+    xysize = int((maxoffset + padd) * 2.0) #int(float(orig_size) + ((maxoffset + padd) * 2.0))
+    
     print('combine: Size of output image is %d' % xysize)
-
+    
     return xysize
 
 def setup_drizzle(imgsize):
@@ -2820,11 +2974,11 @@ def clean_makecoo(_ce, _cc, refSrc, strSrc, aotsxyRef, radecRef,
 
     # Make a temporary rotated coo file, in case there are any data sets
     # with various PAs; needed for xregister; remove later
-    xyRef_rot = kai_util.rotate_coo(xref, yref, phi)
+    xyRef_rot = kai_util.rotate_coo(xref, yref, phi, instrument)
     xref_r = xyRef_rot[0]
     yref_r = xyRef_rot[1]
 
-    xyStr_rot = kai_util.rotate_coo(xstr, ystr, phi)
+    xyStr_rot = kai_util.rotate_coo(xstr, ystr, phi, instrument)
     xstr_r = xyStr_rot[0]
     ystr_r = xyStr_rot[1]
 
