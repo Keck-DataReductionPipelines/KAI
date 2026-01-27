@@ -24,7 +24,8 @@ all_scales = [[1.0, 'No scaling'],
               [0.004, 'TMT/IRIS'],
               [0.0196, 'GSAOI'],
               [0.050, 'ACS-WFC'],
-              [0.01,  'OSIRIS-imag']]
+              [0.01,  'OSIRIS-imag'],
+              [0.035, 'OSIRIS-spec']]
 
 ##################################################
 # 
@@ -471,20 +472,28 @@ def input_data(options):
     x = tab[cols[3]]
     y = tab[cols[4]]
     
-    if options.data_type == 2:
+    if options.data_type == 2: 
         xerr = tab[cols[5]]
         yerr = tab[cols[6]]
         snr = tab[cols[7]]
         corr = tab[cols[8]]
         nframes = tab[cols[9]]
         fwhm = tab[cols[10]]
-    else:
+    elif options.data_type == 1:   
         xerr = None
         yerr = None
         snr = tab[cols[5]]
         corr = tab[cols[6]]
         nframes = tab[cols[7]]
         fwhm = tab[cols[8]]
+    else:
+        xerr = None
+        yerr = None
+        snr = tab[cols[8]]
+        fwhm = tab[cols[5]]
+        corr = tab[cols[6]]
+        nframes = tab[cols[7]]
+        
 
         
     # Trim out stars with errors in magnitudes
@@ -828,6 +837,9 @@ def get_camera_type(fitsfile):
 
        if ('imag' in instrument):
           instrument = 'OSIRIS-imag'
+
+    if ("OSIRIS" in instrument):
+        instrument = "OSIRIS-spec"
     
     # Default is still NIRC2
     if (instrument == None): 
