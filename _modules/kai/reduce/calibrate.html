@@ -14,8 +14,8 @@
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
-      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -98,7 +98,8 @@
               <span class="p">[</span><span class="mf">0.004</span><span class="p">,</span> <span class="s1">&#39;TMT/IRIS&#39;</span><span class="p">],</span>
               <span class="p">[</span><span class="mf">0.0196</span><span class="p">,</span> <span class="s1">&#39;GSAOI&#39;</span><span class="p">],</span>
               <span class="p">[</span><span class="mf">0.050</span><span class="p">,</span> <span class="s1">&#39;ACS-WFC&#39;</span><span class="p">],</span>
-              <span class="p">[</span><span class="mf">0.01</span><span class="p">,</span>  <span class="s1">&#39;OSIRIS-imag&#39;</span><span class="p">]]</span></div>
+              <span class="p">[</span><span class="mf">0.01</span><span class="p">,</span>  <span class="s1">&#39;OSIRIS-imag&#39;</span><span class="p">],</span>
+              <span class="p">[</span><span class="mf">0.035</span><span class="p">,</span> <span class="s1">&#39;OSIRIS-spec&#39;</span><span class="p">]]</span></div>
 
 
 <span class="c1">##################################################</span>
@@ -566,20 +567,28 @@
     <span class="n">x</span> <span class="o">=</span> <span class="n">tab</span><span class="p">[</span><span class="n">cols</span><span class="p">[</span><span class="mi">3</span><span class="p">]]</span>
     <span class="n">y</span> <span class="o">=</span> <span class="n">tab</span><span class="p">[</span><span class="n">cols</span><span class="p">[</span><span class="mi">4</span><span class="p">]]</span>
     
-    <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">data_type</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">data_type</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span> 
         <span class="n">xerr</span> <span class="o">=</span> <span class="n">tab</span><span class="p">[</span><span class="n">cols</span><span class="p">[</span><span class="mi">5</span><span class="p">]]</span>
         <span class="n">yerr</span> <span class="o">=</span> <span class="n">tab</span><span class="p">[</span><span class="n">cols</span><span class="p">[</span><span class="mi">6</span><span class="p">]]</span>
         <span class="n">snr</span> <span class="o">=</span> <span class="n">tab</span><span class="p">[</span><span class="n">cols</span><span class="p">[</span><span class="mi">7</span><span class="p">]]</span>
         <span class="n">corr</span> <span class="o">=</span> <span class="n">tab</span><span class="p">[</span><span class="n">cols</span><span class="p">[</span><span class="mi">8</span><span class="p">]]</span>
         <span class="n">nframes</span> <span class="o">=</span> <span class="n">tab</span><span class="p">[</span><span class="n">cols</span><span class="p">[</span><span class="mi">9</span><span class="p">]]</span>
         <span class="n">fwhm</span> <span class="o">=</span> <span class="n">tab</span><span class="p">[</span><span class="n">cols</span><span class="p">[</span><span class="mi">10</span><span class="p">]]</span>
-    <span class="k">else</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">options</span><span class="o">.</span><span class="n">data_type</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>   
         <span class="n">xerr</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="n">yerr</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="n">snr</span> <span class="o">=</span> <span class="n">tab</span><span class="p">[</span><span class="n">cols</span><span class="p">[</span><span class="mi">5</span><span class="p">]]</span>
         <span class="n">corr</span> <span class="o">=</span> <span class="n">tab</span><span class="p">[</span><span class="n">cols</span><span class="p">[</span><span class="mi">6</span><span class="p">]]</span>
         <span class="n">nframes</span> <span class="o">=</span> <span class="n">tab</span><span class="p">[</span><span class="n">cols</span><span class="p">[</span><span class="mi">7</span><span class="p">]]</span>
         <span class="n">fwhm</span> <span class="o">=</span> <span class="n">tab</span><span class="p">[</span><span class="n">cols</span><span class="p">[</span><span class="mi">8</span><span class="p">]]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">xerr</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">yerr</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">snr</span> <span class="o">=</span> <span class="n">tab</span><span class="p">[</span><span class="n">cols</span><span class="p">[</span><span class="mi">8</span><span class="p">]]</span>
+        <span class="n">fwhm</span> <span class="o">=</span> <span class="n">tab</span><span class="p">[</span><span class="n">cols</span><span class="p">[</span><span class="mi">5</span><span class="p">]]</span>
+        <span class="n">corr</span> <span class="o">=</span> <span class="n">tab</span><span class="p">[</span><span class="n">cols</span><span class="p">[</span><span class="mi">6</span><span class="p">]]</span>
+        <span class="n">nframes</span> <span class="o">=</span> <span class="n">tab</span><span class="p">[</span><span class="n">cols</span><span class="p">[</span><span class="mi">7</span><span class="p">]]</span>
+        
 
         
     <span class="c1"># Trim out stars with errors in magnitudes</span>
@@ -935,6 +944,9 @@
 
        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;imag&#39;</span> <span class="ow">in</span> <span class="n">instrument</span><span class="p">):</span>
           <span class="n">instrument</span> <span class="o">=</span> <span class="s1">&#39;OSIRIS-imag&#39;</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="s2">&quot;OSIRIS&quot;</span> <span class="ow">in</span> <span class="n">instrument</span><span class="p">):</span>
+        <span class="n">instrument</span> <span class="o">=</span> <span class="s2">&quot;OSIRIS-spec&quot;</span>
     
     <span class="c1"># Default is still NIRC2</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">instrument</span> <span class="o">==</span> <span class="kc">None</span><span class="p">):</span> 
