@@ -1,0 +1,280 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>kai.reduce.summary_stats &mdash; KAI  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            KAI
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../autoapi/index.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">KAI</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">kai.reduce.summary_stats</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for kai.reduce.summary_stats</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Written with significant generation from Claude Sonnet 4.5</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+
+<div class="viewcode-block" id="get_n_used">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/summary_stats/index.html#kai.reduce.summary_stats.get_n_used">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_n_used</span><span class="p">(</span><span class="n">date</span><span class="p">,</span> <span class="n">target_name</span><span class="p">,</span> <span class="n">base_dir</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Count the number of lines in mag&lt;date&gt;_&lt;target_name&gt;.lis</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        date: Date as a string</span>
+<span class="sd">        target_name: Target name as a string</span>
+<span class="sd">        base_dir: Base directory path</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        N_used: Number of lines in the file</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">base_dir</span> <span class="o">+</span> <span class="s1">&#39;/combo/&#39;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;mag</span><span class="si">{</span><span class="n">date</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">target_name</span><span class="si">}</span><span class="s2">.lis&quot;</span><span class="p">)</span>
+    
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">n_used</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="mi">1</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">n_used</span>
+    <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error: File &#39;</span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2">&#39; not found.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="get_ref_and_error">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/summary_stats/index.html#kai.reduce.summary_stats.get_ref_and_error">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_ref_and_error</span><span class="p">(</span><span class="n">target_name</span><span class="p">,</span> <span class="n">base_dir</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Extract N_ref and Ast_Error from plotPosError_&lt;target&gt;.txt</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        target_name: Target name as a string</span>
+<span class="sd">        base_dir: Base directory path</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: (N_ref, Ast_Error) or (None, None) if error</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">base_dir</span> <span class="o">+</span> <span class="s1">&#39;/combo/starfinder/&#39;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;plotPosError_</span><span class="si">{</span><span class="n">target_name</span><span class="si">}</span><span class="s2">.txt&quot;</span><span class="p">)</span>
+    
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">content</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        
+        <span class="c1"># Extract number of detections</span>
+        <span class="n">n_ref_match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Number of detections:\s+(\d+)&#39;</span><span class="p">,</span> <span class="n">content</span><span class="p">)</span>
+        <span class="n">n_ref</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">n_ref_match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span> <span class="k">if</span> <span class="n">n_ref_match</span> <span class="k">else</span> <span class="kc">None</span>
+        
+        <span class="c1"># Extract median position error</span>
+        <span class="n">ast_error_match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Median Pos Error \(mas\).*?:\s+([\d.]+)&#39;</span><span class="p">,</span> <span class="n">content</span><span class="p">)</span>
+        <span class="n">ast_error</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">ast_error_match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span> <span class="k">if</span> <span class="n">ast_error_match</span> <span class="k">else</span> <span class="kc">None</span>
+        
+        <span class="k">return</span> <span class="n">n_ref</span><span class="p">,</span> <span class="n">ast_error</span>
+    <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error: File &#39;</span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2">&#39; not found.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="get_strehl_and_fwhm">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/summary_stats/index.html#kai.reduce.summary_stats.get_strehl_and_fwhm">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_strehl_and_fwhm</span><span class="p">(</span><span class="n">date</span><span class="p">,</span> <span class="n">target_name</span><span class="p">,</span> <span class="n">base_dir</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Extract Strehl and FWHM from stf_psf_strehl_&lt;target&gt;.txt</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        date: Date as a string</span>
+<span class="sd">        target_name: Target name as a string</span>
+<span class="sd">        base_dir: Base directory path</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: (strehl, fwhm) or (None, None) if error</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">base_dir</span> <span class="o">+</span> <span class="s1">&#39;/combo/starfinder/&#39;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;stf_psf_strehl_</span><span class="si">{</span><span class="n">target_name</span><span class="si">}</span><span class="s2">.txt&quot;</span><span class="p">)</span>
+    
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+                <span class="c1"># Look for the line with mag&lt;date&gt;_&lt;target&gt;_psf.fits</span>
+                <span class="k">if</span> <span class="sa">f</span><span class="s2">&quot;mag</span><span class="si">{</span><span class="n">date</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">target_name</span><span class="si">}</span><span class="s2">_psf.fits&quot;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+                    <span class="c1"># Split the line by whitespace</span>
+                    <span class="n">parts</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">4</span><span class="p">:</span>
+                        <span class="n">strehl</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                        <span class="n">fwhm</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+                        <span class="k">return</span> <span class="n">strehl</span><span class="p">,</span> <span class="n">fwhm</span>
+        
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error: Could not find matching line in &#39;</span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+    <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error: File &#39;</span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2">&#39; not found.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">IndexError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error parsing values: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="get_astrometric_errors">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/summary_stats/index.html#kai.reduce.summary_stats.get_astrometric_errors">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_astrometric_errors</span><span class="p">(</span><span class="n">date</span><span class="p">,</span> <span class="n">target_name</span><span class="p">,</span> <span class="n">object_name</span><span class="p">,</span> <span class="n">base_dir</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Extract x_ast_err and y_ast_err from mag&lt;date&gt;_&lt;target&gt;_rms.lis</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        date: Date as a string</span>
+<span class="sd">        target_name: Target name as a string</span>
+<span class="sd">        object_name: Name of the object to search for in the file</span>
+<span class="sd">        base_dir: Base directory path</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: (x_ast_err, y_ast_err) or (None, None) if error</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">base_dir</span> <span class="o">+</span> <span class="s1">&#39;/combo/starfinder/&#39;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;mag</span><span class="si">{</span><span class="n">date</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">target_name</span><span class="si">}</span><span class="s2">_rms.lis&quot;</span><span class="p">)</span>
+    
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+                <span class="c1"># Skip comment lines</span>
+                <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;#&#39;</span><span class="p">):</span>
+                    <span class="k">continue</span>
+                
+                <span class="c1"># Split the line by whitespace</span>
+                <span class="n">parts</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                
+                <span class="c1"># Check if this is the line for the specified object</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">object_name</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">6</span><span class="p">:</span>
+                        <span class="n">x_ast_err</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="mi">5</span><span class="p">])</span>  <span class="c1"># xe is the 5th column (index 4)</span>
+                        <span class="n">y_ast_err</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="mi">6</span><span class="p">])</span>  <span class="c1"># ye is the 6th column (index 5)</span>
+                        <span class="k">return</span> <span class="n">x_ast_err</span><span class="p">,</span> <span class="n">y_ast_err</span>
+        
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error: Could not find object &#39;</span><span class="si">{</span><span class="n">object_name</span><span class="si">}</span><span class="s2">&#39; in &#39;</span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+    <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error: File &#39;</span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2">&#39; not found.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">IndexError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error parsing values: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="get_summary_stats">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/summary_stats/index.html#kai.reduce.summary_stats.get_summary_stats">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_summary_stats</span><span class="p">(</span><span class="n">date</span><span class="p">,</span> <span class="n">target_name</span><span class="p">,</span> <span class="n">object_name</span><span class="p">,</span> <span class="n">base_dir</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    date : str</span>
+<span class="sd">       Epoch name such as 21jun13os</span>
+<span class="sd">    target_name : str</span>
+<span class="sd">       Target name with suffix such as m15_kp</span>
+<span class="sd">    object_name : str</span>
+<span class="sd">       Object name as it appears in starfinder, such as m15</span>
+<span class="sd">    base_dir : str</span>
+<span class="sd">       Base directory such as /g/lu/data/microlens/21jun13os/</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">n_used</span> <span class="o">=</span> <span class="n">get_n_used</span><span class="p">(</span><span class="n">date</span><span class="p">,</span> <span class="n">target_name</span><span class="p">,</span> <span class="n">base_dir</span><span class="p">)</span>
+    <span class="n">n_used</span> <span class="o">=</span> <span class="n">get_n_used</span><span class="p">(</span><span class="n">date</span><span class="p">,</span> <span class="n">target_name</span><span class="p">,</span> <span class="n">base_dir</span><span class="p">)</span>
+    <span class="n">n_ref</span><span class="p">,</span> <span class="n">ast_error</span> <span class="o">=</span> <span class="n">get_ref_and_error</span><span class="p">(</span><span class="n">target_name</span><span class="p">,</span> <span class="n">base_dir</span><span class="p">)</span>
+    <span class="n">strehl</span><span class="p">,</span> <span class="n">fwhm</span> <span class="o">=</span> <span class="n">get_strehl_and_fwhm</span><span class="p">(</span><span class="n">date</span><span class="p">,</span> <span class="n">target_name</span><span class="p">,</span> <span class="n">base_dir</span><span class="p">)</span>
+    <span class="n">x_ast_err</span><span class="p">,</span> <span class="n">y_ast_err</span> <span class="o">=</span> <span class="n">get_astrometric_errors</span><span class="p">(</span><span class="n">date</span><span class="p">,</span> <span class="n">target_name</span><span class="p">,</span> <span class="n">object_name</span><span class="p">,</span> <span class="n">base_dir</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="n">v</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="p">[</span><span class="n">n_used</span><span class="p">,</span> <span class="n">n_ref</span><span class="p">,</span> <span class="n">ast_error</span><span class="p">,</span> <span class="n">strehl</span><span class="p">,</span> <span class="n">fwhm</span><span class="p">,</span> <span class="n">x_ast_err</span><span class="p">,</span> <span class="n">y_ast_err</span><span class="p">]):</span>
+        <span class="c1"># Print header row</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;N_used</span><span class="se">\t</span><span class="s2">strehl</span><span class="se">\t</span><span class="s2">fwhm</span><span class="se">\t</span><span class="s2">Ast_Error</span><span class="se">\t</span><span class="s2">N_ref</span><span class="se">\t</span><span class="s2">x_ast_err</span><span class="se">\t</span><span class="s2">y_ast_err&quot;</span><span class="p">)</span>
+        <span class="c1"># Print values row</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">n_used</span><span class="si">}</span><span class="se">\t</span><span class="si">{</span><span class="n">strehl</span><span class="si">}</span><span class="se">\t</span><span class="si">{</span><span class="n">fwhm</span><span class="si">}</span><span class="se">\t</span><span class="si">{</span><span class="n">ast_error</span><span class="si">}</span><span class="se">\t</span><span class="si">{</span><span class="n">n_ref</span><span class="si">}</span><span class="se">\t</span><span class="si">{</span><span class="n">x_ast_err</span><span class="si">}</span><span class="se">\t</span><span class="si">{</span><span class="n">y_ast_err</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, J. R. Lu, A. K. Gautam, T. Do.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,171 @@
+kai.reduce.summary_stats
+========================
+
+.. py:module:: kai.reduce.summary_stats
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   kai.reduce.summary_stats.get_n_used
+   kai.reduce.summary_stats.get_ref_and_error
+   kai.reduce.summary_stats.get_strehl_and_fwhm
+   kai.reduce.summary_stats.get_astrometric_errors
+   kai.reduce.summary_stats.get_summary_stats
+
+
+Module Contents
+---------------
+
+.. py:function:: get_n_used(date, target_name, base_dir)
+
+   
+   Count the number of lines in mag<date>_<target_name>.lis
+
+   Args:
+       date: Date as a string
+       target_name: Target name as a string
+       base_dir: Base directory path
+
+   Returns:
+       N_used: Number of lines in the file
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: get_ref_and_error(target_name, base_dir)
+
+   
+   Extract N_ref and Ast_Error from plotPosError_<target>.txt
+
+   Args:
+       target_name: Target name as a string
+       base_dir: Base directory path
+
+   Returns:
+       tuple: (N_ref, Ast_Error) or (None, None) if error
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: get_strehl_and_fwhm(date, target_name, base_dir)
+
+   
+   Extract Strehl and FWHM from stf_psf_strehl_<target>.txt
+
+   Args:
+       date: Date as a string
+       target_name: Target name as a string
+       base_dir: Base directory path
+
+   Returns:
+       tuple: (strehl, fwhm) or (None, None) if error
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: get_astrometric_errors(date, target_name, object_name, base_dir)
+
+   
+   Extract x_ast_err and y_ast_err from mag<date>_<target>_rms.lis
+
+   Args:
+       date: Date as a string
+       target_name: Target name as a string
+       object_name: Name of the object to search for in the file
+       base_dir: Base directory path
+
+   Returns:
+       tuple: (x_ast_err, y_ast_err) or (None, None) if error
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: get_summary_stats(date, target_name, object_name, base_dir)
+
+   
+   date : str
+      Epoch name such as 21jun13os
+   target_name : str
+      Target name with suffix such as m15_kp
+   object_name : str
+      Object name as it appears in starfinder, such as m15
+   base_dir : str
+      Base directory such as /g/lu/data/microlens/21jun13os/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+

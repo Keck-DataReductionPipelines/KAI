@@ -27,6 +27,7 @@ Submodules
    /autoapi/kai/reduce/restack_template/index
    /autoapi/kai/reduce/sky/index
    /autoapi/kai/reduce/slalib/index
+   /autoapi/kai/reduce/summary_stats/index
    /autoapi/kai/reduce/tests/index
    /autoapi/kai/reduce/util/index
 
