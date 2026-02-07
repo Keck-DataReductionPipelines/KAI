@@ -12,6 +12,7 @@ from astropy.coordinates import SkyCoord
 import ccdproc as ccdp
 import math
 import drizzle
+import kai
 from . import kai_util
 from kai.reduce import util, lin_correction
 from kai import instruments
@@ -29,7 +30,8 @@ from datetime import datetime
 from scipy.ndimage import shift
 from scipy.optimize import least_squares
 from scipy.ndimage import rotate
-import kai
+from scipy.fft import fftn, ifftn, fftshift, ifftshift
+from scipy.signal import windows
 
 from scipy import ndimage
 from scipy.interpolate import griddata
@@ -498,6 +500,7 @@ def combine(files, wave, outroot, field=None, outSuffix=None,
             mask=True,
             clean_dirs=None, combo_dir=None,
             instrument=instruments.default_inst,
+            debug_plot_correlation=False
            ):
     """
     Accepts a list of cleaned images and does a weighted combining after
@@ -568,6 +571,7 @@ def combine(files, wave, outroot, field=None, outSuffix=None,
     """
     
     # Setup some files and directories
+    waveDir = util.getcwd()
     redDir = util.getcwd()
     rootDir = util.trimdir( os.path.abspath(redDir + '../') + '/')
     
@@ -808,10 +812,8 @@ def combine(files, wave, outroot, field=None, outSuffix=None,
 
 
     # Register images to get shifts.
-    shiftsTab = combine_register(_out, refImage, diffPA, instrument=instrument)
-    #shiftsTab = Table.read('../combo/mag19apr21os_ob140613_kp.shifts', format = 'ascii')
-    #shiftsTab.add_row(['ci190421_a015002_flip.fits', shiftsTab['col1'][shiftsTab['col0'] == 'ci190421_a015003_flip.fits'],
-    #                  shiftsTab['col2'][shiftsTab['col0'] == 'ci190421_a015003_flip.fits']])
+    shiftsTab = combine_register(_out, refImage, diffPA, instrument=instrument,
+                                 plot_correlation=debug_plot_correlation)
 
     # Determine the size of the output image from max shifts
     xysize = combine_size(shiftsTab, refImage, _out, _sub, submaps, phis)
@@ -1258,7 +1260,9 @@ def combine_drizzle(imgsize, cleanDir, roots, outroot, weights, shifts,
                     out_shape = (imgsize, imgsize), #np.shape(cdwt_img),
                     fillval = 0
                     )
-                       
+
+    imgsize_half = imgsize / 2.0
+    
     f_dlog.write('- Base dir: ' + cleanDir + '\n')                 
     for i in range(len(roots)):
         f_dlog.write(time.ctime() + '\n')
@@ -1275,9 +1279,15 @@ def combine_drizzle(imgsize, cleanDir, roots, outroot, weights, shifts,
 
         # Multiply each distorted image by it's weight
         fits_cd = fits.open(_cd)
-        fits_cd[0].data *= weights[i]
+        cdwt_img = fits_cd[0].data * weights[i]   # Keep image variable for drizzling later
+        fits_cd[0].data = cdwt_img                # Also save the weighted image to a file.
         fits_cd[0].header[instrument.hdr_keys['itime']] *= weights[i]
         fits_cd.writeto(_cdwt, output_verify=outputVerify)
+
+        # Padd size (must be same as in combine_size)
+        imgsize_orig = np.max(cdwt_img.shape)
+        padd_1percent = int(np.floor(imgsize_orig * 0.01))
+        padd_bigger_img = (imgsize - imgsize_orig) / 2.0
 
         # Get pixel shifts
         xsh = shifts[i][1]
@@ -1295,6 +1305,8 @@ def combine_drizzle(imgsize, cleanDir, roots, outroot, weights, shifts,
              _, _, cd_mat = rotate_wcs(hdr_current_img, phi)
              #cd_mat = rot_img(roots[i], phi, cleanDir, return_cd_only = True)
 
+        # Setup distortion maps to include both geometric and differential atmospheric
+        # refraction corrections (if specified).
         if (fixDAR == True):
             darRoot = _cdwt.replace('.fits', 'geo')
             (_xgeoim, _ygeoim) = dar.darPlusDistortion(
@@ -1311,8 +1323,6 @@ def combine_drizzle(imgsize, cleanDir, roots, outroot, weights, shifts,
         f_dlog.write('- X-shift distortion image: clean' + _xgeoim.split('/clean')[1] + '\n')
         f_dlog.write('- Y-shift distortion image: clean' + _ygeoim.split('/clean')[1] + '\n')
 
-        cdwt_img = fits.getdata(_cdwt)
-
         # Get exposure time
         itime_keyword = 'ITIME'
         exp_time = hdr_current_img[itime_keyword]
@@ -1320,7 +1330,6 @@ def combine_drizzle(imgsize, cleanDir, roots, outroot, weights, shifts,
         # Read in MJD of current file from FITS header
         mjd = instrument.get_mjd(hdr)
         mjd_weightedSum += weights[i] * mjd
-
         
         # weight the image by multiplying by mask
         # this is what is said to be done by in_mask in the iraf version 
@@ -1339,20 +1348,20 @@ def combine_drizzle(imgsize, cleanDir, roots, outroot, weights, shifts,
         print('  weight = {0:8.2f}'.format( weights[i] ))
         print('   outnx = {0:8d}'.format( imgsize ))
 
-        # We tell it the input its distorted/shfited and we want to undistort it
+        # We tell it the input is distorted/shifted and we want to undistort it
         wcs_in = wcs.WCS(hdr_current_img)
         wcs_out = wcs.WCS(hdr_current_img)
-        
 
         if (diffPA == 1):
             f_dlog.write('- Rotating image. phi = {} \n'.format(phi))
             wcs_in.wcs.cd = cd_mat
+
             # Calculate padding shifts
             pad_xsh = (imgsize - np.shape(cdwt_img)[0])/2
             pad_ysh = (imgsize - np.shape(cdwt_img)[1])/2
-    
+            
             # Unrotate the rotated coos
-            # We'll later rotate them with the padding
+            # We'll later rotate them with padding added.
             phi_rad = np.deg2rad(phi)
             unrotated_xsh = xsh * np.cos(-phi_rad) - ysh * np.sin(-phi_rad)
             unrotated_ysh = xsh * np.sin(-phi_rad) + ysh * np.cos(-phi_rad)
@@ -1362,7 +1371,6 @@ def combine_drizzle(imgsize, cleanDir, roots, outroot, weights, shifts,
             total_ysh = unrotated_ysh + pad_ysh
             
             # Rotate the TOTAL shifts 
-            
             xsh_rot = total_xsh * np.cos(phi_rad) - total_ysh * np.sin(phi_rad)
             ysh_rot = total_xsh * np.sin(phi_rad) + total_ysh * np.cos(phi_rad)
             
@@ -1384,14 +1392,22 @@ def combine_drizzle(imgsize, cleanDir, roots, outroot, weights, shifts,
             
             x1 = cx + dx*np.cos(phi_rad) + dy*np.sin(phi_rad)
             y1 = cy - dx*np.sin(phi_rad) + dy*np.cos(phi_rad)
-            
+
             wcs_in.wcs.crpix = [x1, y1]
+
+            # NEW:
+            # Calc offset for larger image size:
+            wcs_in.wcs.crpix = [cdwt_img.shape[0]/2.0, cdwt_img.shape[1]/2.0]
+            wcs_out.wcs.crpix = [(imgsize / 2.0) + xsh, (imgsize / 2.0) + ysh]
+            print(xsh, ysh)
+            print(wcs_in.wcs.crpix)
+            print(wcs_out.wcs.crpix)
         else:
             # Non-rotated case
             f_dlog.write('- Shifting image. xshift = {0:8.2f}, yshift = {1:8.2f} \n'.format(xsh, ysh))
             wcs_in.wcs.crpix = [wcs_in.wcs.crpix[0] - xsh, wcs_in.wcs.crpix[1] - ysh]
-            wcs_in.wcs.crpix = [wcs_in.wcs.crpix[0] - (imgsize - np.shape(cdwt_img)[0])/2, 
-                                wcs_in.wcs.crpix[1] - (imgsize - np.shape(cdwt_img)[1])/2]
+            wcs_in.wcs.crpix = [wcs_in.wcs.crpix[0] - (imgsize - np.shape(cdwt_img)[1])/2, 
+                                wcs_in.wcs.crpix[1] - (imgsize - np.shape(cdwt_img)[0])/2]
     
         xgeoim = fits.getdata(_xgeoim).astype('float32')
         ygeoim = fits.getdata(_ygeoim).astype('float32')
@@ -1401,6 +1417,10 @@ def combine_drizzle(imgsize, cleanDir, roots, outroot, weights, shifts,
     
         wcs_in.cpdis1 = xdist
         wcs_in.cpdis2 = ydist
+
+        #wcs_out.wcs.naxis = [imgsize, imgsize]
+
+        #pdb.set_trace()
     
         pixmap = drizzle.utils.calc_pixmap(wcs_in, wcs_out)
         
@@ -1434,6 +1454,14 @@ def combine_drizzle(imgsize, cleanDir, roots, outroot, weights, shifts,
         #swtich from output cps to counts by multiplying by total counts
         out_img = driz.out_img * driz._texptime
         img_hdu = fits.PrimaryHDU(data=out_img, header=hdr)
+
+        import pylab as plt
+        plt.figure(1)
+        plt.clf()
+        plt.imshow(out_img, vmin=0, vmax=100)
+        plt.show()
+        pdb.set_trace()
+        
 
         # make header
         if i == 0:
@@ -1765,7 +1793,6 @@ def combine_submaps(
             total_ysh = unrotated_ysh + pad_ysh
             
             # Rotate the TOTAL shifts 
-            
             xsh_rot = total_xsh * np.cos(phi_rad) - total_ysh * np.sin(phi_rad)
             ysh_rot = total_xsh * np.sin(phi_rad) + total_ysh * np.cos(phi_rad)
             
@@ -2025,9 +2052,9 @@ def sort_frames(roots, strehls, fwhm, weights, shiftsTab):
     fwhm = fwhm[sidx]
     weights = weights[sidx]
     roots = [roots[i] for i in sidx]
-    shiftsX = shiftsTab['col1']
+    shiftsX = shiftsTab['xshift']
     shiftsX = shiftsX[sidx]
-    shiftsY = shiftsTab['col2']
+    shiftsY = shiftsTab['yshift']
     shiftsY = shiftsY[sidx]
 
     # Move all the ones with fwhm = -1 to the end
@@ -2157,6 +2184,9 @@ def residuals(params, x, y, image):
     return elliptical_gaussian_2d(params, x, y) - image
 
 def combine_register(outroot, refImage, diffPA, plot_correlation = False, instrument = instruments.default_inst):
+    """
+    Register all the images through a cross-correlation method.
+    """
 
     shiftFile = outroot + '.shifts'
 
@@ -2165,30 +2195,47 @@ def combine_register(outroot, refImage, diffPA, plot_correlation = False, instru
         input = '@' + outroot + '.lis_r'
     else:
         input = '@' + outroot + '.lis'
-    
+
+    # Fetch the reference image, which all shifts will be calculated against.
+    # Also get the coordinates of the cooStar in the reference image (coo_file_ref)
     ref_img = fits.getdata(refImage)
+    
     # coo file starts with c even if image was rotated
     refImage_filename = refImage.split('/')[-1]
     if refImage_filename[0] == 'r':
-        coo_file_ref = Table.read(refImage.split(refImage_filename)[0] + 'c' + refImage_filename[1:-5] + '.rcoo', format='ascii', header_start=None)
+        coo_file_ref = Table.read(refImage.split(refImage_filename)[0] + 'c' + refImage_filename[1:-5] + '.rcoo',
+                                  format='ascii', header_start=None)
     else:
         coo_file_ref = Table.read(refImage[:-5] + '.coo', format='ascii', header_start=None)
 
+    # Fetch the file names and cooStar position for all images.
     fileNames = Table.read(input[1:], format='ascii.no_header')
     fileNames = np.array(fileNames)
     fileNames = np.array(fileNames, dtype='S')
     
-    coords = Table.read(outroot + '.coo', format='ascii', header_start=None)        
+    coords = Table.read(outroot + '.coo', format='ascii', header_start=None)
+
+    # Setup a shifts table for storing the final calculated shifts.
     shiftsTable_empty = np.zeros((len(fileNames), 3), dtype=float)
     shiftsTable = Table(shiftsTable_empty, dtype=('S50', float, float))
     
     hdrRef = fits.getheader(refImage, ignore_missing_end=True)
+
+    # Calculate the size of the large-crop box (crop-val) in pixels.
     plate_scale = instrument.get_plate_scale(hdrRef) #arcsec/pixels
-    crop_val = 1/plate_scale # 1 arcsec/(arcsec/pix)
+    crop_val = 1 / plate_scale # 1 arcsec/(arcsec/pix), units = pixels
     crop_val = int(np.round(crop_val))
 
+    # For speed, we pre-trim the reference image edges by 5%.
+    # This helps remove edge effects. 
+    five_percent = int(np.shape(ref_img)[0]*0.05)
+    ref_img_noedge = ref_img[five_percent:-five_percent, five_percent:-five_percent]
+    
+    # Loop through the images and calculate the shift for each (w.r.t. the reference image).
     for ii in range(len(fileNames)):
         fileName = fileNames[ii].decode("utf-8")
+        
+        # Load up the image, and cooStar coordinates.
         shift_img = fits.getdata(fileName)
         fileName_filename = fileName.split('/')[-1]
         if fileName_filename[0] == 'r':
@@ -2196,102 +2243,244 @@ def combine_register(outroot, refImage, diffPA, plot_correlation = False, instru
         else:
             coo_name = fileName[:-5] + '.coo'
         coo_file = Table.read(coo_name, format='ascii', header_start=None)
-        
-        
-        xshift = coo_file_ref['col2'] - coo_file['col2'] 
-        yshift = coo_file_ref['col1'] - coo_file['col1']
-        global_shift_img = shift(shift_img, (xshift, yshift), mode = 'constant')
 
-        # Crop off edges of images to avoid edge effects contaminating the cross correlation
-        five_percent = int(np.shape(ref_img)[0]*0.05)
-        global_shift_img_noedge = global_shift_img[five_percent:-five_percent, five_percent:-five_percent]
-        ref_img_noedge = ref_img[five_percent:-five_percent, five_percent:-five_percent]
+        # Crop off 5% of the edges of ii-th image
+        # to avoid edge effects contaminating the cross correlation.
+        shift_img_noedge = shift_img[five_percent:-five_percent, five_percent:-five_percent]
         
-        _x = np.fft.fft2(ref_img_noedge)
-        _y = np.fft.fft2(global_shift_img_noedge).conj()
-        
-        corr = np.abs(np.fft.ifft2(_x * _y))
+        # Figure out the overlap window between this ii-th image and the ref image.
+        xmin_ref = 0
+        xmax_ref = ref_img_noedge.shape[1]
+        ymin_ref = 0
+        ymax_ref = ref_img_noedge.shape[0]
 
-        half_size = int(np.shape(ref_img_noedge)[0]/2)
-        concat_x = np.concatenate((corr[half_size:], corr[:half_size]))
-        correlation_img = np.concatenate((concat_x[:,half_size:], concat_x[:,:half_size]), axis =1)
-
-        correlation_img = correlation_img - np.median(correlation_img)
+        xmin_ii = 0
+        xmax_ii = shift_img_noedge.shape[1]
+        ymin_ii = 0
+        ymax_ii = shift_img_noedge.shape[0]
         
-        # Find centroid by fitting gaussian
+        # Apply a shift to the image to center up on the cooStar.
+        xshift = int(coo_file_ref['col1'][0] - coo_file['col1'][0])
+        yshift = int(coo_file_ref['col2'][0] - coo_file['col2'][0])
+        #global_shift_img = shift(shift_img_noedge, (xshift, yshift), mode = 'constant')  # shifted image.
 
-        # Initial crop of +/- 1 arcsec
-        initial_crop_image = correlation_img[(half_size - crop_val):(half_size + crop_val), (half_size - crop_val):(half_size + crop_val)]
+        xmin_ii += xshift
+        xmax_ii += xshift
+        ymin_ii += yshift
+        ymax_ii += yshift
+
+        # Calculate the vertices of the overlap rectangle. Note these are in the coordinate system
+        # of the 5% cropped reference image (ref_img_noedge). 
+        overlap_xmin = max(xmin_ref, xmin_ii)
+        overlap_xmax = min(xmax_ref, xmax_ii)
+        overlap_ymin = max(ymin_ref, ymin_ii)
+        overlap_ymax = min(ymax_ref, ymax_ii)
+
+        # For sanity and ease of use later on, make sure the overlap rectangle is divisible by 2.
+        if (overlap_xmax - overlap_xmin) % 2 != 0:
+            overlap_xmax -= 1
+        if (overlap_ymax - overlap_ymin) % 2 != 0:
+            overlap_ymax -= 1
+
+        # Double-check that we have overlap in both directions.
+        if overlap_xmin >= overlap_xmax or overlap_ymin >= overlap_ymax:
+            raise RuntimeError(f'Two images do not overlap: {fileName_filename} and {refImage_filename}')
+
+        # Rectangle vertices in the original coordinates of shift_img_noedge:
+        overlap_xmin_ii = overlap_xmin - xshift
+        overlap_xmax_ii = overlap_xmax - xshift
+        overlap_ymin_ii = overlap_ymin - yshift
+        overlap_ymax_ii = overlap_ymax - yshift
+
+        # Return cropped images of both the reference and ii-th image that contains only
+        # the overlapping area. This is what should be used as input into the cross-correlation.
+        # Note that this action should also center up the two images onto the same coordinate system.
+        ref_img_cropped = ref_img_noedge[overlap_ymin:overlap_ymax, overlap_xmin:overlap_xmax]
+        ii_img_cropped = shift_img_noedge[overlap_ymin_ii:overlap_ymax_ii, overlap_xmin_ii:overlap_xmax_ii]
+
+        # # Method 1
+        # # Calculate a 2D FFT for both the reference image and the shifted image.
+        t0 = time.time()
+        _rr = np.fft.fft2(ref_img_cropped)
+        _ii = np.fft.fft2(ii_img_cropped)
+
+        # # Calculate the cross-correlation between the two images.
+        # # Save the results into a correlation map.
+        # corr = np.abs(np.fft.ifft2(_rr * _ii))
+
+        # # Shuffle the correlation map so that the center of the map = 0, 0 shift.
+        # #     right becomes left
+        # #     top becomes bottom
+        # # Then crop the correlation map around the middle where the shift peak should be.
+        # # This should leave us with a nice Gaussian shaped peak in the middle of the image.
+        # # Note this works because corr.shape is divisible by 2. Kinda equivalent to fftshift.
+        # half_size = (np.array(corr.shape) / 2.0).astype('int')
+        # concat_x = np.concatenate((corr[half_size[0]:], corr[:half_size[0]])) # swap y halves
+        # correlation_map = np.concatenate((concat_x[:,half_size[1]:], concat_x[:,:half_size[1]]), axis=1) # swap x halves
+        # # Save the "peak" or 0-shift image coordinates (e.g. where the peak should be
+        # # if the coo files were perfect).
+        # xy_shift00 = half_size # 2 dimensions, center of correlation map
+
+        # # Background subtract the correlation map to reduce noise.
+        # correlation_map = correlation_map - np.median(correlation_map)
+
+        # Method 2
+        corr_unnorm = np.multiply(_rr, np.conj(_ii))
+        corr_norm = corr_unnorm / (np.abs(corr_unnorm) + 1e-10) # for numerical stability
+        correlation_map = np.real(np.fft.fftshift(np.fft.ifft2(corr_norm)))
+        xy_shift00 = (np.array(ref_img_cropped.shape) / 2.0).astype('int')
         
-        # Find the approximate peak location
-        y_peak, x_peak = np.unravel_index(np.argmax(initial_crop_image), initial_crop_image.shape)
+        
+        # Find centroid by fitting gaussian to the peak of the correlation map.
+
+        # Initial crop of +/- 1 arcsec on the correlation map.
+        # These coordinates are in the reference frame of: correlation_map
+        y_min_orig = xy_shift00[0] - crop_val
+        y_max_orig = xy_shift00[0] + crop_val
+        x_min_orig = xy_shift00[1] - crop_val
+        x_max_orig = xy_shift00[1] + crop_val
+        corr_map_init_crop = correlation_map[y_min_orig:y_max_orig, x_min_orig:x_max_orig]
+        
+        # Find the approximate peak location on the correlation map.
+        y_peak, x_peak = np.unravel_index(np.argmax(corr_map_init_crop), corr_map_init_crop.shape)
         
         # Define a cutout around the peak +/- cutout_size
         if instrument.name == 'NIRC2':
             cutout_size = 5
         elif instrument.name == 'OSIRIS':
             cutout_size = 8
-        y_min, y_max = max(0, y_peak - cutout_size), min(initial_crop_image.shape[0], y_peak + cutout_size)
-        x_min, x_max = max(0, x_peak - cutout_size), min(initial_crop_image.shape[1], x_peak + cutout_size)
+
+        # Keep track of the min and max indices of the new correlation map.
+        # These coordinates are in the reference frame of: corr_map_init_crop.
+        y_min_init = max(0, y_peak - cutout_size)
+        y_max_init = min(corr_map_init_crop.shape[0], y_peak + cutout_size)
+        x_min_init = max(0, x_peak - cutout_size)
+        x_max_init = min(corr_map_init_crop.shape[1], x_peak + cutout_size)
         
-        # Extract the cutout image
-        image_cutout = initial_crop_image[y_min:y_max, x_min:x_max]
-        y_cutout, x_cutout = np.indices(image_cutout.shape)
+        # Extract the final small cutout map from the correlation map.
+        corr_map_crop_final = corr_map_init_crop[y_min_init:y_max_init, x_min_init:x_max_init]
+        y_cutout, x_cutout = np.indices(corr_map_crop_final.shape)
 
         # Flatten the arrays for fitting
         x_flat = x_cutout.ravel()
         y_flat = y_cutout.ravel()
-        image_flat = image_cutout.ravel()
+        corr_map_crop_flat = corr_map_crop_final.ravel()
 
         # Initial guess for the parameters: [amplitude, x0, y0, sigma_x, sigma_y, theta, offset]
         initial_guess = [
-            np.max(image_cutout),            # Amplitude
-            x_flat[np.argmax(image_cutout)], #image_cutout.shape[1] // 2,      # x0 (center of cutout in x)
-            y_flat[np.argmax(image_cutout)], #image_cutout.shape[0] // 2,      # y0 (center of cutout in y)
+            np.max(corr_map_crop_final),            # Amplitude
+            x_flat[np.argmax(corr_map_crop_final)], #corr_map_crop_final.shape[1] // 2, # x0 (center of cutout in x)
+            y_flat[np.argmax(corr_map_crop_final)], #corr_map_crop_final.shape[0] // 2, # y0 (center of cutout in y)
             1,                               # sigma_x
             1,                               # sigma_y
             0,                               # theta
-            np.min(correlation_img)             # offset (background level)
+            np.min(correlation_map)             # offset (background level)
         ]
         
         # Bounds for the parameters
         bounds = (
             [0, 0, 0, 0.1, 0.1, -np.pi, -np.inf],   # Lower bounds
-            [np.inf, image_cutout.shape[1], image_cutout.shape[0], np.inf, np.inf, np.pi, np.inf]  # Upper bounds
+            [np.inf, corr_map_crop_final.shape[1], corr_map_crop_final.shape[0],
+             np.inf, np.inf, np.pi, np.inf]  # Upper bounds
         )
         
         # Run least squares optimization
         result = least_squares(
-            residuals, initial_guess, args=(x_flat, y_flat, image_flat), bounds=bounds, xtol=1e-12, ftol=1e-12, gtol=1e-12, max_nfev=10000
+            residuals, initial_guess, args=(x_flat, y_flat, corr_map_crop_flat),
+            bounds=bounds, xtol=1e-12, ftol=1e-12, gtol=1e-12, max_nfev=10000
         )
         
         # Extract the optimized parameters
         amplitude, x0_fit, y0_fit, sigma_x, sigma_y, theta_fit, offset = result.x
 
-        
-        # Translate the cutout coordinates back to full image coordinates
-        x0_full = x0_fit + x_min + (half_size - crop_val)
-        y0_full = y0_fit + y_min + (half_size - crop_val)
-        
-        total_x_shift = xshift + (half_size - x0_full)
-        total_y_shift = yshift + (half_size - y0_full)
-    
+        # Translate the cutout coordinates back to full correlation map coordinates.
+        # Coords in reference frame of: correlation_map
+        x0_full = x0_fit + x_min_init + x_min_orig
+        y0_full = y0_fit + y_min_init + y_min_orig
+
+        # Shift relative to the expected input shift is: e.g. xy_shift00[1] - x0_full
+        total_x_shift = xshift - (xy_shift00[1] - x0_full)
+        total_y_shift = yshift - (xy_shift00[0] - y0_full)
+        t1 = time.time()
+
+        print(f'Runtime for default method = {t1 - t0:.1f} s')
+
+        # Method 2
+        from skimage.registration import phase_cross_correlation
+        t2 = time.time()
+        # shift_pcc, error, phase_div = phase_cross_correlation(ref_img_cropped, ii_img_cropped,
+        #                                                       upsample_factor=50, overlap_ratio=0.1)
+
+        shift_pcc = subpixel_windowed_pcc(ref_img_cropped, ii_img_cropped, window_radius=100,
+                                          upsample_factor=50, alpha=0.5)        
+        total_y_shift_pcc = shift_pcc[0] + yshift
+        total_x_shift_pcc = shift_pcc[1] + xshift
+        pcc_half_size = np.array(ref_img_cropped.shape) / 2.0
+        t3 = time.time()
+        print(f'Runtime for phase_cross_corr method = {t3 - t2:.1f} s')
+
+        print('*** Comparing methods:')
+        print(f'\t {"":<10s} {"x":<10s} {"y":<10s}')
+        print(f'\t {"coo":<10s} {xshift:10.2f} {yshift:10.2f}')
+        print(f'\t {"manual":<10s} {total_x_shift:10.2f} {total_y_shift:8.3f}')
+        print(f'\t {"pcc":<10s} {total_x_shift_pcc:10.2f} {total_y_shift_pcc:10.2f}')
+
         if plot_correlation:
-            import matplotlib.pyplot as plt
-            plt.imshow(correlation_img, origin="upper", cmap="viridis")
-            plt.scatter(x0_full, y0_full, color="red", marker="*", s=20, label="Gaussian Fit Centroid")
+            import pylab as plt
+            import matplotlib.colors as mcolors
+            
+            norm = mcolors.SymLogNorm(vmin=-10, vmax=1e4, linthresh=100) 
+            
+            # plot the image cutouts used in cross-correlation.
+            plt.close(1)
+            plt.figure(1, figsize=(10, 5.2))
+            plt.clf()
+            plt.subplots_adjust(left=0.1, right=0.95, bottom=0.10, top=0.85)
+            ax1 = plt.subplot(1, 2, 1)
+            plt.imshow(ref_img_cropped, cmap='gist_heat', norm=norm)
+            plt.axis('equal')
+            plt.xlim(0, ref_img_cropped.shape[1])
+            plt.xlim(0, ref_img_cropped.shape[0])
+            plt.title(f'Cropped Ref:\n{refImage_filename}')
+            
+            plt.subplot(1, 2, 2)
+            plt.imshow(ii_img_cropped, cmap='gist_heat', norm=norm)
+            plt.axis('equal')
+            plt.xlim(0, ref_img_cropped.shape[1])
+            plt.xlim(0, ref_img_cropped.shape[0])
+            plt.title(f'Cropped ii Img:\n{fileName_filename}')
+            save_name1 = fileName.replace('.fits', '_crop.png')
+            plt.savefig(save_name1)
+
+            # plot the correlation map.
+            plt.figure(2)
+            plt.clf()
+            plt.imshow(correlation_map, cmap="viridis")
+            plt.scatter(x0_full, y0_full, color="red", marker="*", s=40, label="Gaussian Fit Centroid")
+            plt.scatter(total_x_shift_pcc + pcc_half_size[1], total_y_shift_pcc + pcc_half_size[0], color="black", marker="+", s=40, label="skimage-pcc")
+            plt.scatter(xy_shift00[0], xy_shift00[1], color="green", marker="x", s=40, label="Init Coo Shift")
             plt.legend()
-            plt.xlim(x_min + (half_size - crop_val), x_max + (half_size - crop_val))
-            plt.ylim(y_min + (half_size - crop_val), y_max + (half_size - crop_val))
-            plt.show()
-            plt.close()
+            plt.xlim(x_min_init + (xy_shift00[1] - crop_val), x_max_init + (xy_shift00[1] - crop_val))
+            plt.ylim(y_min_init + (xy_shift00[0] - crop_val), y_max_init + (xy_shift00[0] - crop_val))
+            save_name2 = fileName.replace('.fits', '_corr.png')
+            plt.savefig(save_name2)
 
+
+
+        if np.hypot(shift_pcc[0], shift_pcc[1]) > 50:
+            pdb.set_trace()
+            
+        # Save the final shifts to the shift table.
         shiftsTable[ii][0] = fileName.split('/')[-1]
-        shiftsTable[ii][1] = total_y_shift
-        shiftsTable[ii][2] = total_x_shift
+        shiftsTable[ii][1] = total_x_shift_pcc
+        shiftsTable[ii][2] = total_y_shift_pcc
 
 
+    # Save out the shifts table. 
     util.rmall([shiftFile])
+    shiftsTable.rename_column('col0', 'file')
+    shiftsTable.rename_column('col1', 'xshift')
+    shiftsTable.rename_column('col2', 'yshift')
     shiftsTable.write(shiftFile, format = 'ascii')
 
     return (shiftsTable)
@@ -2327,8 +2516,8 @@ def combine_size(shiftsTable, refImage, outroot, subroot, submaps, phis):
     @param phis: Array of rotation angles in degrees for each image
     @type phis: array-like
     """
-    x_allShifts = np.array(shiftsTable['col1'])
-    y_allShifts = np.array(shiftsTable['col2'])
+    x_allShifts = np.array(shiftsTable['xshift'])
+    y_allShifts = np.array(shiftsTable['yshift'])
     phis_rad = np.deg2rad(np.array(phis))
     
     # Get original image size
@@ -3238,68 +3427,127 @@ class Sky(object):
 
 
 def mosaic(files, wave, outroot, field=None, outSuffix=None,
-            trim=0, weight=0, fwhm_max=0, submaps=0, fixDAR=True, maskSubmap=False,
+           trim=False, weight=None, fwhm_max=0, submaps=0,
+           clean_dirs=None, combo_dir=None,
+           fixDAR=True, maskSubmap=False,
             instrument=instruments.default_inst):
-    """Accepts a list of cleaned images and does a weighted combining after
+    """
+    Accepts a list of cleaned images and does a weighted combining after
     performing frame selection based on the Strehl and FWHM.
-
+    
     Each image must have an associated *.coo file which gives the rough
     position of the reference source.
-
-    @param files: List of integer file numbers to include in combine.
-    @type files: list of int
-    @param wave: Filter of observations (e.g. 'kp', 'lp', 'h')
-    @type wave: string
-    @param outroot: The output root name (e.g. '06jullgs'). The final combined
-        file names will be <outroot>_<field>_<wave>. The <field> keyword
-        is optional.
-
+    
+    Parameters
+    ----------
+    files : list of int
+        Integer list of the files to include in combine. Does not require
+        padded zeros.
+    wave : str
+        Name for the observation passband (e.g.: "kp", "lp", or "h"), used as
+        a wavelength suffix
+    outroot : str
+        The output root name (e.g. '06jullgs'). The final combined file names
+        will be <outroot>_<field>_<outSuffix>_<wave>.
+        The <field> and <outSuffix> keywords are optional.
+        
         Examples:
         06jullgs_kp for outroot='06jullgs' and wave='kp'
         06jullgs_arch_f1_kp for adding field='arch_f1'
-    @type outroot: string
-    @kwparam field: Optional field name used to get to clean directory and
-        also effects the final output file name.
-    @type field: string
-    @kwparam trim: Optional file trimming based on image quality. Default
-        is 0. Set to 1 to turn trimming on.
-    @kwparam outSuffix: Optional suffix used to modify final output file name.
-    @type outSuffix: string
-    @type trim: 0 or 1
-    @kwparam weight: Optional weighting based on Strehl. Set to 1 to
-        to turn file weighting on (default is 0).
-    @type weight: 0 or 1
-    @kwparam fwhm_max: The maximum allowed FWHM for keeping frames when
-        trimming is turned on.
-    @type fwhm_max: int
-    @kwparam submaps: Set to the number of submaps to be made (def=0).
-    @type submaps: int
-    @kwparam mask: Set to false for maser mosaics; 06maylgs1 is an exception
-    @type mask: Boolean
+    field : str, default=None
+        Optional field name. Used to get to clean directory and also affects
+        the final output file name.
+    outSuffix : str
+        Optional suffix used to modify final output file name.
+        Can use suffix to indicate a night of observation (e.g.: "nite1").
+    trim : bool, default=False
+        Optional file trimming based on image quality. Default
+        is False. Set to True to turn trimming on.
+    weight : str, default=None
+        Optional weighting. Set to 'strehl' to weight by Strehl, as found in
+        strehl_source.txt file.
+        OR set to a file name with the first column being the file name
+        (e.g., c0021.fits) and the second column being the weight. Weights will
+        be renormalized to sum to 1.0.
+        Default = None, no weighting.
+    fwhm_max : float, default=0
+        The maximum allowed FWHM for keeping frames when trimming is turned on.
+        If set to default=0 and trim=True, then we use FWHM < 1.25 * FWHM.min().
+    strehl_trim_min : float or None, default = None
+        The minimum strehl value allowed when trimming is turned on. When a value
+        is specified, both FWHM and strehl trimming are performed.
+        Recommended *ONLY* when AO performance is bad leading to a tight core, but
+        very poor PSF otherwise.
+        If None, then will not trim on strehl. 
+    submaps : int, default=0
+        Set to the number of submaps to be made (def=0).
+    fixDAR : boolean, default = True
+        Whether or not to calculate and apply DAR correction coefficients.
+    use_koa_weather : boolean, default = False
+        If calculating DAR correction, this keyword specifies if the atmosphere
+        conditions should be downloaded from the KOA weather data. If False,
+        atmosphere conditions are downloaded from the MKWC CFHT data.
+    mask : bool, default=True
+    clean_dirs : list of str, optional
+        List of directories where clean files are stored. Needs to be same
+        length as files list. If not specified, by default assumes that
+        clean files are stored in '../clean'.
+    combo_dir : str, optional
+        Directory where combo files will be stored. By default,
+        assumes that combo files will be stored in '../combo'
+    instrument : instruments object, optional
+        Instrument of data. Default is `instruments.default_inst`
     """
-    # Start out in something like '06maylgs1/reduce/kp/'
     # Setup some files and directories
     waveDir = util.getcwd()
-    redDir = util.trimdir( os.path.abspath(waveDir + '../') + '/')
+    redDir = util.getcwd()
     rootDir = util.trimdir( os.path.abspath(redDir + '../') + '/')
-    if (field != None):
-        cleanDir = util.trimdir( os.path.abspath(rootDir +
-                                                   'clean/' +field+
-                                                   '_' +wave) + '/')
+    
+    # Determine clean directory and add field and suffixes to outroot
+    cleanRoot = rootDir + 'clean/'
+    
+    if field is not None:
+        cleanDir = cleanRoot + field + '_' + wave + '/'
         outroot += '_' + field
     else:
-        cleanDir = util.trimdir( os.path.abspath(rootDir +
-                                                   'clean/' + wave) + '/')
-
+        cleanDir = cleanRoot + wave + '/'
+        
+    # If clean directories are specified for each file,
+    # first tack on the field and wave to each path
+    if clean_dirs is not None:
+        # If incorrect number of clean directories specified, raise ValueError
+        if len(clean_dirs) != len(files):
+            err_str = 'Length of clean_dirs needs to match number of files, '
+            err_str += str(len(files))
+            
+            raise ValueError(err_str)
+        
+        # Tack on field and wave to each path
+        for clean_dir_index in range(len(clean_dirs)):
+            cleanRoot = util.trimdir(
+                            os.path.abspath(clean_dirs[clean_dir_index] + '/'))
+            
+            if field is not None:
+                clean_dirs[clean_dir_index] = cleanRoot + '/' + field +\
+                                              '_' + wave + '/'
+            else:
+                clean_dirs[clean_dir_index] = cleanRoot + '/' + wave + '/'
+                
     if (outSuffix != None):
         outroot += outSuffix
 
-    # This is the final output directory
+    # Set up combo directory. This is the final output directory.
     comboDir = rootDir + 'combo/'
+    
+    if combo_dir is not None:
+        comboDir = util.trimdir(os.path.abspath(combo_dir) + '/')
+    
     util.mkdir(comboDir)
 
+    
     # Make strings out of all the filename roots.
-    roots = instrument.make_filenames(files, prefix='')
+    allroots = instrument.make_filenames(files, prefix='')
+    allroots = [aa.replace('.fits', '') for aa in allroots]
 
     # This is the output root filename
     _out = comboDir + 'mag' + outroot + '_' + wave
@@ -3353,7 +3601,7 @@ def mosaic(files, wave, outroot, field=None, outSuffix=None,
     # See if all images are at same PA, if not, rotate all to PA = 0
     # temporarily. This needs to be done to get correct shifts.
     print('Calling combine_rotation')
-    diffPA = combine_rotation(cleanDir, roots, instrument=instrument)
+    diffPA, phis = combine_rotation(cleanDir, roots, instrument=instrument)
 
     # Make a table of initial guesses for the shifts.
     # Use the header keywords AOTSX and AOTSY to get shifts.
@@ -3452,8 +3700,8 @@ def mosaic_size(shiftsTable, refImage, outroot, subroot, submaps):
     @param submaps:
     @type submaps:
     """
-    x_allShifts = shiftsTable['col1']
-    y_allShifts = shiftsTable['col2']
+    x_allShifts = shiftsTable['xshift']
+    y_allShifts = shiftsTable['yshift']
 
     xhi = abs(x_allShifts.max())
     xlo = abs(x_allShifts.min())
@@ -3498,3 +3746,90 @@ def mosaic_size(shiftsTable, refImage, outroot, subroot, submaps):
 
     return xysize
     
+
+def subpixel_windowed_pcc(ref_img, mov_img, window_radius=100, upsample_factor=10, alpha=0.5):
+    """
+    Finds sub-pixel shifts restricted to a window_radius box.
+    """
+    shape = np.array(ref_img.shape)
+    
+    #### 1. Compute Cross-Correlation (Coarse)
+    src_freq = fftn(ref_img)
+    target_freq = fftn(mov_img)
+    cross_corr = ifftn(src_freq * target_freq.conj())
+    
+    #### 2. Apply Tukey Window to restrict the search area
+    cross_corr_centered = fftshift(cross_corr)
+    win_list = [windows.tukey(dim, alpha=alpha) for dim in shape]
+    
+    # (Simplified windowing: zeroing out anything beyond the window_radius)
+    mask = np.zeros(shape)
+    slices = tuple(slice(max(0, d//2 - window_radius), min(d, d//2 + window_radius)) for d in shape)
+    mask[slices] = 1.0
+    
+    # Create the tapered mask
+    full_window = np.ones(shape)
+    for i, w in enumerate(win_list):
+        slice_obj = [None] * len(shape)
+        slice_obj[i] = slice(None)
+        full_window *= w[tuple(slice_obj)]
+    
+    # Apply both the hard boundary and the taper
+    constrained_corr = ifftshift(cross_corr_centered * full_window * mask)
+
+    #### 3. Locate Coarse Peak
+    max_idx = np.unravel_index(np.argmax(np.abs(constrained_corr)), shape)
+    midpoints = shape // 2
+    # Convert to shift (handling wrap-around)
+    coarse_shift = np.array([i if i <= d // 2 else i - d for i, d in zip(max_idx, shape)])
+
+    #### 4. Sub-pixel Refinement (Upsampled DFT)
+    if upsample_factor > 1:
+        # We "zoom in" around the coarse_shift using a Matrix Multiply DFT
+        # This is the same math skimage uses for their sub-pixel refinement
+        src_freq = fftn(ref_img)
+        target_freq = fftn(mov_img)
+        
+        # Define the sub-pixel grid around the coarse peak
+        upsampled_region_size = np.ceil(upsample_factor * 1.5).astype(int)
+        dft_shift = coarse_shift * upsample_factor
+        
+        # Run upsampled DFT at the specific coarse location
+        # (Simplified for brevity: we call the peak-finding logic on the small patch)
+        # In practice, you'd use skimage.registration._upsampled_dft
+        refined_shift = _upsampled_refinement(src_freq, target_freq, upsample_factor, coarse_shift)
+        return refined_shift
+
+    return coarse_shift.astype(float)
+
+
+def _upsampled_refinement(src_freq, target_freq, upsample_factor, initial_shift):
+    """
+    Internal helper to perform the Matrix Multiply DFT centered on initial_shift.
+    """
+    # This mimics the core logic of skimage's subpixel refinement
+    # It essentially 'zooms' into the correlation map at the specific pixel
+    from skimage.registration._phase_cross_correlation import _upsampled_dft
+    
+    shape = src_freq.shape
+    upsample_factor = float(upsample_factor)
+    
+    # Center the upsampled DFT on the coarse shift
+    sample_region_offset = initial_shift * upsample_factor
+    
+    # Compute the cross-power spectrum in the zoomed region
+    image_product = src_freq * target_freq.conj()
+    
+    # Upsample by factor around the initial peak
+    upsampled_corr = _upsampled_dft(image_product, 
+                                    upsampled_region_size=1.5, 
+                                    upsample_factor=upsample_factor, 
+                                    axis_offsets=initial_shift)
+    
+    # Find peak in the zoomed-in array
+    max_idx = np.unravel_index(np.argmax(np.abs(upsampled_corr)), upsampled_corr.shape)
+    
+    # Adjust shift by the fractional amount
+    fractional_shift = (np.array(max_idx) - 0.75 * upsample_factor) / upsample_factor
+    
+    return initial_shift + fractional_shift
