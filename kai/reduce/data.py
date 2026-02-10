@@ -1,4 +1,5 @@
 import os, sys
+import pylab as plt
 from astropy.io import fits
 from astropy.table import Table
 from astropy.time import Time
@@ -1356,58 +1357,9 @@ def combine_drizzle(imgsize, cleanDir, roots, outroot, weights, shifts,
             f_dlog.write('- Rotating image. phi = {} \n'.format(phi))
             wcs_in.wcs.cd = cd_mat
 
-            # Calculate padding shifts
-            pad_xsh = (imgsize - np.shape(cdwt_img)[0])/2
-            pad_ysh = (imgsize - np.shape(cdwt_img)[1])/2
-            
-            # Unrotate the rotated coos
-            # We'll later rotate them with padding added.
-            phi_rad = np.deg2rad(phi)
-            unrotated_xsh = xsh * np.cos(-phi_rad) - ysh * np.sin(-phi_rad)
-            unrotated_ysh = xsh * np.sin(-phi_rad) + ysh * np.cos(-phi_rad)
-            
-            # Combine star alignment shifts with padding shifts BEFORE rotating
-            total_xsh = unrotated_xsh + pad_xsh
-            total_ysh = unrotated_ysh + pad_ysh
-            
-            # Rotate the TOTAL shifts 
-            xsh_rot = total_xsh * np.cos(phi_rad) - total_ysh * np.sin(phi_rad)
-            ysh_rot = total_xsh * np.sin(phi_rad) + total_ysh * np.cos(phi_rad)
-            
-            # Original CRPIX
-            x0, y0 = wcs_in.wcs.crpix
-            
-            # Apply the combined rotated shift
-            x_shifted = x0 - xsh_rot
-            y_shifted = y0 - ysh_rot
-
-            f_dlog.write('- Shifting image. xshift = {0:8.2f}, yshift = {1:8.2f} \n'.format(xsh_rot, ysh_rot))
-            
-            # Account for rotation around the image center
-            cx = imgsize/2
-            cy = imgsize/2
-            
-            dx = x_shifted - cx
-            dy = y_shifted - cy
-            
-            x1 = cx + dx*np.cos(phi_rad) + dy*np.sin(phi_rad)
-            y1 = cy - dx*np.sin(phi_rad) + dy*np.cos(phi_rad)
-
-            wcs_in.wcs.crpix = [x1, y1]
-
-            # NEW:
-            # Calc offset for larger image size:
-            wcs_in.wcs.crpix = [cdwt_img.shape[0]/2.0, cdwt_img.shape[1]/2.0]
-            wcs_out.wcs.crpix = [(imgsize / 2.0) + xsh, (imgsize / 2.0) + ysh]
-            print(xsh, ysh)
-            print(wcs_in.wcs.crpix)
-            print(wcs_out.wcs.crpix)
-        else:
-            # Non-rotated case
-            f_dlog.write('- Shifting image. xshift = {0:8.2f}, yshift = {1:8.2f} \n'.format(xsh, ysh))
-            wcs_in.wcs.crpix = [wcs_in.wcs.crpix[0] - xsh, wcs_in.wcs.crpix[1] - ysh]
-            wcs_in.wcs.crpix = [wcs_in.wcs.crpix[0] - (imgsize - np.shape(cdwt_img)[1])/2, 
-                                wcs_in.wcs.crpix[1] - (imgsize - np.shape(cdwt_img)[0])/2]
+        f_dlog.write('- Shifting image. xshift = {0:8.2f}, yshift = {1:8.2f} \n'.format(xsh, ysh))
+        wcs_in.wcs.crpix = [cdwt_img.shape[0]/2.0, cdwt_img.shape[1]/2.0]
+        wcs_out.wcs.crpix = [(imgsize / 2.0) + xsh, (imgsize / 2.0) + ysh]
     
         xgeoim = fits.getdata(_xgeoim).astype('float32')
         ygeoim = fits.getdata(_ygeoim).astype('float32')
@@ -1418,10 +1370,6 @@ def combine_drizzle(imgsize, cleanDir, roots, outroot, weights, shifts,
         wcs_in.cpdis1 = xdist
         wcs_in.cpdis2 = ydist
 
-        #wcs_out.wcs.naxis = [imgsize, imgsize]
-
-        #pdb.set_trace()
-    
         pixmap = drizzle.utils.calc_pixmap(wcs_in, wcs_out)
         
         # Drizzle this file ontop of all previous ones
@@ -1441,7 +1389,7 @@ def combine_drizzle(imgsize, cleanDir, roots, outroot, weights, shifts,
         else:
             wht_scale = 1.0
             pixfrac = 1.0
-            driz.add_image(cdwt_img, pixmap = pixmap,  #cdwt_img
+            driz.add_image(cdwt_img, pixmap = pixmap,
                                 weight_map = wgt_in,
                                 exptime = exp_time,
                                 xmax = int(imgsize),
@@ -1455,12 +1403,11 @@ def combine_drizzle(imgsize, cleanDir, roots, outroot, weights, shifts,
         out_img = driz.out_img * driz._texptime
         img_hdu = fits.PrimaryHDU(data=out_img, header=hdr)
 
-        import pylab as plt
-        plt.figure(1)
-        plt.clf()
-        plt.imshow(out_img, vmin=0, vmax=100)
-        plt.show()
-        pdb.set_trace()
+        # import pylab as plt
+        # plt.figure(1)
+        # plt.clf()
+        # plt.imshow(out_img, vmin=0, vmax=100)
+        # plt.show()
         
 
         # make header
@@ -1662,7 +1609,8 @@ def combine_submaps(
                         ))
 
     for log in f_log:
-        log.write('- Base dir: ' + cleanDir + '\n') 
+        log.write('- Base dir: ' + cleanDir + '\n')
+        
     for i in range(len(roots)):
         # Cleaned image
         _c = cleanDir + 'c' + roots[i] + '.fits'
@@ -1675,15 +1623,15 @@ def combine_submaps(
         util.rmall([cdwt])
 
         fits_cd = fits.open(_cd)
-        fits_cd[0].data *= weights[i]
+        cdwt_img = fits_cd[0].data * weights[i]   # Keep image variable for drizzling later
+        fits_cd[0].data = cdwt_img
         fits_cd[0].header[instrument.hdr_keys['itime']] *= weights[i]
         fits_cd.writeto(cdwt, output_verify=outputVerify)
         
-        # Fix the ITIME header keyword so that it matches (weighted).
-        # Drizzle will add all the ITIMEs together, just as it adds the flux.
-        #itime = fits.getval(cdwt, instrument.hdr_keys['itime'])
-        #itime *= weights[i]
-        #fits.setval(cdwt, instrument.hdr_keys['itime'], value=itime)
+        # Padd size (must be same as in combine_size)
+        imgsize_orig = np.max(cdwt_img.shape)
+        padd_1percent = int(np.floor(imgsize_orig * 0.01))
+        padd_bigger_img = (imgsize - imgsize_orig) / 2.0
         
         # Get pixel shifts
         xsh = shifts[i][1]
@@ -1720,9 +1668,7 @@ def combine_submaps(
         # Read in each satLevel from individual .max files
         max_indiv = cleanDir + 'c' + roots[i] + '.max'
         satfile = open(max_indiv)
-        satLvl = float(satfile.read()) #changed to simple i/o because the astropy table was breaking for a textfile with a single entry
-        #getsatLvl = Table.read(max_indiv, format='ascii', header_start=None)
-        #satLvl = getsatLvl[0][0]
+        satLvl = float(satfile.read())
         satLvl_wt = satLvl * weights[i]
         satLvl_tot[sub] += satLvl_wt
         
@@ -1747,8 +1693,6 @@ def combine_submaps(
         log.write('- Input data image: clean' + cdwt.split('/clean')[1] + '\n')
         log.write('- X-shift distortion image: clean' + _xgeoim.split('/clean')[1] + '\n')
         log.write('- Y-shift distortion image: clean' + _ygeoim.split('/clean')[1] + '\n')
-
-        cdwt_img = fits.getdata(cdwt)
 
         # Get exposure time
         itime_keyword = 'ITIME'
@@ -1775,55 +1719,10 @@ def combine_submaps(
         wcs_in = wcs.WCS(hdr_current_img)
         wcs_out = wcs.WCS(hdr_current_img)
 
-        if (diffPA == 1):
-            log.write('- Rotating image. phi = {} \n'.format(phi))
-            wcs_in.wcs.cd = cd_mat
-            # Calculate padding shifts
-            pad_xsh = (imgsize - np.shape(cdwt_img)[0])/2
-            pad_ysh = (imgsize - np.shape(cdwt_img)[1])/2
-    
-            # Unrotate the rotated coos
-            # We'll later rotate them with the padding
-            phi_rad = np.deg2rad(phi)
-            unrotated_xsh = xsh * np.cos(-phi_rad) - ysh * np.sin(-phi_rad)
-            unrotated_ysh = xsh * np.sin(-phi_rad) + ysh * np.cos(-phi_rad)
-            
-            # Combine star alignment shifts with padding shifts BEFORE rotating
-            total_xsh = unrotated_xsh + pad_xsh
-            total_ysh = unrotated_ysh + pad_ysh
-            
-            # Rotate the TOTAL shifts 
-            xsh_rot = total_xsh * np.cos(phi_rad) - total_ysh * np.sin(phi_rad)
-            ysh_rot = total_xsh * np.sin(phi_rad) + total_ysh * np.cos(phi_rad)
-            
-            # Original CRPIX
-            x0, y0 = wcs_in.wcs.crpix
-            
-            # Apply the combined rotated shift
-            x_shifted = x0 - xsh_rot
-            y_shifted = y0 - ysh_rot
-
-            log.write('- Shifting image. xshift = {0:8.2f}, yshift = {1:8.2f} \n'.format(xsh_rot, ysh_rot))
-            
-            # Account for rotation around the image center
-            cx = imgsize/2
-            cy = imgsize/2
-            
-            dx = x_shifted - cx
-            dy = y_shifted - cy
-            
-            x1 = cx + dx*np.cos(phi_rad) + dy*np.sin(phi_rad)
-            y1 = cy - dx*np.sin(phi_rad) + dy*np.cos(phi_rad)
-            
-            wcs_in.wcs.crpix = [x1, y1]
-        else:
-            # Non-rotated case
-            log.write('- Shifting image. xshift = {0:8.2f}, yshift = {1:8.2f} \n'.format(xsh, ysh))
-            wcs_in.wcs.crpix = [wcs_in.wcs.crpix[0] - xsh, wcs_in.wcs.crpix[1] - ysh]
-            # shift so output image is in the center of the produce image
-            wcs_in.wcs.crpix = [wcs_in.wcs.crpix[0] - (imgsize - np.shape(cdwt_img)[0])/2, 
-                                wcs_in.wcs.crpix[1] - (imgsize - np.shape(cdwt_img)[1])/2]
-            
+        log.write('- Shifting image. xshift = {0:8.2f}, yshift = {1:8.2f} \n'.format(xsh, ysh))
+        wcs_in.wcs.crpix = [cdwt_img.shape[0]/2.0, cdwt_img.shape[1]/2.0]
+        wcs_out.wcs.crpix = [(imgsize / 2.0) + xsh, (imgsize / 2.0) + ysh]
+        
         xgeoim = fits.getdata(_xgeoim).astype('float32')
         ygeoim = fits.getdata(_ygeoim).astype('float32')
     
@@ -2298,131 +2197,23 @@ def combine_register(outroot, refImage, diffPA, plot_correlation = False, instru
         ref_img_cropped = ref_img_noedge[overlap_ymin:overlap_ymax, overlap_xmin:overlap_xmax]
         ii_img_cropped = shift_img_noedge[overlap_ymin_ii:overlap_ymax_ii, overlap_xmin_ii:overlap_xmax_ii]
 
-        # # Method 1
-        # # Calculate a 2D FFT for both the reference image and the shifted image.
-        t0 = time.time()
-        _rr = np.fft.fft2(ref_img_cropped)
-        _ii = np.fft.fft2(ii_img_cropped)
-
-        # # Calculate the cross-correlation between the two images.
-        # # Save the results into a correlation map.
-        # corr = np.abs(np.fft.ifft2(_rr * _ii))
-
-        # # Shuffle the correlation map so that the center of the map = 0, 0 shift.
-        # #     right becomes left
-        # #     top becomes bottom
-        # # Then crop the correlation map around the middle where the shift peak should be.
-        # # This should leave us with a nice Gaussian shaped peak in the middle of the image.
-        # # Note this works because corr.shape is divisible by 2. Kinda equivalent to fftshift.
-        # half_size = (np.array(corr.shape) / 2.0).astype('int')
-        # concat_x = np.concatenate((corr[half_size[0]:], corr[:half_size[0]])) # swap y halves
-        # correlation_map = np.concatenate((concat_x[:,half_size[1]:], concat_x[:,:half_size[1]]), axis=1) # swap x halves
-        # # Save the "peak" or 0-shift image coordinates (e.g. where the peak should be
-        # # if the coo files were perfect).
-        # xy_shift00 = half_size # 2 dimensions, center of correlation map
-
-        # # Background subtract the correlation map to reduce noise.
-        # correlation_map = correlation_map - np.median(correlation_map)
-
-        # Method 2
-        corr_unnorm = np.multiply(_rr, np.conj(_ii))
-        corr_norm = corr_unnorm / (np.abs(corr_unnorm) + 1e-10) # for numerical stability
-        correlation_map = np.real(np.fft.fftshift(np.fft.ifft2(corr_norm)))
-        xy_shift00 = (np.array(ref_img_cropped.shape) / 2.0).astype('int')
-        
-        
-        # Find centroid by fitting gaussian to the peak of the correlation map.
-
-        # Initial crop of +/- 1 arcsec on the correlation map.
-        # These coordinates are in the reference frame of: correlation_map
-        y_min_orig = xy_shift00[0] - crop_val
-        y_max_orig = xy_shift00[0] + crop_val
-        x_min_orig = xy_shift00[1] - crop_val
-        x_max_orig = xy_shift00[1] + crop_val
-        corr_map_init_crop = correlation_map[y_min_orig:y_max_orig, x_min_orig:x_max_orig]
-        
-        # Find the approximate peak location on the correlation map.
-        y_peak, x_peak = np.unravel_index(np.argmax(corr_map_init_crop), corr_map_init_crop.shape)
-        
-        # Define a cutout around the peak +/- cutout_size
-        if instrument.name == 'NIRC2':
-            cutout_size = 5
-        elif instrument.name == 'OSIRIS':
-            cutout_size = 8
-
-        # Keep track of the min and max indices of the new correlation map.
-        # These coordinates are in the reference frame of: corr_map_init_crop.
-        y_min_init = max(0, y_peak - cutout_size)
-        y_max_init = min(corr_map_init_crop.shape[0], y_peak + cutout_size)
-        x_min_init = max(0, x_peak - cutout_size)
-        x_max_init = min(corr_map_init_crop.shape[1], x_peak + cutout_size)
-        
-        # Extract the final small cutout map from the correlation map.
-        corr_map_crop_final = corr_map_init_crop[y_min_init:y_max_init, x_min_init:x_max_init]
-        y_cutout, x_cutout = np.indices(corr_map_crop_final.shape)
-
-        # Flatten the arrays for fitting
-        x_flat = x_cutout.ravel()
-        y_flat = y_cutout.ravel()
-        corr_map_crop_flat = corr_map_crop_final.ravel()
-
-        # Initial guess for the parameters: [amplitude, x0, y0, sigma_x, sigma_y, theta, offset]
-        initial_guess = [
-            np.max(corr_map_crop_final),            # Amplitude
-            x_flat[np.argmax(corr_map_crop_final)], #corr_map_crop_final.shape[1] // 2, # x0 (center of cutout in x)
-            y_flat[np.argmax(corr_map_crop_final)], #corr_map_crop_final.shape[0] // 2, # y0 (center of cutout in y)
-            1,                               # sigma_x
-            1,                               # sigma_y
-            0,                               # theta
-            np.min(correlation_map)             # offset (background level)
-        ]
-        
-        # Bounds for the parameters
-        bounds = (
-            [0, 0, 0, 0.1, 0.1, -np.pi, -np.inf],   # Lower bounds
-            [np.inf, corr_map_crop_final.shape[1], corr_map_crop_final.shape[0],
-             np.inf, np.inf, np.pi, np.inf]  # Upper bounds
-        )
-        
-        # Run least squares optimization
-        result = least_squares(
-            residuals, initial_guess, args=(x_flat, y_flat, corr_map_crop_flat),
-            bounds=bounds, xtol=1e-12, ftol=1e-12, gtol=1e-12, max_nfev=10000
-        )
-        
-        # Extract the optimized parameters
-        amplitude, x0_fit, y0_fit, sigma_x, sigma_y, theta_fit, offset = result.x
-
-        # Translate the cutout coordinates back to full correlation map coordinates.
-        # Coords in reference frame of: correlation_map
-        x0_full = x0_fit + x_min_init + x_min_orig
-        y0_full = y0_fit + y_min_init + y_min_orig
-
-        # Shift relative to the expected input shift is: e.g. xy_shift00[1] - x0_full
-        total_x_shift = xshift - (xy_shift00[1] - x0_full)
-        total_y_shift = yshift - (xy_shift00[0] - y0_full)
-        t1 = time.time()
-
-        print(f'Runtime for default method = {t1 - t0:.1f} s')
-
-        # Method 2
         from skimage.registration import phase_cross_correlation
-        t2 = time.time()
-        # shift_pcc, error, phase_div = phase_cross_correlation(ref_img_cropped, ii_img_cropped,
-        #                                                       upsample_factor=50, overlap_ratio=0.1)
+        if plot_correlation:
+            plot_corr_filename = fileName.replace('.fits', '_corr.png')
+        else:
+            plot_corr_filename = None
 
         shift_pcc = subpixel_windowed_pcc(ref_img_cropped, ii_img_cropped, window_radius=100,
-                                          upsample_factor=50, alpha=0.5)        
+                                          upsample_factor=50, alpha=0.5,
+                                          plot_corr_map=plot_correlation, plot_outfile=plot_corr_filename)
         total_y_shift_pcc = shift_pcc[0] + yshift
         total_x_shift_pcc = shift_pcc[1] + xshift
         pcc_half_size = np.array(ref_img_cropped.shape) / 2.0
-        t3 = time.time()
-        print(f'Runtime for phase_cross_corr method = {t3 - t2:.1f} s')
 
-        print('*** Comparing methods:')
+        print('*** Comparing correlation methods:')
         print(f'\t {"":<10s} {"x":<10s} {"y":<10s}')
         print(f'\t {"coo":<10s} {xshift:10.2f} {yshift:10.2f}')
-        print(f'\t {"manual":<10s} {total_x_shift:10.2f} {total_y_shift:8.3f}')
+        # print(f'\t {"manual":<10s} {total_x_shift:10.2f} {total_y_shift:8.3f}')
         print(f'\t {"pcc":<10s} {total_x_shift_pcc:10.2f} {total_y_shift_pcc:10.2f}')
 
         if plot_correlation:
@@ -2452,24 +2243,6 @@ def combine_register(outroot, refImage, diffPA, plot_correlation = False, instru
             save_name1 = fileName.replace('.fits', '_crop.png')
             plt.savefig(save_name1)
 
-            # plot the correlation map.
-            plt.figure(2)
-            plt.clf()
-            plt.imshow(correlation_map, cmap="viridis")
-            plt.scatter(x0_full, y0_full, color="red", marker="*", s=40, label="Gaussian Fit Centroid")
-            plt.scatter(total_x_shift_pcc + pcc_half_size[1], total_y_shift_pcc + pcc_half_size[0], color="black", marker="+", s=40, label="skimage-pcc")
-            plt.scatter(xy_shift00[0], xy_shift00[1], color="green", marker="x", s=40, label="Init Coo Shift")
-            plt.legend()
-            plt.xlim(x_min_init + (xy_shift00[1] - crop_val), x_max_init + (xy_shift00[1] - crop_val))
-            plt.ylim(y_min_init + (xy_shift00[0] - crop_val), y_max_init + (xy_shift00[0] - crop_val))
-            save_name2 = fileName.replace('.fits', '_corr.png')
-            plt.savefig(save_name2)
-
-
-
-        if np.hypot(shift_pcc[0], shift_pcc[1]) > 50:
-            pdb.set_trace()
-            
         # Save the final shifts to the shift table.
         shiftsTable[ii][0] = fileName.split('/')[-1]
         shiftsTable[ii][1] = total_x_shift_pcc
@@ -3747,7 +3520,8 @@ def mosaic_size(shiftsTable, refImage, outroot, subroot, submaps):
     return xysize
     
 
-def subpixel_windowed_pcc(ref_img, mov_img, window_radius=100, upsample_factor=10, alpha=0.5):
+def subpixel_windowed_pcc(ref_img, mov_img, window_radius=100, upsample_factor=10, alpha=0.5,
+                          plot_corr_map=False, plot_outfile=None):
     """
     Finds sub-pixel shifts restricted to a window_radius box.
     """
@@ -3787,9 +3561,6 @@ def subpixel_windowed_pcc(ref_img, mov_img, window_radius=100, upsample_factor=1
     if upsample_factor > 1:
         # We "zoom in" around the coarse_shift using a Matrix Multiply DFT
         # This is the same math skimage uses for their sub-pixel refinement
-        src_freq = fftn(ref_img)
-        target_freq = fftn(mov_img)
-        
         # Define the sub-pixel grid around the coarse peak
         upsampled_region_size = np.ceil(upsample_factor * 1.5).astype(int)
         dft_shift = coarse_shift * upsample_factor
@@ -3798,9 +3569,27 @@ def subpixel_windowed_pcc(ref_img, mov_img, window_radius=100, upsample_factor=1
         # (Simplified for brevity: we call the peak-finding logic on the small patch)
         # In practice, you'd use skimage.registration._upsampled_dft
         refined_shift = _upsampled_refinement(src_freq, target_freq, upsample_factor, coarse_shift)
-        return refined_shift
+    else:
+        refined_shift = coarse_shift
 
-    return coarse_shift.astype(float)
+    if plot_corr_map and plot_outfile is not None:
+        # plot the correlation map.
+        plt.figure(2)
+        plt.clf()
+        plt.imshow(np.abs(fftshift(constrained_corr)), cmap="viridis")
+        # Plot center points (the 0.5 is just for plotting purposes.)
+        plt.scatter(shape[1]/2 + 0.5, shape[0]/2 + 0.5,
+                    color="green", marker="*", s=40, label="Coo Shift")
+        plt.scatter(shape[1]/2 + refined_shift[1] + 0.5, shape[0]/2 + refined_shift[0] + 0.5,
+                    color="red", marker="*", s=40, label="PCC Shift")
+        plt.legend()
+        plt.xlim(shape[1]/2 - window_radius/3, shape[1]/2 + window_radius/3)
+        plt.ylim(shape[0]/2 - window_radius/3, shape[0]/2 + window_radius/3)
+
+        plt.savefig(plot_outfile)
+        
+        
+    return refined_shift.astype(float)
 
 
 def _upsampled_refinement(src_freq, target_freq, upsample_factor, initial_shift):

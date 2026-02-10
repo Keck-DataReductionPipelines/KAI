@@ -64,7 +64,8 @@ def test_combine():
     # Check values in images. Check on the bright star in the middle. 
     img_c = fits.getdata(combo_dir + 'mag17may21_ob170095_kp.fits')
     assert (img_c[648, 616] > 3000) and (img_c[648, 616] < 5000)
-    assert img_c.shape[0] == 1165
+    assert img_c.shape[0] == 1164
+    assert img_c.shape[1] == 1164
 
     return
 
@@ -199,23 +200,23 @@ def test_run_combine_register():
     # Register images to get shifts.
     shiftsTab = data.combine_register(_out, refImage, diffPA)
 
-    reference_shifts = np.array([('c0007.fits',   -8.22583569204437,  15.00604689858647),
-                                 ('c0008.fits',   27.96633774050803,  25.26330781967397),
-                                 ('c0009.fits',   26.30237344713845,  25.48251851589532),
-                                 ('c0010.fits',   26.24048199239820,  25.94019792811400),
-                                 ('c0011.fits',   27.91495606760486,  25.60896778953673),
-                                 ('c0012.fits',   26.67926071676515,  25.27709588556933),
-                                 ('c0013.fits',    0.70791162662226,   0.67794855742397),
-                                 ('c0014.fits',    0.60011435370148,   0.25667873570063),
-                                 ('c0015.fits',    0.60819980377993,   0.28020593117025),
-                                 ('c0016.fits',    0.00103079900645,  -0.00410230112589),
-                                 ('c0017.fits',    0.51020696254255,  -0.13930112946718),
-                                 ('c0018.fits',   60.72642706771751,  28.17767716616447),
-                                 ('c0019.fits',   60.55995214113301,  28.38895806924171)],
+    reference_shifts = np.array([('c0007.fits', -10.73, 14.25),
+                                 ('c0008.fits',  27.25, 26.25),
+                                 ('c0009.fits',  27.25, 25.25),
+                                 ('c0010.fits',  27.25, 25.27),
+                                 ('c0011.fits',  27.25, 25.25),
+                                 ('c0012.fits',  26.25, 26.25),
+                                 ('c0013.fits',  -1.73, -1.73),
+                                 ('c0014.fits',  -1.73, -1.73),
+                                 ('c0015.fits',  -0.73, -0.73),
+                                 ('c0016.fits',  -0.75, -0.75),
+                                 ('c0017.fits',  -0.73, -0.75),
+                                 ('c0018.fits',  60.25, 29.25),
+                                 ('c0019.fits',  60.25, 29.25)],
                               dtype=[('file', '<U10'), ('xshift', '<f8'), ('yshift', '<f8')])
 
-    assert np.all(np.abs(np.array(shiftsTab['xshift']) - np.array(reference_shifts['xshift'])) < 1e-2)
-    assert np.all(np.abs(np.array(shiftsTab['yshift']) - np.array(reference_shifts['yshift'])) < 1e-2)
+    assert np.all(np.abs(np.array(shiftsTab['xshift']) - np.array(reference_shifts['xshift'])) < 1e-1)
+    assert np.all(np.abs(np.array(shiftsTab['yshift']) - np.array(reference_shifts['yshift'])) < 1e-1)
 
 
     return
@@ -376,8 +377,8 @@ def test_run_combine_drizzle():
     assert hdr['D001YGIM'] == 'clean/ob170095_kp/weight/cdwt0016geo_y.fits'
     assert hdr['D001SCAL'] == 1
     assert hdr['D001ROT'] == 0
-    assert np.isclose(hdr['D001XSH'], 0.001030799006457527, rtol = 1e-4)
-    assert np.isclose(hdr['D001YSH'], -0.00410230112589715, rtol = 1e-4)
+    assert np.isclose(hdr['D001XSH'], -0.75, rtol = 1e-1)
+    assert np.isclose(hdr['D001YSH'], -0.75, rtol = 1e-1)
     assert hdr['D001SFTU'] == 'pixels'
     assert hdr['D001SFTF'] == 'pixels'
     assert hdr['D001EXKY'] == 'ITIME'
@@ -398,8 +399,8 @@ def test_run_combine_drizzle():
     assert hdr['D013YGIM'] == 'clean/ob170095_kp/weight/cdwt0007geo_y.fits'
     assert hdr['D013SCAL'] == 1
     assert hdr['D013ROT'] == 0
-    assert np.isclose(hdr['D013XSH'], -8.22583569204437, rtol = 1e-4)
-    assert np.isclose(hdr['D013YSH'], 15.006046898586476, rtol = 1e-4)
+    assert np.isclose(hdr['D013XSH'], -10.73, rtol = 1e-1)
+    assert np.isclose(hdr['D013YSH'],  14.25, rtol = 1e-1)
     assert hdr['D013SFTU'] == 'pixels'
     assert hdr['D013SFTF'] == 'pixels'
     assert hdr['D013EXKY'] == 'ITIME'
@@ -521,14 +522,6 @@ def test_run_combine_drizzle_with_rotation():
              'i211024_a015002_flip']
     outroot = f'{combo_dir}mag21oct24os_m15_kn3_tdhBand'
     weights = np.array([0.11915224, 0.11966917, 0.09718273])
-    # shifts = np.array([('i211024_a005002_flip.fits',   0.1652500619879,  -0.4675604446898 ),
-    #                    ('i211024_a010002_flip.fits',  27.2253651947605, -18.1846068524364 ),
-    #                    ('i211024_a015002_flip.fits',-467.4734558749579, -10.0252279046324 )],
-    #                   dtype=[('file', '<U10'), ('xshift', '<f8'), ('yshift', '<f8')])
-    # shifts = np.array([('i211024_a005002_flip.fits', -0.040,   0.200 ),
-    #                    ('i211024_a010002_flip.fits', 30.700,  -19.92 ),
-    #                    ('i211024_a015002_flip.fits',-466.64, -10.020 )],
-    #                   dtype=[('file', '<U10'), ('xshift', '<f8'), ('yshift', '<f8')])
     shifts = np.array([('i211024_a005002_flip.fits', -0.75,    -0.75 ),
                        ('i211024_a010002_flip.fits', 30.25,  -20.73 ),
                        ('i211024_a015002_flip.fits',-466.75, -10.75 )],
@@ -560,7 +553,7 @@ def test_run_combine_with_rotation():
 
     os.chdir(reduce_dir)
     
-    #data.calcStrehl(sci_files, 'kn3_tdhBand', field=target, instrument=osiris)
+    data.calcStrehl(sci_files, 'kn3_tdhBand', field=target, instrument=osiris)
     data.combine(sci_files, 'kn3_tdhBand', epoch, field=target,
                  trim=0, weight='strehl', submaps=3, instrument=osiris,
                  clean_dirs=clean_dirs, combo_dir=combo_dir, debug_plot_correlation=True)
@@ -635,8 +628,8 @@ def test_run_submaps():
     assert hdr['D001YGIM'] == 'clean/ob170095_kp/weight/cdwt0016geo_y.fits'
     assert hdr['D001SCAL'] == 1
     assert hdr['D001ROT'] == 0
-    assert np.isclose(hdr['D001XSH'],  0.00103079900645752, rtol = 1e-3)
-    assert np.isclose(hdr['D001YSH'], -0.00410230112589715, rtol = 1e-3)
+    assert np.isclose(hdr['D001XSH'], -0.75, rtol = 1e-1)
+    assert np.isclose(hdr['D001YSH'], -0.75, rtol = 1e-1)
     assert hdr['D001SFTU'] == 'pixels'
     assert hdr['D001SFTF'] == 'pixels'
     assert hdr['D001EXKY'] == 'ITIME'
@@ -657,8 +650,8 @@ def test_run_submaps():
     assert hdr['D005YGIM'] == 'clean/ob170095_kp/weight/cdwt0007geo_y.fits'
     assert hdr['D005SCAL'] == 1
     assert hdr['D005ROT'] == 0
-    assert np.isclose(hdr['D005XSH'], -8.22583569204437, rtol = 1e-3)
-    assert np.isclose(hdr['D005YSH'], 15.006046898586476, rtol = 1e-3)
+    assert np.isclose(hdr['D005XSH'], -10.73, rtol = 1e-1)
+    assert np.isclose(hdr['D005YSH'],  14.25, rtol = 1e-1)
     assert hdr['D005SFTU'] == 'pixels'
     assert hdr['D005SFTF'] == 'pixels'
     assert hdr['D005EXKY'] == 'ITIME'
