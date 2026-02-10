@@ -177,19 +177,24 @@ class NIRC2(Instrument):
             Date in string format such as '2015-10-02'.
         """
         date = hdr['DATE-OBS']
+        size = hdr["NAXIS1"]
         
-        if (float(date[0:4]) < 2015):
-            distXgeoim = module_dir + '/reduce/distortion/nirc2_narrow_xgeoim.fits'
-            distYgeoim = module_dir + '/reduce/distortion/nirc2_narrow_ygeoim.fits'
-        if (float(date[0:4]) == 2015) & (float(date[5:7]) < 0o5):
-            distXgeoim = module_dir + '/reduce/distortion/nirc2_narrow_xgeoim.fits'
-            distYgeoim = module_dir + '/reduce/distortion/nirc2_narrow_ygeoim.fits'
-        if (float(date[0:4]) == 2015) & (float(date[5:7]) >= 0o5):
-            distXgeoim = module_dir + '/reduce/distortion/nirc2_narrow_xgeoim_post20150413.fits'
-            distYgeoim = module_dir + '/reduce/distortion/nirc2_narrow_ygeoim_post20150413.fits'
-        if (float(date[0:4]) > 2015):
-            distXgeoim = module_dir + '/reduce/distortion/nirc2_narrow_xgeoim_post20150413.fits'
-            distYgeoim = module_dir + '/reduce/distortion/nirc2_narrow_ygeoim_post20150413.fits'
+        if size == 512:
+            distXgeoim = module_dir + '/reduce/distortion/nirc2_narrow_xgeoim_512.fits'
+            distYgeoim = module_dir + '/reduce/distortion/nirc2_narrow_ygeoim_512.fits'
+        else:
+            if (float(date[0:4]) < 2015):
+                distXgeoim = module_dir + '/reduce/distortion/nirc2_narrow_xgeoim.fits'
+                distYgeoim = module_dir + '/reduce/distortion/nirc2_narrow_ygeoim.fits'
+            if (float(date[0:4]) == 2015) & (float(date[5:7]) < 0o5):
+                distXgeoim = module_dir + '/reduce/distortion/nirc2_narrow_xgeoim.fits'
+                distYgeoim = module_dir + '/reduce/distortion/nirc2_narrow_ygeoim.fits'
+            if (float(date[0:4]) == 2015) & (float(date[5:7]) >= 0o5):
+                distXgeoim = module_dir + '/reduce/distortion/nirc2_narrow_xgeoim_post20150413.fits'
+                distYgeoim = module_dir + '/reduce/distortion/nirc2_narrow_ygeoim_post20150413.fits'
+            if (float(date[0:4]) > 2015):
+                distXgeoim = module_dir + '/reduce/distortion/nirc2_narrow_xgeoim_post20150413.fits'
+                distYgeoim = module_dir + '/reduce/distortion/nirc2_narrow_ygeoim_post20150413.fits'
 
         return distXgeoim, distYgeoim
         
