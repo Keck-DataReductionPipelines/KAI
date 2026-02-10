@@ -68,6 +68,8 @@ Functions
    kai.reduce.data.mosaic
    kai.reduce.data.mosaic_register
    kai.reduce.data.mosaic_size
+   kai.reduce.data.subpixel_windowed_pcc
+   kai.reduce.data._upsampled_refinement
 
 
 Module Contents
@@ -284,7 +286,7 @@ Module Contents
    ..
        !! processed by numpydoc !!
 
-.. py:function:: combine(files, wave, outroot, field=None, outSuffix=None, trim=False, weight=None, fwhm_max=0, strehl_trim_min=None, submaps=0, fixDAR=True, use_koa_weather=False, mask=True, clean_dirs=None, combo_dir=None, instrument=instruments.default_inst)
+.. py:function:: combine(files, wave, outroot, field=None, outSuffix=None, trim=False, weight=None, fwhm_max=0, strehl_trim_min=None, submaps=0, fixDAR=True, use_koa_weather=False, mask=True, clean_dirs=None, combo_dir=None, instrument=instruments.default_inst, debug_plot_correlation=False)
 
    
    Accepts a list of cleaned images and does a weighted combining after
@@ -793,6 +795,27 @@ Module Contents
 
 .. py:function:: combine_register(outroot, refImage, diffPA, plot_correlation=False, instrument=instruments.default_inst)
 
+   
+   Register all the images through a cross-correlation method.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
 .. py:function:: combine_log(outroot, roots, strehls, fwhm, weights)
 
 .. py:function:: combine_size(shiftsTable, refImage, outroot, subroot, submaps, phis)
@@ -1296,7 +1319,7 @@ Module Contents
           !! processed by numpydoc !!
 
 
-.. py:function:: mosaic(files, wave, outroot, field=None, outSuffix=None, trim=0, weight=0, fwhm_max=0, submaps=0, fixDAR=True, maskSubmap=False, instrument=instruments.default_inst)
+.. py:function:: mosaic(files, wave, outroot, field=None, outSuffix=None, trim=False, weight=None, fwhm_max=0, submaps=0, clean_dirs=None, combo_dir=None, fixDAR=True, maskSubmap=False, instrument=instruments.default_inst)
 
    
    Accepts a list of cleaned images and does a weighted combining after
@@ -1305,37 +1328,81 @@ Module Contents
    Each image must have an associated *.coo file which gives the rough
    position of the reference source.
 
-   @param files: List of integer file numbers to include in combine.
-   @type files: list of int
-   @param wave: Filter of observations (e.g. 'kp', 'lp', 'h')
-   @type wave: string
-   @param outroot: The output root name (e.g. '06jullgs'). The final combined
-       file names will be <outroot>_<field>_<wave>. The <field> keyword
-       is optional.
+   :Parameters:
 
-       Examples:
-       06jullgs_kp for outroot='06jullgs' and wave='kp'
-       06jullgs_arch_f1_kp for adding field='arch_f1'
-   @type outroot: string
-   @kwparam field: Optional field name used to get to clean directory and
-       also effects the final output file name.
-   @type field: string
-   @kwparam trim: Optional file trimming based on image quality. Default
-       is 0. Set to 1 to turn trimming on.
-   @kwparam outSuffix: Optional suffix used to modify final output file name.
-   @type outSuffix: string
-   @type trim: 0 or 1
-   @kwparam weight: Optional weighting based on Strehl. Set to 1 to
-       to turn file weighting on (default is 0).
-   @type weight: 0 or 1
-   @kwparam fwhm_max: The maximum allowed FWHM for keeping frames when
-       trimming is turned on.
-   @type fwhm_max: int
-   @kwparam submaps: Set to the number of submaps to be made (def=0).
-   @type submaps: int
-   @kwparam mask: Set to false for maser mosaics; 06maylgs1 is an exception
-   @type mask: Boolean
+       **files** : list of int
+           Integer list of the files to include in combine. Does not require
+           padded zeros.
 
+       **wave** : str
+           Name for the observation passband (e.g.: "kp", "lp", or "h"), used as
+           a wavelength suffix
+
+       **outroot** : str
+           The output root name (e.g. '06jullgs'). The final combined file names
+           will be <outroot>_<field>_<outSuffix>_<wave>.
+           The <field> and <outSuffix> keywords are optional.
+           
+           Examples:
+           06jullgs_kp for outroot='06jullgs' and wave='kp'
+           06jullgs_arch_f1_kp for adding field='arch_f1'
+
+       **field** : str, default=None
+           Optional field name. Used to get to clean directory and also affects
+           the final output file name.
+
+       **outSuffix** : str
+           Optional suffix used to modify final output file name.
+           Can use suffix to indicate a night of observation (e.g.: "nite1").
+
+       **trim** : bool, default=False
+           Optional file trimming based on image quality. Default
+           is False. Set to True to turn trimming on.
+
+       **weight** : str, default=None
+           Optional weighting. Set to 'strehl' to weight by Strehl, as found in
+           strehl_source.txt file.
+           OR set to a file name with the first column being the file name
+           (e.g., c0021.fits) and the second column being the weight. Weights will
+           be renormalized to sum to 1.0.
+           Default = None, no weighting.
+
+       **fwhm_max** : float, default=0
+           The maximum allowed FWHM for keeping frames when trimming is turned on.
+           If set to default=0 and trim=True, then we use FWHM < 1.25 * FWHM.min().
+
+       **strehl_trim_min** : float or None, default = None
+           The minimum strehl value allowed when trimming is turned on. When a value
+           is specified, both FWHM and strehl trimming are performed.
+           Recommended *ONLY* when AO performance is bad leading to a tight core, but
+           very poor PSF otherwise.
+           If None, then will not trim on strehl. 
+
+       **submaps** : int, default=0
+           Set to the number of submaps to be made (def=0).
+
+       **fixDAR** : boolean, default = True
+           Whether or not to calculate and apply DAR correction coefficients.
+
+       **use_koa_weather** : boolean, default = False
+           If calculating DAR correction, this keyword specifies if the atmosphere
+           conditions should be downloaded from the KOA weather data. If False,
+           atmosphere conditions are downloaded from the MKWC CFHT data.
+
+       **mask** : bool, default=True
+           ..
+
+       **clean_dirs** : list of str, optional
+           List of directories where clean files are stored. Needs to be same
+           length as files list. If not specified, by default assumes that
+           clean files are stored in '../clean'.
+
+       **combo_dir** : str, optional
+           Directory where combo files will be stored. By default,
+           assumes that combo files will be stored in '../combo'
+
+       **instrument** : instruments object, optional
+           Instrument of data. Default is `instruments.default_inst`
 
 
 
@@ -1398,6 +1465,52 @@ Module Contents
    @type subroot: string
    @param submaps:
    @type submaps:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: subpixel_windowed_pcc(ref_img, mov_img, window_radius=100, upsample_factor=10, alpha=0.5, plot_corr_map=False, plot_outfile=None)
+
+   
+   Finds sub-pixel shifts restricted to a window_radius box.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: _upsampled_refinement(src_freq, target_freq, upsample_factor, initial_shift)
+
+   
+   Internal helper to perform the Matrix Multiply DFT centered on initial_shift.
+
 
 
 

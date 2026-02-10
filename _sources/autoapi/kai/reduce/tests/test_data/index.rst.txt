@@ -16,7 +16,10 @@ Functions
    kai.reduce.tests.test_data.test_run_combine_register
    kai.reduce.tests.test_data.test_run_clean_drizzle
    kai.reduce.tests.test_data.test_run_combine_drizzle
+   kai.reduce.tests.test_data.test_run_clean_with_rotation
+   kai.reduce.tests.test_data.test_run_combine_register_with_rotation
    kai.reduce.tests.test_data.test_run_combine_drizzle_with_rotation
+   kai.reduce.tests.test_data.test_run_combine_with_rotation
    kai.reduce.tests.test_data.test_run_submaps
 
 
@@ -37,7 +40,13 @@ Module Contents
 
 .. py:function:: test_run_combine_drizzle()
 
-.. py:function:: test_run_combine_drizzle_with_rotation(self)
+.. py:function:: test_run_clean_with_rotation()
+
+.. py:function:: test_run_combine_register_with_rotation()
+
+.. py:function:: test_run_combine_drizzle_with_rotation()
+
+.. py:function:: test_run_combine_with_rotation()
 
 .. py:function:: test_run_submaps()
 

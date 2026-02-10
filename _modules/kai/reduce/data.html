@@ -71,6 +71,7 @@
              
   <h1>Source code for kai.reduce.data</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span><span class="o">,</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pylab</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">astropy.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">fits</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">astropy.table</span><span class="w"> </span><span class="kn">import</span> <span class="n">Table</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">astropy.time</span><span class="w"> </span><span class="kn">import</span> <span class="n">Time</span>
@@ -84,6 +85,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">ccdproc</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ccdp</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">drizzle</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">kai</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">kai_util</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">kai.reduce</span><span class="w"> </span><span class="kn">import</span> <span class="n">util</span><span class="p">,</span> <span class="n">lin_correction</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">kai</span><span class="w"> </span><span class="kn">import</span> <span class="n">instruments</span>
@@ -101,7 +103,8 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">scipy.ndimage</span><span class="w"> </span><span class="kn">import</span> <span class="n">shift</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">scipy.optimize</span><span class="w"> </span><span class="kn">import</span> <span class="n">least_squares</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">scipy.ndimage</span><span class="w"> </span><span class="kn">import</span> <span class="n">rotate</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">kai</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.fft</span><span class="w"> </span><span class="kn">import</span> <span class="n">fftn</span><span class="p">,</span> <span class="n">ifftn</span><span class="p">,</span> <span class="n">fftshift</span><span class="p">,</span> <span class="n">ifftshift</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.signal</span><span class="w"> </span><span class="kn">import</span> <span class="n">windows</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">ndimage</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">scipy.interpolate</span><span class="w"> </span><span class="kn">import</span> <span class="n">griddata</span>
@@ -593,6 +596,7 @@
             <span class="n">mask</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="n">clean_dirs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">combo_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
             <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">,</span>
+            <span class="n">debug_plot_correlation</span><span class="o">=</span><span class="kc">False</span>
            <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Accepts a list of cleaned images and does a weighted combining after</span>
@@ -663,6 +667,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     
     <span class="c1"># Setup some files and directories</span>
+    <span class="n">waveDir</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
     <span class="n">redDir</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
     <span class="n">rootDir</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">trimdir</span><span class="p">(</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">redDir</span> <span class="o">+</span> <span class="s1">&#39;../&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span>
     
@@ -903,10 +908,8 @@
 
 
     <span class="c1"># Register images to get shifts.</span>
-    <span class="n">shiftsTab</span> <span class="o">=</span> <span class="n">combine_register</span><span class="p">(</span><span class="n">_out</span><span class="p">,</span> <span class="n">refImage</span><span class="p">,</span> <span class="n">diffPA</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">instrument</span><span class="p">)</span>
-    <span class="c1">#shiftsTab = Table.read(&#39;../combo/mag19apr21os_ob140613_kp.shifts&#39;, format = &#39;ascii&#39;)</span>
-    <span class="c1">#shiftsTab.add_row([&#39;ci190421_a015002_flip.fits&#39;, shiftsTab[&#39;col1&#39;][shiftsTab[&#39;col0&#39;] == &#39;ci190421_a015003_flip.fits&#39;],</span>
-    <span class="c1">#                  shiftsTab[&#39;col2&#39;][shiftsTab[&#39;col0&#39;] == &#39;ci190421_a015003_flip.fits&#39;]])</span>
+    <span class="n">shiftsTab</span> <span class="o">=</span> <span class="n">combine_register</span><span class="p">(</span><span class="n">_out</span><span class="p">,</span> <span class="n">refImage</span><span class="p">,</span> <span class="n">diffPA</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">instrument</span><span class="p">,</span>
+                                 <span class="n">plot_correlation</span><span class="o">=</span><span class="n">debug_plot_correlation</span><span class="p">)</span>
 
     <span class="c1"># Determine the size of the output image from max shifts</span>
     <span class="n">xysize</span> <span class="o">=</span> <span class="n">combine_size</span><span class="p">(</span><span class="n">shiftsTab</span><span class="p">,</span> <span class="n">refImage</span><span class="p">,</span> <span class="n">_out</span><span class="p">,</span> <span class="n">_sub</span><span class="p">,</span> <span class="n">submaps</span><span class="p">,</span> <span class="n">phis</span><span class="p">)</span>
@@ -1386,7 +1389,9 @@
                     <span class="n">out_shape</span> <span class="o">=</span> <span class="p">(</span><span class="n">imgsize</span><span class="p">,</span> <span class="n">imgsize</span><span class="p">),</span> <span class="c1">#np.shape(cdwt_img),</span>
                     <span class="n">fillval</span> <span class="o">=</span> <span class="mi">0</span>
                     <span class="p">)</span>
-                       
+
+    <span class="n">imgsize_half</span> <span class="o">=</span> <span class="n">imgsize</span> <span class="o">/</span> <span class="mf">2.0</span>
+    
     <span class="n">f_dlog</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;- Base dir: &#39;</span> <span class="o">+</span> <span class="n">cleanDir</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>                 
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">roots</span><span class="p">)):</span>
         <span class="n">f_dlog</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">ctime</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
@@ -1403,9 +1408,15 @@
 
         <span class="c1"># Multiply each distorted image by it&#39;s weight</span>
         <span class="n">fits_cd</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">_cd</span><span class="p">)</span>
-        <span class="n">fits_cd</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span> <span class="o">*=</span> <span class="n">weights</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">cdwt_img</span> <span class="o">=</span> <span class="n">fits_cd</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span> <span class="o">*</span> <span class="n">weights</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>   <span class="c1"># Keep image variable for drizzling later</span>
+        <span class="n">fits_cd</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">cdwt_img</span>                <span class="c1"># Also save the weighted image to a file.</span>
         <span class="n">fits_cd</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="n">instrument</span><span class="o">.</span><span class="n">hdr_keys</span><span class="p">[</span><span class="s1">&#39;itime&#39;</span><span class="p">]]</span> <span class="o">*=</span> <span class="n">weights</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
         <span class="n">fits_cd</span><span class="o">.</span><span class="n">writeto</span><span class="p">(</span><span class="n">_cdwt</span><span class="p">,</span> <span class="n">output_verify</span><span class="o">=</span><span class="n">outputVerify</span><span class="p">)</span>
+
+        <span class="c1"># Padd size (must be same as in combine_size)</span>
+        <span class="n">imgsize_orig</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">cdwt_img</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+        <span class="n">padd_1percent</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">imgsize_orig</span> <span class="o">*</span> <span class="mf">0.01</span><span class="p">))</span>
+        <span class="n">padd_bigger_img</span> <span class="o">=</span> <span class="p">(</span><span class="n">imgsize</span> <span class="o">-</span> <span class="n">imgsize_orig</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>
 
         <span class="c1"># Get pixel shifts</span>
         <span class="n">xsh</span> <span class="o">=</span> <span class="n">shifts</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
@@ -1423,6 +1434,8 @@
              <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">cd_mat</span> <span class="o">=</span> <span class="n">rotate_wcs</span><span class="p">(</span><span class="n">hdr_current_img</span><span class="p">,</span> <span class="n">phi</span><span class="p">)</span>
              <span class="c1">#cd_mat = rot_img(roots[i], phi, cleanDir, return_cd_only = True)</span>
 
+        <span class="c1"># Setup distortion maps to include both geometric and differential atmospheric</span>
+        <span class="c1"># refraction corrections (if specified).</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">fixDAR</span> <span class="o">==</span> <span class="kc">True</span><span class="p">):</span>
             <span class="n">darRoot</span> <span class="o">=</span> <span class="n">_cdwt</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.fits&#39;</span><span class="p">,</span> <span class="s1">&#39;geo&#39;</span><span class="p">)</span>
             <span class="p">(</span><span class="n">_xgeoim</span><span class="p">,</span> <span class="n">_ygeoim</span><span class="p">)</span> <span class="o">=</span> <span class="n">dar</span><span class="o">.</span><span class="n">darPlusDistortion</span><span class="p">(</span>
@@ -1439,8 +1452,6 @@
         <span class="n">f_dlog</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;- X-shift distortion image: clean&#39;</span> <span class="o">+</span> <span class="n">_xgeoim</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/clean&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
         <span class="n">f_dlog</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;- Y-shift distortion image: clean&#39;</span> <span class="o">+</span> <span class="n">_ygeoim</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/clean&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
 
-        <span class="n">cdwt_img</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getdata</span><span class="p">(</span><span class="n">_cdwt</span><span class="p">)</span>
-
         <span class="c1"># Get exposure time</span>
         <span class="n">itime_keyword</span> <span class="o">=</span> <span class="s1">&#39;ITIME&#39;</span>
         <span class="n">exp_time</span> <span class="o">=</span> <span class="n">hdr_current_img</span><span class="p">[</span><span class="n">itime_keyword</span><span class="p">]</span>
@@ -1448,7 +1459,6 @@
         <span class="c1"># Read in MJD of current file from FITS header</span>
         <span class="n">mjd</span> <span class="o">=</span> <span class="n">instrument</span><span class="o">.</span><span class="n">get_mjd</span><span class="p">(</span><span class="n">hdr</span><span class="p">)</span>
         <span class="n">mjd_weightedSum</span> <span class="o">+=</span> <span class="n">weights</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">mjd</span>
-
         
         <span class="c1"># weight the image by multiplying by mask</span>
         <span class="c1"># this is what is said to be done by in_mask in the iraf version </span>
@@ -1467,59 +1477,17 @@
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;  weight = </span><span class="si">{0:8.2f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span> <span class="n">weights</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="p">))</span>
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;   outnx = </span><span class="si">{0:8d}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span> <span class="n">imgsize</span> <span class="p">))</span>
 
-        <span class="c1"># We tell it the input its distorted/shfited and we want to undistort it</span>
+        <span class="c1"># We tell it the input is distorted/shifted and we want to undistort it</span>
         <span class="n">wcs_in</span> <span class="o">=</span> <span class="n">wcs</span><span class="o">.</span><span class="n">WCS</span><span class="p">(</span><span class="n">hdr_current_img</span><span class="p">)</span>
         <span class="n">wcs_out</span> <span class="o">=</span> <span class="n">wcs</span><span class="o">.</span><span class="n">WCS</span><span class="p">(</span><span class="n">hdr_current_img</span><span class="p">)</span>
-        
 
         <span class="k">if</span> <span class="p">(</span><span class="n">diffPA</span> <span class="o">==</span> <span class="mi">1</span><span class="p">):</span>
             <span class="n">f_dlog</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;- Rotating image. phi = </span><span class="si">{}</span><span class="s1"> </span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">phi</span><span class="p">))</span>
             <span class="n">wcs_in</span><span class="o">.</span><span class="n">wcs</span><span class="o">.</span><span class="n">cd</span> <span class="o">=</span> <span class="n">cd_mat</span>
-            <span class="c1"># Calculate padding shifts</span>
-            <span class="n">pad_xsh</span> <span class="o">=</span> <span class="p">(</span><span class="n">imgsize</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">cdwt_img</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="mi">2</span>
-            <span class="n">pad_ysh</span> <span class="o">=</span> <span class="p">(</span><span class="n">imgsize</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">cdwt_img</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span><span class="o">/</span><span class="mi">2</span>
-    
-            <span class="c1"># Unrotate the rotated coos</span>
-            <span class="c1"># We&#39;ll later rotate them with the padding</span>
-            <span class="n">phi_rad</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="n">phi</span><span class="p">)</span>
-            <span class="n">unrotated_xsh</span> <span class="o">=</span> <span class="n">xsh</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="o">-</span><span class="n">phi_rad</span><span class="p">)</span> <span class="o">-</span> <span class="n">ysh</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="o">-</span><span class="n">phi_rad</span><span class="p">)</span>
-            <span class="n">unrotated_ysh</span> <span class="o">=</span> <span class="n">xsh</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="o">-</span><span class="n">phi_rad</span><span class="p">)</span> <span class="o">+</span> <span class="n">ysh</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="o">-</span><span class="n">phi_rad</span><span class="p">)</span>
-            
-            <span class="c1"># Combine star alignment shifts with padding shifts BEFORE rotating</span>
-            <span class="n">total_xsh</span> <span class="o">=</span> <span class="n">unrotated_xsh</span> <span class="o">+</span> <span class="n">pad_xsh</span>
-            <span class="n">total_ysh</span> <span class="o">=</span> <span class="n">unrotated_ysh</span> <span class="o">+</span> <span class="n">pad_ysh</span>
-            
-            <span class="c1"># Rotate the TOTAL shifts </span>
-            
-            <span class="n">xsh_rot</span> <span class="o">=</span> <span class="n">total_xsh</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">phi_rad</span><span class="p">)</span> <span class="o">-</span> <span class="n">total_ysh</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">phi_rad</span><span class="p">)</span>
-            <span class="n">ysh_rot</span> <span class="o">=</span> <span class="n">total_xsh</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">phi_rad</span><span class="p">)</span> <span class="o">+</span> <span class="n">total_ysh</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">phi_rad</span><span class="p">)</span>
-            
-            <span class="c1"># Original CRPIX</span>
-            <span class="n">x0</span><span class="p">,</span> <span class="n">y0</span> <span class="o">=</span> <span class="n">wcs_in</span><span class="o">.</span><span class="n">wcs</span><span class="o">.</span><span class="n">crpix</span>
-            
-            <span class="c1"># Apply the combined rotated shift</span>
-            <span class="n">x_shifted</span> <span class="o">=</span> <span class="n">x0</span> <span class="o">-</span> <span class="n">xsh_rot</span>
-            <span class="n">y_shifted</span> <span class="o">=</span> <span class="n">y0</span> <span class="o">-</span> <span class="n">ysh_rot</span>
 
-            <span class="n">f_dlog</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;- Shifting image. xshift = </span><span class="si">{0:8.2f}</span><span class="s1">, yshift = </span><span class="si">{1:8.2f}</span><span class="s1"> </span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">xsh_rot</span><span class="p">,</span> <span class="n">ysh_rot</span><span class="p">))</span>
-            
-            <span class="c1"># Account for rotation around the image center</span>
-            <span class="n">cx</span> <span class="o">=</span> <span class="n">imgsize</span><span class="o">/</span><span class="mi">2</span>
-            <span class="n">cy</span> <span class="o">=</span> <span class="n">imgsize</span><span class="o">/</span><span class="mi">2</span>
-            
-            <span class="n">dx</span> <span class="o">=</span> <span class="n">x_shifted</span> <span class="o">-</span> <span class="n">cx</span>
-            <span class="n">dy</span> <span class="o">=</span> <span class="n">y_shifted</span> <span class="o">-</span> <span class="n">cy</span>
-            
-            <span class="n">x1</span> <span class="o">=</span> <span class="n">cx</span> <span class="o">+</span> <span class="n">dx</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">phi_rad</span><span class="p">)</span> <span class="o">+</span> <span class="n">dy</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">phi_rad</span><span class="p">)</span>
-            <span class="n">y1</span> <span class="o">=</span> <span class="n">cy</span> <span class="o">-</span> <span class="n">dx</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">phi_rad</span><span class="p">)</span> <span class="o">+</span> <span class="n">dy</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">phi_rad</span><span class="p">)</span>
-            
-            <span class="n">wcs_in</span><span class="o">.</span><span class="n">wcs</span><span class="o">.</span><span class="n">crpix</span> <span class="o">=</span> <span class="p">[</span><span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">]</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="c1"># Non-rotated case</span>
-            <span class="n">f_dlog</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;- Shifting image. xshift = </span><span class="si">{0:8.2f}</span><span class="s1">, yshift = </span><span class="si">{1:8.2f}</span><span class="s1"> </span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">xsh</span><span class="p">,</span> <span class="n">ysh</span><span class="p">))</span>
-            <span class="n">wcs_in</span><span class="o">.</span><span class="n">wcs</span><span class="o">.</span><span class="n">crpix</span> <span class="o">=</span> <span class="p">[</span><span class="n">wcs_in</span><span class="o">.</span><span class="n">wcs</span><span class="o">.</span><span class="n">crpix</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">xsh</span><span class="p">,</span> <span class="n">wcs_in</span><span class="o">.</span><span class="n">wcs</span><span class="o">.</span><span class="n">crpix</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">ysh</span><span class="p">]</span>
-            <span class="n">wcs_in</span><span class="o">.</span><span class="n">wcs</span><span class="o">.</span><span class="n">crpix</span> <span class="o">=</span> <span class="p">[</span><span class="n">wcs_in</span><span class="o">.</span><span class="n">wcs</span><span class="o">.</span><span class="n">crpix</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="p">(</span><span class="n">imgsize</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">cdwt_img</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> 
-                                <span class="n">wcs_in</span><span class="o">.</span><span class="n">wcs</span><span class="o">.</span><span class="n">crpix</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="p">(</span><span class="n">imgsize</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">cdwt_img</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span><span class="o">/</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">f_dlog</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;- Shifting image. xshift = </span><span class="si">{0:8.2f}</span><span class="s1">, yshift = </span><span class="si">{1:8.2f}</span><span class="s1"> </span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">xsh</span><span class="p">,</span> <span class="n">ysh</span><span class="p">))</span>
+        <span class="n">wcs_in</span><span class="o">.</span><span class="n">wcs</span><span class="o">.</span><span class="n">crpix</span> <span class="o">=</span> <span class="p">[</span><span class="n">cdwt_img</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">cdwt_img</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="mf">2.0</span><span class="p">]</span>
+        <span class="n">wcs_out</span><span class="o">.</span><span class="n">wcs</span><span class="o">.</span><span class="n">crpix</span> <span class="o">=</span> <span class="p">[(</span><span class="n">imgsize</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">)</span> <span class="o">+</span> <span class="n">xsh</span><span class="p">,</span> <span class="p">(</span><span class="n">imgsize</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">)</span> <span class="o">+</span> <span class="n">ysh</span><span class="p">]</span>
     
         <span class="n">xgeoim</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getdata</span><span class="p">(</span><span class="n">_xgeoim</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;float32&#39;</span><span class="p">)</span>
         <span class="n">ygeoim</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getdata</span><span class="p">(</span><span class="n">_ygeoim</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;float32&#39;</span><span class="p">)</span>
@@ -1529,7 +1497,7 @@
     
         <span class="n">wcs_in</span><span class="o">.</span><span class="n">cpdis1</span> <span class="o">=</span> <span class="n">xdist</span>
         <span class="n">wcs_in</span><span class="o">.</span><span class="n">cpdis2</span> <span class="o">=</span> <span class="n">ydist</span>
-    
+
         <span class="n">pixmap</span> <span class="o">=</span> <span class="n">drizzle</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">calc_pixmap</span><span class="p">(</span><span class="n">wcs_in</span><span class="p">,</span> <span class="n">wcs_out</span><span class="p">)</span>
         
         <span class="c1"># Drizzle this file ontop of all previous ones</span>
@@ -1549,7 +1517,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">wht_scale</span> <span class="o">=</span> <span class="mf">1.0</span>
             <span class="n">pixfrac</span> <span class="o">=</span> <span class="mf">1.0</span>
-            <span class="n">driz</span><span class="o">.</span><span class="n">add_image</span><span class="p">(</span><span class="n">cdwt_img</span><span class="p">,</span> <span class="n">pixmap</span> <span class="o">=</span> <span class="n">pixmap</span><span class="p">,</span>  <span class="c1">#cdwt_img</span>
+            <span class="n">driz</span><span class="o">.</span><span class="n">add_image</span><span class="p">(</span><span class="n">cdwt_img</span><span class="p">,</span> <span class="n">pixmap</span> <span class="o">=</span> <span class="n">pixmap</span><span class="p">,</span>
                                 <span class="n">weight_map</span> <span class="o">=</span> <span class="n">wgt_in</span><span class="p">,</span>
                                 <span class="n">exptime</span> <span class="o">=</span> <span class="n">exp_time</span><span class="p">,</span>
                                 <span class="n">xmax</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">imgsize</span><span class="p">),</span>
@@ -1562,6 +1530,13 @@
         <span class="c1">#swtich from output cps to counts by multiplying by total counts</span>
         <span class="n">out_img</span> <span class="o">=</span> <span class="n">driz</span><span class="o">.</span><span class="n">out_img</span> <span class="o">*</span> <span class="n">driz</span><span class="o">.</span><span class="n">_texptime</span>
         <span class="n">img_hdu</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">PrimaryHDU</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">out_img</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="n">hdr</span><span class="p">)</span>
+
+        <span class="c1"># import pylab as plt</span>
+        <span class="c1"># plt.figure(1)</span>
+        <span class="c1"># plt.clf()</span>
+        <span class="c1"># plt.imshow(out_img, vmin=0, vmax=100)</span>
+        <span class="c1"># plt.show()</span>
+        
 
         <span class="c1"># make header</span>
         <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
@@ -1765,7 +1740,8 @@
                         <span class="p">))</span>
 
     <span class="k">for</span> <span class="n">log</span> <span class="ow">in</span> <span class="n">f_log</span><span class="p">:</span>
-        <span class="n">log</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;- Base dir: &#39;</span> <span class="o">+</span> <span class="n">cleanDir</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span> 
+        <span class="n">log</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;- Base dir: &#39;</span> <span class="o">+</span> <span class="n">cleanDir</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">roots</span><span class="p">)):</span>
         <span class="c1"># Cleaned image</span>
         <span class="n">_c</span> <span class="o">=</span> <span class="n">cleanDir</span> <span class="o">+</span> <span class="s1">&#39;c&#39;</span> <span class="o">+</span> <span class="n">roots</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span>
@@ -1778,15 +1754,15 @@
         <span class="n">util</span><span class="o">.</span><span class="n">rmall</span><span class="p">([</span><span class="n">cdwt</span><span class="p">])</span>
 
         <span class="n">fits_cd</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">_cd</span><span class="p">)</span>
-        <span class="n">fits_cd</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span> <span class="o">*=</span> <span class="n">weights</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">cdwt_img</span> <span class="o">=</span> <span class="n">fits_cd</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span> <span class="o">*</span> <span class="n">weights</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>   <span class="c1"># Keep image variable for drizzling later</span>
+        <span class="n">fits_cd</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">cdwt_img</span>
         <span class="n">fits_cd</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="n">instrument</span><span class="o">.</span><span class="n">hdr_keys</span><span class="p">[</span><span class="s1">&#39;itime&#39;</span><span class="p">]]</span> <span class="o">*=</span> <span class="n">weights</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
         <span class="n">fits_cd</span><span class="o">.</span><span class="n">writeto</span><span class="p">(</span><span class="n">cdwt</span><span class="p">,</span> <span class="n">output_verify</span><span class="o">=</span><span class="n">outputVerify</span><span class="p">)</span>
         
-        <span class="c1"># Fix the ITIME header keyword so that it matches (weighted).</span>
-        <span class="c1"># Drizzle will add all the ITIMEs together, just as it adds the flux.</span>
-        <span class="c1">#itime = fits.getval(cdwt, instrument.hdr_keys[&#39;itime&#39;])</span>
-        <span class="c1">#itime *= weights[i]</span>
-        <span class="c1">#fits.setval(cdwt, instrument.hdr_keys[&#39;itime&#39;], value=itime)</span>
+        <span class="c1"># Padd size (must be same as in combine_size)</span>
+        <span class="n">imgsize_orig</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">cdwt_img</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+        <span class="n">padd_1percent</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">imgsize_orig</span> <span class="o">*</span> <span class="mf">0.01</span><span class="p">))</span>
+        <span class="n">padd_bigger_img</span> <span class="o">=</span> <span class="p">(</span><span class="n">imgsize</span> <span class="o">-</span> <span class="n">imgsize_orig</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>
         
         <span class="c1"># Get pixel shifts</span>
         <span class="n">xsh</span> <span class="o">=</span> <span class="n">shifts</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
@@ -1823,9 +1799,7 @@
         <span class="c1"># Read in each satLevel from individual .max files</span>
         <span class="n">max_indiv</span> <span class="o">=</span> <span class="n">cleanDir</span> <span class="o">+</span> <span class="s1">&#39;c&#39;</span> <span class="o">+</span> <span class="n">roots</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.max&#39;</span>
         <span class="n">satfile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">max_indiv</span><span class="p">)</span>
-        <span class="n">satLvl</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">satfile</span><span class="o">.</span><span class="n">read</span><span class="p">())</span> <span class="c1">#changed to simple i/o because the astropy table was breaking for a textfile with a single entry</span>
-        <span class="c1">#getsatLvl = Table.read(max_indiv, format=&#39;ascii&#39;, header_start=None)</span>
-        <span class="c1">#satLvl = getsatLvl[0][0]</span>
+        <span class="n">satLvl</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">satfile</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
         <span class="n">satLvl_wt</span> <span class="o">=</span> <span class="n">satLvl</span> <span class="o">*</span> <span class="n">weights</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
         <span class="n">satLvl_tot</span><span class="p">[</span><span class="n">sub</span><span class="p">]</span> <span class="o">+=</span> <span class="n">satLvl_wt</span>
         
@@ -1850,8 +1824,6 @@
         <span class="n">log</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;- Input data image: clean&#39;</span> <span class="o">+</span> <span class="n">cdwt</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/clean&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
         <span class="n">log</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;- X-shift distortion image: clean&#39;</span> <span class="o">+</span> <span class="n">_xgeoim</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/clean&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
         <span class="n">log</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;- Y-shift distortion image: clean&#39;</span> <span class="o">+</span> <span class="n">_ygeoim</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/clean&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
-
-        <span class="n">cdwt_img</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getdata</span><span class="p">(</span><span class="n">cdwt</span><span class="p">)</span>
 
         <span class="c1"># Get exposure time</span>
         <span class="n">itime_keyword</span> <span class="o">=</span> <span class="s1">&#39;ITIME&#39;</span>
@@ -1878,56 +1850,10 @@
         <span class="n">wcs_in</span> <span class="o">=</span> <span class="n">wcs</span><span class="o">.</span><span class="n">WCS</span><span class="p">(</span><span class="n">hdr_current_img</span><span class="p">)</span>
         <span class="n">wcs_out</span> <span class="o">=</span> <span class="n">wcs</span><span class="o">.</span><span class="n">WCS</span><span class="p">(</span><span class="n">hdr_current_img</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="n">diffPA</span> <span class="o">==</span> <span class="mi">1</span><span class="p">):</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;- Rotating image. phi = </span><span class="si">{}</span><span class="s1"> </span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">phi</span><span class="p">))</span>
-            <span class="n">wcs_in</span><span class="o">.</span><span class="n">wcs</span><span class="o">.</span><span class="n">cd</span> <span class="o">=</span> <span class="n">cd_mat</span>
-            <span class="c1"># Calculate padding shifts</span>
-            <span class="n">pad_xsh</span> <span class="o">=</span> <span class="p">(</span><span class="n">imgsize</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">cdwt_img</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="mi">2</span>
-            <span class="n">pad_ysh</span> <span class="o">=</span> <span class="p">(</span><span class="n">imgsize</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">cdwt_img</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span><span class="o">/</span><span class="mi">2</span>
-    
-            <span class="c1"># Unrotate the rotated coos</span>
-            <span class="c1"># We&#39;ll later rotate them with the padding</span>
-            <span class="n">phi_rad</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="n">phi</span><span class="p">)</span>
-            <span class="n">unrotated_xsh</span> <span class="o">=</span> <span class="n">xsh</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="o">-</span><span class="n">phi_rad</span><span class="p">)</span> <span class="o">-</span> <span class="n">ysh</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="o">-</span><span class="n">phi_rad</span><span class="p">)</span>
-            <span class="n">unrotated_ysh</span> <span class="o">=</span> <span class="n">xsh</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="o">-</span><span class="n">phi_rad</span><span class="p">)</span> <span class="o">+</span> <span class="n">ysh</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="o">-</span><span class="n">phi_rad</span><span class="p">)</span>
-            
-            <span class="c1"># Combine star alignment shifts with padding shifts BEFORE rotating</span>
-            <span class="n">total_xsh</span> <span class="o">=</span> <span class="n">unrotated_xsh</span> <span class="o">+</span> <span class="n">pad_xsh</span>
-            <span class="n">total_ysh</span> <span class="o">=</span> <span class="n">unrotated_ysh</span> <span class="o">+</span> <span class="n">pad_ysh</span>
-            
-            <span class="c1"># Rotate the TOTAL shifts </span>
-            
-            <span class="n">xsh_rot</span> <span class="o">=</span> <span class="n">total_xsh</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">phi_rad</span><span class="p">)</span> <span class="o">-</span> <span class="n">total_ysh</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">phi_rad</span><span class="p">)</span>
-            <span class="n">ysh_rot</span> <span class="o">=</span> <span class="n">total_xsh</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">phi_rad</span><span class="p">)</span> <span class="o">+</span> <span class="n">total_ysh</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">phi_rad</span><span class="p">)</span>
-            
-            <span class="c1"># Original CRPIX</span>
-            <span class="n">x0</span><span class="p">,</span> <span class="n">y0</span> <span class="o">=</span> <span class="n">wcs_in</span><span class="o">.</span><span class="n">wcs</span><span class="o">.</span><span class="n">crpix</span>
-            
-            <span class="c1"># Apply the combined rotated shift</span>
-            <span class="n">x_shifted</span> <span class="o">=</span> <span class="n">x0</span> <span class="o">-</span> <span class="n">xsh_rot</span>
-            <span class="n">y_shifted</span> <span class="o">=</span> <span class="n">y0</span> <span class="o">-</span> <span class="n">ysh_rot</span>
-
-            <span class="n">log</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;- Shifting image. xshift = </span><span class="si">{0:8.2f}</span><span class="s1">, yshift = </span><span class="si">{1:8.2f}</span><span class="s1"> </span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">xsh_rot</span><span class="p">,</span> <span class="n">ysh_rot</span><span class="p">))</span>
-            
-            <span class="c1"># Account for rotation around the image center</span>
-            <span class="n">cx</span> <span class="o">=</span> <span class="n">imgsize</span><span class="o">/</span><span class="mi">2</span>
-            <span class="n">cy</span> <span class="o">=</span> <span class="n">imgsize</span><span class="o">/</span><span class="mi">2</span>
-            
-            <span class="n">dx</span> <span class="o">=</span> <span class="n">x_shifted</span> <span class="o">-</span> <span class="n">cx</span>
-            <span class="n">dy</span> <span class="o">=</span> <span class="n">y_shifted</span> <span class="o">-</span> <span class="n">cy</span>
-            
-            <span class="n">x1</span> <span class="o">=</span> <span class="n">cx</span> <span class="o">+</span> <span class="n">dx</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">phi_rad</span><span class="p">)</span> <span class="o">+</span> <span class="n">dy</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">phi_rad</span><span class="p">)</span>
-            <span class="n">y1</span> <span class="o">=</span> <span class="n">cy</span> <span class="o">-</span> <span class="n">dx</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">phi_rad</span><span class="p">)</span> <span class="o">+</span> <span class="n">dy</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">phi_rad</span><span class="p">)</span>
-            
-            <span class="n">wcs_in</span><span class="o">.</span><span class="n">wcs</span><span class="o">.</span><span class="n">crpix</span> <span class="o">=</span> <span class="p">[</span><span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">]</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="c1"># Non-rotated case</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;- Shifting image. xshift = </span><span class="si">{0:8.2f}</span><span class="s1">, yshift = </span><span class="si">{1:8.2f}</span><span class="s1"> </span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">xsh</span><span class="p">,</span> <span class="n">ysh</span><span class="p">))</span>
-            <span class="n">wcs_in</span><span class="o">.</span><span class="n">wcs</span><span class="o">.</span><span class="n">crpix</span> <span class="o">=</span> <span class="p">[</span><span class="n">wcs_in</span><span class="o">.</span><span class="n">wcs</span><span class="o">.</span><span class="n">crpix</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">xsh</span><span class="p">,</span> <span class="n">wcs_in</span><span class="o">.</span><span class="n">wcs</span><span class="o">.</span><span class="n">crpix</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">ysh</span><span class="p">]</span>
-            <span class="c1"># shift so output image is in the center of the produce image</span>
-            <span class="n">wcs_in</span><span class="o">.</span><span class="n">wcs</span><span class="o">.</span><span class="n">crpix</span> <span class="o">=</span> <span class="p">[</span><span class="n">wcs_in</span><span class="o">.</span><span class="n">wcs</span><span class="o">.</span><span class="n">crpix</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="p">(</span><span class="n">imgsize</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">cdwt_img</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> 
-                                <span class="n">wcs_in</span><span class="o">.</span><span class="n">wcs</span><span class="o">.</span><span class="n">crpix</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="p">(</span><span class="n">imgsize</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">cdwt_img</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span><span class="o">/</span><span class="mi">2</span><span class="p">]</span>
-            
+        <span class="n">log</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;- Shifting image. xshift = </span><span class="si">{0:8.2f}</span><span class="s1">, yshift = </span><span class="si">{1:8.2f}</span><span class="s1"> </span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">xsh</span><span class="p">,</span> <span class="n">ysh</span><span class="p">))</span>
+        <span class="n">wcs_in</span><span class="o">.</span><span class="n">wcs</span><span class="o">.</span><span class="n">crpix</span> <span class="o">=</span> <span class="p">[</span><span class="n">cdwt_img</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">cdwt_img</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="mf">2.0</span><span class="p">]</span>
+        <span class="n">wcs_out</span><span class="o">.</span><span class="n">wcs</span><span class="o">.</span><span class="n">crpix</span> <span class="o">=</span> <span class="p">[(</span><span class="n">imgsize</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">)</span> <span class="o">+</span> <span class="n">xsh</span><span class="p">,</span> <span class="p">(</span><span class="n">imgsize</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">)</span> <span class="o">+</span> <span class="n">ysh</span><span class="p">]</span>
+        
         <span class="n">xgeoim</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getdata</span><span class="p">(</span><span class="n">_xgeoim</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;float32&#39;</span><span class="p">)</span>
         <span class="n">ygeoim</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getdata</span><span class="p">(</span><span class="n">_ygeoim</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;float32&#39;</span><span class="p">)</span>
     
@@ -2162,9 +2088,9 @@
     <span class="n">fwhm</span> <span class="o">=</span> <span class="n">fwhm</span><span class="p">[</span><span class="n">sidx</span><span class="p">]</span>
     <span class="n">weights</span> <span class="o">=</span> <span class="n">weights</span><span class="p">[</span><span class="n">sidx</span><span class="p">]</span>
     <span class="n">roots</span> <span class="o">=</span> <span class="p">[</span><span class="n">roots</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">sidx</span><span class="p">]</span>
-    <span class="n">shiftsX</span> <span class="o">=</span> <span class="n">shiftsTab</span><span class="p">[</span><span class="s1">&#39;col1&#39;</span><span class="p">]</span>
+    <span class="n">shiftsX</span> <span class="o">=</span> <span class="n">shiftsTab</span><span class="p">[</span><span class="s1">&#39;xshift&#39;</span><span class="p">]</span>
     <span class="n">shiftsX</span> <span class="o">=</span> <span class="n">shiftsX</span><span class="p">[</span><span class="n">sidx</span><span class="p">]</span>
-    <span class="n">shiftsY</span> <span class="o">=</span> <span class="n">shiftsTab</span><span class="p">[</span><span class="s1">&#39;col2&#39;</span><span class="p">]</span>
+    <span class="n">shiftsY</span> <span class="o">=</span> <span class="n">shiftsTab</span><span class="p">[</span><span class="s1">&#39;yshift&#39;</span><span class="p">]</span>
     <span class="n">shiftsY</span> <span class="o">=</span> <span class="n">shiftsY</span><span class="p">[</span><span class="n">sidx</span><span class="p">]</span>
 
     <span class="c1"># Move all the ones with fwhm = -1 to the end</span>
@@ -2315,6 +2241,9 @@
 <div class="viewcode-block" id="combine_register">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/data/index.html#kai.reduce.data.combine_register">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">combine_register</span><span class="p">(</span><span class="n">outroot</span><span class="p">,</span> <span class="n">refImage</span><span class="p">,</span> <span class="n">diffPA</span><span class="p">,</span> <span class="n">plot_correlation</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">instrument</span> <span class="o">=</span> <span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Register all the images through a cross-correlation method.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">shiftFile</span> <span class="o">=</span> <span class="n">outroot</span> <span class="o">+</span> <span class="s1">&#39;.shifts&#39;</span>
 
@@ -2323,30 +2252,47 @@
         <span class="nb">input</span> <span class="o">=</span> <span class="s1">&#39;@&#39;</span> <span class="o">+</span> <span class="n">outroot</span> <span class="o">+</span> <span class="s1">&#39;.lis_r&#39;</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="nb">input</span> <span class="o">=</span> <span class="s1">&#39;@&#39;</span> <span class="o">+</span> <span class="n">outroot</span> <span class="o">+</span> <span class="s1">&#39;.lis&#39;</span>
-    
+
+    <span class="c1"># Fetch the reference image, which all shifts will be calculated against.</span>
+    <span class="c1"># Also get the coordinates of the cooStar in the reference image (coo_file_ref)</span>
     <span class="n">ref_img</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getdata</span><span class="p">(</span><span class="n">refImage</span><span class="p">)</span>
+    
     <span class="c1"># coo file starts with c even if image was rotated</span>
     <span class="n">refImage_filename</span> <span class="o">=</span> <span class="n">refImage</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
     <span class="k">if</span> <span class="n">refImage_filename</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;r&#39;</span><span class="p">:</span>
-        <span class="n">coo_file_ref</span> <span class="o">=</span> <span class="n">Table</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">refImage</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">refImage_filename</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;c&#39;</span> <span class="o">+</span> <span class="n">refImage_filename</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">5</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.rcoo&#39;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;ascii&#39;</span><span class="p">,</span> <span class="n">header_start</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">coo_file_ref</span> <span class="o">=</span> <span class="n">Table</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">refImage</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">refImage_filename</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;c&#39;</span> <span class="o">+</span> <span class="n">refImage_filename</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">5</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.rcoo&#39;</span><span class="p">,</span>
+                                  <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;ascii&#39;</span><span class="p">,</span> <span class="n">header_start</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">coo_file_ref</span> <span class="o">=</span> <span class="n">Table</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">refImage</span><span class="p">[:</span><span class="o">-</span><span class="mi">5</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.coo&#39;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;ascii&#39;</span><span class="p">,</span> <span class="n">header_start</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 
+    <span class="c1"># Fetch the file names and cooStar position for all images.</span>
     <span class="n">fileNames</span> <span class="o">=</span> <span class="n">Table</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="nb">input</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;ascii.no_header&#39;</span><span class="p">)</span>
     <span class="n">fileNames</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">fileNames</span><span class="p">)</span>
     <span class="n">fileNames</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">fileNames</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;S&#39;</span><span class="p">)</span>
     
-    <span class="n">coords</span> <span class="o">=</span> <span class="n">Table</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">outroot</span> <span class="o">+</span> <span class="s1">&#39;.coo&#39;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;ascii&#39;</span><span class="p">,</span> <span class="n">header_start</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>        
+    <span class="n">coords</span> <span class="o">=</span> <span class="n">Table</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">outroot</span> <span class="o">+</span> <span class="s1">&#39;.coo&#39;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;ascii&#39;</span><span class="p">,</span> <span class="n">header_start</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+
+    <span class="c1"># Setup a shifts table for storing the final calculated shifts.</span>
     <span class="n">shiftsTable_empty</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">fileNames</span><span class="p">),</span> <span class="mi">3</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
     <span class="n">shiftsTable</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">shiftsTable_empty</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;S50&#39;</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">))</span>
     
     <span class="n">hdrRef</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getheader</span><span class="p">(</span><span class="n">refImage</span><span class="p">,</span> <span class="n">ignore_missing_end</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Calculate the size of the large-crop box (crop-val) in pixels.</span>
     <span class="n">plate_scale</span> <span class="o">=</span> <span class="n">instrument</span><span class="o">.</span><span class="n">get_plate_scale</span><span class="p">(</span><span class="n">hdrRef</span><span class="p">)</span> <span class="c1">#arcsec/pixels</span>
-    <span class="n">crop_val</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="n">plate_scale</span> <span class="c1"># 1 arcsec/(arcsec/pix)</span>
+    <span class="n">crop_val</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">plate_scale</span> <span class="c1"># 1 arcsec/(arcsec/pix), units = pixels</span>
     <span class="n">crop_val</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">crop_val</span><span class="p">))</span>
 
+    <span class="c1"># For speed, we pre-trim the reference image edges by 5%.</span>
+    <span class="c1"># This helps remove edge effects. </span>
+    <span class="n">five_percent</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">ref_img</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mf">0.05</span><span class="p">)</span>
+    <span class="n">ref_img_noedge</span> <span class="o">=</span> <span class="n">ref_img</span><span class="p">[</span><span class="n">five_percent</span><span class="p">:</span><span class="o">-</span><span class="n">five_percent</span><span class="p">,</span> <span class="n">five_percent</span><span class="p">:</span><span class="o">-</span><span class="n">five_percent</span><span class="p">]</span>
+    
+    <span class="c1"># Loop through the images and calculate the shift for each (w.r.t. the reference image).</span>
     <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">fileNames</span><span class="p">)):</span>
         <span class="n">fileName</span> <span class="o">=</span> <span class="n">fileNames</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+        
+        <span class="c1"># Load up the image, and cooStar coordinates.</span>
         <span class="n">shift_img</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getdata</span><span class="p">(</span><span class="n">fileName</span><span class="p">)</span>
         <span class="n">fileName_filename</span> <span class="o">=</span> <span class="n">fileName</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">fileName_filename</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;r&#39;</span><span class="p">:</span>
@@ -2354,102 +2300,118 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">coo_name</span> <span class="o">=</span> <span class="n">fileName</span><span class="p">[:</span><span class="o">-</span><span class="mi">5</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.coo&#39;</span>
         <span class="n">coo_file</span> <span class="o">=</span> <span class="n">Table</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">coo_name</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;ascii&#39;</span><span class="p">,</span> <span class="n">header_start</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-        
-        
-        <span class="n">xshift</span> <span class="o">=</span> <span class="n">coo_file_ref</span><span class="p">[</span><span class="s1">&#39;col2&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">coo_file</span><span class="p">[</span><span class="s1">&#39;col2&#39;</span><span class="p">]</span> 
-        <span class="n">yshift</span> <span class="o">=</span> <span class="n">coo_file_ref</span><span class="p">[</span><span class="s1">&#39;col1&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">coo_file</span><span class="p">[</span><span class="s1">&#39;col1&#39;</span><span class="p">]</span>
-        <span class="n">global_shift_img</span> <span class="o">=</span> <span class="n">shift</span><span class="p">(</span><span class="n">shift_img</span><span class="p">,</span> <span class="p">(</span><span class="n">xshift</span><span class="p">,</span> <span class="n">yshift</span><span class="p">),</span> <span class="n">mode</span> <span class="o">=</span> <span class="s1">&#39;constant&#39;</span><span class="p">)</span>
 
-        <span class="c1"># Crop off edges of images to avoid edge effects contaminating the cross correlation</span>
-        <span class="n">five_percent</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">ref_img</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mf">0.05</span><span class="p">)</span>
-        <span class="n">global_shift_img_noedge</span> <span class="o">=</span> <span class="n">global_shift_img</span><span class="p">[</span><span class="n">five_percent</span><span class="p">:</span><span class="o">-</span><span class="n">five_percent</span><span class="p">,</span> <span class="n">five_percent</span><span class="p">:</span><span class="o">-</span><span class="n">five_percent</span><span class="p">]</span>
-        <span class="n">ref_img_noedge</span> <span class="o">=</span> <span class="n">ref_img</span><span class="p">[</span><span class="n">five_percent</span><span class="p">:</span><span class="o">-</span><span class="n">five_percent</span><span class="p">,</span> <span class="n">five_percent</span><span class="p">:</span><span class="o">-</span><span class="n">five_percent</span><span class="p">]</span>
+        <span class="c1"># Crop off 5% of the edges of ii-th image</span>
+        <span class="c1"># to avoid edge effects contaminating the cross correlation.</span>
+        <span class="n">shift_img_noedge</span> <span class="o">=</span> <span class="n">shift_img</span><span class="p">[</span><span class="n">five_percent</span><span class="p">:</span><span class="o">-</span><span class="n">five_percent</span><span class="p">,</span> <span class="n">five_percent</span><span class="p">:</span><span class="o">-</span><span class="n">five_percent</span><span class="p">]</span>
         
-        <span class="n">_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fft2</span><span class="p">(</span><span class="n">ref_img_noedge</span><span class="p">)</span>
-        <span class="n">_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fft2</span><span class="p">(</span><span class="n">global_shift_img_noedge</span><span class="p">)</span><span class="o">.</span><span class="n">conj</span><span class="p">()</span>
-        
-        <span class="n">corr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">ifft2</span><span class="p">(</span><span class="n">_x</span> <span class="o">*</span> <span class="n">_y</span><span class="p">))</span>
+        <span class="c1"># Figure out the overlap window between this ii-th image and the ref image.</span>
+        <span class="n">xmin_ref</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">xmax_ref</span> <span class="o">=</span> <span class="n">ref_img_noedge</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">ymin_ref</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">ymax_ref</span> <span class="o">=</span> <span class="n">ref_img_noedge</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
-        <span class="n">half_size</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">ref_img_noedge</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
-        <span class="n">concat_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">corr</span><span class="p">[</span><span class="n">half_size</span><span class="p">:],</span> <span class="n">corr</span><span class="p">[:</span><span class="n">half_size</span><span class="p">]))</span>
-        <span class="n">correlation_img</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">concat_x</span><span class="p">[:,</span><span class="n">half_size</span><span class="p">:],</span> <span class="n">concat_x</span><span class="p">[:,:</span><span class="n">half_size</span><span class="p">]),</span> <span class="n">axis</span> <span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">xmin_ii</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">xmax_ii</span> <span class="o">=</span> <span class="n">shift_img_noedge</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">ymin_ii</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">ymax_ii</span> <span class="o">=</span> <span class="n">shift_img_noedge</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        
+        <span class="c1"># Apply a shift to the image to center up on the cooStar.</span>
+        <span class="n">xshift</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">coo_file_ref</span><span class="p">[</span><span class="s1">&#39;col1&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">coo_file</span><span class="p">[</span><span class="s1">&#39;col1&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">yshift</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">coo_file_ref</span><span class="p">[</span><span class="s1">&#39;col2&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">coo_file</span><span class="p">[</span><span class="s1">&#39;col2&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+        <span class="c1">#global_shift_img = shift(shift_img_noedge, (xshift, yshift), mode = &#39;constant&#39;)  # shifted image.</span>
 
-        <span class="n">correlation_img</span> <span class="o">=</span> <span class="n">correlation_img</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">correlation_img</span><span class="p">)</span>
-        
-        <span class="c1"># Find centroid by fitting gaussian</span>
+        <span class="n">xmin_ii</span> <span class="o">+=</span> <span class="n">xshift</span>
+        <span class="n">xmax_ii</span> <span class="o">+=</span> <span class="n">xshift</span>
+        <span class="n">ymin_ii</span> <span class="o">+=</span> <span class="n">yshift</span>
+        <span class="n">ymax_ii</span> <span class="o">+=</span> <span class="n">yshift</span>
 
-        <span class="c1"># Initial crop of +/- 1 arcsec</span>
-        <span class="n">initial_crop_image</span> <span class="o">=</span> <span class="n">correlation_img</span><span class="p">[(</span><span class="n">half_size</span> <span class="o">-</span> <span class="n">crop_val</span><span class="p">):(</span><span class="n">half_size</span> <span class="o">+</span> <span class="n">crop_val</span><span class="p">),</span> <span class="p">(</span><span class="n">half_size</span> <span class="o">-</span> <span class="n">crop_val</span><span class="p">):(</span><span class="n">half_size</span> <span class="o">+</span> <span class="n">crop_val</span><span class="p">)]</span>
-        
-        <span class="c1"># Find the approximate peak location</span>
-        <span class="n">y_peak</span><span class="p">,</span> <span class="n">x_peak</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unravel_index</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">initial_crop_image</span><span class="p">),</span> <span class="n">initial_crop_image</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-        
-        <span class="c1"># Define a cutout around the peak +/- cutout_size</span>
-        <span class="k">if</span> <span class="n">instrument</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;NIRC2&#39;</span><span class="p">:</span>
-            <span class="n">cutout_size</span> <span class="o">=</span> <span class="mi">5</span>
-        <span class="k">elif</span> <span class="n">instrument</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;OSIRIS&#39;</span><span class="p">:</span>
-            <span class="n">cutout_size</span> <span class="o">=</span> <span class="mi">8</span>
-        <span class="n">y_min</span><span class="p">,</span> <span class="n">y_max</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">y_peak</span> <span class="o">-</span> <span class="n">cutout_size</span><span class="p">),</span> <span class="nb">min</span><span class="p">(</span><span class="n">initial_crop_image</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">y_peak</span> <span class="o">+</span> <span class="n">cutout_size</span><span class="p">)</span>
-        <span class="n">x_min</span><span class="p">,</span> <span class="n">x_max</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">x_peak</span> <span class="o">-</span> <span class="n">cutout_size</span><span class="p">),</span> <span class="nb">min</span><span class="p">(</span><span class="n">initial_crop_image</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">x_peak</span> <span class="o">+</span> <span class="n">cutout_size</span><span class="p">)</span>
-        
-        <span class="c1"># Extract the cutout image</span>
-        <span class="n">image_cutout</span> <span class="o">=</span> <span class="n">initial_crop_image</span><span class="p">[</span><span class="n">y_min</span><span class="p">:</span><span class="n">y_max</span><span class="p">,</span> <span class="n">x_min</span><span class="p">:</span><span class="n">x_max</span><span class="p">]</span>
-        <span class="n">y_cutout</span><span class="p">,</span> <span class="n">x_cutout</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">indices</span><span class="p">(</span><span class="n">image_cutout</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+        <span class="c1"># Calculate the vertices of the overlap rectangle. Note these are in the coordinate system</span>
+        <span class="c1"># of the 5% cropped reference image (ref_img_noedge). </span>
+        <span class="n">overlap_xmin</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">xmin_ref</span><span class="p">,</span> <span class="n">xmin_ii</span><span class="p">)</span>
+        <span class="n">overlap_xmax</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">xmax_ref</span><span class="p">,</span> <span class="n">xmax_ii</span><span class="p">)</span>
+        <span class="n">overlap_ymin</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">ymin_ref</span><span class="p">,</span> <span class="n">ymin_ii</span><span class="p">)</span>
+        <span class="n">overlap_ymax</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">ymax_ref</span><span class="p">,</span> <span class="n">ymax_ii</span><span class="p">)</span>
 
-        <span class="c1"># Flatten the arrays for fitting</span>
-        <span class="n">x_flat</span> <span class="o">=</span> <span class="n">x_cutout</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
-        <span class="n">y_flat</span> <span class="o">=</span> <span class="n">y_cutout</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
-        <span class="n">image_flat</span> <span class="o">=</span> <span class="n">image_cutout</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+        <span class="c1"># For sanity and ease of use later on, make sure the overlap rectangle is divisible by 2.</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">overlap_xmax</span> <span class="o">-</span> <span class="n">overlap_xmin</span><span class="p">)</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">overlap_xmax</span> <span class="o">-=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">overlap_ymax</span> <span class="o">-</span> <span class="n">overlap_ymin</span><span class="p">)</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">overlap_ymax</span> <span class="o">-=</span> <span class="mi">1</span>
 
-        <span class="c1"># Initial guess for the parameters: [amplitude, x0, y0, sigma_x, sigma_y, theta, offset]</span>
-        <span class="n">initial_guess</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">image_cutout</span><span class="p">),</span>            <span class="c1"># Amplitude</span>
-            <span class="n">x_flat</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">image_cutout</span><span class="p">)],</span> <span class="c1">#image_cutout.shape[1] // 2,      # x0 (center of cutout in x)</span>
-            <span class="n">y_flat</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">image_cutout</span><span class="p">)],</span> <span class="c1">#image_cutout.shape[0] // 2,      # y0 (center of cutout in y)</span>
-            <span class="mi">1</span><span class="p">,</span>                               <span class="c1"># sigma_x</span>
-            <span class="mi">1</span><span class="p">,</span>                               <span class="c1"># sigma_y</span>
-            <span class="mi">0</span><span class="p">,</span>                               <span class="c1"># theta</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">correlation_img</span><span class="p">)</span>             <span class="c1"># offset (background level)</span>
-        <span class="p">]</span>
-        
-        <span class="c1"># Bounds for the parameters</span>
-        <span class="n">bounds</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">],</span>   <span class="c1"># Lower bounds</span>
-            <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">image_cutout</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">image_cutout</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">]</span>  <span class="c1"># Upper bounds</span>
-        <span class="p">)</span>
-        
-        <span class="c1"># Run least squares optimization</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="n">least_squares</span><span class="p">(</span>
-            <span class="n">residuals</span><span class="p">,</span> <span class="n">initial_guess</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">x_flat</span><span class="p">,</span> <span class="n">y_flat</span><span class="p">,</span> <span class="n">image_flat</span><span class="p">),</span> <span class="n">bounds</span><span class="o">=</span><span class="n">bounds</span><span class="p">,</span> <span class="n">xtol</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">,</span> <span class="n">ftol</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">,</span> <span class="n">gtol</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">,</span> <span class="n">max_nfev</span><span class="o">=</span><span class="mi">10000</span>
-        <span class="p">)</span>
-        
-        <span class="c1"># Extract the optimized parameters</span>
-        <span class="n">amplitude</span><span class="p">,</span> <span class="n">x0_fit</span><span class="p">,</span> <span class="n">y0_fit</span><span class="p">,</span> <span class="n">sigma_x</span><span class="p">,</span> <span class="n">sigma_y</span><span class="p">,</span> <span class="n">theta_fit</span><span class="p">,</span> <span class="n">offset</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">x</span>
+        <span class="c1"># Double-check that we have overlap in both directions.</span>
+        <span class="k">if</span> <span class="n">overlap_xmin</span> <span class="o">&gt;=</span> <span class="n">overlap_xmax</span> <span class="ow">or</span> <span class="n">overlap_ymin</span> <span class="o">&gt;=</span> <span class="n">overlap_ymax</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Two images do not overlap: </span><span class="si">{</span><span class="n">fileName_filename</span><span class="si">}</span><span class="s1"> and </span><span class="si">{</span><span class="n">refImage_filename</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
 
-        
-        <span class="c1"># Translate the cutout coordinates back to full image coordinates</span>
-        <span class="n">x0_full</span> <span class="o">=</span> <span class="n">x0_fit</span> <span class="o">+</span> <span class="n">x_min</span> <span class="o">+</span> <span class="p">(</span><span class="n">half_size</span> <span class="o">-</span> <span class="n">crop_val</span><span class="p">)</span>
-        <span class="n">y0_full</span> <span class="o">=</span> <span class="n">y0_fit</span> <span class="o">+</span> <span class="n">y_min</span> <span class="o">+</span> <span class="p">(</span><span class="n">half_size</span> <span class="o">-</span> <span class="n">crop_val</span><span class="p">)</span>
-        
-        <span class="n">total_x_shift</span> <span class="o">=</span> <span class="n">xshift</span> <span class="o">+</span> <span class="p">(</span><span class="n">half_size</span> <span class="o">-</span> <span class="n">x0_full</span><span class="p">)</span>
-        <span class="n">total_y_shift</span> <span class="o">=</span> <span class="n">yshift</span> <span class="o">+</span> <span class="p">(</span><span class="n">half_size</span> <span class="o">-</span> <span class="n">y0_full</span><span class="p">)</span>
-    
+        <span class="c1"># Rectangle vertices in the original coordinates of shift_img_noedge:</span>
+        <span class="n">overlap_xmin_ii</span> <span class="o">=</span> <span class="n">overlap_xmin</span> <span class="o">-</span> <span class="n">xshift</span>
+        <span class="n">overlap_xmax_ii</span> <span class="o">=</span> <span class="n">overlap_xmax</span> <span class="o">-</span> <span class="n">xshift</span>
+        <span class="n">overlap_ymin_ii</span> <span class="o">=</span> <span class="n">overlap_ymin</span> <span class="o">-</span> <span class="n">yshift</span>
+        <span class="n">overlap_ymax_ii</span> <span class="o">=</span> <span class="n">overlap_ymax</span> <span class="o">-</span> <span class="n">yshift</span>
+
+        <span class="c1"># Return cropped images of both the reference and ii-th image that contains only</span>
+        <span class="c1"># the overlapping area. This is what should be used as input into the cross-correlation.</span>
+        <span class="c1"># Note that this action should also center up the two images onto the same coordinate system.</span>
+        <span class="n">ref_img_cropped</span> <span class="o">=</span> <span class="n">ref_img_noedge</span><span class="p">[</span><span class="n">overlap_ymin</span><span class="p">:</span><span class="n">overlap_ymax</span><span class="p">,</span> <span class="n">overlap_xmin</span><span class="p">:</span><span class="n">overlap_xmax</span><span class="p">]</span>
+        <span class="n">ii_img_cropped</span> <span class="o">=</span> <span class="n">shift_img_noedge</span><span class="p">[</span><span class="n">overlap_ymin_ii</span><span class="p">:</span><span class="n">overlap_ymax_ii</span><span class="p">,</span> <span class="n">overlap_xmin_ii</span><span class="p">:</span><span class="n">overlap_xmax_ii</span><span class="p">]</span>
+
+        <span class="kn">from</span><span class="w"> </span><span class="nn">skimage.registration</span><span class="w"> </span><span class="kn">import</span> <span class="n">phase_cross_correlation</span>
         <span class="k">if</span> <span class="n">plot_correlation</span><span class="p">:</span>
-            <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">correlation_img</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="s2">&quot;upper&quot;</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;viridis&quot;</span><span class="p">)</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x0_full</span><span class="p">,</span> <span class="n">y0_full</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;*&quot;</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Gaussian Fit Centroid&quot;</span><span class="p">)</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="n">x_min</span> <span class="o">+</span> <span class="p">(</span><span class="n">half_size</span> <span class="o">-</span> <span class="n">crop_val</span><span class="p">),</span> <span class="n">x_max</span> <span class="o">+</span> <span class="p">(</span><span class="n">half_size</span> <span class="o">-</span> <span class="n">crop_val</span><span class="p">))</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="n">y_min</span> <span class="o">+</span> <span class="p">(</span><span class="n">half_size</span> <span class="o">-</span> <span class="n">crop_val</span><span class="p">),</span> <span class="n">y_max</span> <span class="o">+</span> <span class="p">(</span><span class="n">half_size</span> <span class="o">-</span> <span class="n">crop_val</span><span class="p">))</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="n">plot_corr_filename</span> <span class="o">=</span> <span class="n">fileName</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.fits&#39;</span><span class="p">,</span> <span class="s1">&#39;_corr.png&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">plot_corr_filename</span> <span class="o">=</span> <span class="kc">None</span>
 
+        <span class="n">shift_pcc</span> <span class="o">=</span> <span class="n">subpixel_windowed_pcc</span><span class="p">(</span><span class="n">ref_img_cropped</span><span class="p">,</span> <span class="n">ii_img_cropped</span><span class="p">,</span> <span class="n">window_radius</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+                                          <span class="n">upsample_factor</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+                                          <span class="n">plot_corr_map</span><span class="o">=</span><span class="n">plot_correlation</span><span class="p">,</span> <span class="n">plot_outfile</span><span class="o">=</span><span class="n">plot_corr_filename</span><span class="p">)</span>
+        <span class="n">total_y_shift_pcc</span> <span class="o">=</span> <span class="n">shift_pcc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">yshift</span>
+        <span class="n">total_x_shift_pcc</span> <span class="o">=</span> <span class="n">shift_pcc</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">xshift</span>
+        <span class="n">pcc_half_size</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">ref_img_cropped</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;*** Comparing correlation methods:&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1"> </span><span class="si">{</span><span class="s2">&quot;&quot;</span><span class="si">:</span><span class="s1">&lt;10s</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="s2">&quot;x&quot;</span><span class="si">:</span><span class="s1">&lt;10s</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="s2">&quot;y&quot;</span><span class="si">:</span><span class="s1">&lt;10s</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1"> </span><span class="si">{</span><span class="s2">&quot;coo&quot;</span><span class="si">:</span><span class="s1">&lt;10s</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">xshift</span><span class="si">:</span><span class="s1">10.2f</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">yshift</span><span class="si">:</span><span class="s1">10.2f</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="c1"># print(f&#39;\t {&quot;manual&quot;:&lt;10s} {total_x_shift:10.2f} {total_y_shift:8.3f}&#39;)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1"> </span><span class="si">{</span><span class="s2">&quot;pcc&quot;</span><span class="si">:</span><span class="s1">&lt;10s</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">total_x_shift_pcc</span><span class="si">:</span><span class="s1">10.2f</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">total_y_shift_pcc</span><span class="si">:</span><span class="s1">10.2f</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">plot_correlation</span><span class="p">:</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">pylab</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.colors</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mcolors</span>
+            
+            <span class="n">norm</span> <span class="o">=</span> <span class="n">mcolors</span><span class="o">.</span><span class="n">SymLogNorm</span><span class="p">(</span><span class="n">vmin</span><span class="o">=-</span><span class="mi">10</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mf">1e4</span><span class="p">,</span> <span class="n">linthresh</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span> 
+            
+            <span class="c1"># plot the image cutouts used in cross-correlation.</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mf">5.2</span><span class="p">))</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">subplots_adjust</span><span class="p">(</span><span class="n">left</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="mf">0.95</span><span class="p">,</span> <span class="n">bottom</span><span class="o">=</span><span class="mf">0.10</span><span class="p">,</span> <span class="n">top</span><span class="o">=</span><span class="mf">0.85</span><span class="p">)</span>
+            <span class="n">ax1</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">ref_img_cropped</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;gist_heat&#39;</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="n">norm</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;equal&#39;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">ref_img_cropped</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">ref_img_cropped</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Cropped Ref:</span><span class="se">\n</span><span class="si">{</span><span class="n">refImage_filename</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            
+            <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">ii_img_cropped</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;gist_heat&#39;</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="n">norm</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;equal&#39;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">ref_img_cropped</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">ref_img_cropped</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Cropped ii Img:</span><span class="se">\n</span><span class="si">{</span><span class="n">fileName_filename</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">save_name1</span> <span class="o">=</span> <span class="n">fileName</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.fits&#39;</span><span class="p">,</span> <span class="s1">&#39;_crop.png&#39;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">save_name1</span><span class="p">)</span>
+
+        <span class="c1"># Save the final shifts to the shift table.</span>
         <span class="n">shiftsTable</span><span class="p">[</span><span class="n">ii</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">fileName</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-        <span class="n">shiftsTable</span><span class="p">[</span><span class="n">ii</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">total_y_shift</span>
-        <span class="n">shiftsTable</span><span class="p">[</span><span class="n">ii</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">total_x_shift</span>
+        <span class="n">shiftsTable</span><span class="p">[</span><span class="n">ii</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">total_x_shift_pcc</span>
+        <span class="n">shiftsTable</span><span class="p">[</span><span class="n">ii</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">total_y_shift_pcc</span>
 
 
+    <span class="c1"># Save out the shifts table. </span>
     <span class="n">util</span><span class="o">.</span><span class="n">rmall</span><span class="p">([</span><span class="n">shiftFile</span><span class="p">])</span>
+    <span class="n">shiftsTable</span><span class="o">.</span><span class="n">rename_column</span><span class="p">(</span><span class="s1">&#39;col0&#39;</span><span class="p">,</span> <span class="s1">&#39;file&#39;</span><span class="p">)</span>
+    <span class="n">shiftsTable</span><span class="o">.</span><span class="n">rename_column</span><span class="p">(</span><span class="s1">&#39;col1&#39;</span><span class="p">,</span> <span class="s1">&#39;xshift&#39;</span><span class="p">)</span>
+    <span class="n">shiftsTable</span><span class="o">.</span><span class="n">rename_column</span><span class="p">(</span><span class="s1">&#39;col2&#39;</span><span class="p">,</span> <span class="s1">&#39;yshift&#39;</span><span class="p">)</span>
     <span class="n">shiftsTable</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">shiftFile</span><span class="p">,</span> <span class="nb">format</span> <span class="o">=</span> <span class="s1">&#39;ascii&#39;</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="p">(</span><span class="n">shiftsTable</span><span class="p">)</span></div>
@@ -2491,8 +2453,8 @@
 <span class="sd">    @param phis: Array of rotation angles in degrees for each image</span>
 <span class="sd">    @type phis: array-like</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">x_allShifts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">shiftsTable</span><span class="p">[</span><span class="s1">&#39;col1&#39;</span><span class="p">])</span>
-    <span class="n">y_allShifts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">shiftsTable</span><span class="p">[</span><span class="s1">&#39;col2&#39;</span><span class="p">])</span>
+    <span class="n">x_allShifts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">shiftsTable</span><span class="p">[</span><span class="s1">&#39;xshift&#39;</span><span class="p">])</span>
+    <span class="n">y_allShifts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">shiftsTable</span><span class="p">[</span><span class="s1">&#39;yshift&#39;</span><span class="p">])</span>
     <span class="n">phis_rad</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">phis</span><span class="p">))</span>
     
     <span class="c1"># Get original image size</span>
@@ -3483,68 +3445,127 @@
 <div class="viewcode-block" id="mosaic">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/data/index.html#kai.reduce.data.mosaic">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">mosaic</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="n">wave</span><span class="p">,</span> <span class="n">outroot</span><span class="p">,</span> <span class="n">field</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">outSuffix</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-            <span class="n">trim</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">fwhm_max</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">submaps</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">fixDAR</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">maskSubmap</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+           <span class="n">trim</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fwhm_max</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">submaps</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+           <span class="n">clean_dirs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">combo_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+           <span class="n">fixDAR</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">maskSubmap</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
             <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Accepts a list of cleaned images and does a weighted combining after</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Accepts a list of cleaned images and does a weighted combining after</span>
 <span class="sd">    performing frame selection based on the Strehl and FWHM.</span>
-
+<span class="sd">    </span>
 <span class="sd">    Each image must have an associated *.coo file which gives the rough</span>
 <span class="sd">    position of the reference source.</span>
-
-<span class="sd">    @param files: List of integer file numbers to include in combine.</span>
-<span class="sd">    @type files: list of int</span>
-<span class="sd">    @param wave: Filter of observations (e.g. &#39;kp&#39;, &#39;lp&#39;, &#39;h&#39;)</span>
-<span class="sd">    @type wave: string</span>
-<span class="sd">    @param outroot: The output root name (e.g. &#39;06jullgs&#39;). The final combined</span>
-<span class="sd">        file names will be &lt;outroot&gt;_&lt;field&gt;_&lt;wave&gt;. The &lt;field&gt; keyword</span>
-<span class="sd">        is optional.</span>
-
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    files : list of int</span>
+<span class="sd">        Integer list of the files to include in combine. Does not require</span>
+<span class="sd">        padded zeros.</span>
+<span class="sd">    wave : str</span>
+<span class="sd">        Name for the observation passband (e.g.: &quot;kp&quot;, &quot;lp&quot;, or &quot;h&quot;), used as</span>
+<span class="sd">        a wavelength suffix</span>
+<span class="sd">    outroot : str</span>
+<span class="sd">        The output root name (e.g. &#39;06jullgs&#39;). The final combined file names</span>
+<span class="sd">        will be &lt;outroot&gt;_&lt;field&gt;_&lt;outSuffix&gt;_&lt;wave&gt;.</span>
+<span class="sd">        The &lt;field&gt; and &lt;outSuffix&gt; keywords are optional.</span>
+<span class="sd">        </span>
 <span class="sd">        Examples:</span>
 <span class="sd">        06jullgs_kp for outroot=&#39;06jullgs&#39; and wave=&#39;kp&#39;</span>
 <span class="sd">        06jullgs_arch_f1_kp for adding field=&#39;arch_f1&#39;</span>
-<span class="sd">    @type outroot: string</span>
-<span class="sd">    @kwparam field: Optional field name used to get to clean directory and</span>
-<span class="sd">        also effects the final output file name.</span>
-<span class="sd">    @type field: string</span>
-<span class="sd">    @kwparam trim: Optional file trimming based on image quality. Default</span>
-<span class="sd">        is 0. Set to 1 to turn trimming on.</span>
-<span class="sd">    @kwparam outSuffix: Optional suffix used to modify final output file name.</span>
-<span class="sd">    @type outSuffix: string</span>
-<span class="sd">    @type trim: 0 or 1</span>
-<span class="sd">    @kwparam weight: Optional weighting based on Strehl. Set to 1 to</span>
-<span class="sd">        to turn file weighting on (default is 0).</span>
-<span class="sd">    @type weight: 0 or 1</span>
-<span class="sd">    @kwparam fwhm_max: The maximum allowed FWHM for keeping frames when</span>
-<span class="sd">        trimming is turned on.</span>
-<span class="sd">    @type fwhm_max: int</span>
-<span class="sd">    @kwparam submaps: Set to the number of submaps to be made (def=0).</span>
-<span class="sd">    @type submaps: int</span>
-<span class="sd">    @kwparam mask: Set to false for maser mosaics; 06maylgs1 is an exception</span>
-<span class="sd">    @type mask: Boolean</span>
+<span class="sd">    field : str, default=None</span>
+<span class="sd">        Optional field name. Used to get to clean directory and also affects</span>
+<span class="sd">        the final output file name.</span>
+<span class="sd">    outSuffix : str</span>
+<span class="sd">        Optional suffix used to modify final output file name.</span>
+<span class="sd">        Can use suffix to indicate a night of observation (e.g.: &quot;nite1&quot;).</span>
+<span class="sd">    trim : bool, default=False</span>
+<span class="sd">        Optional file trimming based on image quality. Default</span>
+<span class="sd">        is False. Set to True to turn trimming on.</span>
+<span class="sd">    weight : str, default=None</span>
+<span class="sd">        Optional weighting. Set to &#39;strehl&#39; to weight by Strehl, as found in</span>
+<span class="sd">        strehl_source.txt file.</span>
+<span class="sd">        OR set to a file name with the first column being the file name</span>
+<span class="sd">        (e.g., c0021.fits) and the second column being the weight. Weights will</span>
+<span class="sd">        be renormalized to sum to 1.0.</span>
+<span class="sd">        Default = None, no weighting.</span>
+<span class="sd">    fwhm_max : float, default=0</span>
+<span class="sd">        The maximum allowed FWHM for keeping frames when trimming is turned on.</span>
+<span class="sd">        If set to default=0 and trim=True, then we use FWHM &lt; 1.25 * FWHM.min().</span>
+<span class="sd">    strehl_trim_min : float or None, default = None</span>
+<span class="sd">        The minimum strehl value allowed when trimming is turned on. When a value</span>
+<span class="sd">        is specified, both FWHM and strehl trimming are performed.</span>
+<span class="sd">        Recommended *ONLY* when AO performance is bad leading to a tight core, but</span>
+<span class="sd">        very poor PSF otherwise.</span>
+<span class="sd">        If None, then will not trim on strehl. </span>
+<span class="sd">    submaps : int, default=0</span>
+<span class="sd">        Set to the number of submaps to be made (def=0).</span>
+<span class="sd">    fixDAR : boolean, default = True</span>
+<span class="sd">        Whether or not to calculate and apply DAR correction coefficients.</span>
+<span class="sd">    use_koa_weather : boolean, default = False</span>
+<span class="sd">        If calculating DAR correction, this keyword specifies if the atmosphere</span>
+<span class="sd">        conditions should be downloaded from the KOA weather data. If False,</span>
+<span class="sd">        atmosphere conditions are downloaded from the MKWC CFHT data.</span>
+<span class="sd">    mask : bool, default=True</span>
+<span class="sd">    clean_dirs : list of str, optional</span>
+<span class="sd">        List of directories where clean files are stored. Needs to be same</span>
+<span class="sd">        length as files list. If not specified, by default assumes that</span>
+<span class="sd">        clean files are stored in &#39;../clean&#39;.</span>
+<span class="sd">    combo_dir : str, optional</span>
+<span class="sd">        Directory where combo files will be stored. By default,</span>
+<span class="sd">        assumes that combo files will be stored in &#39;../combo&#39;</span>
+<span class="sd">    instrument : instruments object, optional</span>
+<span class="sd">        Instrument of data. Default is `instruments.default_inst`</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># Start out in something like &#39;06maylgs1/reduce/kp/&#39;</span>
     <span class="c1"># Setup some files and directories</span>
     <span class="n">waveDir</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
-    <span class="n">redDir</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">trimdir</span><span class="p">(</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">waveDir</span> <span class="o">+</span> <span class="s1">&#39;../&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span>
+    <span class="n">redDir</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
     <span class="n">rootDir</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">trimdir</span><span class="p">(</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">redDir</span> <span class="o">+</span> <span class="s1">&#39;../&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="p">(</span><span class="n">field</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="n">cleanDir</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">trimdir</span><span class="p">(</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">rootDir</span> <span class="o">+</span>
-                                                   <span class="s1">&#39;clean/&#39;</span> <span class="o">+</span><span class="n">field</span><span class="o">+</span>
-                                                   <span class="s1">&#39;_&#39;</span> <span class="o">+</span><span class="n">wave</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span>
+    
+    <span class="c1"># Determine clean directory and add field and suffixes to outroot</span>
+    <span class="n">cleanRoot</span> <span class="o">=</span> <span class="n">rootDir</span> <span class="o">+</span> <span class="s1">&#39;clean/&#39;</span>
+    
+    <span class="k">if</span> <span class="n">field</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">cleanDir</span> <span class="o">=</span> <span class="n">cleanRoot</span> <span class="o">+</span> <span class="n">field</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">wave</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span>
         <span class="n">outroot</span> <span class="o">+=</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">field</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">cleanDir</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">trimdir</span><span class="p">(</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">rootDir</span> <span class="o">+</span>
-                                                   <span class="s1">&#39;clean/&#39;</span> <span class="o">+</span> <span class="n">wave</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span>
-
+        <span class="n">cleanDir</span> <span class="o">=</span> <span class="n">cleanRoot</span> <span class="o">+</span> <span class="n">wave</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span>
+        
+    <span class="c1"># If clean directories are specified for each file,</span>
+    <span class="c1"># first tack on the field and wave to each path</span>
+    <span class="k">if</span> <span class="n">clean_dirs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># If incorrect number of clean directories specified, raise ValueError</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">clean_dirs</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">files</span><span class="p">):</span>
+            <span class="n">err_str</span> <span class="o">=</span> <span class="s1">&#39;Length of clean_dirs needs to match number of files, &#39;</span>
+            <span class="n">err_str</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">files</span><span class="p">))</span>
+            
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">err_str</span><span class="p">)</span>
+        
+        <span class="c1"># Tack on field and wave to each path</span>
+        <span class="k">for</span> <span class="n">clean_dir_index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">clean_dirs</span><span class="p">)):</span>
+            <span class="n">cleanRoot</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">trimdir</span><span class="p">(</span>
+                            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">clean_dirs</span><span class="p">[</span><span class="n">clean_dir_index</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span><span class="p">))</span>
+            
+            <span class="k">if</span> <span class="n">field</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">clean_dirs</span><span class="p">[</span><span class="n">clean_dir_index</span><span class="p">]</span> <span class="o">=</span> <span class="n">cleanRoot</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">field</span> <span class="o">+</span>\
+                                              <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">wave</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">clean_dirs</span><span class="p">[</span><span class="n">clean_dir_index</span><span class="p">]</span> <span class="o">=</span> <span class="n">cleanRoot</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">wave</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span>
+                
     <span class="k">if</span> <span class="p">(</span><span class="n">outSuffix</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="n">outroot</span> <span class="o">+=</span> <span class="n">outSuffix</span>
 
-    <span class="c1"># This is the final output directory</span>
+    <span class="c1"># Set up combo directory. This is the final output directory.</span>
     <span class="n">comboDir</span> <span class="o">=</span> <span class="n">rootDir</span> <span class="o">+</span> <span class="s1">&#39;combo/&#39;</span>
+    
+    <span class="k">if</span> <span class="n">combo_dir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">comboDir</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">trimdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">combo_dir</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span>
+    
     <span class="n">util</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">comboDir</span><span class="p">)</span>
 
+    
     <span class="c1"># Make strings out of all the filename roots.</span>
-    <span class="n">roots</span> <span class="o">=</span> <span class="n">instrument</span><span class="o">.</span><span class="n">make_filenames</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="n">allroots</span> <span class="o">=</span> <span class="n">instrument</span><span class="o">.</span><span class="n">make_filenames</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="n">allroots</span> <span class="o">=</span> <span class="p">[</span><span class="n">aa</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.fits&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">aa</span> <span class="ow">in</span> <span class="n">allroots</span><span class="p">]</span>
 
     <span class="c1"># This is the output root filename</span>
     <span class="n">_out</span> <span class="o">=</span> <span class="n">comboDir</span> <span class="o">+</span> <span class="s1">&#39;mag&#39;</span> <span class="o">+</span> <span class="n">outroot</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">wave</span>
@@ -3598,7 +3619,7 @@
     <span class="c1"># See if all images are at same PA, if not, rotate all to PA = 0</span>
     <span class="c1"># temporarily. This needs to be done to get correct shifts.</span>
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Calling combine_rotation&#39;</span><span class="p">)</span>
-    <span class="n">diffPA</span> <span class="o">=</span> <span class="n">combine_rotation</span><span class="p">(</span><span class="n">cleanDir</span><span class="p">,</span> <span class="n">roots</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">instrument</span><span class="p">)</span>
+    <span class="n">diffPA</span><span class="p">,</span> <span class="n">phis</span> <span class="o">=</span> <span class="n">combine_rotation</span><span class="p">(</span><span class="n">cleanDir</span><span class="p">,</span> <span class="n">roots</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">instrument</span><span class="p">)</span>
 
     <span class="c1"># Make a table of initial guesses for the shifts.</span>
     <span class="c1"># Use the header keywords AOTSX and AOTSY to get shifts.</span>
@@ -3703,8 +3724,8 @@
 <span class="sd">    @param submaps:</span>
 <span class="sd">    @type submaps:</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">x_allShifts</span> <span class="o">=</span> <span class="n">shiftsTable</span><span class="p">[</span><span class="s1">&#39;col1&#39;</span><span class="p">]</span>
-    <span class="n">y_allShifts</span> <span class="o">=</span> <span class="n">shiftsTable</span><span class="p">[</span><span class="s1">&#39;col2&#39;</span><span class="p">]</span>
+    <span class="n">x_allShifts</span> <span class="o">=</span> <span class="n">shiftsTable</span><span class="p">[</span><span class="s1">&#39;xshift&#39;</span><span class="p">]</span>
+    <span class="n">y_allShifts</span> <span class="o">=</span> <span class="n">shiftsTable</span><span class="p">[</span><span class="s1">&#39;yshift&#39;</span><span class="p">]</span>
 
     <span class="n">xhi</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">x_allShifts</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
     <span class="n">xlo</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">x_allShifts</span><span class="o">.</span><span class="n">min</span><span class="p">())</span>
@@ -3750,6 +3771,115 @@
     <span class="k">return</span> <span class="n">xysize</span></div>
 
     
+
+<div class="viewcode-block" id="subpixel_windowed_pcc">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/data/index.html#kai.reduce.data.subpixel_windowed_pcc">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">subpixel_windowed_pcc</span><span class="p">(</span><span class="n">ref_img</span><span class="p">,</span> <span class="n">mov_img</span><span class="p">,</span> <span class="n">window_radius</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">upsample_factor</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+                          <span class="n">plot_corr_map</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">plot_outfile</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Finds sub-pixel shifts restricted to a window_radius box.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">shape</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">ref_img</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    
+    <span class="c1">#### 1. Compute Cross-Correlation (Coarse)</span>
+    <span class="n">src_freq</span> <span class="o">=</span> <span class="n">fftn</span><span class="p">(</span><span class="n">ref_img</span><span class="p">)</span>
+    <span class="n">target_freq</span> <span class="o">=</span> <span class="n">fftn</span><span class="p">(</span><span class="n">mov_img</span><span class="p">)</span>
+    <span class="n">cross_corr</span> <span class="o">=</span> <span class="n">ifftn</span><span class="p">(</span><span class="n">src_freq</span> <span class="o">*</span> <span class="n">target_freq</span><span class="o">.</span><span class="n">conj</span><span class="p">())</span>
+    
+    <span class="c1">#### 2. Apply Tukey Window to restrict the search area</span>
+    <span class="n">cross_corr_centered</span> <span class="o">=</span> <span class="n">fftshift</span><span class="p">(</span><span class="n">cross_corr</span><span class="p">)</span>
+    <span class="n">win_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">windows</span><span class="o">.</span><span class="n">tukey</span><span class="p">(</span><span class="n">dim</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">)</span> <span class="k">for</span> <span class="n">dim</span> <span class="ow">in</span> <span class="n">shape</span><span class="p">]</span>
+    
+    <span class="c1"># (Simplified windowing: zeroing out anything beyond the window_radius)</span>
+    <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
+    <span class="n">slices</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">slice</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">d</span><span class="o">//</span><span class="mi">2</span> <span class="o">-</span> <span class="n">window_radius</span><span class="p">),</span> <span class="nb">min</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">d</span><span class="o">//</span><span class="mi">2</span> <span class="o">+</span> <span class="n">window_radius</span><span class="p">))</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">shape</span><span class="p">)</span>
+    <span class="n">mask</span><span class="p">[</span><span class="n">slices</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
+    
+    <span class="c1"># Create the tapered mask</span>
+    <span class="n">full_window</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">w</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">win_list</span><span class="p">):</span>
+        <span class="n">slice_obj</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
+        <span class="n">slice_obj</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">full_window</span> <span class="o">*=</span> <span class="n">w</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">slice_obj</span><span class="p">)]</span>
+    
+    <span class="c1"># Apply both the hard boundary and the taper</span>
+    <span class="n">constrained_corr</span> <span class="o">=</span> <span class="n">ifftshift</span><span class="p">(</span><span class="n">cross_corr_centered</span> <span class="o">*</span> <span class="n">full_window</span> <span class="o">*</span> <span class="n">mask</span><span class="p">)</span>
+
+    <span class="c1">#### 3. Locate Coarse Peak</span>
+    <span class="n">max_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unravel_index</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">constrained_corr</span><span class="p">)),</span> <span class="n">shape</span><span class="p">)</span>
+    <span class="n">midpoints</span> <span class="o">=</span> <span class="n">shape</span> <span class="o">//</span> <span class="mi">2</span>
+    <span class="c1"># Convert to shift (handling wrap-around)</span>
+    <span class="n">coarse_shift</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">i</span> <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">d</span> <span class="o">//</span> <span class="mi">2</span> <span class="k">else</span> <span class="n">i</span> <span class="o">-</span> <span class="n">d</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">max_idx</span><span class="p">,</span> <span class="n">shape</span><span class="p">)])</span>
+
+    <span class="c1">#### 4. Sub-pixel Refinement (Upsampled DFT)</span>
+    <span class="k">if</span> <span class="n">upsample_factor</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="c1"># We &quot;zoom in&quot; around the coarse_shift using a Matrix Multiply DFT</span>
+        <span class="c1"># This is the same math skimage uses for their sub-pixel refinement</span>
+        <span class="c1"># Define the sub-pixel grid around the coarse peak</span>
+        <span class="n">upsampled_region_size</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">upsample_factor</span> <span class="o">*</span> <span class="mf">1.5</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+        <span class="n">dft_shift</span> <span class="o">=</span> <span class="n">coarse_shift</span> <span class="o">*</span> <span class="n">upsample_factor</span>
+        
+        <span class="c1"># Run upsampled DFT at the specific coarse location</span>
+        <span class="c1"># (Simplified for brevity: we call the peak-finding logic on the small patch)</span>
+        <span class="c1"># In practice, you&#39;d use skimage.registration._upsampled_dft</span>
+        <span class="n">refined_shift</span> <span class="o">=</span> <span class="n">_upsampled_refinement</span><span class="p">(</span><span class="n">src_freq</span><span class="p">,</span> <span class="n">target_freq</span><span class="p">,</span> <span class="n">upsample_factor</span><span class="p">,</span> <span class="n">coarse_shift</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">refined_shift</span> <span class="o">=</span> <span class="n">coarse_shift</span>
+
+    <span class="k">if</span> <span class="n">plot_corr_map</span> <span class="ow">and</span> <span class="n">plot_outfile</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># plot the correlation map.</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">fftshift</span><span class="p">(</span><span class="n">constrained_corr</span><span class="p">)),</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;viridis&quot;</span><span class="p">)</span>
+        <span class="c1"># Plot center points (the 0.5 is just for plotting purposes.)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="mi">2</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="mi">2</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">,</span>
+                    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;*&quot;</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Coo Shift&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="mi">2</span> <span class="o">+</span> <span class="n">refined_shift</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="mi">2</span> <span class="o">+</span> <span class="n">refined_shift</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">,</span>
+                    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;*&quot;</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;PCC Shift&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="mi">2</span> <span class="o">-</span> <span class="n">window_radius</span><span class="o">/</span><span class="mi">3</span><span class="p">,</span> <span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="mi">2</span> <span class="o">+</span> <span class="n">window_radius</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="mi">2</span> <span class="o">-</span> <span class="n">window_radius</span><span class="o">/</span><span class="mi">3</span><span class="p">,</span> <span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="mi">2</span> <span class="o">+</span> <span class="n">window_radius</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">plot_outfile</span><span class="p">)</span>
+        
+        
+    <span class="k">return</span> <span class="n">refined_shift</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="_upsampled_refinement">
+<a class="viewcode-back" href="../../../autoapi/kai/reduce/data/index.html#kai.reduce.data._upsampled_refinement">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">_upsampled_refinement</span><span class="p">(</span><span class="n">src_freq</span><span class="p">,</span> <span class="n">target_freq</span><span class="p">,</span> <span class="n">upsample_factor</span><span class="p">,</span> <span class="n">initial_shift</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Internal helper to perform the Matrix Multiply DFT centered on initial_shift.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># This mimics the core logic of skimage&#39;s subpixel refinement</span>
+    <span class="c1"># It essentially &#39;zooms&#39; into the correlation map at the specific pixel</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">skimage.registration._phase_cross_correlation</span><span class="w"> </span><span class="kn">import</span> <span class="n">_upsampled_dft</span>
+    
+    <span class="n">shape</span> <span class="o">=</span> <span class="n">src_freq</span><span class="o">.</span><span class="n">shape</span>
+    <span class="n">upsample_factor</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">upsample_factor</span><span class="p">)</span>
+    
+    <span class="c1"># Center the upsampled DFT on the coarse shift</span>
+    <span class="n">sample_region_offset</span> <span class="o">=</span> <span class="n">initial_shift</span> <span class="o">*</span> <span class="n">upsample_factor</span>
+    
+    <span class="c1"># Compute the cross-power spectrum in the zoomed region</span>
+    <span class="n">image_product</span> <span class="o">=</span> <span class="n">src_freq</span> <span class="o">*</span> <span class="n">target_freq</span><span class="o">.</span><span class="n">conj</span><span class="p">()</span>
+    
+    <span class="c1"># Upsample by factor around the initial peak</span>
+    <span class="n">upsampled_corr</span> <span class="o">=</span> <span class="n">_upsampled_dft</span><span class="p">(</span><span class="n">image_product</span><span class="p">,</span> 
+                                    <span class="n">upsampled_region_size</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> 
+                                    <span class="n">upsample_factor</span><span class="o">=</span><span class="n">upsample_factor</span><span class="p">,</span> 
+                                    <span class="n">axis_offsets</span><span class="o">=</span><span class="n">initial_shift</span><span class="p">)</span>
+    
+    <span class="c1"># Find peak in the zoomed-in array</span>
+    <span class="n">max_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unravel_index</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">upsampled_corr</span><span class="p">)),</span> <span class="n">upsampled_corr</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    
+    <span class="c1"># Adjust shift by the fractional amount</span>
+    <span class="n">fractional_shift</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">max_idx</span><span class="p">)</span> <span class="o">-</span> <span class="mf">0.75</span> <span class="o">*</span> <span class="n">upsample_factor</span><span class="p">)</span> <span class="o">/</span> <span class="n">upsample_factor</span>
+    
+    <span class="k">return</span> <span class="n">initial_shift</span> <span class="o">+</span> <span class="n">fractional_shift</span></div>
+
 </pre></div>
 
            </div>

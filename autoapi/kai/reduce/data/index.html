@@ -204,7 +204,7 @@
 <td><p></p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.data.combine_register" title="kai.reduce.data.combine_register"><code class="xref py py-obj docutils literal notranslate"><span class="pre">combine_register</span></code></a>(outroot, refImage, diffPA[, ...])</p></td>
-<td><p></p></td>
+<td><p>Register all the images through a cross-correlation method.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.data.combine_log" title="kai.reduce.data.combine_log"><code class="xref py py-obj docutils literal notranslate"><span class="pre">combine_log</span></code></a>(outroot, roots, strehls, fwhm, weights)</p></td>
 <td><p></p></td>
@@ -250,6 +250,12 @@
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.data.mosaic_size" title="kai.reduce.data.mosaic_size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mosaic_size</span></code></a>(shiftsTable, refImage, outroot, subroot, ...)</p></td>
 <td><p>Determine the final size for the completed mosaic.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#kai.reduce.data.subpixel_windowed_pcc" title="kai.reduce.data.subpixel_windowed_pcc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subpixel_windowed_pcc</span></code></a>(ref_img, mov_img[, ...])</p></td>
+<td><p>Finds sub-pixel shifts restricted to a window_radius box.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#kai.reduce.data._upsampled_refinement" title="kai.reduce.data._upsampled_refinement"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_upsampled_refinement</span></code></a>(src_freq, target_freq, ...)</p></td>
+<td><p>Internal helper to perform the Matrix Multiply DFT centered on initial_shift.</p></td>
 </tr>
 </tbody>
 </table>
@@ -397,7 +403,7 @@ You should use clean() instead.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="kai.reduce.data.combine">
-<span class="sig-prename descclassname"><span class="pre">kai.reduce.data.</span></span><span class="sig-name descname"><span class="pre">combine</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">files</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wave</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outroot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outSuffix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fwhm_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strehl_trim_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">submaps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fixDAR</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_koa_weather</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clean_dirs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">combo_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instrument</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">instruments.default_inst</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/data.html#combine"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.data.combine" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.data.</span></span><span class="sig-name descname"><span class="pre">combine</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">files</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wave</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outroot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outSuffix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fwhm_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strehl_trim_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">submaps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fixDAR</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_koa_weather</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clean_dirs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">combo_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instrument</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">instruments.default_inst</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug_plot_correlation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/data.html#combine"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.data.combine" title="Link to this definition"></a></dt>
 <dd><p>Accepts a list of cleaned images and does a weighted combining after
 performing frame selection based on the Strehl and FWHM.</p>
 <p>Each image must have an associated <a href="#id5"><span class="problematic" id="id6">*</span></a>.coo file which gives the rough
@@ -665,7 +671,8 @@ is rotated to PA = 0.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="kai.reduce.data.combine_register">
 <span class="sig-prename descclassname"><span class="pre">kai.reduce.data.</span></span><span class="sig-name descname"><span class="pre">combine_register</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outroot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">refImage</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">diffPA</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_correlation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instrument</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">instruments.default_inst</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/data.html#combine_register"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.data.combine_register" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Register all the images through a cross-correlation method.</p>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="kai.reduce.data.combine_log">
@@ -1006,50 +1013,73 @@ for every frame.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="kai.reduce.data.mosaic">
-<span class="sig-prename descclassname"><span class="pre">kai.reduce.data.</span></span><span class="sig-name descname"><span class="pre">mosaic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">files</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wave</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outroot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outSuffix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fwhm_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">submaps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fixDAR</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maskSubmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instrument</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">instruments.default_inst</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/data.html#mosaic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.data.mosaic" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.data.</span></span><span class="sig-name descname"><span class="pre">mosaic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">files</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wave</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outroot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outSuffix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fwhm_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">submaps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clean_dirs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">combo_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fixDAR</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maskSubmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instrument</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">instruments.default_inst</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/data.html#mosaic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.data.mosaic" title="Link to this definition"></a></dt>
 <dd><p>Accepts a list of cleaned images and does a weighted combining after
 performing frame selection based on the Strehl and FWHM.</p>
 <p>Each image must have an associated <a href="#id15"><span class="problematic" id="id16">*</span></a>.coo file which gives the rough
 position of the reference source.</p>
-<p>&#64;param files: List of integer file numbers to include in combine.
-&#64;type files: list of int
-&#64;param wave: Filter of observations (e.g. ‘kp’, ‘lp’, ‘h’)
-&#64;type wave: string
-&#64;param outroot: The output root name (e.g. ‘06jullgs’). The final combined</p>
-<blockquote>
-<div><p>file names will be &lt;outroot&gt;_&lt;field&gt;_&lt;wave&gt;. The &lt;field&gt; keyword
-is optional.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>files</strong><span class="classifier">list of int</span></dt><dd><p>Integer list of the files to include in combine. Does not require
+padded zeros.</p>
+</dd>
+<dt><strong>wave</strong><span class="classifier">str</span></dt><dd><p>Name for the observation passband (e.g.: “kp”, “lp”, or “h”), used as
+a wavelength suffix</p>
+</dd>
+<dt><strong>outroot</strong><span class="classifier">str</span></dt><dd><p>The output root name (e.g. ‘06jullgs’). The final combined file names
+will be &lt;outroot&gt;_&lt;field&gt;_&lt;outSuffix&gt;_&lt;wave&gt;.
+The &lt;field&gt; and &lt;outSuffix&gt; keywords are optional.</p>
 <p>Examples:
 06jullgs_kp for outroot=’06jullgs’ and wave=’kp’
 06jullgs_arch_f1_kp for adding field=’arch_f1’</p>
-</div></blockquote>
-<p>&#64;type outroot: string
-&#64;kwparam field: Optional field name used to get to clean directory and</p>
-<blockquote>
-<div><p>also effects the final output file name.</p>
-</div></blockquote>
-<p>&#64;type field: string
-&#64;kwparam trim: Optional file trimming based on image quality. Default</p>
-<blockquote>
-<div><p>is 0. Set to 1 to turn trimming on.</p>
-</div></blockquote>
-<p>&#64;kwparam outSuffix: Optional suffix used to modify final output file name.
-&#64;type outSuffix: string
-&#64;type trim: 0 or 1
-&#64;kwparam weight: Optional weighting based on Strehl. Set to 1 to</p>
-<blockquote>
-<div><p>to turn file weighting on (default is 0).</p>
-</div></blockquote>
-<p>&#64;type weight: 0 or 1
-&#64;kwparam fwhm_max: The maximum allowed FWHM for keeping frames when</p>
-<blockquote>
-<div><p>trimming is turned on.</p>
-</div></blockquote>
-<p>&#64;type fwhm_max: int
-&#64;kwparam submaps: Set to the number of submaps to be made (def=0).
-&#64;type submaps: int
-&#64;kwparam mask: Set to false for maser mosaics; 06maylgs1 is an exception
-&#64;type mask: Boolean</p>
+</dd>
+<dt><strong>field</strong><span class="classifier">str, default=None</span></dt><dd><p>Optional field name. Used to get to clean directory and also affects
+the final output file name.</p>
+</dd>
+<dt><strong>outSuffix</strong><span class="classifier">str</span></dt><dd><p>Optional suffix used to modify final output file name.
+Can use suffix to indicate a night of observation (e.g.: “nite1”).</p>
+</dd>
+<dt><strong>trim</strong><span class="classifier">bool, default=False</span></dt><dd><p>Optional file trimming based on image quality. Default
+is False. Set to True to turn trimming on.</p>
+</dd>
+<dt><strong>weight</strong><span class="classifier">str, default=None</span></dt><dd><p>Optional weighting. Set to ‘strehl’ to weight by Strehl, as found in
+strehl_source.txt file.
+OR set to a file name with the first column being the file name
+(e.g., c0021.fits) and the second column being the weight. Weights will
+be renormalized to sum to 1.0.
+Default = None, no weighting.</p>
+</dd>
+<dt><strong>fwhm_max</strong><span class="classifier">float, default=0</span></dt><dd><p>The maximum allowed FWHM for keeping frames when trimming is turned on.
+If set to default=0 and trim=True, then we use FWHM &lt; 1.25 * FWHM.min().</p>
+</dd>
+<dt><strong>strehl_trim_min</strong><span class="classifier">float or None, default = None</span></dt><dd><p>The minimum strehl value allowed when trimming is turned on. When a value
+is specified, both FWHM and strehl trimming are performed.
+Recommended <em>ONLY</em> when AO performance is bad leading to a tight core, but
+very poor PSF otherwise.
+If None, then will not trim on strehl.</p>
+</dd>
+<dt><strong>submaps</strong><span class="classifier">int, default=0</span></dt><dd><p>Set to the number of submaps to be made (def=0).</p>
+</dd>
+<dt><strong>fixDAR</strong><span class="classifier">boolean, default = True</span></dt><dd><p>Whether or not to calculate and apply DAR correction coefficients.</p>
+</dd>
+<dt><strong>use_koa_weather</strong><span class="classifier">boolean, default = False</span></dt><dd><p>If calculating DAR correction, this keyword specifies if the atmosphere
+conditions should be downloaded from the KOA weather data. If False,
+atmosphere conditions are downloaded from the MKWC CFHT data.</p>
+</dd>
+<dt><strong>mask</strong><span class="classifier">bool, default=True</span></dt><dd></dd>
+<dt><strong>clean_dirs</strong><span class="classifier">list of str, optional</span></dt><dd><p>List of directories where clean files are stored. Needs to be same
+length as files list. If not specified, by default assumes that
+clean files are stored in ‘../clean’.</p>
+</dd>
+<dt><strong>combo_dir</strong><span class="classifier">str, optional</span></dt><dd><p>Directory where combo files will be stored. By default,
+assumes that combo files will be stored in ‘../combo’</p>
+</dd>
+<dt><strong>instrument</strong><span class="classifier">instruments object, optional</span></dt><dd><p>Instrument of data. Default is <cite>instruments.default_inst</cite></p>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -1079,6 +1109,18 @@ shifts for all the images.
 &#64;type subroot: string
 &#64;param submaps:
 &#64;type submaps:</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.reduce.data.subpixel_windowed_pcc">
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.data.</span></span><span class="sig-name descname"><span class="pre">subpixel_windowed_pcc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ref_img</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mov_img</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_radius</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upsample_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_corr_map</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_outfile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/data.html#subpixel_windowed_pcc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.data.subpixel_windowed_pcc" title="Link to this definition"></a></dt>
+<dd><p>Finds sub-pixel shifts restricted to a window_radius box.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kai.reduce.data._upsampled_refinement">
+<span class="sig-prename descclassname"><span class="pre">kai.reduce.data.</span></span><span class="sig-name descname"><span class="pre">_upsampled_refinement</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">src_freq</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_freq</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upsample_factor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_shift</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/kai/reduce/data.html#_upsampled_refinement"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kai.reduce.data._upsampled_refinement" title="Link to this definition"></a></dt>
+<dd><p>Internal helper to perform the Matrix Multiply DFT centered on initial_shift.</p>
 </dd></dl>
 
 </section>
