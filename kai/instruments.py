@@ -103,7 +103,7 @@ class NIRC2(Instrument):
         self.distXgeoim = module_dir + '/reduce//distortion/nirc2_narrow_xgeoim.fits'
         self.distYgeoim = module_dir + '/reduce//distortion/nirc2_narrow_ygeoim.fits'
 
-        self.telescope = 'Keck'
+        self.telescope = 'Keck II'
         self.telescope_diam = 10.5 # telescope diameter in meters
 
         return
@@ -301,7 +301,6 @@ class OSIRIS(Instrument):
     def __init__(self):
         # Instrument properties
         self.name = 'OSIRIS'
-        self.telescope = 'Keck I'
         
         # Define
         self.hdr_keys = {}
@@ -323,7 +322,7 @@ class OSIRIS(Instrument):
         self.distXgeoim = module_dir + '/reduce/distortion/OSIRIS_im_x_2021.fits'
         self.distYgeoim = module_dir + '/reduce/distortion/OSIRIS_im_y_2021.fits'
 
-        self.telescope = 'Keck'
+        self.telescope = 'Keck I'
         self.telescope_diam = 10.5 # telescope diameter in meters
         
         return
@@ -641,6 +640,10 @@ class OSIRIS(Instrument):
         """Return the exposure start time"""
         return str(hdr['UTC'])
 
+    def get_exposure_start_date(self, hdr):
+        """Return the exposure start date"""
+        return str(hdr['DATE-OBS'])
+
     def get_exposure_duration(self, hdr):
         """Return the exposure duration"""
         return float(hdr['ELAPTIME'])
@@ -659,7 +662,7 @@ class OSIRIS(Instrument):
 
     def was_exposure_aborted(self, hdr):
         """Return whether the exposure was aborted"""
-        return false if str(hdr['ABORTED']).strip(" ").lower() == "f" else true
+        return str(hdr["ABORTED"])
 
     def get_dither_name(self, hdr):
         """Return the dither name"""
@@ -685,11 +688,11 @@ class OSIRIS(Instrument):
 
     def get_ngs_fwhm(self, hdr):
         """Return the FWHM size of the tip tilt - natural guide star on the sky"""
-        return float(hdr['NGSFWHM'])
+        return float(hdr['GUIDFWHM'])
         
     def get_ngs_wavelength(self, hdr):
         """Return the wavelength of the tip tilt - natural guide star"""
-        return float(hdr['GUIDFWHM'])
+        return float(hdr['GUIDWAVE'])
 
     # def get_ngs_integration_time(self, hdr):
     #     """Return the integration time for the tip tilt - natural guide star"""
