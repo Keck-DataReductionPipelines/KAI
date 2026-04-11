@@ -299,7 +299,9 @@ class OSIRIS(Instrument):
     OSIRIS Imager - after 2019
     """
     def __init__(self):
+        # Instrument properties
         self.name = 'OSIRIS'
+        self.telescope = 'Keck I'
         
         # Define
         self.hdr_keys = {}
@@ -586,6 +588,176 @@ class OSIRIS(Instrument):
         """Return observation time in MJD"""
         
         return float(hdr['MJD-OBS'])
+
+    def get_telescope_name(self, hdr):
+        """Return the name of the telescope"""
+        return str(self.telescope)
+
+    def get_instrument_name(self, hdr):
+        """Return the name of the instrument"""
+        return str(self.name)
+
+    def get_telescope_elevation(self, hdr):
+        """Return the elevation of the telescope"""
+        return float(hdr['EL'])
+
+    def get_telescope_azimuth(self, hdr):
+        """Return the azimuth of the telescope"""
+        return float(hdr['AZ'])
+
+    def get_frame_number(self, hdr):
+        """Return the frame number"""
+        return str(hdr['FRAMENUM'])
+
+    def get_set_number(self, hdr):
+        """Return the set number"""
+        return str(hdr['SETNUM'])
+
+    def get_set_name(self, hdr):
+        """Return the set name"""
+        return str(hdr['DATASET'])
+
+    def get_target_name(self, hdr):
+        """Return the target name"""
+        return str(hdr['TARGNAME'])
+
+    def get_object_name(self, hdr):
+        """Return the object name"""
+        return str(hdr['OBJECT'])
+    
+    def get_target_ra(self, hdr):
+        """Return the target RA"""
+        return float(hdr['TARGRA'])
+
+    def get_target_dec(self, hdr):
+        """Return the target Dec"""
+        return float(hdr['TARGDEC'])
+
+    def get_epoch(self, hdr):
+        """Return the target epoch"""
+        return str(hdr['TARGEPOC'])
+
+    def get_exposure_start_time(self, hdr):
+        """Return the exposure start time"""
+        return str(hdr['UTC'])
+
+    def get_exposure_duration(self, hdr):
+        """Return the exposure duration"""
+        return float(hdr['ELAPTIME'])
+    
+    def get_integration_time_per_coadd(self, hdr):
+        """Return the integration time per coadd"""
+        return float(hdr['TRUITIME'])
+
+    def get_number_of_coadds(self, hdr):
+        """Return the number of coadds"""
+        return int(hdr['COADDS'])
+
+    def get_airmass(self, hdr):
+        """Return the airmass"""
+        return float(hdr['AIRMASS'])
+
+    def was_exposure_aborted(self, hdr):
+        """Return whether the exposure was aborted"""
+        return false if str(hdr['ABORTED']).strip(" ").lower() == "f" else true
+
+    def get_dither_name(self, hdr):
+        """Return the dither name"""
+        return str(hdr['OBJPTTRN'])
+
+# ---
+
+    def get_lgs_wfs_rate(self, hdr):
+        """Return the loop rate for the laser guide star wavefront sensor"""
+        return float(hdr['O1FPS'])
+
+    # def get_tt_wfs_rate(self, hdr):
+    #     """Return the loop rate for the tip tilt wavefront sensor"""
+    #     return float(hdr['TTWFSRATE'])
+
+    def get_lgs_rms_wfe(self, hdr):
+        """Return the RMS wavefront error for the laser guide star wavefront sensor"""
+        return float(hdr['LGRMSWF'])
+
+    def get_lgs_layer_altitude(self, hdr):
+        """Return the altitude of the sodium layer focus"""
+        return float(hdr['AOFCSALT'])
+
+    def get_ngs_fwhm(self, hdr):
+        """Return the FWHM size of the tip tilt - natural guide star on the sky"""
+        return float(hdr['NGSFWHM'])
+        
+    def get_ngs_wavelength(self, hdr):
+        """Return the wavelength of the tip tilt - natural guide star"""
+        return float(hdr['GUIDFWHM'])
+
+    # def get_ngs_integration_time(self, hdr):
+    #     """Return the integration time for the tip tilt - natural guide star"""
+    #     return float(hdr['NGSINTTIME'])
+        
+    def get_reconstructor_name(self, hdr):
+        """Return the name of the reconstructor"""
+        return str(hdr['DMMRFN'])
+
+    def get_dm_gain(self, hdr):
+        """Return the gain of the DM loop"""
+        return float(hdr['DMGAIN'])
+
+    def get_lgs_wfs_gain(self, hdr):
+        """Return the gain of the LGS WFS loop"""
+        return float(hdr['O1SMGN']) # in counts?
+
+    def get_system_gain(self, hdr):
+        """Return the gain of the system"""
+        return float(hdr['SYSGAIN']) # e- / adu (not system loop gain)
+
+    def get_utt_gain(self, hdr):
+        """Return the gain of the up tip tilt loop"""
+        return float(hdr['UTGAIN'])
+
+    def get_dtt_gain(self, hdr):
+        """Return the gain of the down tip tilt loop"""
+        return float(hdr['DTGAIN'])
+
+    def get_ao_mode(self, hdr):
+        """Return the AO mode"""
+        return str(hdr['AOOPSMOD'])
+
+    def get_dome_humidity(self, hdr):
+        """Return the humidity inside the dome"""
+        return float(hdr['WXDOMHUM'])
+
+    def get_dome_temperature(self, hdr):
+        """Return the temperature of the air inside the dome"""
+        return float(hdr['WXDOMTMP'])
+
+    def get_outside_humidity(self, hdr):
+        """Return the humidity outside the dome"""
+        return float(hdr['WXOUTHUM'])
+
+    def get_outside_temperature(self, hdr):
+        """Return the temperature of the air outside the dome"""
+        return float(hdr['WXOUTTMP'])
+
+    def get_barometric_pressure(self, hdr):
+        """Return the barometric pressure at the site"""
+        return float(hdr['WXPRESS'])
+
+    def get_wind_direction(self, hdr):
+        """Return the wind direction (degrees but not sure what reference)"""
+        return float(hdr['WXWNDIR'])
+
+    def get_wind_speed(self, hdr):
+        """Return the wind speed (m/s)"""
+        return float(hdr['WXWNDSP'])
+
+    def get_weather_sample_timestamp_string(self, hdr):
+        """Return the timestamp of the weather sample"""
+        return str(hdr['WXTIME'])
+
+    def get_tube_temperature(self, hdr):
+        """Return the temperature of the telescope tube"""
+        return float(hdr['TUBETEMP'])
 
 ##################################################
 #
