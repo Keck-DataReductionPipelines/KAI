@@ -707,13 +707,13 @@ class OSIRIS(Instrument):
         """Return the gain of the DM loop"""
         return float(hdr['DMGAIN'])
 
-    def get_lgs_wfs_gain(self, hdr):
-        """Return the gain of the LGS WFS loop"""
-        return float(hdr['O1SMGN']) # in counts?
+    # def get_lgs_wfs_gain(self, hdr):
+    #     """Return the gain of the LGS WFS loop"""
+    #     return float(hdr['O1SMGN']) # in counts?
 
-    def get_system_gain(self, hdr):
-        """Return the gain of the system"""
-        return float(hdr['SYSGAIN']) # e- / adu (not system loop gain)
+    def get_detector_gain(self, hdr):
+        """Return the gain of the main detector in e-/ADU"""
+        return float(hdr['SYSGAIN']) # e- / adu for main detector (not system loop gain)
 
     def get_utt_gain(self, hdr):
         """Return the gain of the up tip tilt loop"""
@@ -726,6 +726,10 @@ class OSIRIS(Instrument):
     def get_ao_mode(self, hdr):
         """Return the AO mode"""
         return str(hdr['AOOPSMOD'])
+    
+    def get_lgs_wfs_detector_gain(self, hdr):
+        """Return the gain of the lgs wfs detector. How many counts per electron"""
+        return float(hdr['O1SMGN']) # in counts
 
     def get_dome_humidity(self, hdr):
         """Return the humidity inside the dome"""
