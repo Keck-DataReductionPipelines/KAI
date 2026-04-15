@@ -430,6 +430,7 @@ class OSIRIS(Instrument):
                      'Hcont':1.5832,
                      'BrGamma':2.169,
                      'BrGamma-sAnn':2.169,
+                     'J':1.2429 # Added 4/15/26 from https://www2.keck.hawaii.edu/inst/osiris/technical/filters/filter_index.html
                     }
         if filt_name not in wave_dict.keys():
             print('NO information available on this filter: ' + filt_name)
