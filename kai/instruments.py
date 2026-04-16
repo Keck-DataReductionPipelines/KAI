@@ -326,6 +326,93 @@ class OSIRIS(Instrument):
         self.telescope_diam = 10.5 # telescope diameter in meters
         
         return
+    
+    # Utilities
+
+    def make_filenames(self, files, rootDir='', prefix=''):
+        file_names = [rootDir + prefix + i + '.fits' for i in files]
+
+        return file_names
+
+    def flip_images(self, files, rootDir=''):
+        """
+        Flip images (as they come from the detector flipped) and
+        subtract reference pixels.
+        Adds WCS and catches issues where the PA_IMAG output is not reported correctly.
+        """
+        from kai.reduce import kai_util
+        
+        for ff in range(len(files)):
+            old_file = files[ff]
+            new_file = files[ff].replace('.fits', '_flip.fits')
+            
+            hdu_list = fits.open(old_file)
+
+            # Fetch the date and figure out how to
+            # best flip the images.
+            year = int(hdu_list[0].header['DATE-OBS'].split('-')[0])
+            month = int(hdu_list[0].header['DATE-OBS'].split('-')[1])
+            date = int(hdu_list[0].header['DATE-OBS'].split('-')[2])
+
+            for hh in range(len(hdu_list)):
+                if isinstance(hdu_list[hh], _ImageBaseHDU):
+                    # Subtract the reference pixels
+                    new_data = self.subtract_reference_pixels(hdu_list[hh].data)
+                    
+                    # if year == 2019:
+                    #     hdu_list[hh].data = new_data[:, ::-1]
+                    # else:
+                    #     hdu_list[hh].data = new_data[::-1, :]
+                    hdu_list[hh].data = new_data[::-1, :]
+
+            # Need to modify PA_IMAG to account for the flip. Added 2023-10-30 by J. Lu.
+            pa_orig = hdu_list[0].header['PA_IMAG']
+            hdu_list[0].header['PA_IMAG'] = 360.0 - pa_orig
+
+            pa_header = hdu_list[0].header['PA_IMAG']
+            if year < 2022:
+                rot_corr = 42.5
+            elif year > 2022:
+                rot_corr = 43.4
+            elif year == 2022:
+                if month < 5:
+                    rot_corr = 42.5
+                elif month > 5:
+                    rot_corr = 43.4
+                elif month == 5:
+                    rot_corr = 'unknown'
+                    
+            if rot_corr == 'unknown':
+                logging.warning('In month with unknown rotation correction. Will default to PA_IMAG')
+            else:
+                calculated_pa = 360 - (hdu_list[0].header['ROTPOSN'] - hdu_list[0].header['INSTANGL'] + rot_corr)
+                if pa_header != calculated_pa:
+                    logging.warning('PA_IMAG does not match calculation via ROTPOSN and INSTANGL for {}. Changing from {} -> {}'.format(files[ff], pa_header, calculated_pa))
+                    hdu_list[0].header['PA_IMAG'] = calculated_pa
+
+                hdu_list[0].header['PA_IMAG'] = hdu_list[0].header['PA_IMAG'] % 360
+
+            hdu_list[0].header = kai_util.add_wcs_keywords(hdu_list[0].header, self)
+
+            hdu_list.writeto(new_file, overwrite=True)
+
+            # Add header values. 
+            wave = self.get_central_wavelength(hdu_list[0].header)
+
+            fits.setval(new_file, 'EFFWAVE', value= wave)
+            fits.setval(new_file, 'CENWAVE', value= wave)
+            fits.setval(new_file, 'CAMNAME', value = 'narrow') # from NIRC2
+            
+        return
+
+    def subtract_reference_pixels(self, img):
+        horiz_ref_pixels = np.concatenate([img[:, 0:4], img[:, -4:]], axis=1)
+        ref_pix_median = np.median(horiz_ref_pixels, axis=1)
+        new_img = img - np.array([ref_pix_median]).T
+    
+        return new_img
+
+    # Getter functions
 
     def get_filter_name(self, hdr):
         f = hdr['ifilter']
@@ -440,90 +527,6 @@ class OSIRIS(Instrument):
     
     def get_gain(self, hdr):
         return hdr['DETGAIN']
-    
-    def make_filenames(self, files, rootDir='', prefix=''):
-        file_names = [rootDir + prefix + i + '.fits' for i in files]
-
-        return file_names
-
-    def flip_images(self, files, rootDir=''):
-        """
-        Flip images (as they come from the detector flipped) and
-        subtract reference pixels.
-        Adds WCS and catches issues where the PA_IMAG output is not reported correctly.
-        """
-        from kai.reduce import kai_util
-        
-        for ff in range(len(files)):
-            old_file = files[ff]
-            new_file = files[ff].replace('.fits', '_flip.fits')
-            
-            hdu_list = fits.open(old_file)
-
-            # Fetch the date and figure out how to
-            # best flip the images.
-            year = int(hdu_list[0].header['DATE-OBS'].split('-')[0])
-            month = int(hdu_list[0].header['DATE-OBS'].split('-')[1])
-            date = int(hdu_list[0].header['DATE-OBS'].split('-')[2])
-
-            for hh in range(len(hdu_list)):
-                if isinstance(hdu_list[hh], _ImageBaseHDU):
-                    # Subtract the reference pixels
-                    new_data = self.subtract_reference_pixels(hdu_list[hh].data)
-                    
-                    # if year == 2019:
-                    #     hdu_list[hh].data = new_data[:, ::-1]
-                    # else:
-                    #     hdu_list[hh].data = new_data[::-1, :]
-                    hdu_list[hh].data = new_data[::-1, :]
-
-            # Need to modify PA_IMAG to account for the flip. Added 2023-10-30 by J. Lu.
-            pa_orig = hdu_list[0].header['PA_IMAG']
-            hdu_list[0].header['PA_IMAG'] = 360.0 - pa_orig
-
-            pa_header = hdu_list[0].header['PA_IMAG']
-            if year < 2022:
-                rot_corr = 42.5
-            elif year > 2022:
-                rot_corr = 43.4
-            elif year == 2022:
-                if month < 5:
-                    rot_corr = 42.5
-                elif month > 5:
-                    rot_corr = 43.4
-                elif month == 5:
-                    rot_corr = 'unknown'
-                    
-            if rot_corr == 'unknown':
-                logging.warning('In month with unknown rotation correction. Will default to PA_IMAG')
-            else:
-                calculated_pa = 360 - (hdu_list[0].header['ROTPOSN'] - hdu_list[0].header['INSTANGL'] + rot_corr)
-                if pa_header != calculated_pa:
-                    logging.warning('PA_IMAG does not match calculation via ROTPOSN and INSTANGL for {}. Changing from {} -> {}'.format(files[ff], pa_header, calculated_pa))
-                    hdu_list[0].header['PA_IMAG'] = calculated_pa
-
-                hdu_list[0].header['PA_IMAG'] = hdu_list[0].header['PA_IMAG'] % 360
-
-            hdu_list[0].header = kai_util.add_wcs_keywords(hdu_list[0].header, self)
-
-            hdu_list.writeto(new_file, overwrite=True)
-
-            # Add header values. 
-            wave = self.get_central_wavelength(hdu_list[0].header)
-
-            fits.setval(new_file, 'EFFWAVE', value= wave)
-            fits.setval(new_file, 'CENWAVE', value= wave)
-            fits.setval(new_file, 'CAMNAME', value = 'narrow') # from NIRC2
-            
-        return
-
-
-    def subtract_reference_pixels(self, img):
-        horiz_ref_pixels = np.concatenate([img[:, 0:4], img[:, -4:]], axis=1)
-        ref_pix_median = np.median(horiz_ref_pixels, axis=1)
-        new_img = img - np.array([ref_pix_median]).T
-    
-        return new_img
 
     def get_reference_pixels(self, img):
         border_mask = np.zeros_like(img, dtype=bool) 
@@ -668,8 +671,6 @@ class OSIRIS(Instrument):
     def get_dither_name(self, hdr):
         """Return the dither name"""
         return str(hdr['OBJPTTRN'])
-
-# ---
 
     def get_lgs_wfs_rate(self, hdr):
         """Return the loop rate for the laser guide star wavefront sensor"""
