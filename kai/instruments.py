@@ -675,6 +675,22 @@ class OSIRIS(Instrument):
     def get_lgs_wfs_rate(self, hdr):
         """Return the loop rate for the laser guide star wavefront sensor"""
         return float(hdr['O1FPS'])
+    
+    def get_tip_tilt_wfs_name(self, hdr):
+        """Return the name of the tip tilt wavefront sensor - STRAP or TRICK"""
+        return str(hdr['DTSENSOR'])
+    
+    def get_STRAP_integration_time(self, hdr):
+        """Return the integration time for STRAP in milliseconds"""
+        return float(hdr['STINTTIM'])
+    
+    def get_STRAP_centroid_gain(self, hdr):
+        """Return the centroid gain for STRAP"""
+        return float(hdr['STCNGN'])
+    
+    def get_TRICK_centroid_gain(self, hdr):
+        """Return the centroid gain for TRICK"""
+        return float(hdr['TRKCNGN'])
 
     # def get_tt_wfs_rate(self, hdr):
     #     """Return the loop rate for the tip tilt wavefront sensor"""
@@ -695,10 +711,6 @@ class OSIRIS(Instrument):
     def get_ngs_wavelength(self, hdr):
         """Return the wavelength of the tip tilt - natural guide star"""
         return float(hdr['GUIDWAVE'])
-
-    # def get_ngs_integration_time(self, hdr):
-    #     """Return the integration time for the tip tilt - natural guide star"""
-    #     return float(hdr['NGSINTTIME'])
         
     def get_reconstructor_name(self, hdr):
         """Return the name of the reconstructor"""
