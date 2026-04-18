@@ -517,7 +517,8 @@ class OSIRIS(Instrument):
                      'Hcont':1.5832,
                      'BrGamma':2.169,
                      'BrGamma-sAnn':2.169,
-                     'J':1.2429 # Added 4/15/26 from https://www2.keck.hawaii.edu/inst/osiris/technical/filters/filter_index.html
+                     'J':1.2429, # Added 4/15/26 from https://www2.keck.hawaii.edu/inst/osiris/technical/filters/filter_index.html
+                     'J-LHex': 1.2429 # Should be the same as J? Some headers say J-LHex
                     }
         if filt_name not in wave_dict.keys():
             print('NO information available on this filter: ' + filt_name)
@@ -599,6 +600,10 @@ class OSIRIS(Instrument):
     def get_instrument_name(self, hdr):
         """Return the name of the instrument"""
         return str(self.name)
+    
+    def get_imaging_mode(self, hdr):
+        """Return the imaging mode (imaging, coronagraphy, etc.)"""
+        return str(hdr['INSTR'])
 
     def get_telescope_elevation(self, hdr):
         """Return the elevation of the telescope"""
@@ -650,7 +655,10 @@ class OSIRIS(Instrument):
 
     def get_exposure_duration(self, hdr):
         """Return the exposure duration"""
-        return float(hdr['ELAPTIME'])
+        try:
+            return float(hdr['ELAPTIME'])
+        except KeyError:
+                return float(hdr['ITIME']) * float(hdr['COADDS']) # Some telemetry from before feb 2026 may not have ELAPTIME
     
     def get_integration_time_per_coadd(self, hdr):
         """Return the integration time per coadd"""
@@ -786,5 +794,6 @@ class OSIRIS(Instrument):
 #
 ##################################################
 default_inst = NIRC2()
+
 
     
