@@ -522,7 +522,7 @@ class OSIRIS(Instrument):
                     }
         if filt_name not in wave_dict.keys():
             print('NO information available on this filter: ' + filt_name)
-            return 2.12
+            return None
         else:
             return wave_dict[filt_name]
     
