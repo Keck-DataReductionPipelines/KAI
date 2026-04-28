@@ -41,11 +41,11 @@ def makelog(directory, outfile='image_log.txt',
         print(( 'Cannot access directory ' + directory ))
 
     # Remove old *flip files and the old log.
-    old = glob.glob(directory + '/*flip.fits')
+    old = glob.glob(directory + '/i*flip.fits')
     util.rmall(old)
     util.rmall([directory+'image_log.txt'])
 
-    files = glob.glob(directory + '/*.fits')
+    files = glob.glob(directory + '/i*.fits')
     files.sort()
     f = open(directory + '/' + outfile, 'w')
 
