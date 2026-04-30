@@ -748,6 +748,10 @@ class OSIRIS(Instrument):
         """Return the AO mode"""
         return str(hdr['AOOPSMOD'])
     
+    def was_AO_hatch_open(self, hdr):
+        """Return whether the AO hatch is open"""
+        return 'open' in str(hdr['OBWNNAME']).strip(" ").lower()
+
     def get_lgs_wfs_detector_gain(self, hdr):
         """Return the gain of the lgs wfs detector. How many counts per electron"""
         return float(hdr['O1SMGN']) # in counts
