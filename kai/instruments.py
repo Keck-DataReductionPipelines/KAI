@@ -679,6 +679,14 @@ class OSIRIS(Instrument):
     def get_dither_name(self, hdr):
         """Return the dither name"""
         return str(hdr['OBJPTTRN'])
+    
+    def was_waiting_for_DM_lock(self, hdr):
+        """Return whether the system was set to wait for the DM to lock before exposing"""
+        return 'on' in str(hdr["WFDM"]).strip(" ").lower()
+    
+    def was_DM_closed_loop(self, hdr):
+        """Return whether the DM is in closed loop"""
+        return 'closed' in str(hdr["AODMSTAT"]).strip(" ").lower()
 
     def get_lgs_wfs_rate(self, hdr):
         """Return the loop rate for the laser guide star wavefront sensor"""
@@ -712,9 +720,9 @@ class OSIRIS(Instrument):
         """Return the altitude of the sodium layer focus"""
         return float(hdr['AOFCSALT'])
 
-    def get_ngs_fwhm(self, hdr):
-        """Return the FWHM size of the tip tilt - natural guide star on the sky"""
-        return float(hdr['GUIDFWHM'])
+    def get_lbwfs_fwhm(self, hdr):
+        """Return the FWHM size of the LBWFS"""
+        return float(hdr['AOLBFWHM'])
         
     def get_ngs_wavelength(self, hdr):
         """Return the wavelength of the tip tilt - natural guide star"""
