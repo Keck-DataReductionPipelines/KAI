@@ -544,15 +544,18 @@ class OSIRIS(Instrument):
         if (date_float < 20201116):
             self.distXgeoim = module_dir + '/reduce/distortion/OSIRIS_im_x_2020.fits'
             self.distYgeoim = module_dir + '/reduce/distortion/OSIRIS_im_y_2020.fits'
-        if (date_float > 20201116) & (date_float <= 20220000):
+        if (date_float > 20201116) & (date_float <= 20220915):
             self.distXgeoim = module_dir + '/reduce/distortion/OSIRIS_im_x_2021.fits'
             self.distYgeoim = module_dir + '/reduce/distortion/OSIRIS_im_y_2021.fits'
-        if (date_float > 20220000) & (date_float <= 20230000):
-            self.distXgeoim = module_dir + '/reduce/distortion/OSIRIS_im_x_pcu_20230413.fits'
-            self.distYgeoim = module_dir + '/reduce/distortion/OSIRIS_im_y_pcu_20230413.fits'
-        if (date_float > 20230000):
-            self.distXgeoim = module_dir + '/reduce/distortion/OSIRIS_im_x_pcu_20240804.fits'
-            self.distYgeoim = module_dir + '/reduce/distortion/OSIRIS_im_y_pcu_20240804.fits'
+        if (date_float > 20220915) & (date_float <= 20231029):
+            self.distXgeoim = module_dir + '/reduce/distortion/xdist_polygp_osiris_pcu_20230413.fits'
+            self.distYgeoim = module_dir + '/reduce/distortion/ydist_polygp_osiris_pcu_20230413.fits'
+        if (date_float > 20231029) & (date_float <= 20260314):
+            self.distXgeoim = module_dir + '/reduce/distortion/xdist_polygp_osiris_pcu_20240804.fits'
+            self.distYgeoim = module_dir + '/reduce/distortion/ydist_polygp_osiris_pcu_20240804.fits'
+        if (date_float > 20260314):
+            self.distXgeoim = module_dir + '/reduce/distortion/xdist_polygp_osiris_pcu_Kp_tdH_20260501.fits'
+            self.distYgeoim = module_dir + '/reduce/distortion/ydist_polygp_osiris_pcu_Kp_tdH_20260501.fits'
             
         return self.distXgeoim, self.distYgeoim
 
