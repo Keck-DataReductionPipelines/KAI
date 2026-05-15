@@ -763,6 +763,14 @@ class OSIRIS(Instrument):
     def get_lgs_wfs_detector_gain(self, hdr):
         """Return the gain of the lgs wfs detector. How many counts per electron"""
         return float(hdr['O1SMGN']) # in counts
+    
+    def get_aotsx(self, hdr):
+        """AO tip/tilt sensor stage X position (mm) """
+        return float(hdr['AOTSX'])
+
+    def get_aotsy(self, hdr):
+        """AO tip/tilt sensor stage Y position (mm) """
+        return float(hdr['AOTSY'])
 
     def get_dome_humidity(self, hdr):
         """Return the humidity inside the dome"""
