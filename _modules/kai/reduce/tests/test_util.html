@@ -83,15 +83,15 @@
 <a class="viewcode-back" href="../../../../autoapi/kai/reduce/tests/test_util/index.html#kai.reduce.tests.test_util.TestImarith.test_imarith_add_single_file">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">test_imarith_add_single_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">mod_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">util</span><span class="o">.</span><span class="vm">__file__</span><span class="p">))</span>
-        <span class="n">epoch_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">mod_path</span> <span class="o">+</span> <span class="s1">&#39;/../data/test_epoch/17may21/&#39;</span><span class="p">)</span>
+        <span class="n">epoch_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">mod_path</span> <span class="o">+</span> <span class="s1">'/../data/test_epoch/17may21/'</span><span class="p">)</span>
 
-        <span class="n">img_file1</span> <span class="o">=</span> <span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">&#39;/raw/n0216.fits&#39;</span>
-        <span class="n">img_file2</span> <span class="o">=</span> <span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">&#39;/raw/n0217.fits&#39;</span>
-        <span class="n">out_file</span> <span class="o">=</span> <span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">&#39;/reduce/calib/tests/test_imarith_add.fits&#39;</span>
+        <span class="n">img_file1</span> <span class="o">=</span> <span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">'/raw/n0216.fits'</span>
+        <span class="n">img_file2</span> <span class="o">=</span> <span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">'/raw/n0217.fits'</span>
+        <span class="n">out_file</span> <span class="o">=</span> <span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">'/reduce/calib/tests/test_imarith_add.fits'</span>
 
-        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">&#39;/reduce/calib/tests&#39;</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">'/reduce/calib/tests'</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-        <span class="n">util</span><span class="o">.</span><span class="n">imarith</span><span class="p">(</span><span class="n">img_file1</span><span class="p">,</span> <span class="s1">&#39;+&#39;</span><span class="p">,</span> <span class="n">img_file2</span><span class="p">,</span> <span class="n">out_file</span><span class="p">)</span>
+        <span class="n">util</span><span class="o">.</span><span class="n">imarith</span><span class="p">(</span><span class="n">img_file1</span><span class="p">,</span> <span class="s1">'+'</span><span class="p">,</span> <span class="n">img_file2</span><span class="p">,</span> <span class="n">out_file</span><span class="p">)</span>
 
         <span class="n">img1</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getdata</span><span class="p">(</span><span class="n">img_file1</span><span class="p">)</span>
         <span class="n">img2</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getdata</span><span class="p">(</span><span class="n">img_file2</span><span class="p">)</span>
@@ -108,16 +108,16 @@
 <a class="viewcode-back" href="../../../../autoapi/kai/reduce/tests/test_util/index.html#kai.reduce.tests.test_util.TestImarith.test_imarith_add_file_list">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">test_imarith_add_file_list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">mod_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">util</span><span class="o">.</span><span class="vm">__file__</span><span class="p">))</span>
-        <span class="n">epoch_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">mod_path</span> <span class="o">+</span> <span class="s1">&#39;/../data/test_epoch/17may21/&#39;</span><span class="p">)</span>
+        <span class="n">epoch_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">mod_path</span> <span class="o">+</span> <span class="s1">'/../data/test_epoch/17may21/'</span><span class="p">)</span>
 
-        <span class="n">img_files1</span> <span class="o">=</span> <span class="p">[</span><span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">&#39;/raw/n0216.fits&#39;</span><span class="p">,</span> <span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">&#39;/raw/n0218.fits&#39;</span><span class="p">]</span>
-        <span class="n">img_file2</span> <span class="o">=</span> <span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">&#39;/raw/n0217.fits&#39;</span>
-        <span class="n">out_file</span> <span class="o">=</span> <span class="p">[</span><span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">&#39;/reduce/calib/tests/test_imarith_add_n0216.fits&#39;</span><span class="p">,</span>
-                    <span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">&#39;/reduce/calib/tests/test_imarith_add_n0218.fits&#39;</span><span class="p">]</span>
+        <span class="n">img_files1</span> <span class="o">=</span> <span class="p">[</span><span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">'/raw/n0216.fits'</span><span class="p">,</span> <span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">'/raw/n0218.fits'</span><span class="p">]</span>
+        <span class="n">img_file2</span> <span class="o">=</span> <span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">'/raw/n0217.fits'</span>
+        <span class="n">out_file</span> <span class="o">=</span> <span class="p">[</span><span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">'/reduce/calib/tests/test_imarith_add_n0216.fits'</span><span class="p">,</span>
+                    <span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">'/reduce/calib/tests/test_imarith_add_n0218.fits'</span><span class="p">]</span>
 
-        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">&#39;/reduce/calib/tests&#39;</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">'/reduce/calib/tests'</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-        <span class="n">util</span><span class="o">.</span><span class="n">imarith</span><span class="p">(</span><span class="n">img_files1</span><span class="p">,</span> <span class="s1">&#39;+&#39;</span><span class="p">,</span> <span class="n">img_file2</span><span class="p">,</span> <span class="n">out_file</span><span class="p">)</span>
+        <span class="n">util</span><span class="o">.</span><span class="n">imarith</span><span class="p">(</span><span class="n">img_files1</span><span class="p">,</span> <span class="s1">'+'</span><span class="p">,</span> <span class="n">img_file2</span><span class="p">,</span> <span class="n">out_file</span><span class="p">)</span>
 
         <span class="n">img1</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getdata</span><span class="p">(</span><span class="n">img_files1</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
         <span class="n">img2</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getdata</span><span class="p">(</span><span class="n">img_file2</span><span class="p">)</span>
@@ -134,29 +134,29 @@
 <a class="viewcode-back" href="../../../../autoapi/kai/reduce/tests/test_util/index.html#kai.reduce.tests.test_util.TestImarith.test_imarith_add_atfile">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">test_imarith_add_atfile</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">mod_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">util</span><span class="o">.</span><span class="vm">__file__</span><span class="p">))</span>
-        <span class="n">epoch_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">mod_path</span> <span class="o">+</span> <span class="s1">&#39;/../data/test_epoch/17may21/&#39;</span><span class="p">)</span>
-        <span class="n">test_dir</span> <span class="o">=</span> <span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">&#39;/reduce/calib/tests/&#39;</span>
+        <span class="n">epoch_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">mod_path</span> <span class="o">+</span> <span class="s1">'/../data/test_epoch/17may21/'</span><span class="p">)</span>
+        <span class="n">test_dir</span> <span class="o">=</span> <span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">'/reduce/calib/tests/'</span>
         <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">test_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-        <span class="n">img_files1</span> <span class="o">=</span> <span class="p">[</span><span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">&#39;/raw/n0216.fits&#39;</span><span class="p">,</span>
-                      <span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">&#39;/raw/n0218.fits&#39;</span><span class="p">]</span>
-        <span class="n">img_file2</span> <span class="o">=</span> <span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">&#39;/raw/n0217.fits&#39;</span>
-        <span class="n">out_files</span> <span class="o">=</span> <span class="p">[</span><span class="n">test_dir</span> <span class="o">+</span> <span class="s1">&#39;test_imarith_add_n0216.fits&#39;</span><span class="p">,</span>
-                     <span class="n">test_dir</span> <span class="o">+</span> <span class="s1">&#39;test_imarith_add_n0218.fits&#39;</span><span class="p">]</span>
+        <span class="n">img_files1</span> <span class="o">=</span> <span class="p">[</span><span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">'/raw/n0216.fits'</span><span class="p">,</span>
+                      <span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">'/raw/n0218.fits'</span><span class="p">]</span>
+        <span class="n">img_file2</span> <span class="o">=</span> <span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">'/raw/n0217.fits'</span>
+        <span class="n">out_files</span> <span class="o">=</span> <span class="p">[</span><span class="n">test_dir</span> <span class="o">+</span> <span class="s1">'test_imarith_add_n0216.fits'</span><span class="p">,</span>
+                     <span class="n">test_dir</span> <span class="o">+</span> <span class="s1">'test_imarith_add_n0218.fits'</span><span class="p">]</span>
 
-        <span class="n">at_file1_name</span> <span class="o">=</span> <span class="n">test_dir</span> <span class="o">+</span> <span class="s1">&#39;test_imarith_add_atfile1.lis&#39;</span>
-        <span class="n">at_file1</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">at_file1_name</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
-        <span class="n">at_file1</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">img_files1</span><span class="p">))</span>
+        <span class="n">at_file1_name</span> <span class="o">=</span> <span class="n">test_dir</span> <span class="o">+</span> <span class="s1">'test_imarith_add_atfile1.lis'</span>
+        <span class="n">at_file1</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">at_file1_name</span><span class="p">,</span> <span class="s1">'w'</span><span class="p">)</span>
+        <span class="n">at_file1</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1">'</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">img_files1</span><span class="p">))</span>
         <span class="n">at_file1</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
-        <span class="n">at_file3_name</span> <span class="o">=</span> <span class="n">test_dir</span> <span class="o">+</span> <span class="s1">&#39;test_imarith_add_atfile3.lis&#39;</span>
-        <span class="n">at_file3</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">at_file3_name</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
-        <span class="n">at_file3</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_files</span><span class="p">))</span>
+        <span class="n">at_file3_name</span> <span class="o">=</span> <span class="n">test_dir</span> <span class="o">+</span> <span class="s1">'test_imarith_add_atfile3.lis'</span>
+        <span class="n">at_file3</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">at_file3_name</span><span class="p">,</span> <span class="s1">'w'</span><span class="p">)</span>
+        <span class="n">at_file3</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1">'</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_files</span><span class="p">))</span>
         <span class="n">at_file3</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
-        <span class="n">util</span><span class="o">.</span><span class="n">imarith</span><span class="p">(</span><span class="s1">&#39;@&#39;</span> <span class="o">+</span> <span class="n">at_file1_name</span><span class="p">,</span>
-                     <span class="s1">&#39;+&#39;</span><span class="p">,</span> <span class="n">img_file2</span><span class="p">,</span>
-                     <span class="s1">&#39;@&#39;</span> <span class="o">+</span> <span class="n">at_file3_name</span><span class="p">)</span>
+        <span class="n">util</span><span class="o">.</span><span class="n">imarith</span><span class="p">(</span><span class="s1">'@'</span> <span class="o">+</span> <span class="n">at_file1_name</span><span class="p">,</span>
+                     <span class="s1">'+'</span><span class="p">,</span> <span class="n">img_file2</span><span class="p">,</span>
+                     <span class="s1">'@'</span> <span class="o">+</span> <span class="n">at_file3_name</span><span class="p">)</span>
 
         <span class="n">img1</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getdata</span><span class="p">(</span><span class="n">img_files1</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
         <span class="n">img2</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getdata</span><span class="p">(</span><span class="n">img_file2</span><span class="p">)</span>
@@ -173,29 +173,29 @@
 <a class="viewcode-back" href="../../../../autoapi/kai/reduce/tests/test_util/index.html#kai.reduce.tests.test_util.TestImarith.test_imarith_subtract_atfile">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">test_imarith_subtract_atfile</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">mod_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">util</span><span class="o">.</span><span class="vm">__file__</span><span class="p">))</span>
-        <span class="n">epoch_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">mod_path</span> <span class="o">+</span> <span class="s1">&#39;/../data/test_epoch/17may21/&#39;</span><span class="p">)</span>
-        <span class="n">test_dir</span> <span class="o">=</span> <span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">&#39;/reduce/calib/tests/&#39;</span>
+        <span class="n">epoch_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">mod_path</span> <span class="o">+</span> <span class="s1">'/../data/test_epoch/17may21/'</span><span class="p">)</span>
+        <span class="n">test_dir</span> <span class="o">=</span> <span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">'/reduce/calib/tests/'</span>
         <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">test_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-        <span class="n">img_files1</span> <span class="o">=</span> <span class="p">[</span><span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">&#39;/raw/n0216.fits&#39;</span><span class="p">,</span>
-                      <span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">&#39;/raw/n0218.fits&#39;</span><span class="p">]</span>
-        <span class="n">img_file2</span> <span class="o">=</span> <span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">&#39;/raw/n0217.fits&#39;</span>
-        <span class="n">out_files</span> <span class="o">=</span> <span class="p">[</span><span class="n">test_dir</span> <span class="o">+</span> <span class="s1">&#39;test_imarith_subtract_n0216.fits&#39;</span><span class="p">,</span>
-                     <span class="n">test_dir</span> <span class="o">+</span> <span class="s1">&#39;test_imarith_subtract_n0218.fits&#39;</span><span class="p">]</span>
+        <span class="n">img_files1</span> <span class="o">=</span> <span class="p">[</span><span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">'/raw/n0216.fits'</span><span class="p">,</span>
+                      <span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">'/raw/n0218.fits'</span><span class="p">]</span>
+        <span class="n">img_file2</span> <span class="o">=</span> <span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">'/raw/n0217.fits'</span>
+        <span class="n">out_files</span> <span class="o">=</span> <span class="p">[</span><span class="n">test_dir</span> <span class="o">+</span> <span class="s1">'test_imarith_subtract_n0216.fits'</span><span class="p">,</span>
+                     <span class="n">test_dir</span> <span class="o">+</span> <span class="s1">'test_imarith_subtract_n0218.fits'</span><span class="p">]</span>
 
-        <span class="n">at_file1_name</span> <span class="o">=</span> <span class="n">test_dir</span> <span class="o">+</span> <span class="s1">&#39;test_imarith_subtract_atfile1.lis&#39;</span>
-        <span class="n">at_file1</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">at_file1_name</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
-        <span class="n">at_file1</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">img_files1</span><span class="p">))</span>
+        <span class="n">at_file1_name</span> <span class="o">=</span> <span class="n">test_dir</span> <span class="o">+</span> <span class="s1">'test_imarith_subtract_atfile1.lis'</span>
+        <span class="n">at_file1</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">at_file1_name</span><span class="p">,</span> <span class="s1">'w'</span><span class="p">)</span>
+        <span class="n">at_file1</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1">'</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">img_files1</span><span class="p">))</span>
         <span class="n">at_file1</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
-        <span class="n">at_file3_name</span> <span class="o">=</span> <span class="n">test_dir</span> <span class="o">+</span> <span class="s1">&#39;test_imarith_subtract_atfile3.lis&#39;</span>
-        <span class="n">at_file3</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">at_file3_name</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
-        <span class="n">at_file3</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_files</span><span class="p">))</span>
+        <span class="n">at_file3_name</span> <span class="o">=</span> <span class="n">test_dir</span> <span class="o">+</span> <span class="s1">'test_imarith_subtract_atfile3.lis'</span>
+        <span class="n">at_file3</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">at_file3_name</span><span class="p">,</span> <span class="s1">'w'</span><span class="p">)</span>
+        <span class="n">at_file3</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1">'</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_files</span><span class="p">))</span>
         <span class="n">at_file3</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
-        <span class="n">util</span><span class="o">.</span><span class="n">imarith</span><span class="p">(</span><span class="s1">&#39;@&#39;</span> <span class="o">+</span> <span class="n">at_file1_name</span><span class="p">,</span>
-                     <span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="n">img_file2</span><span class="p">,</span>
-                     <span class="s1">&#39;@&#39;</span> <span class="o">+</span> <span class="n">at_file3_name</span><span class="p">)</span>
+        <span class="n">util</span><span class="o">.</span><span class="n">imarith</span><span class="p">(</span><span class="s1">'@'</span> <span class="o">+</span> <span class="n">at_file1_name</span><span class="p">,</span>
+                     <span class="s1">'-'</span><span class="p">,</span> <span class="n">img_file2</span><span class="p">,</span>
+                     <span class="s1">'@'</span> <span class="o">+</span> <span class="n">at_file3_name</span><span class="p">)</span>
 
         <span class="n">img1</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getdata</span><span class="p">(</span><span class="n">img_files1</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
         <span class="n">img2</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getdata</span><span class="p">(</span><span class="n">img_file2</span><span class="p">)</span>
@@ -212,29 +212,29 @@
 <a class="viewcode-back" href="../../../../autoapi/kai/reduce/tests/test_util/index.html#kai.reduce.tests.test_util.TestImarith.test_imarith_divide_atfile">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">test_imarith_divide_atfile</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">mod_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">util</span><span class="o">.</span><span class="vm">__file__</span><span class="p">))</span>
-        <span class="n">epoch_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">mod_path</span> <span class="o">+</span> <span class="s1">&#39;/../data/test_epoch/17may21/&#39;</span><span class="p">)</span>
-        <span class="n">test_dir</span> <span class="o">=</span> <span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">&#39;/reduce/calib/tests/&#39;</span>
+        <span class="n">epoch_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">mod_path</span> <span class="o">+</span> <span class="s1">'/../data/test_epoch/17may21/'</span><span class="p">)</span>
+        <span class="n">test_dir</span> <span class="o">=</span> <span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">'/reduce/calib/tests/'</span>
         <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">test_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-        <span class="n">img_files1</span> <span class="o">=</span> <span class="p">[</span><span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">&#39;/raw/n0216.fits&#39;</span><span class="p">,</span>
-                      <span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">&#39;/raw/n0218.fits&#39;</span><span class="p">]</span>
-        <span class="n">img_file2</span> <span class="o">=</span> <span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">&#39;/raw/n0217.fits&#39;</span>
-        <span class="n">out_files</span> <span class="o">=</span> <span class="p">[</span><span class="n">test_dir</span> <span class="o">+</span> <span class="s1">&#39;test_imarith_divide_n0216.fits&#39;</span><span class="p">,</span>
-                     <span class="n">test_dir</span> <span class="o">+</span> <span class="s1">&#39;test_imarith_divide_n0218.fits&#39;</span><span class="p">]</span>
+        <span class="n">img_files1</span> <span class="o">=</span> <span class="p">[</span><span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">'/raw/n0216.fits'</span><span class="p">,</span>
+                      <span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">'/raw/n0218.fits'</span><span class="p">]</span>
+        <span class="n">img_file2</span> <span class="o">=</span> <span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">'/raw/n0217.fits'</span>
+        <span class="n">out_files</span> <span class="o">=</span> <span class="p">[</span><span class="n">test_dir</span> <span class="o">+</span> <span class="s1">'test_imarith_divide_n0216.fits'</span><span class="p">,</span>
+                     <span class="n">test_dir</span> <span class="o">+</span> <span class="s1">'test_imarith_divide_n0218.fits'</span><span class="p">]</span>
 
-        <span class="n">at_file1_name</span> <span class="o">=</span> <span class="n">test_dir</span> <span class="o">+</span> <span class="s1">&#39;test_imarith_divide_atfile1.lis&#39;</span>
-        <span class="n">at_file1</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">at_file1_name</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
-        <span class="n">at_file1</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">img_files1</span><span class="p">))</span>
+        <span class="n">at_file1_name</span> <span class="o">=</span> <span class="n">test_dir</span> <span class="o">+</span> <span class="s1">'test_imarith_divide_atfile1.lis'</span>
+        <span class="n">at_file1</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">at_file1_name</span><span class="p">,</span> <span class="s1">'w'</span><span class="p">)</span>
+        <span class="n">at_file1</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1">'</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">img_files1</span><span class="p">))</span>
         <span class="n">at_file1</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
-        <span class="n">at_file3_name</span> <span class="o">=</span> <span class="n">test_dir</span> <span class="o">+</span> <span class="s1">&#39;test_imarith_divide_atfile3.lis&#39;</span>
-        <span class="n">at_file3</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">at_file3_name</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
-        <span class="n">at_file3</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_files</span><span class="p">))</span>
+        <span class="n">at_file3_name</span> <span class="o">=</span> <span class="n">test_dir</span> <span class="o">+</span> <span class="s1">'test_imarith_divide_atfile3.lis'</span>
+        <span class="n">at_file3</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">at_file3_name</span><span class="p">,</span> <span class="s1">'w'</span><span class="p">)</span>
+        <span class="n">at_file3</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1">'</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_files</span><span class="p">))</span>
         <span class="n">at_file3</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
-        <span class="n">util</span><span class="o">.</span><span class="n">imarith</span><span class="p">(</span><span class="s1">&#39;@&#39;</span> <span class="o">+</span> <span class="n">at_file1_name</span><span class="p">,</span>
-                     <span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="n">img_file2</span><span class="p">,</span>
-                     <span class="s1">&#39;@&#39;</span> <span class="o">+</span> <span class="n">at_file3_name</span><span class="p">)</span>
+        <span class="n">util</span><span class="o">.</span><span class="n">imarith</span><span class="p">(</span><span class="s1">'@'</span> <span class="o">+</span> <span class="n">at_file1_name</span><span class="p">,</span>
+                     <span class="s1">'/'</span><span class="p">,</span> <span class="n">img_file2</span><span class="p">,</span>
+                     <span class="s1">'@'</span> <span class="o">+</span> <span class="n">at_file3_name</span><span class="p">)</span>
 
         <span class="n">img1</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getdata</span><span class="p">(</span><span class="n">img_files1</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
         <span class="n">img2</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getdata</span><span class="p">(</span><span class="n">img_file2</span><span class="p">)</span>
@@ -251,29 +251,29 @@
 <a class="viewcode-back" href="../../../../autoapi/kai/reduce/tests/test_util/index.html#kai.reduce.tests.test_util.TestImarith.test_imarith_multiply_atfile">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">test_imarith_multiply_atfile</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">mod_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">util</span><span class="o">.</span><span class="vm">__file__</span><span class="p">))</span>
-        <span class="n">epoch_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">mod_path</span> <span class="o">+</span> <span class="s1">&#39;/../data/test_epoch/17may21/&#39;</span><span class="p">)</span>
-        <span class="n">test_dir</span> <span class="o">=</span> <span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">&#39;/reduce/calib/tests/&#39;</span>
+        <span class="n">epoch_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">mod_path</span> <span class="o">+</span> <span class="s1">'/../data/test_epoch/17may21/'</span><span class="p">)</span>
+        <span class="n">test_dir</span> <span class="o">=</span> <span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">'/reduce/calib/tests/'</span>
         <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">test_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-        <span class="n">img_files1</span> <span class="o">=</span> <span class="p">[</span><span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">&#39;/raw/n0216.fits&#39;</span><span class="p">,</span>
-                      <span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">&#39;/raw/n0218.fits&#39;</span><span class="p">]</span>
-        <span class="n">img_file2</span> <span class="o">=</span> <span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">&#39;/raw/n0217.fits&#39;</span>
-        <span class="n">out_files</span> <span class="o">=</span> <span class="p">[</span><span class="n">test_dir</span> <span class="o">+</span> <span class="s1">&#39;test_imarith_multiply_n0216.fits&#39;</span><span class="p">,</span>
-                     <span class="n">test_dir</span> <span class="o">+</span> <span class="s1">&#39;test_imarith_multiply_n0218.fits&#39;</span><span class="p">]</span>
+        <span class="n">img_files1</span> <span class="o">=</span> <span class="p">[</span><span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">'/raw/n0216.fits'</span><span class="p">,</span>
+                      <span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">'/raw/n0218.fits'</span><span class="p">]</span>
+        <span class="n">img_file2</span> <span class="o">=</span> <span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">'/raw/n0217.fits'</span>
+        <span class="n">out_files</span> <span class="o">=</span> <span class="p">[</span><span class="n">test_dir</span> <span class="o">+</span> <span class="s1">'test_imarith_multiply_n0216.fits'</span><span class="p">,</span>
+                     <span class="n">test_dir</span> <span class="o">+</span> <span class="s1">'test_imarith_multiply_n0218.fits'</span><span class="p">]</span>
 
-        <span class="n">at_file1_name</span> <span class="o">=</span> <span class="n">test_dir</span> <span class="o">+</span> <span class="s1">&#39;test_imarith_multiply_atfile1.lis&#39;</span>
-        <span class="n">at_file1</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">at_file1_name</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
-        <span class="n">at_file1</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">img_files1</span><span class="p">))</span>
+        <span class="n">at_file1_name</span> <span class="o">=</span> <span class="n">test_dir</span> <span class="o">+</span> <span class="s1">'test_imarith_multiply_atfile1.lis'</span>
+        <span class="n">at_file1</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">at_file1_name</span><span class="p">,</span> <span class="s1">'w'</span><span class="p">)</span>
+        <span class="n">at_file1</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1">'</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">img_files1</span><span class="p">))</span>
         <span class="n">at_file1</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
-        <span class="n">at_file3_name</span> <span class="o">=</span> <span class="n">test_dir</span> <span class="o">+</span> <span class="s1">&#39;test_imarith_multiply_atfile3.lis&#39;</span>
-        <span class="n">at_file3</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">at_file3_name</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
-        <span class="n">at_file3</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_files</span><span class="p">))</span>
+        <span class="n">at_file3_name</span> <span class="o">=</span> <span class="n">test_dir</span> <span class="o">+</span> <span class="s1">'test_imarith_multiply_atfile3.lis'</span>
+        <span class="n">at_file3</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">at_file3_name</span><span class="p">,</span> <span class="s1">'w'</span><span class="p">)</span>
+        <span class="n">at_file3</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1">'</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_files</span><span class="p">))</span>
         <span class="n">at_file3</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
-        <span class="n">util</span><span class="o">.</span><span class="n">imarith</span><span class="p">(</span><span class="s1">&#39;@&#39;</span> <span class="o">+</span> <span class="n">at_file1_name</span><span class="p">,</span>
-                     <span class="s1">&#39;*&#39;</span><span class="p">,</span> <span class="n">img_file2</span><span class="p">,</span>
-                     <span class="s1">&#39;@&#39;</span> <span class="o">+</span> <span class="n">at_file3_name</span><span class="p">)</span>
+        <span class="n">util</span><span class="o">.</span><span class="n">imarith</span><span class="p">(</span><span class="s1">'@'</span> <span class="o">+</span> <span class="n">at_file1_name</span><span class="p">,</span>
+                     <span class="s1">'*'</span><span class="p">,</span> <span class="n">img_file2</span><span class="p">,</span>
+                     <span class="s1">'@'</span> <span class="o">+</span> <span class="n">at_file3_name</span><span class="p">)</span>
 
         <span class="n">img1</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getdata</span><span class="p">(</span><span class="n">img_files1</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
         <span class="n">img2</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getdata</span><span class="p">(</span><span class="n">img_file2</span><span class="p">)</span>
@@ -290,23 +290,23 @@
 <a class="viewcode-back" href="../../../../autoapi/kai/reduce/tests/test_util/index.html#kai.reduce.tests.test_util.TestImarith.test_imarith_atfile_mismatch_length">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">test_imarith_atfile_mismatch_length</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">mod_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">util</span><span class="o">.</span><span class="vm">__file__</span><span class="p">))</span>
-        <span class="n">epoch_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">mod_path</span> <span class="o">+</span> <span class="s1">&#39;/../data/test_epoch/17may21/&#39;</span><span class="p">)</span>
-        <span class="n">test_dir</span> <span class="o">=</span> <span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">&#39;/reduce/calib/tests/&#39;</span>
+        <span class="n">epoch_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">mod_path</span> <span class="o">+</span> <span class="s1">'/../data/test_epoch/17may21/'</span><span class="p">)</span>
+        <span class="n">test_dir</span> <span class="o">=</span> <span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">'/reduce/calib/tests/'</span>
         <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">test_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-        <span class="n">img_files1</span> <span class="o">=</span> <span class="p">[</span><span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">&#39;/raw/n0216.fits&#39;</span><span class="p">,</span>
-                      <span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">&#39;/raw/n0218.fits&#39;</span><span class="p">]</span>
-        <span class="n">img_file2</span> <span class="o">=</span> <span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">&#39;/raw/n0217.fits&#39;</span>
-        <span class="n">out_files</span> <span class="o">=</span> <span class="n">test_dir</span> <span class="o">+</span> <span class="s1">&#39;test_imarith_add_n0216.fits&#39;</span>
+        <span class="n">img_files1</span> <span class="o">=</span> <span class="p">[</span><span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">'/raw/n0216.fits'</span><span class="p">,</span>
+                      <span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">'/raw/n0218.fits'</span><span class="p">]</span>
+        <span class="n">img_file2</span> <span class="o">=</span> <span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">'/raw/n0217.fits'</span>
+        <span class="n">out_files</span> <span class="o">=</span> <span class="n">test_dir</span> <span class="o">+</span> <span class="s1">'test_imarith_add_n0216.fits'</span>
 
-        <span class="n">at_file1_name</span> <span class="o">=</span> <span class="n">test_dir</span> <span class="o">+</span> <span class="s1">&#39;test_imarith_add_atfile1.lis&#39;</span>
-        <span class="n">at_file1</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">at_file1_name</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
-        <span class="n">at_file1</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">img_files1</span><span class="p">))</span>
+        <span class="n">at_file1_name</span> <span class="o">=</span> <span class="n">test_dir</span> <span class="o">+</span> <span class="s1">'test_imarith_add_atfile1.lis'</span>
+        <span class="n">at_file1</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">at_file1_name</span><span class="p">,</span> <span class="s1">'w'</span><span class="p">)</span>
+        <span class="n">at_file1</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1">'</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">img_files1</span><span class="p">))</span>
         <span class="n">at_file1</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
         <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">):</span>
-            <span class="n">util</span><span class="o">.</span><span class="n">imarith</span><span class="p">(</span><span class="s1">&#39;@&#39;</span> <span class="o">+</span> <span class="n">test_dir</span> <span class="o">+</span> <span class="s1">&#39;test_imarith_add_atfile1.lis&#39;</span><span class="p">,</span>
-                         <span class="s1">&#39;*&#39;</span><span class="p">,</span> <span class="n">img_file2</span><span class="p">,</span>
+            <span class="n">util</span><span class="o">.</span><span class="n">imarith</span><span class="p">(</span><span class="s1">'@'</span> <span class="o">+</span> <span class="n">test_dir</span> <span class="o">+</span> <span class="s1">'test_imarith_add_atfile1.lis'</span><span class="p">,</span>
+                         <span class="s1">'*'</span><span class="p">,</span> <span class="n">img_file2</span><span class="p">,</span>
                          <span class="n">out_files</span><span class="p">)</span>
 
         <span class="n">util</span><span class="o">.</span><span class="n">rmall</span><span class="p">([</span><span class="n">at_file1_name</span><span class="p">])</span>
@@ -316,7 +316,7 @@
 
 
 
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">'__main__'</span><span class="p">:</span>
     <span class="n">unittest</span><span class="o">.</span><span class="n">main</span><span class="p">()</span>
 </pre></div>
 

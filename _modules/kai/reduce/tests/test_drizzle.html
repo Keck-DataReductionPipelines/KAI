@@ -86,39 +86,39 @@
     <span class="kn">from</span><span class="w"> </span><span class="nn">pyraf</span><span class="w"> </span><span class="kn">import</span> <span class="n">iraf</span> <span class="k">as</span> <span class="n">ir</span>
 
     <span class="c1"># Image we will distortion correct:</span>
-    <span class="n">img_in</span> <span class="o">=</span> <span class="s1">&#39;cd0138.fits&#39;</span>
-    <span class="n">img_out</span> <span class="o">=</span> <span class="s1">&#39;c0138_iraf.fits&#39;</span>
-    <span class="n">_wgt</span> <span class="o">=</span> <span class="s1">&#39;wgt0138.fits&#39;</span>
-    <span class="n">_dlog</span> <span class="o">=</span> <span class="s1">&#39;c0138_iraf_drz.log&#39;</span>
+    <span class="n">img_in</span> <span class="o">=</span> <span class="s1">'cd0138.fits'</span>
+    <span class="n">img_out</span> <span class="o">=</span> <span class="s1">'c0138_iraf.fits'</span>
+    <span class="n">_wgt</span> <span class="o">=</span> <span class="s1">'wgt0138.fits'</span>
+    <span class="n">_dlog</span> <span class="o">=</span> <span class="s1">'c0138_iraf_drz.log'</span>
     
     <span class="n">imgsize</span> <span class="o">=</span> <span class="mi">1024</span>
 
     <span class="c1"># Setup the drizzle parameters we will use</span>
-    <span class="n">ir</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;stsdas&#39;</span><span class="p">,</span> <span class="n">doprint</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">hush</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-    <span class="n">ir</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;analysis&#39;</span><span class="p">,</span> <span class="n">doprint</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">hush</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-    <span class="n">ir</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;dither&#39;</span><span class="p">,</span> <span class="n">doprint</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">hush</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-    <span class="n">ir</span><span class="o">.</span><span class="n">unlearn</span><span class="p">(</span><span class="s1">&#39;drizzle&#39;</span><span class="p">)</span>
-    <span class="n">ir</span><span class="o">.</span><span class="n">drizzle</span><span class="o">.</span><span class="n">outweig</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
-    <span class="n">ir</span><span class="o">.</span><span class="n">drizzle</span><span class="o">.</span><span class="n">in_mask</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+    <span class="n">ir</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">'stsdas'</span><span class="p">,</span> <span class="n">doprint</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">hush</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">ir</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">'analysis'</span><span class="p">,</span> <span class="n">doprint</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">hush</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">ir</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">'dither'</span><span class="p">,</span> <span class="n">doprint</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">hush</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">ir</span><span class="o">.</span><span class="n">unlearn</span><span class="p">(</span><span class="s1">'drizzle'</span><span class="p">)</span>
+    <span class="n">ir</span><span class="o">.</span><span class="n">drizzle</span><span class="o">.</span><span class="n">outweig</span> <span class="o">=</span> <span class="s1">''</span>
+    <span class="n">ir</span><span class="o">.</span><span class="n">drizzle</span><span class="o">.</span><span class="n">in_mask</span> <span class="o">=</span> <span class="s1">''</span>
     <span class="n">ir</span><span class="o">.</span><span class="n">drizzle</span><span class="o">.</span><span class="n">wt_scl</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">ir</span><span class="o">.</span><span class="n">drizzle</span><span class="o">.</span><span class="n">outnx</span> <span class="o">=</span> <span class="n">imgsize</span>
     <span class="n">ir</span><span class="o">.</span><span class="n">drizzle</span><span class="o">.</span><span class="n">outny</span> <span class="o">=</span> <span class="n">imgsize</span>
     <span class="n">ir</span><span class="o">.</span><span class="n">drizzle</span><span class="o">.</span><span class="n">pixfrac</span> <span class="o">=</span> <span class="mi">1</span>
-    <span class="n">ir</span><span class="o">.</span><span class="n">drizzle</span><span class="o">.</span><span class="n">kernel</span> <span class="o">=</span> <span class="s1">&#39;lanczos3&#39;</span>
+    <span class="n">ir</span><span class="o">.</span><span class="n">drizzle</span><span class="o">.</span><span class="n">kernel</span> <span class="o">=</span> <span class="s1">'lanczos3'</span>
     <span class="n">ir</span><span class="o">.</span><span class="n">drizzle</span><span class="o">.</span><span class="n">scale</span> <span class="o">=</span> <span class="mi">1</span>
-    <span class="n">ir</span><span class="o">.</span><span class="n">drizzle</span><span class="o">.</span><span class="n">shft_un</span> <span class="o">=</span> <span class="s1">&#39;input&#39;</span>
-    <span class="n">ir</span><span class="o">.</span><span class="n">drizzle</span><span class="o">.</span><span class="n">shft_fr</span> <span class="o">=</span> <span class="s1">&#39;output&#39;</span>
-    <span class="n">ir</span><span class="o">.</span><span class="n">drizzle</span><span class="o">.</span><span class="n">align</span> <span class="o">=</span> <span class="s1">&#39;center&#39;</span>
-    <span class="n">ir</span><span class="o">.</span><span class="n">drizzle</span><span class="o">.</span><span class="n">expkey</span> <span class="o">=</span> <span class="s1">&#39;ITIME&#39;</span>
-    <span class="n">ir</span><span class="o">.</span><span class="n">drizzle</span><span class="o">.</span><span class="n">in_un</span> <span class="o">=</span> <span class="s1">&#39;counts&#39;</span>
-    <span class="n">ir</span><span class="o">.</span><span class="n">drizzle</span><span class="o">.</span><span class="n">out_un</span> <span class="o">=</span> <span class="s1">&#39;counts&#39;</span>
+    <span class="n">ir</span><span class="o">.</span><span class="n">drizzle</span><span class="o">.</span><span class="n">shft_un</span> <span class="o">=</span> <span class="s1">'input'</span>
+    <span class="n">ir</span><span class="o">.</span><span class="n">drizzle</span><span class="o">.</span><span class="n">shft_fr</span> <span class="o">=</span> <span class="s1">'output'</span>
+    <span class="n">ir</span><span class="o">.</span><span class="n">drizzle</span><span class="o">.</span><span class="n">align</span> <span class="o">=</span> <span class="s1">'center'</span>
+    <span class="n">ir</span><span class="o">.</span><span class="n">drizzle</span><span class="o">.</span><span class="n">expkey</span> <span class="o">=</span> <span class="s1">'ITIME'</span>
+    <span class="n">ir</span><span class="o">.</span><span class="n">drizzle</span><span class="o">.</span><span class="n">in_un</span> <span class="o">=</span> <span class="s1">'counts'</span>
+    <span class="n">ir</span><span class="o">.</span><span class="n">drizzle</span><span class="o">.</span><span class="n">out_un</span> <span class="o">=</span> <span class="s1">'counts'</span>
     
 
     <span class="c1"># Get the distortion maps for this instrument.</span>
     <span class="n">hdr</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getheader</span><span class="p">(</span><span class="n">img_in</span><span class="p">)</span>
     <span class="n">xgeoim</span><span class="p">,</span> <span class="n">ygeoim</span> <span class="o">=</span> <span class="n">kai</span><span class="o">.</span><span class="n">get_distortion_maps</span><span class="p">(</span><span class="n">hdr</span><span class="p">)</span>
-    <span class="n">xgeoim_local</span> <span class="o">=</span> <span class="s1">&#39;nirc2_distX.fits&#39;</span>
-    <span class="n">ygeoim_local</span> <span class="o">=</span> <span class="s1">&#39;nirc2_distY.fits&#39;</span>
+    <span class="n">xgeoim_local</span> <span class="o">=</span> <span class="s1">'nirc2_distX.fits'</span>
+    <span class="n">ygeoim_local</span> <span class="o">=</span> <span class="s1">'nirc2_distY.fits'</span>
     
     <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">xgeoim</span><span class="p">,</span> <span class="n">xgeoim_local</span><span class="p">)</span>
     <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">ygeoim</span><span class="p">,</span> <span class="n">ygeoim_local</span><span class="p">)</span>
@@ -134,22 +134,22 @@
 <div class="viewcode-block" id="test_drizzle_single_py">
 <a class="viewcode-back" href="../../../../autoapi/kai/reduce/tests/test_drizzle/index.html#kai.reduce.tests.test_drizzle.test_drizzle_single_py">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">test_drizzle_single_py</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    RUN</span>
 
 <span class="sd">        conda activate astroconda</span>
 
 <span class="sd">    before using this code.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="kn">from</span><span class="w"> </span><span class="nn">drizzle</span><span class="w"> </span><span class="kn">import</span> <span class="n">drizzle</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">wcs</span>
     
     <span class="c1"># Image we will distortion correct:</span>
-    <span class="n">img_in</span> <span class="o">=</span> <span class="s1">&#39;cd0138.fits&#39;</span>
-    <span class="n">img_out</span> <span class="o">=</span> <span class="s1">&#39;c0138_py.fits&#39;</span>
-    <span class="n">_wgt</span> <span class="o">=</span> <span class="s1">&#39;wgt0138.fits&#39;</span>
-    <span class="n">_dlog</span> <span class="o">=</span> <span class="s1">&#39;c0138_py_drz.log&#39;</span>
+    <span class="n">img_in</span> <span class="o">=</span> <span class="s1">'cd0138.fits'</span>
+    <span class="n">img_out</span> <span class="o">=</span> <span class="s1">'c0138_py.fits'</span>
+    <span class="n">_wgt</span> <span class="o">=</span> <span class="s1">'wgt0138.fits'</span>
+    <span class="n">_dlog</span> <span class="o">=</span> <span class="s1">'c0138_py_drz.log'</span>
     
     <span class="n">imgsize</span> <span class="o">=</span> <span class="mi">1024</span>
 
@@ -164,8 +164,8 @@
 
     <span class="c1"># Get the distortion maps for this instrument.</span>
     <span class="n">xgeoim</span><span class="p">,</span> <span class="n">ygeoim</span> <span class="o">=</span> <span class="n">kai</span><span class="o">.</span><span class="n">get_distortion_maps</span><span class="p">(</span><span class="n">hdr</span><span class="p">)</span>
-    <span class="n">xgeoim</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getdata</span><span class="p">(</span><span class="n">xgeoim</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;float32&#39;</span><span class="p">)</span>
-    <span class="n">ygeoim</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getdata</span><span class="p">(</span><span class="n">ygeoim</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;float32&#39;</span><span class="p">)</span>
+    <span class="n">xgeoim</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getdata</span><span class="p">(</span><span class="n">xgeoim</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">'float32'</span><span class="p">)</span>
+    <span class="n">ygeoim</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getdata</span><span class="p">(</span><span class="n">ygeoim</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">'float32'</span><span class="p">)</span>
 
     <span class="n">xdist</span> <span class="o">=</span> <span class="n">wcs</span><span class="o">.</span><span class="n">DistortionLookupTable</span><span class="p">(</span> <span class="n">xgeoim</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
     <span class="n">ydist</span> <span class="o">=</span> <span class="n">wcs</span><span class="o">.</span><span class="n">DistortionLookupTable</span><span class="p">(</span> <span class="n">ygeoim</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
@@ -176,8 +176,8 @@
     <span class="c1"># wcs_out.cpdis2 = ydist</span>
 
     <span class="c1"># # Testing</span>
-    <span class="c1"># one = np.ones(2, dtype=&#39;float64&#39;)</span>
-    <span class="c1"># idxmap = np.indices((imgsize, imgsize), dtype=&#39;float64&#39;)</span>
+    <span class="c1"># one = np.ones(2, dtype='float64')</span>
+    <span class="c1"># idxmap = np.indices((imgsize, imgsize), dtype='float64')</span>
     <span class="c1"># idxmap = idxmap.transpose() + one</span>
     <span class="c1"># idxmap = idxmap.reshape(imgsize * imgsize, 2)</span>
 
@@ -195,7 +195,7 @@
     <span class="c1"># print(worldmap_in[50000:50005])</span>
     <span class="c1"># print(worldmap_out[50000:50005])</span>
 
-    <span class="c1"># print(&#39;&#39;)</span>
+    <span class="c1"># print('')</span>
     <span class="c1"># print(xgeoim.flatten()[50000:50005])</span>
     <span class="c1"># print(ygeoim.flatten()[50000:50005])</span>
     
@@ -204,37 +204,37 @@
     
     <span class="c1"># Initialize the output with the WCS</span>
     <span class="n">driz</span> <span class="o">=</span> <span class="n">drizzle</span><span class="o">.</span><span class="n">Drizzle</span><span class="p">(</span><span class="n">outwcs</span> <span class="o">=</span> <span class="n">wcs_out</span><span class="p">,</span>
-                            <span class="n">wt_scl</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+                            <span class="n">wt_scl</span> <span class="o">=</span> <span class="s1">''</span><span class="p">,</span>
                             <span class="n">pixfrac</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
-                            <span class="n">kernel</span> <span class="o">=</span> <span class="s1">&#39;lanczos3&#39;</span><span class="p">)</span>
+                            <span class="n">kernel</span> <span class="o">=</span> <span class="s1">'lanczos3'</span><span class="p">)</span>
 
     <span class="c1"># Combine the input images into on drizzle image</span>
     <span class="c1"># driz.add_fits_file(img_in,</span>
     <span class="c1">#                     inweight = _wgt,</span>
     <span class="c1">#                     xmax = imgsize,</span>
     <span class="c1">#                     ymax = imgsize,</span>
-    <span class="c1">#                     unitkey = &#39;counts&#39;,</span>
-    <span class="c1">#                     expkey = &#39;ITIME&#39;)</span>
+    <span class="c1">#                     unitkey = 'counts',</span>
+    <span class="c1">#                     expkey = 'ITIME')</span>
 
     <span class="n">driz</span><span class="o">.</span><span class="n">add_image</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">wcs_in</span><span class="p">,</span> <span class="n">inwht</span> <span class="o">=</span> <span class="n">wgt</span><span class="p">,</span>
                         <span class="n">expin</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
                         <span class="n">xmax</span> <span class="o">=</span> <span class="n">imgsize</span><span class="p">,</span>
                         <span class="n">ymax</span> <span class="o">=</span> <span class="n">imgsize</span><span class="p">,</span>
                         <span class="n">wt_scl</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
-                        <span class="n">in_units</span> <span class="o">=</span> <span class="s1">&#39;cps&#39;</span><span class="p">)</span>
+                        <span class="n">in_units</span> <span class="o">=</span> <span class="s1">'cps'</span><span class="p">)</span>
 
     <span class="c1"># Write the drizzled image out</span>
     <span class="n">driz</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">img_out</span><span class="p">)</span>
 
     <span class="c1"># Read in the input and output files and compare.</span>
-    <span class="n">img_new</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getdata</span><span class="p">(</span><span class="n">img_out</span><span class="p">,</span> <span class="n">extname</span><span class="o">=</span><span class="s1">&#39;sci&#39;</span><span class="p">)</span>
-    <span class="n">img_iraf</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getdata</span><span class="p">(</span><span class="s1">&#39;c0138_iraf.fits&#39;</span><span class="p">)</span>
+    <span class="n">img_new</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getdata</span><span class="p">(</span><span class="n">img_out</span><span class="p">,</span> <span class="n">extname</span><span class="o">=</span><span class="s1">'sci'</span><span class="p">)</span>
+    <span class="n">img_iraf</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getdata</span><span class="p">(</span><span class="s1">'c0138_iraf.fits'</span><span class="p">)</span>
 
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;orig&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'orig'</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">img</span><span class="p">[</span><span class="mi">500</span><span class="p">:</span><span class="mi">505</span><span class="p">,</span> <span class="mi">500</span><span class="p">:</span><span class="mi">505</span><span class="p">])</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;py_new&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'py_new'</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">img_new</span><span class="p">[</span><span class="mi">500</span><span class="p">:</span><span class="mi">505</span><span class="p">,</span> <span class="mi">500</span><span class="p">:</span><span class="mi">505</span><span class="p">])</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;ir_new&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'ir_new'</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">img_iraf</span><span class="p">[</span><span class="mi">500</span><span class="p">:</span><span class="mi">505</span><span class="p">,</span> <span class="mi">500</span><span class="p">:</span><span class="mi">505</span><span class="p">])</span>
     <span class="nb">print</span><span class="p">()</span>
 

@@ -86,44 +86,44 @@
 
 <div class="viewcode-block" id="Fvalues">
 <a class="viewcode-back" href="../../../autoapi/kai/mtf/mtf/index.html#kai.mtf.mtf.Fvalues">[docs]</a>
-<span class="n">Fvalues</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;wide&#39;</span><span class="p">:</span> <span class="mf">139.9</span><span class="p">,</span> <span class="s1">&#39;narrow&#39;</span><span class="p">:</span> <span class="mf">557.0</span><span class="p">}</span></div>
+<span class="n">Fvalues</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'wide'</span><span class="p">:</span> <span class="mf">139.9</span><span class="p">,</span> <span class="s1">'narrow'</span><span class="p">:</span> <span class="mf">557.0</span><span class="p">}</span></div>
 
 
 <div class="viewcode-block" id="get_mtf">
 <a class="viewcode-back" href="../../../autoapi/kai/mtf/mtf/index.html#kai.mtf.mtf.get_mtf">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_mtf</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">sources</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    image - 2D numpy array containing the image. Image must be square.</span>
 <span class="sd">    params - a dictionary with the various parameters used to calculate</span>
 <span class="sd">             the MTF.</span>
 <span class="sd">    sources - (def=None) and optional 2D numpy array (same size as image)</span>
 <span class="sd">              that contains the distribution of stars in the image as delta</span>
 <span class="sd">              functions.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># Some image testing to catch unexpected inputs</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Input image must be 2-dimensional&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">'Input image must be 2-dimensional'</span><span class="p">)</span>
         <span class="k">return</span>
     <span class="k">if</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Input image must be square&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">'Input image must be square'</span><span class="p">)</span>
         <span class="k">return</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="n">sources</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sources</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">sources</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">sources</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Input sources must be of the same size as image&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">'Input sources must be of the same size as image'</span><span class="p">)</span>
             <span class="k">return</span>
 
     <span class="c1"># Pull out the necessary paramters</span>
-    <span class="n">D</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;D&#39;</span><span class="p">]</span>              <span class="c1"># telescope primary mirror diameter in meters</span>
-    <span class="n">wave</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;wave&#39;</span><span class="p">]</span>        <span class="c1"># observing wavelength in meters</span>
-    <span class="n">F</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;F&#39;</span><span class="p">]</span>              <span class="c1"># effective focal length at detector in meters</span>
-    <span class="n">Apix</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;Apix&#39;</span><span class="p">]</span>        <span class="c1"># pixel size of detector in meters</span>
+    <span class="n">D</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">'D'</span><span class="p">]</span>              <span class="c1"># telescope primary mirror diameter in meters</span>
+    <span class="n">wave</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">'wave'</span><span class="p">]</span>        <span class="c1"># observing wavelength in meters</span>
+    <span class="n">F</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">'F'</span><span class="p">]</span>              <span class="c1"># effective focal length at detector in meters</span>
+    <span class="n">Apix</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">'Apix'</span><span class="p">]</span>        <span class="c1"># pixel size of detector in meters</span>
     <span class="n">platescale</span> <span class="o">=</span> <span class="n">Apix</span> <span class="o">/</span> <span class="n">F</span>        <span class="c1"># plate scale of detector in radians/pixel</span>
 
     <span class="c1"># Calculate the sky in the image.</span>
     <span class="n">skyInfo</span> <span class="o">=</span> <span class="n">mmm</span><span class="o">.</span><span class="n">mmm</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
-    <span class="n">skyMode</span> <span class="o">=</span> <span class="n">skyInfo</span><span class="p">[</span><span class="s1">&#39;mode&#39;</span><span class="p">]</span>
-    <span class="n">skySigma</span> <span class="o">=</span> <span class="n">skyInfo</span><span class="p">[</span><span class="s1">&#39;sigma&#39;</span><span class="p">]</span>
+    <span class="n">skyMode</span> <span class="o">=</span> <span class="n">skyInfo</span><span class="p">[</span><span class="s1">'mode'</span><span class="p">]</span>
+    <span class="n">skySigma</span> <span class="o">=</span> <span class="n">skyInfo</span><span class="p">[</span><span class="s1">'sigma'</span><span class="p">]</span>
 
     <span class="c1"># Apodize the image with a Hanning kernal to enforce periodicity</span>
     <span class="n">szx</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -133,7 +133,7 @@
 
     <span class="n">fftim</span> <span class="o">=</span> <span class="n">fftpack</span><span class="o">.</span><span class="n">fft2</span><span class="p">(</span><span class="n">img_skysub</span> <span class="o">*</span> <span class="n">han</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">szx</span> <span class="o">*</span> <span class="n">szy</span><span class="p">)</span>
     <span class="n">absim</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span> <span class="n">fftim</span> <span class="o">*</span> <span class="n">fftim</span><span class="o">.</span><span class="n">conjugate</span><span class="p">()</span> <span class="p">)</span>
-    <span class="n">absim</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>   <span class="c1"># don&#39;t count the DC component</span>
+    <span class="n">absim</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>   <span class="c1"># don't count the DC component</span>
     <span class="n">wrapim</span> <span class="o">=</span> <span class="n">fftpack</span><span class="o">.</span><span class="n">fftshift</span><span class="p">(</span> <span class="n">absim</span> <span class="p">)</span>  <span class="c1"># this is the 2D power spectrum</span>
     <span class="n">ind</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">wrapim</span><span class="p">)</span> <span class="o">==</span> <span class="kc">False</span> <span class="p">)</span>
     <span class="n">xcen</span> <span class="o">=</span> <span class="n">ind</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
@@ -179,13 +179,13 @@
 <div class="viewcode-block" id="hanning">
 <a class="viewcode-back" href="../../../autoapi/kai/mtf/mtf/index.html#kai.mtf.mtf.hanning">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">hanning</span><span class="p">(</span><span class="n">xsize</span><span class="p">,</span> <span class="n">ysize</span><span class="p">,</span> <span class="n">invert</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Make a 2D hanning kernel from the seperable 1D hanning kernels. The</span>
 <span class="sd">    default kernel peaks at 1 at the center and falls to zero at the edges.</span>
 <span class="sd">    Use invert=True to make an inner mask that is 0 at the center and rises</span>
 <span class="sd">    to 1 at the edges.</span>
 <span class="sd">    </span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">mask1D_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hanning</span><span class="p">(</span><span class="n">xsize</span><span class="p">)</span>
     <span class="n">mask1D_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hanning</span><span class="p">(</span><span class="n">ysize</span><span class="p">)</span>
     <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="n">mask1D_x</span><span class="p">,</span> <span class="n">mask1D_y</span><span class="p">)</span>
@@ -201,8 +201,8 @@
 <a class="viewcode-back" href="../../../autoapi/kai/mtf/mtf/index.html#kai.mtf.mtf.mtffunc_keck">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">mtffunc_keck</span><span class="p">(</span><span class="n">pp</span><span class="p">,</span> <span class="n">nu</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">wave</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">F</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">D</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">Apix</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
                  <span class="n">pupil</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tperf</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sources</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
-                 <span class="n">output</span><span class="o">=</span><span class="s1">&#39;system&#39;</span><span class="p">,</span> <span class="n">fjac</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+                 <span class="n">output</span><span class="o">=</span><span class="s1">'system'</span><span class="p">,</span> <span class="n">fjac</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">     NAME:</span>
 <span class="sd">            MTFFUNC_KECK</span>
 <span class="sd">    </span>
@@ -247,7 +247,7 @@
 <span class="sd">                                       available pupil-stop names) or for</span>
 <span class="sd">                                       a circular pupil, the scalar</span>
 <span class="sd">                                       floating point value of the</span>
-<span class="sd">                                       pupil&#39;s central obscuration.  The</span>
+<span class="sd">                                       pupil's central obscuration.  The</span>
 <span class="sd">                                       data type of this parameter</span>
 <span class="sd">                                       deterimines the form of the pupil</span>
 <span class="sd">                                       MTF used (see PROCEDURE below).</span>
@@ -255,11 +255,11 @@
 <span class="sd">                                       meters, for a modified Kolmogorov</span>
 <span class="sd">                                       spectrum</span>
 <span class="sd">                      params.sigma   - the width of the AO system</span>
-<span class="sd">                                       deformable mirror&#39;s (DM&#39;s)</span>
+<span class="sd">                                       deformable mirror's (DM's)</span>
 <span class="sd">                                       influence function as projected</span>
 <span class="sd">                                       onto the pupil plane, in meters.</span>
 <span class="sd">                      params.w       - scaling factor for the influence</span>
-<span class="sd">                                       function&#39;s Fourier transform;</span>
+<span class="sd">                                       function's Fourier transform;</span>
 <span class="sd">                                       mimics variable AO correction (see</span>
 <span class="sd">                                       documentation for</span>
 <span class="sd">                                       FT_INFL_FUNCTION) </span>
@@ -300,7 +300,7 @@
 <span class="sd">                    pupil MTF (N.B., not the squared MTF) and is</span>
 <span class="sd">                    equivalent to the square root of the output of</span>
 <span class="sd">                    MTFFUNC_KECK with the /PERF keyword set; SPDIST is</span>
-<span class="sd">                    the power spectrum of and image&#39;s source distribution</span>
+<span class="sd">                    the power spectrum of and image's source distribution</span>
 <span class="sd">                    function, identical to SPDIST.  </span>
 
 <span class="sd">                    If the keyword _EXTRA is set to this structure,</span>
@@ -381,19 +381,19 @@
 <span class="sd">            </span>
 <span class="sd">            params={lambda:1.6e-6, F:557.0, D:10.99,  $</span>
 <span class="sd">                    L0:30.0, sigma:0.56, w:1.5, delta:0.0, cmult:1.0, $</span>
-<span class="sd">                    N:1e-4, r0:0.65, Apix:27e-6, pupil:&#39;largehex&#39;}</span>
+<span class="sd">                    N:1e-4, r0:0.65, Apix:27e-6, pupil:'largehex'}</span>
 <span class="sd">            nu = findgen(100)/99.</span>
 <span class="sd">            tsys_squared = mtffunc_keck(nu,params) </span>
 <span class="sd">    </span>
 <span class="sd">     MODIFICATION HISTORY:</span>
 <span class="sd">            Written by:  Christopher D. Sheehy, January 2006.</span>
 <span class="sd">    </span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">nu</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Input NU cannot be less than zero.&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">'Input NU cannot be less than zero.'</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">wave</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">p</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;wave&#39;</span><span class="p">:</span> <span class="n">wave</span><span class="p">,</span> <span class="s1">&#39;F&#39;</span><span class="p">:</span> <span class="n">F</span><span class="p">,</span> <span class="s1">&#39;D&#39;</span><span class="p">:</span> <span class="n">D</span><span class="p">,</span> <span class="s1">&#39;Apix&#39;</span><span class="p">:</span> <span class="n">Apix</span><span class="p">,</span> <span class="s1">&#39;pupil&#39;</span><span class="p">:</span> <span class="n">pupil</span><span class="p">}</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'wave'</span><span class="p">:</span> <span class="n">wave</span><span class="p">,</span> <span class="s1">'F'</span><span class="p">:</span> <span class="n">F</span><span class="p">,</span> <span class="s1">'D'</span><span class="p">:</span> <span class="n">D</span><span class="p">,</span> <span class="s1">'Apix'</span><span class="p">:</span> <span class="n">Apix</span><span class="p">,</span> <span class="s1">'pupil'</span><span class="p">:</span> <span class="n">pupil</span><span class="p">}</span>
         <span class="n">p</span><span class="o">.</span><span class="n">update</span><span class="p">(</span> <span class="n">params_arr2dict</span><span class="p">(</span><span class="n">pp</span><span class="p">)</span> <span class="p">)</span>
 
         <span class="n">MTF_perf</span> <span class="o">=</span> <span class="n">tperf</span>
@@ -401,10 +401,10 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="n">p</span> <span class="o">=</span> <span class="n">pp</span>
         <span class="n">spdist_mult</span> <span class="o">=</span> <span class="mi">1</span>
-        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="s1">&#39;pupil&#39;</span><span class="p">])</span> <span class="o">==</span> <span class="nb">str</span><span class="p">:</span>
-            <span class="n">MTF_perf</span> <span class="o">=</span> <span class="n">t_perfect_keck</span><span class="p">(</span><span class="n">nu</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">pupil</span><span class="o">=</span><span class="n">p</span><span class="p">[</span><span class="s1">&#39;pupil&#39;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="s1">'pupil'</span><span class="p">])</span> <span class="o">==</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="n">MTF_perf</span> <span class="o">=</span> <span class="n">t_perfect_keck</span><span class="p">(</span><span class="n">nu</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">pupil</span><span class="o">=</span><span class="n">p</span><span class="p">[</span><span class="s1">'pupil'</span><span class="p">])</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">MTF_perf</span> <span class="o">=</span> <span class="n">t_perfect</span><span class="p">(</span><span class="n">nu</span><span class="p">,</span> <span class="n">p</span><span class="p">[</span><span class="s1">&#39;pupil&#39;</span><span class="p">])</span>
+            <span class="n">MTF_perf</span> <span class="o">=</span> <span class="n">t_perfect</span><span class="p">(</span><span class="n">nu</span><span class="p">,</span> <span class="n">p</span><span class="p">[</span><span class="s1">'pupil'</span><span class="p">])</span>
             
     <span class="k">if</span> <span class="n">sources</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">spdist_mult</span> <span class="o">=</span> <span class="n">sources</span>
@@ -415,14 +415,14 @@
     <span class="n">MTF_pix</span> <span class="o">=</span> <span class="n">t_pix</span><span class="p">(</span><span class="n">nu</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
 
     <span class="n">tsys</span> <span class="o">=</span> <span class="n">MTF_perf</span> <span class="o">*</span> <span class="n">MTF_atmos_ao</span> <span class="o">*</span> <span class="n">MTF_pix</span>
-    <span class="n">MTF_sys2</span> <span class="o">=</span> <span class="p">(</span><span class="n">spdist_mult</span> <span class="o">*</span> <span class="n">p</span><span class="p">[</span><span class="s1">&#39;cmult&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">tsys</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="n">p</span><span class="p">[</span><span class="s1">&#39;N&#39;</span><span class="p">]</span>
+    <span class="n">MTF_sys2</span> <span class="o">=</span> <span class="p">(</span><span class="n">spdist_mult</span> <span class="o">*</span> <span class="n">p</span><span class="p">[</span><span class="s1">'cmult'</span><span class="p">]</span> <span class="o">*</span> <span class="n">tsys</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="n">p</span><span class="p">[</span><span class="s1">'N'</span><span class="p">]</span>
 
     <span class="c1"># We have several output options:</span>
     <span class="n">all_mtfs</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="n">all_mtfs</span><span class="p">[</span><span class="s1">&#39;perfect&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">MTF_perf</span><span class="o">**</span><span class="mi">2</span>
-    <span class="n">all_mtfs</span><span class="p">[</span><span class="s1">&#39;atmos_ao&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">MTF_atmos_ao</span><span class="o">**</span><span class="mi">2</span>
-    <span class="n">all_mtfs</span><span class="p">[</span><span class="s1">&#39;pixel&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">MTF_pix</span><span class="o">**</span><span class="mi">2</span>
-    <span class="n">all_mtfs</span><span class="p">[</span><span class="s1">&#39;system&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">MTF_sys2</span>
+    <span class="n">all_mtfs</span><span class="p">[</span><span class="s1">'perfect'</span><span class="p">]</span> <span class="o">=</span> <span class="n">MTF_perf</span><span class="o">**</span><span class="mi">2</span>
+    <span class="n">all_mtfs</span><span class="p">[</span><span class="s1">'atmos_ao'</span><span class="p">]</span> <span class="o">=</span> <span class="n">MTF_atmos_ao</span><span class="o">**</span><span class="mi">2</span>
+    <span class="n">all_mtfs</span><span class="p">[</span><span class="s1">'pixel'</span><span class="p">]</span> <span class="o">=</span> <span class="n">MTF_pix</span><span class="o">**</span><span class="mi">2</span>
+    <span class="n">all_mtfs</span><span class="p">[</span><span class="s1">'system'</span><span class="p">]</span> <span class="o">=</span> <span class="n">MTF_sys2</span>
     
     <span class="k">return</span> <span class="n">all_mtfs</span><span class="p">[</span><span class="n">output</span><span class="p">]</span></div>
 
@@ -432,7 +432,7 @@
 <a class="viewcode-back" href="../../../autoapi/kai/mtf/mtf/index.html#kai.mtf.mtf.fitmtf_keck">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">fitmtf_keck</span><span class="p">(</span><span class="n">nu</span><span class="p">,</span> <span class="n">power</span><span class="p">,</span> <span class="n">error</span><span class="p">,</span> <span class="n">pspec_sources</span><span class="p">,</span> 
                 <span class="n">clip</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">startParams</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">relStep</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    NAME:</span>
 <span class="sd">         FITMTF_KECK</span>
 <span class="sd">    </span>
@@ -463,7 +463,7 @@
 <span class="sd">    </span>
 <span class="sd">         A good rule of thumb that seems to work in some (many?) cases</span>
 <span class="sd">         is specifying the step size in the first iteration to be 20% of the</span>
-<span class="sd">         parameters&#39; respective values, and a step size of 2% in the</span>
+<span class="sd">         parameters' respective values, and a step size of 2% in the</span>
 <span class="sd">         second interation.  This can be accomplished by changing the</span>
 <span class="sd">         values of PARINFO[*].relstep from 0.20 to 0.02 within the</span>
 <span class="sd">         procedure or via the RELSTEP keyword defined at the main</span>
@@ -512,14 +512,14 @@
 <span class="sd">      </span>
 <span class="sd">         /QUIET : Set this keyword to supress the printed output of</span>
 <span class="sd">                  MPFIT.  Generally, though, it is good practice to keep</span>
-<span class="sd">                  tabs on what MPFIT is doing as it&#39;s proceding with the</span>
+<span class="sd">                  tabs on what MPFIT is doing as it's proceding with the</span>
 <span class="sd">                  fit.  </span>
 <span class="sd">    </span>
 <span class="sd">    OUTPUTS:</span>
 <span class="sd">         PARAMS:  A structure of the best fit parameters as determined</span>
 <span class="sd">                  by MPFIT; can be used as the input parameters to</span>
 <span class="sd">                  MTFFUNC_KECK, MTF2PSF, MTF2EE, or any of</span>
-<span class="sd">                  MTFFUNC_KECK&#39;s subsidiary routines.  </span>
+<span class="sd">                  MTFFUNC_KECK's subsidiary routines.  </span>
 <span class="sd">    </span>
 <span class="sd">                  The parameters that are fit are L0, sigma, w,</span>
 <span class="sd">                  delta, cmult, N, and r0.  The rest are only supplied</span>
@@ -557,28 +557,28 @@
 <span class="sd">    </span>
 <span class="sd">    EXAMPLE:</span>
 <span class="sd">         read in a fully reduced H-band NIRC2 image</span>
-<span class="sd">         im = READFITS(&#39;myimage.fits&#39;)  </span>
+<span class="sd">         im = READFITS('myimage.fits')  </span>
 <span class="sd">        </span>
 <span class="sd">         calculate its power spectrum</span>
 <span class="sd">         p = {lambda:1.65e-6, D:10.99, F:557.0, APIX:27e-6}</span>
 <span class="sd">         GETMTF, im, p, nu, power, error, spdist</span>
-<span class="sd">         SAVE, nu, power, error, spdist, filename=&#39;mtfdata.sav&#39;</span>
+<span class="sd">         SAVE, nu, power, error, spdist, filename='mtfdata.sav'</span>
 <span class="sd">    </span>
 <span class="sd">         fit an MTF to this data</span>
 <span class="sd">         startp = {wave:1.65e-6, D:10.99, F:557.0, Apix:27e-6, $</span>
-<span class="sd">                   pupil:&#39;largehex&#39;, L0:30.0, sigma:0.56, $</span>
+<span class="sd">                   pupil:'largehex', L0:30.0, sigma:0.56, $</span>
 <span class="sd">                   w:1.3, delta:0.0, cmult:1.0, N:1e-5, r0:0.5}</span>
-<span class="sd">         FITMTF_KECK, &#39;mtfdata.sav&#39;, bestfit_params, start=startp</span>
+<span class="sd">         FITMTF_KECK, 'mtfdata.sav', bestfit_params, start=startp</span>
 <span class="sd">    </span>
 <span class="sd">         zero in on the best fit parameters by editing FITMTF_KECK to</span>
 <span class="sd">         perform the fit using a smaller step size to MPFIT.  Change</span>
 <span class="sd">         PARINFO[*].relstep from 0.20 to 0.02, recomplie FITMTF_KECK,</span>
 <span class="sd">         and perform the fit again using the previous best fit</span>
 <span class="sd">         parameters as the new starting parameters.</span>
-<span class="sd">         FITMTF_KECK, &#39;mtfdata.sav&#39;, bestfit_params2, start=bestfit_params</span>
+<span class="sd">         FITMTF_KECK, 'mtfdata.sav', bestfit_params2, start=bestfit_params</span>
 <span class="sd">    </span>
 <span class="sd">         calculate the encircled energy for the PSF in image</span>
-<span class="sd">         &#39;myimage.fits&#39; at a radius of 25 pixels (at the 0.01 arcsec/pix</span>
+<span class="sd">         'myimage.fits' at a radius of 25 pixels (at the 0.01 arcsec/pix</span>
 <span class="sd">         NIRC2 platescale). </span>
 <span class="sd">         MTF2EE, bestfit_params2, 25.0, EE</span>
 <span class="sd">         print, EE</span>
@@ -594,8 +594,8 @@
 <span class="sd">    </span>
 <span class="sd">    MODIFICATION HISTORY:</span>
 <span class="sd">         Written by Christopher D. Sheehy, January 2006.</span>
-<span class="sd">         Added &quot;niter&quot; keyword, Nate McCrady, May 17, 2007.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">         Added "niter" keyword, Nate McCrady, May 17, 2007.</span>
+<span class="sd">    """</span>
 
     <span class="k">if</span> <span class="n">clip</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">nu</span> <span class="o">&lt;=</span> <span class="n">clip</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
@@ -613,10 +613,10 @@
     <span class="k">if</span> <span class="n">startParams</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">wave</span> <span class="o">=</span> <span class="mf">1.65e-6</span>       <span class="c1"># wavelength in meters</span>
         <span class="n">F</span> <span class="o">=</span> <span class="mf">557.0</span>            <span class="c1"># effective focal length in meters</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Using effective focal length for the narrow camera.&#39;</span><span class="p">,</span> <span class="n">F</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">'Using effective focal length for the narrow camera.'</span><span class="p">,</span> <span class="n">F</span><span class="p">)</span>
         <span class="n">D</span> <span class="o">=</span> <span class="mf">10.99</span>            <span class="c1"># primary mirror diamter in meters</span>
-        <span class="n">pupil</span> <span class="o">=</span> <span class="s1">&#39;largehex&#39;</span>   <span class="c1"># NIRC2 pupil-stop</span>
-        <span class="n">Apix</span> <span class="o">=</span> <span class="mf">27e-6</span>         <span class="c1"># width of detector&#39;s pixel in meters</span>
+        <span class="n">pupil</span> <span class="o">=</span> <span class="s1">'largehex'</span>   <span class="c1"># NIRC2 pupil-stop</span>
+        <span class="n">Apix</span> <span class="o">=</span> <span class="mf">27e-6</span>         <span class="c1"># width of detector's pixel in meters</span>
         <span class="n">L0</span> <span class="o">=</span> <span class="mf">20.0</span>            <span class="c1"># outer scale of turbulence in meters</span>
         <span class="n">sigma</span> <span class="o">=</span> <span class="mf">0.56</span>         <span class="c1"># IF width on primary in meters</span>
         <span class="n">w</span> <span class="o">=</span> <span class="mf">1.3</span>              <span class="c1"># IF height</span>
@@ -625,65 +625,65 @@
         <span class="n">N</span> <span class="o">=</span> <span class="mf">1e-5</span>             <span class="c1"># additive noise floor constant</span>
         <span class="n">r0</span> <span class="o">=</span> <span class="mf">0.5</span>             <span class="c1"># wavelength specific Fried parameter in meters</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">wave</span> <span class="o">=</span> <span class="n">startParams</span><span class="p">[</span><span class="s1">&#39;wave&#39;</span><span class="p">]</span>
-        <span class="n">F</span> <span class="o">=</span> <span class="n">startParams</span><span class="p">[</span><span class="s1">&#39;F&#39;</span><span class="p">]</span>
-        <span class="n">D</span> <span class="o">=</span> <span class="n">startParams</span><span class="p">[</span><span class="s1">&#39;D&#39;</span><span class="p">]</span>
-        <span class="n">pupil</span> <span class="o">=</span> <span class="n">startParams</span><span class="p">[</span><span class="s1">&#39;pupil&#39;</span><span class="p">]</span>
-        <span class="n">Apix</span> <span class="o">=</span> <span class="n">startParams</span><span class="p">[</span><span class="s1">&#39;Apix&#39;</span><span class="p">]</span>
-        <span class="n">L0</span> <span class="o">=</span> <span class="n">startParams</span><span class="p">[</span><span class="s1">&#39;L0&#39;</span><span class="p">]</span>
-        <span class="n">sigma</span> <span class="o">=</span> <span class="n">startParams</span><span class="p">[</span><span class="s1">&#39;sigma&#39;</span><span class="p">]</span>
-        <span class="n">w</span> <span class="o">=</span> <span class="n">startParams</span><span class="p">[</span><span class="s1">&#39;w&#39;</span><span class="p">]</span>
-        <span class="n">delta</span> <span class="o">=</span> <span class="n">startParams</span><span class="p">[</span><span class="s1">&#39;delta&#39;</span><span class="p">]</span>
-        <span class="n">cmult</span> <span class="o">=</span> <span class="n">startParams</span><span class="p">[</span><span class="s1">&#39;cmult&#39;</span><span class="p">]</span>
-        <span class="n">N</span> <span class="o">=</span> <span class="n">startParams</span><span class="p">[</span><span class="s1">&#39;N&#39;</span><span class="p">]</span>
-        <span class="n">r0</span> <span class="o">=</span> <span class="n">startParams</span><span class="p">[</span><span class="s1">&#39;r0&#39;</span><span class="p">]</span>
+        <span class="n">wave</span> <span class="o">=</span> <span class="n">startParams</span><span class="p">[</span><span class="s1">'wave'</span><span class="p">]</span>
+        <span class="n">F</span> <span class="o">=</span> <span class="n">startParams</span><span class="p">[</span><span class="s1">'F'</span><span class="p">]</span>
+        <span class="n">D</span> <span class="o">=</span> <span class="n">startParams</span><span class="p">[</span><span class="s1">'D'</span><span class="p">]</span>
+        <span class="n">pupil</span> <span class="o">=</span> <span class="n">startParams</span><span class="p">[</span><span class="s1">'pupil'</span><span class="p">]</span>
+        <span class="n">Apix</span> <span class="o">=</span> <span class="n">startParams</span><span class="p">[</span><span class="s1">'Apix'</span><span class="p">]</span>
+        <span class="n">L0</span> <span class="o">=</span> <span class="n">startParams</span><span class="p">[</span><span class="s1">'L0'</span><span class="p">]</span>
+        <span class="n">sigma</span> <span class="o">=</span> <span class="n">startParams</span><span class="p">[</span><span class="s1">'sigma'</span><span class="p">]</span>
+        <span class="n">w</span> <span class="o">=</span> <span class="n">startParams</span><span class="p">[</span><span class="s1">'w'</span><span class="p">]</span>
+        <span class="n">delta</span> <span class="o">=</span> <span class="n">startParams</span><span class="p">[</span><span class="s1">'delta'</span><span class="p">]</span>
+        <span class="n">cmult</span> <span class="o">=</span> <span class="n">startParams</span><span class="p">[</span><span class="s1">'cmult'</span><span class="p">]</span>
+        <span class="n">N</span> <span class="o">=</span> <span class="n">startParams</span><span class="p">[</span><span class="s1">'N'</span><span class="p">]</span>
+        <span class="n">r0</span> <span class="o">=</span> <span class="n">startParams</span><span class="p">[</span><span class="s1">'r0'</span><span class="p">]</span>
         
     <span class="c1"># Declare the structure to pass parameters to mpfit</span>
-    <span class="n">parinfo</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span> <span class="s1">&#39;fixed&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;limited&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="s1">&#39;limits&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">],</span>
-               <span class="s1">&#39;relstep&#39;</span><span class="p">:</span> <span class="n">relStep</span><span class="p">,</span> <span class="s1">&#39;parname&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">}</span>
+    <span class="n">parinfo</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'value'</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span> <span class="s1">'fixed'</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">'limited'</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="s1">'limits'</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">],</span>
+               <span class="s1">'relstep'</span><span class="p">:</span> <span class="n">relStep</span><span class="p">,</span> <span class="s1">'parname'</span><span class="p">:</span> <span class="s1">''</span><span class="p">}</span>
     <span class="n">pinfo</span> <span class="o">=</span> <span class="p">[</span><span class="n">parinfo</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">7</span><span class="p">)]</span>
 
     <span class="c1"># additive constant for model MTF    </span>
-    <span class="n">pinfo</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;parname&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;N&#39;</span>    
-    <span class="n">pinfo</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;value&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">N</span>
+    <span class="n">pinfo</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">'parname'</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'N'</span>    
+    <span class="n">pinfo</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">'value'</span><span class="p">]</span> <span class="o">=</span> <span class="n">N</span>
 
     <span class="c1"># Fried parameter in meters</span>
-    <span class="n">pinfo</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;parname&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;r_0&#39;</span>   
-    <span class="n">pinfo</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;value&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">r0</span>
-    <span class="n">pinfo</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;limits&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.05</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">]</span>
+    <span class="n">pinfo</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">'parname'</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'r_0'</span>   
+    <span class="n">pinfo</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">'value'</span><span class="p">]</span> <span class="o">=</span> <span class="n">r0</span>
+    <span class="n">pinfo</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">'limits'</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.05</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">]</span>
 
     <span class="c1"># multiplicative constant for model MTF</span>
-    <span class="n">pinfo</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="s1">&#39;parname&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;cmult&#39;</span> 
-    <span class="n">pinfo</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="s1">&#39;value&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cmult</span>
-    <span class="n">pinfo</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="s1">&#39;limited&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
-    <span class="n">pinfo</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="s1">&#39;limits&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">pinfo</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="s1">'parname'</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'cmult'</span> 
+    <span class="n">pinfo</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="s1">'value'</span><span class="p">]</span> <span class="o">=</span> <span class="n">cmult</span>
+    <span class="n">pinfo</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="s1">'limited'</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">pinfo</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="s1">'limits'</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
 
-    <span class="c1"># w of influence func&#39;s 1st gaussian</span>
-    <span class="n">pinfo</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="s1">&#39;parname&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;w&#39;</span>      
-    <span class="n">pinfo</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="s1">&#39;value&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">w</span>
-    <span class="n">pinfo</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="s1">&#39;limited&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
-    <span class="n">pinfo</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="s1">&#39;limits&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">2.01</span><span class="p">]</span>
+    <span class="c1"># w of influence func's 1st gaussian</span>
+    <span class="n">pinfo</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="s1">'parname'</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'w'</span>      
+    <span class="n">pinfo</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="s1">'value'</span><span class="p">]</span> <span class="o">=</span> <span class="n">w</span>
+    <span class="n">pinfo</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="s1">'limited'</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="n">pinfo</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="s1">'limits'</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">2.01</span><span class="p">]</span>
 
     <span class="c1"># outer turbulence scale, L_0, in meters</span>
-    <span class="n">pinfo</span><span class="p">[</span><span class="mi">4</span><span class="p">][</span><span class="s1">&#39;parname&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;L0&#39;</span>
-    <span class="n">pinfo</span><span class="p">[</span><span class="mi">4</span><span class="p">][</span><span class="s1">&#39;value&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">L0</span>   
-    <span class="n">pinfo</span><span class="p">[</span><span class="mi">4</span><span class="p">][</span><span class="s1">&#39;fixed&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="n">pinfo</span><span class="p">[</span><span class="mi">4</span><span class="p">][</span><span class="s1">&#39;limited&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
-    <span class="n">pinfo</span><span class="p">[</span><span class="mi">4</span><span class="p">][</span><span class="s1">&#39;limits&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">3500.</span><span class="p">]</span>
+    <span class="n">pinfo</span><span class="p">[</span><span class="mi">4</span><span class="p">][</span><span class="s1">'parname'</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'L0'</span>
+    <span class="n">pinfo</span><span class="p">[</span><span class="mi">4</span><span class="p">][</span><span class="s1">'value'</span><span class="p">]</span> <span class="o">=</span> <span class="n">L0</span>   
+    <span class="n">pinfo</span><span class="p">[</span><span class="mi">4</span><span class="p">][</span><span class="s1">'fixed'</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">pinfo</span><span class="p">[</span><span class="mi">4</span><span class="p">][</span><span class="s1">'limited'</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="n">pinfo</span><span class="p">[</span><span class="mi">4</span><span class="p">][</span><span class="s1">'limits'</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">3500.</span><span class="p">]</span>
 
-    <span class="c1"># sigma of influ. func&#39;s 1st gaussian (meters)</span>
-    <span class="n">pinfo</span><span class="p">[</span><span class="mi">5</span><span class="p">][</span><span class="s1">&#39;parname&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;sigma&#39;</span>
-    <span class="n">pinfo</span><span class="p">[</span><span class="mi">5</span><span class="p">][</span><span class="s1">&#39;value&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sigma</span>
-    <span class="n">pinfo</span><span class="p">[</span><span class="mi">5</span><span class="p">][</span><span class="s1">&#39;fixed&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="c1"># sigma of influ. func's 1st gaussian (meters)</span>
+    <span class="n">pinfo</span><span class="p">[</span><span class="mi">5</span><span class="p">][</span><span class="s1">'parname'</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'sigma'</span>
+    <span class="n">pinfo</span><span class="p">[</span><span class="mi">5</span><span class="p">][</span><span class="s1">'value'</span><span class="p">]</span> <span class="o">=</span> <span class="n">sigma</span>
+    <span class="n">pinfo</span><span class="p">[</span><span class="mi">5</span><span class="p">][</span><span class="s1">'fixed'</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
 
     <span class="c1"># additive noise factor</span>
-    <span class="n">pinfo</span><span class="p">[</span><span class="mi">6</span><span class="p">][</span><span class="s1">&#39;parname&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;delta&#39;</span>  
-    <span class="n">pinfo</span><span class="p">[</span><span class="mi">6</span><span class="p">][</span><span class="s1">&#39;value&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">delta</span>
-    <span class="n">pinfo</span><span class="p">[</span><span class="mi">6</span><span class="p">][</span><span class="s1">&#39;fixed&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
-    <span class="n">pinfo</span><span class="p">[</span><span class="mi">6</span><span class="p">][</span><span class="s1">&#39;limited&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
-    <span class="n">pinfo</span><span class="p">[</span><span class="mi">6</span><span class="p">][</span><span class="s1">&#39;limits&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">pinfo</span><span class="p">[</span><span class="mi">6</span><span class="p">][</span><span class="s1">'parname'</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'delta'</span>  
+    <span class="n">pinfo</span><span class="p">[</span><span class="mi">6</span><span class="p">][</span><span class="s1">'value'</span><span class="p">]</span> <span class="o">=</span> <span class="n">delta</span>
+    <span class="n">pinfo</span><span class="p">[</span><span class="mi">6</span><span class="p">][</span><span class="s1">'fixed'</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">pinfo</span><span class="p">[</span><span class="mi">6</span><span class="p">][</span><span class="s1">'limited'</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">pinfo</span><span class="p">[</span><span class="mi">6</span><span class="p">][</span><span class="s1">'limits'</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
 
-    <span class="n">startp</span> <span class="o">=</span> <span class="p">[</span><span class="n">pinfo</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s1">&#39;value&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">pinfo</span><span class="p">))]</span>
+    <span class="n">startp</span> <span class="o">=</span> <span class="p">[</span><span class="n">pinfo</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s1">'value'</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">pinfo</span><span class="p">))]</span>
         
     <span class="c1"># Pass in constant parameters using the keyword functargs</span>
     <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">pupil</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span><span class="p">:</span>
@@ -694,9 +694,9 @@
         <span class="c1"># is just a secondary obscuration.</span>
         <span class="n">tp</span> <span class="o">=</span> <span class="n">t_perfect</span><span class="p">(</span><span class="n">xx</span><span class="p">,</span> <span class="n">pupil</span><span class="p">)</span>
 
-    <span class="n">fcnargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;nu&#39;</span><span class="p">:</span> <span class="n">xx</span><span class="p">,</span> <span class="s1">&#39;obs&#39;</span><span class="p">:</span> <span class="n">data</span><span class="p">,</span> <span class="s1">&#39;err&#39;</span><span class="p">:</span> <span class="n">err</span><span class="p">,</span>
-               <span class="s1">&#39;wave&#39;</span><span class="p">:</span> <span class="n">wave</span><span class="p">,</span> <span class="s1">&#39;F&#39;</span><span class="p">:</span> <span class="n">F</span><span class="p">,</span> <span class="s1">&#39;D&#39;</span><span class="p">:</span> <span class="n">D</span><span class="p">,</span> <span class="s1">&#39;Apix&#39;</span><span class="p">:</span> <span class="n">Apix</span><span class="p">,</span> 
-               <span class="s1">&#39;pupil&#39;</span><span class="p">:</span> <span class="n">pupil</span><span class="p">,</span> <span class="s1">&#39;tperf&#39;</span><span class="p">:</span> <span class="n">tp</span><span class="p">,</span> <span class="s1">&#39;sources&#39;</span><span class="p">:</span> <span class="n">spdist</span><span class="p">,</span>
+    <span class="n">fcnargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'nu'</span><span class="p">:</span> <span class="n">xx</span><span class="p">,</span> <span class="s1">'obs'</span><span class="p">:</span> <span class="n">data</span><span class="p">,</span> <span class="s1">'err'</span><span class="p">:</span> <span class="n">err</span><span class="p">,</span>
+               <span class="s1">'wave'</span><span class="p">:</span> <span class="n">wave</span><span class="p">,</span> <span class="s1">'F'</span><span class="p">:</span> <span class="n">F</span><span class="p">,</span> <span class="s1">'D'</span><span class="p">:</span> <span class="n">D</span><span class="p">,</span> <span class="s1">'Apix'</span><span class="p">:</span> <span class="n">Apix</span><span class="p">,</span> 
+               <span class="s1">'pupil'</span><span class="p">:</span> <span class="n">pupil</span><span class="p">,</span> <span class="s1">'tperf'</span><span class="p">:</span> <span class="n">tp</span><span class="p">,</span> <span class="s1">'sources'</span><span class="p">:</span> <span class="n">spdist</span><span class="p">,</span>
                <span class="p">}</span>
     
     <span class="c1"># Call the fitting routine MPFIT, passing it the function that returns</span>
@@ -712,45 +712,45 @@
                   <span class="n">fjac</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">fit</span> <span class="o">=</span> <span class="n">mtffunc_keck</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">nu</span><span class="o">=</span><span class="n">nu</span><span class="p">,</span> <span class="n">wave</span><span class="o">=</span><span class="n">wave</span><span class="p">,</span> <span class="n">F</span><span class="o">=</span><span class="n">F</span><span class="p">,</span> <span class="n">D</span><span class="o">=</span><span class="n">D</span><span class="p">,</span> <span class="n">Apix</span><span class="o">=</span><span class="n">Apix</span><span class="p">,</span>
                            <span class="n">pupil</span><span class="o">=</span><span class="n">pupil</span><span class="p">,</span> <span class="n">tperf</span><span class="o">=</span><span class="n">tperf</span><span class="p">,</span> <span class="n">sources</span><span class="o">=</span><span class="n">sources</span><span class="p">,</span>
-                           <span class="n">output</span><span class="o">=</span><span class="s1">&#39;system&#39;</span><span class="p">,</span> <span class="n">fjac</span><span class="o">=</span><span class="n">fjac</span><span class="p">)</span>
+                           <span class="n">output</span><span class="o">=</span><span class="s1">'system'</span><span class="p">,</span> <span class="n">fjac</span><span class="o">=</span><span class="n">fjac</span><span class="p">)</span>
 
         <span class="c1"># Check for appropriate error weighting. Otherwise, simply unweighted.</span>
         <span class="n">res</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">fit</span><span class="p">))</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
         <span class="c1">#res = (obs - fit) / err</span>
         
         <span class="n">param_dict</span> <span class="o">=</span> <span class="n">params_arr2dict</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
-        <span class="n">paramStr</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="n">paramStr</span> <span class="o">=</span> <span class="s1">''</span>
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">param_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="n">paramStr</span> <span class="o">+=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">=</span><span class="si">%.2g</span><span class="s1"> &#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+            <span class="n">paramStr</span> <span class="o">+=</span> <span class="s1">'</span><span class="si">%s</span><span class="s1">=</span><span class="si">%.2g</span><span class="s1"> '</span> <span class="o">%</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
 
         <span class="n">py</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
-        <span class="n">py</span><span class="o">.</span><span class="n">semilogy</span><span class="p">(</span><span class="n">nu</span><span class="p">,</span> <span class="n">obs</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Observed&#39;</span><span class="p">)</span>
-        <span class="n">py</span><span class="o">.</span><span class="n">semilogy</span><span class="p">(</span><span class="n">nu</span><span class="p">,</span> <span class="n">fit</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Fit&#39;</span><span class="p">)</span>
+        <span class="n">py</span><span class="o">.</span><span class="n">semilogy</span><span class="p">(</span><span class="n">nu</span><span class="p">,</span> <span class="n">obs</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">'Observed'</span><span class="p">)</span>
+        <span class="n">py</span><span class="o">.</span><span class="n">semilogy</span><span class="p">(</span><span class="n">nu</span><span class="p">,</span> <span class="n">fit</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">'Fit'</span><span class="p">)</span>
         <span class="n">py</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
         <span class="n">py</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">paramStr</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
         <span class="n">py</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
 
         <span class="k">return</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">res</span><span class="p">)</span>
 
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Start Fitting: &#39;</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">ctime</span><span class="p">())</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'Start Fitting: '</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">ctime</span><span class="p">())</span>
     <span class="n">fit</span> <span class="o">=</span> <span class="n">mpfit</span><span class="o">.</span><span class="n">mpfit</span><span class="p">(</span><span class="n">residuals</span><span class="p">,</span> <span class="n">startp</span><span class="p">,</span> <span class="n">nprint</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
                       <span class="n">parinfo</span><span class="o">=</span><span class="n">pinfo</span><span class="p">,</span> <span class="n">functkw</span><span class="o">=</span><span class="n">fcnargs</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Stop Fitting: &#39;</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">ctime</span><span class="p">())</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'Stop Fitting: '</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">ctime</span><span class="p">())</span>
 
     <span class="n">params</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="n">params</span><span class="p">[</span><span class="s1">&#39;wave&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fcnargs</span><span class="p">[</span><span class="s1">&#39;wave&#39;</span><span class="p">]</span>
-    <span class="n">params</span><span class="p">[</span><span class="s1">&#39;F&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fcnargs</span><span class="p">[</span><span class="s1">&#39;F&#39;</span><span class="p">]</span>
-    <span class="n">params</span><span class="p">[</span><span class="s1">&#39;D&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fcnargs</span><span class="p">[</span><span class="s1">&#39;D&#39;</span><span class="p">]</span>
-    <span class="n">params</span><span class="p">[</span><span class="s1">&#39;Apix&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fcnargs</span><span class="p">[</span><span class="s1">&#39;Apix&#39;</span><span class="p">]</span>
-    <span class="n">params</span><span class="p">[</span><span class="s1">&#39;pupil&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fcnargs</span><span class="p">[</span><span class="s1">&#39;pupil&#39;</span><span class="p">]</span>
+    <span class="n">params</span><span class="p">[</span><span class="s1">'wave'</span><span class="p">]</span> <span class="o">=</span> <span class="n">fcnargs</span><span class="p">[</span><span class="s1">'wave'</span><span class="p">]</span>
+    <span class="n">params</span><span class="p">[</span><span class="s1">'F'</span><span class="p">]</span> <span class="o">=</span> <span class="n">fcnargs</span><span class="p">[</span><span class="s1">'F'</span><span class="p">]</span>
+    <span class="n">params</span><span class="p">[</span><span class="s1">'D'</span><span class="p">]</span> <span class="o">=</span> <span class="n">fcnargs</span><span class="p">[</span><span class="s1">'D'</span><span class="p">]</span>
+    <span class="n">params</span><span class="p">[</span><span class="s1">'Apix'</span><span class="p">]</span> <span class="o">=</span> <span class="n">fcnargs</span><span class="p">[</span><span class="s1">'Apix'</span><span class="p">]</span>
+    <span class="n">params</span><span class="p">[</span><span class="s1">'pupil'</span><span class="p">]</span> <span class="o">=</span> <span class="n">fcnargs</span><span class="p">[</span><span class="s1">'pupil'</span><span class="p">]</span>
     <span class="n">params</span><span class="o">.</span><span class="n">update</span><span class="p">(</span> <span class="n">params_arr2dict</span><span class="p">(</span><span class="n">fit</span><span class="o">.</span><span class="n">params</span><span class="p">)</span> <span class="p">)</span>
 
     <span class="n">perror</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="n">perror</span><span class="p">[</span><span class="s1">&#39;wave&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="n">perror</span><span class="p">[</span><span class="s1">&#39;F&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="n">perror</span><span class="p">[</span><span class="s1">&#39;D&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="n">perror</span><span class="p">[</span><span class="s1">&#39;Apix&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="n">perror</span><span class="p">[</span><span class="s1">&#39;pupil&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">perror</span><span class="p">[</span><span class="s1">'wave'</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">perror</span><span class="p">[</span><span class="s1">'F'</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">perror</span><span class="p">[</span><span class="s1">'D'</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">perror</span><span class="p">[</span><span class="s1">'Apix'</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">perror</span><span class="p">[</span><span class="s1">'pupil'</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">perror</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">params_arr2dict</span><span class="p">(</span><span class="n">fit</span><span class="o">.</span><span class="n">perror</span><span class="p">))</span>
     
     <span class="n">output</span> <span class="o">=</span> <span class="n">DataHolder</span><span class="p">()</span>
@@ -772,13 +772,13 @@
 <a class="viewcode-back" href="../../../autoapi/kai/mtf/mtf/index.html#kai.mtf.mtf.params_arr2dict">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">params_arr2dict</span><span class="p">(</span><span class="n">param_array</span><span class="p">):</span>
     <span class="n">param_dict</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="n">param_dict</span><span class="p">[</span><span class="s1">&#39;N&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">param_array</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="n">param_dict</span><span class="p">[</span><span class="s1">&#39;r0&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">param_array</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-    <span class="n">param_dict</span><span class="p">[</span><span class="s1">&#39;cmult&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">param_array</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
-    <span class="n">param_dict</span><span class="p">[</span><span class="s1">&#39;w&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">param_array</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
-    <span class="n">param_dict</span><span class="p">[</span><span class="s1">&#39;L0&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">param_array</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
-    <span class="n">param_dict</span><span class="p">[</span><span class="s1">&#39;sigma&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">param_array</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>
-    <span class="n">param_dict</span><span class="p">[</span><span class="s1">&#39;delta&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">param_array</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span>
+    <span class="n">param_dict</span><span class="p">[</span><span class="s1">'N'</span><span class="p">]</span> <span class="o">=</span> <span class="n">param_array</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">param_dict</span><span class="p">[</span><span class="s1">'r0'</span><span class="p">]</span> <span class="o">=</span> <span class="n">param_array</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">param_dict</span><span class="p">[</span><span class="s1">'cmult'</span><span class="p">]</span> <span class="o">=</span> <span class="n">param_array</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">param_dict</span><span class="p">[</span><span class="s1">'w'</span><span class="p">]</span> <span class="o">=</span> <span class="n">param_array</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+    <span class="n">param_dict</span><span class="p">[</span><span class="s1">'L0'</span><span class="p">]</span> <span class="o">=</span> <span class="n">param_array</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+    <span class="n">param_dict</span><span class="p">[</span><span class="s1">'sigma'</span><span class="p">]</span> <span class="o">=</span> <span class="n">param_array</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>
+    <span class="n">param_dict</span><span class="p">[</span><span class="s1">'delta'</span><span class="p">]</span> <span class="o">=</span> <span class="n">param_array</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span>
     
     <span class="k">return</span> <span class="n">param_dict</span></div>
 
@@ -787,13 +787,13 @@
 <a class="viewcode-back" href="../../../autoapi/kai/mtf/mtf/index.html#kai.mtf.mtf.params_dict2arr">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">params_dict2arr</span><span class="p">(</span><span class="n">param_dict</span><span class="p">):</span>
     <span class="n">param_arr</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">param_arr</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">param_dict</span><span class="p">[</span><span class="s1">&#39;N&#39;</span><span class="p">]</span>
-    <span class="n">param_arr</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">param_dict</span><span class="p">[</span><span class="s1">&#39;r0&#39;</span><span class="p">]</span>
-    <span class="n">param_arr</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">param_dict</span><span class="p">[</span><span class="s1">&#39;cmult&#39;</span><span class="p">]</span>
-    <span class="n">param_arr</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">param_dict</span><span class="p">[</span><span class="s1">&#39;w&#39;</span><span class="p">]</span>
-    <span class="n">param_arr</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="n">param_dict</span><span class="p">[</span><span class="s1">&#39;L0&#39;</span><span class="p">]</span>
-    <span class="n">param_arr</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="o">=</span> <span class="n">param_dict</span><span class="p">[</span><span class="s1">&#39;sigma&#39;</span><span class="p">]</span>
-    <span class="n">param_arr</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span> <span class="o">=</span> <span class="n">param_dict</span><span class="p">[</span><span class="s1">&#39;delta&#39;</span><span class="p">]</span>
+    <span class="n">param_arr</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">param_dict</span><span class="p">[</span><span class="s1">'N'</span><span class="p">]</span>
+    <span class="n">param_arr</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">param_dict</span><span class="p">[</span><span class="s1">'r0'</span><span class="p">]</span>
+    <span class="n">param_arr</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">param_dict</span><span class="p">[</span><span class="s1">'cmult'</span><span class="p">]</span>
+    <span class="n">param_arr</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">param_dict</span><span class="p">[</span><span class="s1">'w'</span><span class="p">]</span>
+    <span class="n">param_arr</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="n">param_dict</span><span class="p">[</span><span class="s1">'L0'</span><span class="p">]</span>
+    <span class="n">param_arr</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="o">=</span> <span class="n">param_dict</span><span class="p">[</span><span class="s1">'sigma'</span><span class="p">]</span>
+    <span class="n">param_arr</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span> <span class="o">=</span> <span class="n">param_dict</span><span class="p">[</span><span class="s1">'delta'</span><span class="p">]</span>
     
     <span class="k">return</span> <span class="n">param_arr</span></div>
 
@@ -802,7 +802,7 @@
 <div class="viewcode-block" id="t_perfect_keck">
 <a class="viewcode-back" href="../../../autoapi/kai/mtf/mtf/index.html#kai.mtf.mtf.t_perfect_keck">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">t_perfect_keck</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">pupil</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    NAME:</span>
 <span class="sd">           T_PERFECT_KECK</span>
 <span class="sd">    </span>
@@ -825,20 +825,20 @@
 <span class="sd">                spatial frequencies are normalized, i.e. not necessarily</span>
 <span class="sd">                the oft-quoted effective diameter of 10 meters.  </span>
 <span class="sd">                If D is a scalar or a 1-element array, this value is</span>
-<span class="sd">                used.  Otherwise D must be a structure with the tag &quot;D&quot;</span>
+<span class="sd">                used.  Otherwise D must be a structure with the tag "D"</span>
 <span class="sd">                defined, as per the definition of PARAMS in</span>
 <span class="sd">                MTFFUNC_KECK. </span>
 <span class="sd">    </span>
 <span class="sd">    KEYWORD PARAMETERS:</span>
 <span class="sd">           PUPIL:      Set this keyword to a string to select the</span>
 <span class="sd">                       NIRC2 pupil-stop.  Available choices are</span>
-<span class="sd">                          &#39;OPEN&#39;</span>
-<span class="sd">                          &#39;LARGEHEX&#39;</span>
-<span class="sd">                          &#39;MEDIUMHEX&#39;</span>
-<span class="sd">                          &#39;SMALLHEX&#39;</span>
-<span class="sd">                          &#39;INCIRCLE&#39;</span>
+<span class="sd">                          'OPEN'</span>
+<span class="sd">                          'LARGEHEX'</span>
+<span class="sd">                          'MEDIUMHEX'</span>
+<span class="sd">                          'SMALLHEX'</span>
+<span class="sd">                          'INCIRCLE'</span>
 <span class="sd">                       If this keyword is not set, the default pupil is</span>
-<span class="sd">                       &#39;LARGEHEX&#39;. (See documentation for NIRC2PUPIL.)</span>
+<span class="sd">                       'LARGEHEX'. (See documentation for NIRC2PUPIL.)</span>
 <span class="sd">    </span>
 <span class="sd">    OUTPUTS:</span>
 <span class="sd">           RESULT:  The diffraction limited MTF (N.B. not the square of</span>
@@ -858,13 +858,13 @@
 <span class="sd">    MODIFICATION HISTORY:</span>
 <span class="sd">           Written by Christopher D. Sheehy, January 2006.</span>
 <span class="sd">           Commented by Nate McCrady, January 2008.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># Some image testing to catch unexpected inputs</span>
     <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Input NU cannot be less than zeros.&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">'Input NU cannot be less than zeros.'</span><span class="p">)</span>
         <span class="k">return</span>
     <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">==</span> <span class="nb">dict</span><span class="p">:</span>
-        <span class="n">D</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="s1">&#39;D&#39;</span><span class="p">]</span>
+        <span class="n">D</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="s1">'D'</span><span class="p">]</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">D</span> <span class="o">=</span> <span class="n">p</span>
 
@@ -897,7 +897,7 @@
     <span class="c1"># Define cutoff frequency in pixel units</span>
     <span class="n">maxpix</span> <span class="o">=</span> <span class="n">D</span> <span class="o">/</span> <span class="n">mperpix</span>
     <span class="n">f</span> <span class="o">=</span> <span class="n">pix</span> <span class="o">/</span> <span class="n">maxpix</span>
-    <span class="c1"># Radially binning doesn&#39;t give a value for r=0, which must be 1</span>
+    <span class="c1"># Radially binning doesn't give a value for r=0, which must be 1</span>
     <span class="n">f</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="mi">0</span><span class="p">],</span> <span class="n">f</span><span class="p">)</span>
     <span class="n">val</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="mi">1</span><span class="p">],</span> <span class="n">val</span><span class="p">)</span>
 
@@ -915,9 +915,9 @@
 <div class="viewcode-block" id="autocorr2d">
 <a class="viewcode-back" href="../../../autoapi/kai/mtf/mtf/index.html#kai.mtf.mtf.autocorr2d">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">autocorr2d</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    2D auto correlation.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">npix</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">d</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
     <span class="n">d_fft</span> <span class="o">=</span> <span class="n">fftpack</span><span class="o">.</span><span class="n">fft2</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
 
@@ -933,8 +933,8 @@
 
 <div class="viewcode-block" id="nirc2pupil">
 <a class="viewcode-back" href="../../../autoapi/kai/mtf/mtf/index.html#kai.mtf.mtf.nirc2pupil">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">nirc2pupil</span><span class="p">(</span><span class="n">npix</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span> <span class="n">du</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">pmsname</span><span class="o">=</span><span class="s1">&#39;largehex&#39;</span><span class="p">,</span> <span class="n">pmrangl</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">nirc2pupil</span><span class="p">(</span><span class="n">npix</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span> <span class="n">du</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">pmsname</span><span class="o">=</span><span class="s1">'largehex'</span><span class="p">,</span> <span class="n">pmrangl</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    NAME:</span>
 <span class="sd">    	NIRC2PUPIL</span>
 <span class="sd">    </span>
@@ -959,13 +959,13 @@
 <span class="sd">    </span>
 <span class="sd">    	DU = platescale of pupil image, in m/pixel at the telescope primary</span>
 <span class="sd">    </span>
-<span class="sd">    	PMSNAME = pupil stop name, eg. &#39;largehex&#39; (the default).</span>
+<span class="sd">    	PMSNAME = pupil stop name, eg. 'largehex' (the default).</span>
 <span class="sd">    </span>
-<span class="sd">    	PMRANGL = pupil drive&#39;s angular position (for rotated pupil images).</span>
+<span class="sd">    	PMRANGL = pupil drive's angular position (for rotated pupil images).</span>
 <span class="sd">    	  NOT TESTED.  There could be an offset and/or a sign flip needed!</span>
 <span class="sd">    </span>
 <span class="sd">    EXAMPLE:</span>
-<span class="sd">    	pupil = NIRC2PUPIL(npix=512, du=0.05, PMSNAME=&#39;open&#39;)</span>
+<span class="sd">    	pupil = NIRC2PUPIL(npix=512, du=0.05, PMSNAME='open')</span>
 <span class="sd">    </span>
 <span class="sd">    ERROR HANDLING:</span>
 <span class="sd">    	none</span>
@@ -982,7 +982,7 @@
 <span class="sd">    </span>
 <span class="sd">    MODIFICATION HISTORY:</span>
 <span class="sd">    	Original writen May 2004, A. Bouchez, W.M. Keck Observatory</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">du</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">du</span> <span class="o">=</span> <span class="mf">2.124e-6</span> <span class="o">/</span> <span class="p">(</span><span class="n">npix</span> <span class="o">*</span> <span class="mf">0.00995</span> <span class="o">/</span> <span class="mf">206265.0</span><span class="p">)</span>
 
@@ -990,11 +990,11 @@
     <span class="n">pmsstr</span> <span class="o">=</span> <span class="n">pmsname</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
 
     <span class="n">pmsInfo</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="n">pmsInfo</span><span class="p">[</span><span class="s1">&#39;OPEN&#39;</span><span class="p">]</span> <span class="o">=</span>      <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.4900</span><span class="p">,</span> <span class="mf">0.4200</span><span class="p">,</span> <span class="mf">0.3500</span><span class="p">,</span> <span class="mf">0.2800</span><span class="p">,</span> <span class="mf">0.0000</span><span class="p">,</span> <span class="mf">0.0000</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
-    <span class="n">pmsInfo</span><span class="p">[</span><span class="s1">&#39;LARGEHEX&#39;</span><span class="p">]</span> <span class="o">=</span>  <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.4790</span><span class="p">,</span> <span class="mf">0.4090</span><span class="p">,</span> <span class="mf">0.3390</span><span class="p">,</span> <span class="mf">0.2690</span><span class="p">,</span> <span class="mf">0.1170</span><span class="p">,</span> <span class="mf">0.0020</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
-    <span class="n">pmsInfo</span><span class="p">[</span><span class="s1">&#39;MEDIUMHEX&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.4710</span><span class="p">,</span> <span class="mf">0.4010</span><span class="p">,</span> <span class="mf">0.3310</span><span class="p">,</span> <span class="mf">0.2610</span><span class="p">,</span> <span class="mf">0.1250</span><span class="p">,</span> <span class="mf">0.0030</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
-    <span class="n">pmsInfo</span><span class="p">[</span><span class="s1">&#39;SMALLHEX&#39;</span><span class="p">]</span> <span class="o">=</span>  <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.4510</span><span class="p">,</span> <span class="mf">0.3810</span><span class="p">,</span> <span class="mf">0.3110</span><span class="p">,</span> <span class="mf">0.2410</span><span class="p">,</span> <span class="mf">0.1450</span><span class="p">,</span> <span class="mf">0.0030</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
-    <span class="n">pmsInfo</span><span class="p">[</span><span class="s1">&#39;INCIRCLE&#39;</span><span class="p">]</span> <span class="o">=</span>  <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.3920</span><span class="p">,</span> <span class="mf">0.1325</span><span class="p">,</span> <span class="mf">0.0030</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">pmsInfo</span><span class="p">[</span><span class="s1">'OPEN'</span><span class="p">]</span> <span class="o">=</span>      <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.4900</span><span class="p">,</span> <span class="mf">0.4200</span><span class="p">,</span> <span class="mf">0.3500</span><span class="p">,</span> <span class="mf">0.2800</span><span class="p">,</span> <span class="mf">0.0000</span><span class="p">,</span> <span class="mf">0.0000</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">pmsInfo</span><span class="p">[</span><span class="s1">'LARGEHEX'</span><span class="p">]</span> <span class="o">=</span>  <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.4790</span><span class="p">,</span> <span class="mf">0.4090</span><span class="p">,</span> <span class="mf">0.3390</span><span class="p">,</span> <span class="mf">0.2690</span><span class="p">,</span> <span class="mf">0.1170</span><span class="p">,</span> <span class="mf">0.0020</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">pmsInfo</span><span class="p">[</span><span class="s1">'MEDIUMHEX'</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.4710</span><span class="p">,</span> <span class="mf">0.4010</span><span class="p">,</span> <span class="mf">0.3310</span><span class="p">,</span> <span class="mf">0.2610</span><span class="p">,</span> <span class="mf">0.1250</span><span class="p">,</span> <span class="mf">0.0030</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">pmsInfo</span><span class="p">[</span><span class="s1">'SMALLHEX'</span><span class="p">]</span> <span class="o">=</span>  <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.4510</span><span class="p">,</span> <span class="mf">0.3810</span><span class="p">,</span> <span class="mf">0.3110</span><span class="p">,</span> <span class="mf">0.2410</span><span class="p">,</span> <span class="mf">0.1450</span><span class="p">,</span> <span class="mf">0.0030</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">pmsInfo</span><span class="p">[</span><span class="s1">'INCIRCLE'</span><span class="p">]</span> <span class="o">=</span>  <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.3920</span><span class="p">,</span> <span class="mf">0.1325</span><span class="p">,</span> <span class="mf">0.0030</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
                
     <span class="n">d</span> <span class="o">=</span> <span class="n">pmsInfo</span><span class="p">[</span><span class="n">pmsstr</span><span class="p">]</span>
 
@@ -1009,7 +1009,7 @@
     <span class="n">r</span> <span class="o">=</span> <span class="n">dist_circle</span><span class="p">(</span><span class="n">npix</span><span class="p">,</span> <span class="n">center</span><span class="o">=</span><span class="p">(</span><span class="n">npix</span><span class="o">/</span><span class="mi">2</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">npix</span><span class="o">/</span><span class="mi">2</span><span class="o">-</span><span class="mf">0.5</span><span class="p">))</span>
 
     <span class="c1"># 1. Create INCIRCLE pupil</span>
-    <span class="k">if</span> <span class="n">pmsstr</span> <span class="o">==</span> <span class="s1">&#39;INCIRCLE&#39;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">pmsstr</span> <span class="o">==</span> <span class="s1">'INCIRCLE'</span><span class="p">:</span>
         <span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">r</span> <span class="o">*</span> <span class="n">du</span> <span class="o">*</span> <span class="n">pms_pscl</span> <span class="o">&lt;</span> <span class="n">d</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&amp;</span> 
                      <span class="p">(</span><span class="n">r</span> <span class="o">*</span> <span class="n">du</span> <span class="o">*</span> <span class="n">pms_pscl</span> <span class="o">&gt;</span> <span class="n">d</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
         <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">w</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">):</span>
@@ -1066,7 +1066,7 @@
             <span class="n">pupil</span><span class="p">[</span><span class="n">inpupil</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
         
         <span class="c1"># Cut out circular secondary</span>
-        <span class="k">if</span> <span class="n">pmsstr</span> <span class="o">==</span> <span class="s1">&#39;OPEN&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">pmsstr</span> <span class="o">==</span> <span class="s1">'OPEN'</span><span class="p">:</span>
             <span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">r</span> <span class="o">*</span> <span class="n">du</span> <span class="o">&lt;</span> <span class="mf">1.30</span><span class="p">)</span>
             <span class="n">pupil</span><span class="p">[</span><span class="n">w</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
 
@@ -1077,7 +1077,7 @@
 <div class="viewcode-block" id="dist_circle">
 <a class="viewcode-back" href="../../../autoapi/kai/mtf/mtf/index.html#kai.mtf.mtf.dist_circle">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">dist_circle</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">center</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""</span>
 <span class="sd">    NAME: </span>
 <span class="sd">         DIST_CIRCLE</span>
 <span class="sd">    PURPOSE:      </span>
@@ -1109,7 +1109,7 @@
 <span class="sd">                  be of type DOUBLE rather than floating point.</span>
 <span class="sd">    </span>
 <span class="sd">    EXAMPLE:</span>
-<span class="sd">          Total the flux in a circular aperture within 3&#39; of a specified RA</span>
+<span class="sd">          Total the flux in a circular aperture within 3' of a specified RA</span>
 <span class="sd">          and DEC on an 512 x 512 image IM, with a header H.</span>
 <span class="sd">    </span>
 <span class="sd">                  IDL&gt; adxy, H, RA, DEC, x, y       Convert RA and DEC to X,Y</span>
@@ -1118,7 +1118,7 @@
 <span class="sd">          IDL&gt; dist_circle, circle, 512, x, y  ;Create a distance circle image</span>
 <span class="sd">          IDL&gt; circle = circle*abs(cdelt[0])   ;Distances now given in arcseconds</span>
 <span class="sd">          IDL&gt; good = where(circle LT 180)  ;Within 3 arc minutes</span>
-<span class="sd">          IDL&gt; print,total( IM[good] )      Total pixel values within 3&#39;</span>
+<span class="sd">          IDL&gt; print,total( IM[good] )      Total pixel values within 3'</span>
 <span class="sd">    </span>
 <span class="sd">    RESTRICTIONS:</span>
 <span class="sd">          The speed of DIST_CIRCLE decreases and the the demands on virtual</span>
@@ -1131,7 +1131,7 @@
 <span class="sd">          Allow a rectangular output array   W. Landsman     June 1994</span>
 <span class="sd">          Converted to IDL V5.0   W. Landsman   September 1997</span>
 <span class="sd">          Add /DOUBLE keyword, make XCEN,YCEN optional  W. Landsman Jun 1998</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">size</span><span class="p">)</span> <span class="o">==</span> <span class="nb">int</span><span class="p">:</span>
         <span class="n">nx</span> <span class="o">=</span> <span class="n">size</span>
         <span class="n">ny</span> <span class="o">=</span> <span class="n">size</span>
@@ -1163,7 +1163,7 @@
 <div class="viewcode-block" id="t_perfect">
 <a class="viewcode-back" href="../../../autoapi/kai/mtf/mtf/index.html#kai.mtf.mtf.t_perfect">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">t_perfect</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">ee</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">     NAME:</span>
 <span class="sd">            T_PERFECT</span>
 <span class="sd">    </span>
@@ -1183,11 +1183,11 @@
 <span class="sd">                 lambda is the observing wavelength     need not be</span>
 <span class="sd">                 regularly gridded</span>
 <span class="sd">    </span>
-<span class="sd">            PUPIL:  The pupil&#39;s central obscuration, defined as the</span>
-<span class="sd">                 ratio of the obscuration&#39;s diameter to the pupil&#39;s</span>
+<span class="sd">            PUPIL:  The pupil's central obscuration, defined as the</span>
+<span class="sd">                 ratio of the obscuration's diameter to the pupil's</span>
 <span class="sd">                 diameter.  If PUPIL is a scalar or a 1-element array,</span>
 <span class="sd">                 this value is used.  Otherwise PUPIL must be a structure</span>
-<span class="sd">                 with the tag &quot;PUPIL&quot; defined, as per the definition of</span>
+<span class="sd">                 with the tag "PUPIL" defined, as per the definition of</span>
 <span class="sd">                 PARAMS in MTFFUNC_KECK. </span>
 <span class="sd">    </span>
 <span class="sd">     OPTIONAL INPUTS:</span>
@@ -1206,12 +1206,12 @@
 <span class="sd">     MODIFICATION HISTORY:</span>
 <span class="sd">            Written by Christopher D. Sheehy, January 2006.</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Input NU cannot be less than zero.&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">'Input NU cannot be less than zero.'</span><span class="p">)</span>
     
     <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">ee</span><span class="p">)</span> <span class="o">==</span> <span class="nb">dict</span><span class="p">:</span>
-        <span class="n">e</span> <span class="o">=</span> <span class="n">ee</span><span class="p">[</span><span class="s1">&#39;pupil&#39;</span><span class="p">]</span>
+        <span class="n">e</span> <span class="o">=</span> <span class="n">ee</span><span class="p">[</span><span class="s1">'pupil'</span><span class="p">]</span>
     <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">ee</span><span class="p">)</span> <span class="o">==</span> <span class="mi">8</span><span class="p">:</span>
         <span class="n">e</span> <span class="o">=</span> <span class="n">ee</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="k">else</span><span class="p">:</span>
@@ -1219,7 +1219,7 @@
         <span class="n">e</span> <span class="o">=</span> <span class="n">ee</span>
 
     <span class="k">if</span> <span class="n">e</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">e</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Central obscuration cannot be &lt; 0 or &gt;= 1&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">'Central obscuration cannot be &lt; 0 or &gt;= 1'</span><span class="p">)</span>
         
     <span class="n">nx</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
     <span class="n">ind0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">x</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
@@ -1261,7 +1261,7 @@
 <div class="viewcode-block" id="t_pix">
 <a class="viewcode-back" href="../../../autoapi/kai/mtf/mtf/index.html#kai.mtf.mtf.t_pix">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">t_pix</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">     NAME:</span>
 <span class="sd">            T_PIX</span>
 <span class="sd">    </span>
@@ -1279,8 +1279,8 @@
 <span class="sd">            NU:  Normalized spatial frequency in the image plane, in</span>
 <span class="sd">                 units of D/lambda.</span>
 <span class="sd">    </span>
-<span class="sd">            PARAMS:  Must be a structure containing the tags &quot;lambda&quot;,</span>
-<span class="sd">                 &quot;D&quot;, &quot;F&quot;, and &quot;A&quot; as defined in the documentation for</span>
+<span class="sd">            PARAMS:  Must be a structure containing the tags "lambda",</span>
+<span class="sd">                 "D", "F", and "A" as defined in the documentation for</span>
 <span class="sd">                 MTFFUNC_KECK.</span>
 <span class="sd">    </span>
 <span class="sd">     OPTIONAL INPUTS:</span>
@@ -1297,20 +1297,20 @@
 <span class="sd">    </span>
 <span class="sd">     MODIFICATION HISTORY:</span>
 <span class="sd">            Written by Christopher Sheehy, January 2006.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Input NU cannot be less than zero.&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">'Input NU cannot be less than zero.'</span><span class="p">)</span>
     
-    <span class="n">d</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="s1">&#39;D&#39;</span><span class="p">]</span>
-    <span class="n">wave</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="s1">&#39;wave&#39;</span><span class="p">]</span>
-    <span class="n">a</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="s1">&#39;Apix&#39;</span><span class="p">]</span>
-    <span class="n">f</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="s1">&#39;F&#39;</span><span class="p">]</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="s1">'D'</span><span class="p">]</span>
+    <span class="n">wave</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="s1">'wave'</span><span class="p">]</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="s1">'Apix'</span><span class="p">]</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="s1">'F'</span><span class="p">]</span>
 
     <span class="c1"># Effective focal ratio</span>
     <span class="n">fratio</span> <span class="o">=</span> <span class="n">f</span> <span class="o">/</span> <span class="n">d</span>
     
     <span class="k">if</span> <span class="n">d</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">wave</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">a</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">f</span> <span class="o">&lt;=</span><span class="mi">0</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Input D, wave, Apix, and F must all be &gt; 0.&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">'Input D, wave, Apix, and F must all be &gt; 0.'</span><span class="p">)</span>
 
     <span class="n">delta</span> <span class="o">=</span> <span class="n">wave</span> <span class="o">*</span> <span class="n">fratio</span> <span class="o">/</span> <span class="n">a</span>
 
@@ -1323,7 +1323,7 @@
 <div class="viewcode-block" id="t_atmos_ao">
 <a class="viewcode-back" href="../../../autoapi/kai/mtf/mtf/index.html#kai.mtf.mtf.t_atmos_ao">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">t_atmos_ao</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">     NAME:</span>
 <span class="sd">            T_ATMOS_AO</span>
 <span class="sd">    </span>
@@ -1366,15 +1366,15 @@
 <span class="sd">    </span>
 <span class="sd">     MODIFICATION HISTORY:</span>
 <span class="sd">            Written by Christopher D. Sheehy, January 2006.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Input NU cannot be less than zero.&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">'Input NU cannot be less than zero.'</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">dict</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Input PARAMS must be a dictionary.&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">'Input PARAMS must be a dictionary.'</span><span class="p">)</span>
 
-    <span class="n">wave</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="s1">&#39;wave&#39;</span><span class="p">]</span>
-    <span class="n">flength</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="s1">&#39;F&#39;</span><span class="p">]</span>
-    <span class="n">diam</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="s1">&#39;D&#39;</span><span class="p">]</span>
+    <span class="n">wave</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="s1">'wave'</span><span class="p">]</span>
+    <span class="n">flength</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="s1">'F'</span><span class="p">]</span>
+    <span class="n">diam</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="s1">'D'</span><span class="p">]</span>
     <span class="n">r</span> <span class="o">=</span> <span class="n">diam</span> <span class="o">*</span> <span class="n">x</span>
 
     <span class="c1"># Comput the structure function. Can be time consuming.</span>
@@ -1390,7 +1390,7 @@
 <div class="viewcode-block" id="phi_atmos_ao">
 <a class="viewcode-back" href="../../../autoapi/kai/mtf/mtf/index.html#kai.mtf.mtf.phi_atmos_ao">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">phi_atmos_ao</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">unmod</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">tat</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">     NAME:</span>
 <span class="sd">            PHI_ATMOS_AO</span>
 <span class="sd">    </span>
@@ -1398,10 +1398,10 @@
 <span class="sd">            Calculates the AO filtered atmospheric power spectrum for</span>
 <span class="sd">            spatial frequencies in the pupil plane, Phi_AO = Phi*(1-H)^2</span>
 <span class="sd">            where Phi is the unfiltered atmospheric power spectrum and H</span>
-<span class="sd">            is the Fourier transform of the deformable mirror&#39;s (DM&#39;s)</span>
+<span class="sd">            is the Fourier transform of the deformable mirror's (DM's)</span>
 <span class="sd">            influence function.  The default behavior is to use modified</span>
 <span class="sd">            Kolmogorov power spectrum with finite outer scale and the</span>
-<span class="sd">            influence function for the Keck AO system&#39;s DM.</span>
+<span class="sd">            influence function for the Keck AO system's DM.</span>
 <span class="sd">    </span>
 <span class="sd">     CATEGORY:</span>
 <span class="sd">            ???</span>
@@ -1423,7 +1423,7 @@
 <span class="sd">                    spectrum, i.e. one with both a finite outer scale</span>
 <span class="sd">                    and finite inner scale (WARNING: UNTESTED).  If this</span>
 <span class="sd">                    keyword is invoked, the PARAMS structure must contain</span>
-<span class="sd">                    an extra tag, &quot;Inner:&quot;, that is the inner scale of</span>
+<span class="sd">                    an extra tag, "Inner:", that is the inner scale of</span>
 <span class="sd">                    turbulence in meters.</span>
 <span class="sd">    </span>
 <span class="sd">     OUTPUTS:</span>
@@ -1436,7 +1436,7 @@
 <span class="sd">            because the power at zero spatial frequency for an infinite</span>
 <span class="sd">            outer scale is infinity.</span>
 <span class="sd">    </span>
-<span class="sd">            Works for the Keck DM&#39;s influence function.  If the user</span>
+<span class="sd">            Works for the Keck DM's influence function.  If the user</span>
 <span class="sd">            wishes to use a different influence function, replace the</span>
 <span class="sd">            call to FT_INFL_FUNC within the routine with another</span>
 <span class="sd">            function that returns the Fourier transform of the</span>
@@ -1451,16 +1451,16 @@
 <span class="sd">    </span>
 <span class="sd">     MODIFICATION HISTORY:</span>
 <span class="sd">            Written by Christopher Sheehy, January 2006.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     
-    <span class="n">delta</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="s1">&#39;delta&#39;</span><span class="p">]</span>
+    <span class="n">delta</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="s1">'delta'</span><span class="p">]</span>
     
     <span class="n">H</span> <span class="o">=</span> <span class="n">ft_infl_func</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
     
     <span class="c1"># Unmodified Kolmogorov power spectrum</span>
     <span class="n">phi_at</span> <span class="o">=</span> <span class="n">phi_atmos</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">unmod</span><span class="o">=</span><span class="n">unmod</span><span class="p">,</span> <span class="n">tat</span><span class="o">=</span><span class="n">tat</span><span class="p">)</span>
 
-    <span class="c1"># AO filter power spectrum, H is already multiplied by p[&#39;w&#39;]</span>
+    <span class="c1"># AO filter power spectrum, H is already multiplied by p['w']</span>
     <span class="n">phi_at_ao</span> <span class="o">=</span> <span class="p">((</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">H</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">phi_at</span> <span class="o">+</span> <span class="n">delta</span> <span class="o">*</span> <span class="n">H</span><span class="o">**</span><span class="mi">2</span>
 
     <span class="k">return</span> <span class="n">phi_at_ao</span></div>
@@ -1470,7 +1470,7 @@
 <div class="viewcode-block" id="phi_atmos">
 <a class="viewcode-back" href="../../../autoapi/kai/mtf/mtf/index.html#kai.mtf.mtf.phi_atmos">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">phi_atmos</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">tat</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">unmod</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">     NAME:</span>
 <span class="sd">            PHI_ATMOS</span>
 <span class="sd">    </span>
@@ -1499,7 +1499,7 @@
 <span class="sd">                     spectrum, i.e. one with both a finite outer scale</span>
 <span class="sd">                     and finite inner scale (WARNING: UNTESTED).  If this</span>
 <span class="sd">                     keyword is invoked, the PARAMS structure must contain</span>
-<span class="sd">                     an extra tag, &quot;Inner:&quot;, that is the inner scale of</span>
+<span class="sd">                     an extra tag, "Inner:", that is the inner scale of</span>
 <span class="sd">                     turbulence in meters.</span>
 <span class="sd">    </span>
 <span class="sd">     OUTPUTS:</span>
@@ -1524,16 +1524,16 @@
 <span class="sd">               </span>
 <span class="sd">     MODIFICATION HISTORY:</span>
 <span class="sd">            Written by Christopher Sheehy, January 2006</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">L</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="s1">&#39;L0&#39;</span><span class="p">]</span>
-    <span class="n">r0</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="s1">&#39;r0&#39;</span><span class="p">]</span>
+<span class="sd">    """</span>
+    <span class="n">L</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="s1">'L0'</span><span class="p">]</span>
+    <span class="n">r0</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="s1">'r0'</span><span class="p">]</span>
     
     <span class="k">if</span> <span class="n">unmod</span><span class="p">:</span>
         <span class="n">phi_unmod</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.0229</span> <span class="o">/</span> <span class="p">(</span><span class="n">r0</span><span class="o">**</span><span class="p">(</span><span class="mf">5.0</span><span class="o">/</span><span class="mf">3.0</span><span class="p">)))</span> <span class="o">*</span> <span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mf">11.0</span><span class="o">/</span><span class="mf">3.0</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">phi_unmod</span>
 
     <span class="k">if</span> <span class="n">tat</span><span class="p">:</span>
-        <span class="n">l0</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="s1">&#39;inner&#39;</span><span class="p">]</span>
+        <span class="n">l0</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="s1">'inner'</span><span class="p">]</span>
         <span class="c1"># UNTESTED! pretty sure this should be normalized in the </span>
         <span class="c1"># same way as below</span>
         <span class="n">phi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="n">l0</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="p">((</span><span class="mi">1</span> <span class="o">+</span> <span class="p">(</span><span class="n">x</span><span class="o">*</span><span class="n">L</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="mf">11.0</span><span class="o">/</span><span class="mf">6.0</span><span class="p">))</span>
@@ -1550,13 +1550,13 @@
 <div class="viewcode-block" id="ft_infl_func">
 <a class="viewcode-back" href="../../../autoapi/kai/mtf/mtf/index.html#kai.mtf.mtf.ft_infl_func">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">ft_infl_func</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    +</span>
 <span class="sd">     NAME:</span>
 <span class="sd">            FT_INFL_FUNC</span>
 <span class="sd">    </span>
 <span class="sd">     PURPOSE:</span>
-<span class="sd">            Evaltuates the Fourier transform of the Keck AO system&#39;s</span>
+<span class="sd">            Evaltuates the Fourier transform of the Keck AO system's</span>
 <span class="sd">            deformable mirror at given input spatial frequency in the</span>
 <span class="sd">            pupil plane.  Uses the functional form for the influence</span>
 <span class="sd">            function given by van Dam, et al., 2004, Applied Optics, 43,</span>
@@ -1592,13 +1592,13 @@
 <span class="sd">    </span>
 <span class="sd">     MODIFICATION HISTORY:</span>
 <span class="sd">            Written by Christopher Sheehy</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">inputIterable</span> <span class="o">=</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s1">&#39;__iter__&#39;</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="n">inputIterable</span> <span class="o">=</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s1">'__iter__'</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">inputIterable</span><span class="p">:</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">x</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
 
-    <span class="n">sig1</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="s1">&#39;sigma&#39;</span><span class="p">])</span>
-    <span class="n">w1</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="s1">&#39;w&#39;</span><span class="p">]</span>
+    <span class="n">sig1</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="s1">'sigma'</span><span class="p">])</span>
+    <span class="n">w1</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="s1">'w'</span><span class="p">]</span>
     <span class="n">a</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="n">sig1</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
     <span class="n">b</span> <span class="o">=</span> <span class="o">-</span><span class="mf">2.0</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="n">sig1</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span>   <span class="p">)</span><span class="o">**</span><span class="mi">2</span>
     
@@ -1625,7 +1625,7 @@
 <div class="viewcode-block" id="structure_function">
 <a class="viewcode-back" href="../../../autoapi/kai/mtf/mtf/index.html#kai.mtf.mtf.structure_function">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">structure_function</span><span class="p">(</span><span class="n">rr</span><span class="p">,</span> <span class="n">pp</span><span class="p">,</span> <span class="n">phi_call</span><span class="o">=</span><span class="n">phi_atmos_ao</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""</span>
 <span class="sd">     NAME:</span>
 <span class="sd">            STRUC_FUNC</span>
 <span class="sd">    </span>
@@ -1675,8 +1675,8 @@
 <span class="sd">                       The PARAMS input to the function is the same</span>
 <span class="sd">                       structure as the PARAMS input into STRUC_FUNC.</span>
 <span class="sd">    </span>
-<span class="sd">                       PHI_CALL MUST HAVE &#39;k&#39; AS THE SPATIAL FREQUENCY</span>
-<span class="sd">                       VARIABLE NAME &#39;k&#39; AND &#39;p&#39; AS THE PARAMETER</span>
+<span class="sd">                       PHI_CALL MUST HAVE 'k' AS THE SPATIAL FREQUENCY</span>
+<span class="sd">                       VARIABLE NAME 'k' AND 'p' AS THE PARAMETER</span>
 <span class="sd">                       STRUCTURE VARAIBLE NAME!</span>
 <span class="sd">                       </span>
 <span class="sd">                       Example: The function PHI_ATMOS returns the</span>
@@ -1691,7 +1691,7 @@
 <span class="sd">                       be able to calculate the power spectrum.  In the</span>
 <span class="sd">                       call to STRUC_FUNC, setting the keyword</span>
 <span class="sd">    </span>
-<span class="sd">                           PHI_CALL = &#39;PHI_ATMOS(k,p)&#39;</span>
+<span class="sd">                           PHI_CALL = 'PHI_ATMOS(k,p)'</span>
 <span class="sd">    </span>
 <span class="sd">                       forces STRUC_FUNC to use this power spectrum in</span>
 <span class="sd">                       calculating D(r).  </span>
@@ -1704,12 +1704,12 @@
 <span class="sd">                       infinite outer scale.  In this case, one would set</span>
 <span class="sd">                       the keyword</span>
 <span class="sd">    </span>
-<span class="sd">                           PHI_CALL = &#39;PHI_ATMOS(k,p,/unmod)&#39;</span>
+<span class="sd">                           PHI_CALL = 'PHI_ATMOS(k,p,/unmod)'</span>
 <span class="sd">    </span>
 <span class="sd">                       Leaving the keyword PHI_CALL undefined is</span>
 <span class="sd">                       equivalent to setting</span>
 <span class="sd">    </span>
-<span class="sd">                           PHI_CALL = &#39;PHI_ATMOS_AO(k,p)</span>
+<span class="sd">                           PHI_CALL = 'PHI_ATMOS_AO(k,p)</span>
 <span class="sd">    </span>
 <span class="sd">     OUTPUTS:</span>
 <span class="sd">            RESULT:  A vector of same size as R, the structure function</span>
@@ -1726,16 +1726,16 @@
 <span class="sd">     MODIFICATION HISTORY:</span>
 <span class="sd">            Written by Christopher Sheehy, January 2006.</span>
 <span class="sd">    -</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">nr</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">rr</span><span class="p">)</span>
     <span class="n">d_of_r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nr</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
 
     <span class="c1"># Make function is valid</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">phi_call</span><span class="p">,</span> <span class="s1">&#39;__call__&#39;</span><span class="p">):</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Invalid phi_call in structure_function()&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">phi_call</span><span class="p">,</span> <span class="s1">'__call__'</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">'Invalid phi_call in structure_function()'</span><span class="p">)</span>
 
     <span class="c1"># Numerically compute the integral at each r necessary to construct</span>
-    <span class="c1"># D(r). The integral&#39;s limits are actually 0 to infinity, but</span>
+    <span class="c1"># D(r). The integral's limits are actually 0 to infinity, but</span>
     <span class="c1"># integration 0 to 10 makes virtually no difference and is much faster.</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">d_r</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">command</span><span class="p">):</span>
         <span class="n">phi</span> <span class="o">=</span> <span class="n">command</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
@@ -1757,7 +1757,7 @@
 <div class="viewcode-block" id="mtf2psf">
 <a class="viewcode-back" href="../../../autoapi/kai/mtf/mtf/index.html#kai.mtf.mtf.mtf2psf">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">mtf2psf</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">sz</span><span class="p">,</span> <span class="n">perfect</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""</span>
 <span class="sd">     NAME:</span>
 <span class="sd">            MTF2PSF</span>
 <span class="sd">    </span>
@@ -1791,16 +1791,16 @@
 <span class="sd">                                       available pupil-stop names) or for</span>
 <span class="sd">                                       a circular pupil, the scalar</span>
 <span class="sd">                                       floating point value of the</span>
-<span class="sd">                                       pupil&#39;s central obscuration.</span>
+<span class="sd">                                       pupil's central obscuration.</span>
 <span class="sd">                      params.L0      - the outer scale of turbluence, in</span>
 <span class="sd">                                       meters, for a modified Kolmogorov</span>
 <span class="sd">                                       spectrum</span>
 <span class="sd">                      params.sigma   - the width of the AO system</span>
-<span class="sd">                                       deformable mirror&#39;s (DM&#39;s)</span>
+<span class="sd">                                       deformable mirror's (DM's)</span>
 <span class="sd">                                       influence function as projected</span>
 <span class="sd">                                       onto the pupil plane, in meters.</span>
 <span class="sd">                      params.w       - scaling factor for the influence</span>
-<span class="sd">                                       function&#39;s Fourier transform    </span>
+<span class="sd">                                       function's Fourier transform    </span>
 <span class="sd">                                       mimics variable AO correction</span>
 <span class="sd">                      params.delta   - wavefront measurement error</span>
 <span class="sd">                      params.cmult   - constant scaling factor of the output</span>
@@ -1859,7 +1859,7 @@
 <span class="sd">            Set up the input parameters:</span>
 <span class="sd">    </span>
 <span class="sd">            p    =   {wave:2.2e-6, F:557.0, D:10.99, $</span>
-<span class="sd">                      Apix:27e-6, pupil:&#39;largehex&#39;, L0:30.0, $</span>
+<span class="sd">                      Apix:27e-6, pupil:'largehex', L0:30.0, $</span>
 <span class="sd">                      sigma:0.56, w:1.5, delta:0.0, cmult:1.0, N:1e-5, $</span>
 <span class="sd">                      r0:0.888}        </span>
 <span class="sd">            sz = 1.0      return a PSF with a radius of 1 arcsecond</span>
@@ -1868,7 +1868,7 @@
 <span class="sd">            plot, psf1</span>
 <span class="sd">    </span>
 <span class="sd">            nu = findgen(100)/99.</span>
-<span class="sd">            T = sqrt(MTFFUNC_KECK(nu, p))     compute the PSF&#39;s corresponding MTF</span>
+<span class="sd">            T = sqrt(MTFFUNC_KECK(nu, p))     compute the PSF's corresponding MTF</span>
 <span class="sd">            plot, nu, T</span>
 <span class="sd">    </span>
 <span class="sd">                compute the PSF for identical seeing conditions but with no</span>
@@ -1892,13 +1892,13 @@
 <span class="sd">    </span>
 <span class="sd">     MODIFICATION HISTORY:</span>
 <span class="sd">            Written by Christopher Sheehy, January 2006.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">p</span> <span class="o">=</span> <span class="n">par</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
-    <span class="n">wave</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="s1">&#39;wave&#39;</span><span class="p">]</span>
-    <span class="n">D</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="s1">&#39;D&#39;</span><span class="p">]</span>
-    <span class="n">flen</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="s1">&#39;F&#39;</span><span class="p">]</span>
-    <span class="n">Apix</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="s1">&#39;Apix&#39;</span><span class="p">]</span>
+    <span class="n">wave</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="s1">'wave'</span><span class="p">]</span>
+    <span class="n">D</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="s1">'D'</span><span class="p">]</span>
+    <span class="n">flen</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="s1">'F'</span><span class="p">]</span>
+    <span class="n">Apix</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="s1">'Apix'</span><span class="p">]</span>
 
     <span class="n">platescale</span> <span class="o">=</span> <span class="p">(</span><span class="n">Apix</span> <span class="o">/</span> <span class="n">flen</span><span class="p">)</span> <span class="o">*</span> <span class="mf">206265.0</span>  <span class="c1"># detector scale in arcsec</span>
     <span class="n">xsamp</span> <span class="o">=</span> <span class="mi">5</span>  <span class="c1"># oversample PSF by a factor of 5</span>
@@ -1913,13 +1913,13 @@
     <span class="n">f</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">nf</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
     <span class="n">f</span> <span class="o">/=</span> <span class="p">(</span><span class="n">nf</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
     <span class="n">pp</span> <span class="o">=</span> <span class="n">p</span>
-    <span class="n">pp</span><span class="p">[</span><span class="s1">&#39;N&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="n">pp</span><span class="p">[</span><span class="s1">&#39;cmult&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">pp</span><span class="p">[</span><span class="s1">'N'</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">pp</span><span class="p">[</span><span class="s1">'cmult'</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
     
     <span class="k">if</span> <span class="n">perfect</span><span class="p">:</span>
-        <span class="n">T</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span> <span class="n">mtffunc_keck</span><span class="p">(</span><span class="n">pp</span><span class="p">,</span> <span class="n">nu</span><span class="o">=</span><span class="n">f</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="s1">&#39;perfect&#39;</span><span class="p">)</span> <span class="p">)</span>
+        <span class="n">T</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span> <span class="n">mtffunc_keck</span><span class="p">(</span><span class="n">pp</span><span class="p">,</span> <span class="n">nu</span><span class="o">=</span><span class="n">f</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="s1">'perfect'</span><span class="p">)</span> <span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">T</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span> <span class="n">mtffunc_keck</span><span class="p">(</span><span class="n">pp</span><span class="p">,</span> <span class="n">nu</span><span class="o">=</span><span class="n">f</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="s1">&#39;system&#39;</span><span class="p">)</span> <span class="p">)</span>
+        <span class="n">T</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span> <span class="n">mtffunc_keck</span><span class="p">(</span><span class="n">pp</span><span class="p">,</span> <span class="n">nu</span><span class="o">=</span><span class="n">f</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="s1">'system'</span><span class="p">)</span> <span class="p">)</span>
 
     <span class="n">psf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nw</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
 
@@ -1950,12 +1950,12 @@
 <div class="viewcode-block" id="mtf2ee">
 <a class="viewcode-back" href="../../../autoapi/kai/mtf/mtf/index.html#kai.mtf.mtf.mtf2ee">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">mtf2ee</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">pixx</span><span class="p">,</span> <span class="n">perfect</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""</span>
 <span class="sd">     NAME:</span>
 <span class="sd">            MTF2EE</span>
 <span class="sd">    </span>
 <span class="sd">     PURPOSE:</span>
-<span class="sd">            Calculates the AO PSF&#39;s encircled energy curve from the AO</span>
+<span class="sd">            Calculates the AO PSF's encircled energy curve from the AO</span>
 <span class="sd">            corrected modulation transfer function.</span>
 <span class="sd">    </span>
 <span class="sd">     CATEGORY:</span>
@@ -2003,13 +2003,13 @@
 <span class="sd">    </span>
 <span class="sd">     MODIFICATION HISTORY:</span>
 <span class="sd">            Written by Christopher D. Sheehy, January 2006.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">p</span> <span class="o">=</span> <span class="n">par</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>    <span class="c1"># prevent input params from begin altered at main level</span>
-    <span class="n">wave</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="s1">&#39;wave&#39;</span><span class="p">]</span>
-    <span class="n">D</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="s1">&#39;D&#39;</span><span class="p">]</span>
-    <span class="n">flen</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="s1">&#39;F&#39;</span><span class="p">]</span>
-    <span class="n">apix</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="s1">&#39;Apix&#39;</span><span class="p">]</span>
+    <span class="n">wave</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="s1">'wave'</span><span class="p">]</span>
+    <span class="n">D</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="s1">'D'</span><span class="p">]</span>
+    <span class="n">flen</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="s1">'F'</span><span class="p">]</span>
+    <span class="n">apix</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="s1">'Apix'</span><span class="p">]</span>
     <span class="n">platescale</span> <span class="o">=</span> <span class="p">(</span><span class="n">apix</span> <span class="o">/</span> <span class="n">flen</span><span class="p">)</span>  <span class="c1"># detector platescale in radians/pixel</span>
     <span class="n">nw</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">pixx</span><span class="p">)</span>
     <span class="n">w</span> <span class="o">=</span> <span class="p">(</span><span class="n">pixx</span> <span class="o">*</span> <span class="n">platescale</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">wave</span> <span class="o">/</span> <span class="n">D</span><span class="p">)</span>
@@ -2019,13 +2019,13 @@
     <span class="n">vn</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">npts</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
     <span class="n">vn</span> <span class="o">/=</span> <span class="n">npts</span> <span class="o">-</span> <span class="mf">1.0</span>
 
-    <span class="n">p</span><span class="p">[</span><span class="s1">&#39;N&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
-    <span class="n">p</span><span class="p">[</span><span class="s1">&#39;cmult&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">p</span><span class="p">[</span><span class="s1">'N'</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">p</span><span class="p">[</span><span class="s1">'cmult'</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
     
     <span class="k">if</span> <span class="n">perfect</span><span class="p">:</span>
-        <span class="n">T</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span> <span class="n">mtffunc_keck</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">nu</span><span class="o">=</span><span class="n">vn</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="s1">&#39;perfect&#39;</span><span class="p">)</span> <span class="p">)</span>
+        <span class="n">T</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span> <span class="n">mtffunc_keck</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">nu</span><span class="o">=</span><span class="n">vn</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="s1">'perfect'</span><span class="p">)</span> <span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">T</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span> <span class="n">mtffunc_keck</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">nu</span><span class="o">=</span><span class="n">vn</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="s1">&#39;system&#39;</span><span class="p">)</span> <span class="p">)</span>
+        <span class="n">T</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span> <span class="n">mtffunc_keck</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">nu</span><span class="o">=</span><span class="n">vn</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="s1">'system'</span><span class="p">)</span> <span class="p">)</span>
 
     <span class="n">ee</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nw</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
 
@@ -2042,7 +2042,7 @@
 <div class="viewcode-block" id="strehl">
 <a class="viewcode-back" href="../../../autoapi/kai/mtf/mtf/index.html#kai.mtf.mtf.strehl">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">strehl</span><span class="p">(</span><span class="n">par</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">     NAME:</span>
 <span class="sd">            STREHL</span>
 <span class="sd">    </span>
@@ -2087,18 +2087,18 @@
 <span class="sd">    </span>
 <span class="sd">     MODIFICATION HISTORY:</span>
 <span class="sd">            Written by Christopher D. Sheehy, January 2006.</span>
-<span class="sd">    &quot;&quot;&quot;</span>            
+<span class="sd">    """</span>            
 
     <span class="n">npts</span> <span class="o">=</span> <span class="mf">500.0</span>
     <span class="n">vn</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">npts</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
     <span class="n">vn</span> <span class="o">/=</span> <span class="p">(</span><span class="n">npts</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)</span>
     <span class="n">p</span> <span class="o">=</span> <span class="n">par</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-    <span class="n">p</span><span class="p">[</span><span class="s1">&#39;cmult&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
-    <span class="n">p</span><span class="p">[</span><span class="s1">&#39;N&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">p</span><span class="p">[</span><span class="s1">'cmult'</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">p</span><span class="p">[</span><span class="s1">'N'</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
 
     <span class="c1"># modified for fitting in log space</span>
     <span class="n">T</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span> <span class="n">mtffunc_keck</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">nu</span><span class="o">=</span><span class="n">vn</span><span class="p">)</span> <span class="p">)</span>
-    <span class="n">Tp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span> <span class="n">mtffunc_keck</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">nu</span><span class="o">=</span><span class="n">vn</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="s1">&#39;perfect&#39;</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">Tp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span> <span class="n">mtffunc_keck</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">nu</span><span class="o">=</span><span class="n">vn</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="s1">'perfect'</span><span class="p">)</span> <span class="p">)</span>
 
     <span class="n">sr</span> <span class="o">=</span> <span class="n">integrate</span><span class="o">.</span><span class="n">simps</span><span class="p">(</span><span class="n">T</span><span class="o">*</span><span class="n">vn</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">vn</span><span class="p">)</span> <span class="o">/</span> <span class="n">integrate</span><span class="o">.</span><span class="n">simps</span><span class="p">(</span><span class="n">Tp</span><span class="o">*</span><span class="n">vn</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">vn</span><span class="p">)</span>
 

@@ -87,19 +87,19 @@
 
         <span class="n">mod_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">sky</span><span class="o">.</span><span class="vm">__file__</span><span class="p">))</span>
 
-        <span class="n">epoch_dir</span> <span class="o">=</span> <span class="n">mod_path</span> <span class="o">+</span> <span class="s1">&#39;/../data/test_epoch/17may21/&#39;</span>
-        <span class="n">reduce_dir</span> <span class="o">=</span> <span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">&#39;reduce/&#39;</span>
-        <span class="n">raw_dir</span> <span class="o">=</span> <span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">&#39;raw/&#39;</span>
+        <span class="n">epoch_dir</span> <span class="o">=</span> <span class="n">mod_path</span> <span class="o">+</span> <span class="s1">'/../data/test_epoch/17may21/'</span>
+        <span class="n">reduce_dir</span> <span class="o">=</span> <span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">'reduce/'</span>
+        <span class="n">raw_dir</span> <span class="o">=</span> <span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">'raw/'</span>
 
         <span class="n">sky_files</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">143</span><span class="p">,</span> <span class="mi">151</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="n">sky_out</span> <span class="o">=</span> <span class="s1">&#39;sky_kp.fits&#39;</span>
-        <span class="n">sky_out_full_path</span> <span class="o">=</span> <span class="n">reduce_dir</span> <span class="o">+</span> <span class="s1">&#39;kp/sky_ob170095/&#39;</span> <span class="o">+</span> <span class="n">sky_out</span>
+        <span class="n">sky_out</span> <span class="o">=</span> <span class="s1">'sky_kp.fits'</span>
+        <span class="n">sky_out_full_path</span> <span class="o">=</span> <span class="n">reduce_dir</span> <span class="o">+</span> <span class="s1">'kp/sky_ob170095/'</span> <span class="o">+</span> <span class="n">sky_out</span>
 
         <span class="c1"># If file exists, delete it.</span>
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">sky_out_full_path</span><span class="p">):</span>
             <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">sky_out_full_path</span><span class="p">)</span>
 
-        <span class="n">sky</span><span class="o">.</span><span class="n">makesky</span><span class="p">(</span><span class="n">sky_files</span><span class="p">,</span> <span class="s1">&#39;ob170095&#39;</span><span class="p">,</span> <span class="s1">&#39;kp&#39;</span><span class="p">,</span>
+        <span class="n">sky</span><span class="o">.</span><span class="n">makesky</span><span class="p">(</span><span class="n">sky_files</span><span class="p">,</span> <span class="s1">'ob170095'</span><span class="p">,</span> <span class="s1">'kp'</span><span class="p">,</span>
                     <span class="n">dark_frame</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">skyscale</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                     <span class="n">raw_dir</span><span class="o">=</span><span class="n">raw_dir</span><span class="p">,</span>
                     <span class="n">reduce_dir</span><span class="o">=</span><span class="n">reduce_dir</span><span class="p">,</span>
@@ -122,26 +122,26 @@
 
         <span class="n">mod_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">sky</span><span class="o">.</span><span class="vm">__file__</span><span class="p">))</span>
 
-        <span class="n">epoch_dir</span> <span class="o">=</span> <span class="n">mod_path</span> <span class="o">+</span> <span class="s1">&#39;/../data/test_epoch/17may21/&#39;</span>
-        <span class="n">reduce_dir</span> <span class="o">=</span> <span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">&#39;reduce/&#39;</span>
-        <span class="n">raw_dir</span> <span class="o">=</span> <span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">&#39;raw/&#39;</span>
+        <span class="n">epoch_dir</span> <span class="o">=</span> <span class="n">mod_path</span> <span class="o">+</span> <span class="s1">'/../data/test_epoch/17may21/'</span>
+        <span class="n">reduce_dir</span> <span class="o">=</span> <span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">'reduce/'</span>
+        <span class="n">raw_dir</span> <span class="o">=</span> <span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">'raw/'</span>
 
         <span class="n">sky_files</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">143</span><span class="p">,</span> <span class="mi">151</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
 
-        <span class="n">sky</span><span class="o">.</span><span class="n">makesky_lp</span><span class="p">(</span><span class="n">sky_files</span><span class="p">,</span> <span class="s1">&#39;ob170095&#39;</span><span class="p">,</span> <span class="s1">&#39;lp&#39;</span><span class="p">,</span>
+        <span class="n">sky</span><span class="o">.</span><span class="n">makesky_lp</span><span class="p">(</span><span class="n">sky_files</span><span class="p">,</span> <span class="s1">'ob170095'</span><span class="p">,</span> <span class="s1">'lp'</span><span class="p">,</span>
                     <span class="n">dark_frame</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">number</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
                     <span class="n">raw_dir</span><span class="o">=</span><span class="n">raw_dir</span><span class="p">,</span>
                     <span class="n">reduce_dir</span><span class="o">=</span><span class="n">reduce_dir</span><span class="p">,</span>
                     <span class="n">instrument</span><span class="o">=</span><span class="n">nirc2</span><span class="p">)</span>
 
         <span class="c1"># Check that file was created.</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">reduce_dir</span> <span class="o">+</span> <span class="s1">&#39;lp/sky_ob170095/sky50.8.fits&#39;</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">reduce_dir</span> <span class="o">+</span> <span class="s1">&#39;lp/sky_ob170095/sky51.0.fits&#39;</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">reduce_dir</span> <span class="o">+</span> <span class="s1">&#39;lp/sky_ob170095/sky51.2.fits&#39;</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">reduce_dir</span> <span class="o">+</span> <span class="s1">&#39;lp/sky_ob170095/sky51.4.fits&#39;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">reduce_dir</span> <span class="o">+</span> <span class="s1">'lp/sky_ob170095/sky50.8.fits'</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">reduce_dir</span> <span class="o">+</span> <span class="s1">'lp/sky_ob170095/sky51.0.fits'</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">reduce_dir</span> <span class="o">+</span> <span class="s1">'lp/sky_ob170095/sky51.2.fits'</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">reduce_dir</span> <span class="o">+</span> <span class="s1">'lp/sky_ob170095/sky51.4.fits'</span><span class="p">))</span>
 
         <span class="c1"># Check the shape is right.</span>
-        <span class="n">sk_img</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getdata</span><span class="p">(</span><span class="n">reduce_dir</span> <span class="o">+</span> <span class="s1">&#39;lp/sky_ob170095/sky50.8.fits&#39;</span><span class="p">)</span>
+        <span class="n">sk_img</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getdata</span><span class="p">(</span><span class="n">reduce_dir</span> <span class="o">+</span> <span class="s1">'lp/sky_ob170095/sky50.8.fits'</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">sk_img</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="p">(</span><span class="mi">1024</span><span class="p">,</span> <span class="mi">1024</span><span class="p">))</span>
 
         <span class="k">return</span></div>
@@ -149,7 +149,7 @@
 
 
 
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">'__main__'</span><span class="p">:</span>
     <span class="n">unittest</span><span class="o">.</span><span class="n">main</span><span class="p">()</span>
 </pre></div>
 

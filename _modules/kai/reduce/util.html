@@ -83,20 +83,20 @@
 
 <div class="viewcode-block" id="dir_alias_file">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/util/index.html#kai.reduce.util.dir_alias_file">[docs]</a>
-<span class="n">dir_alias_file</span> <span class="o">=</span> <span class="n">module_dir</span> <span class="o">+</span> <span class="s1">&#39;/../data/directory_aliases.txt&#39;</span></div>
+<span class="n">dir_alias_file</span> <span class="o">=</span> <span class="n">module_dir</span> <span class="o">+</span> <span class="s1">'/../data/directory_aliases.txt'</span></div>
 
 <div class="viewcode-block" id="dir_alias">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/util/index.html#kai.reduce.util.dir_alias">[docs]</a>
-<span class="n">dir_alias</span> <span class="o">=</span> <span class="n">Table</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">dir_alias_file</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;ascii.fast_no_header&#39;</span><span class="p">)</span></div>
+<span class="n">dir_alias</span> <span class="o">=</span> <span class="n">Table</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">dir_alias_file</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">'ascii.fast_no_header'</span><span class="p">)</span></div>
 
-<span class="n">dir_alias</span><span class="o">.</span><span class="n">rename_column</span><span class="p">(</span><span class="s1">&#39;col1&#39;</span><span class="p">,</span> <span class="s1">&#39;dir&#39;</span><span class="p">)</span>
-<span class="n">dir_alias</span><span class="o">.</span><span class="n">rename_column</span><span class="p">(</span><span class="s1">&#39;col2&#39;</span><span class="p">,</span> <span class="s1">&#39;alias&#39;</span><span class="p">)</span>
+<span class="n">dir_alias</span><span class="o">.</span><span class="n">rename_column</span><span class="p">(</span><span class="s1">'col1'</span><span class="p">,</span> <span class="s1">'dir'</span><span class="p">)</span>
+<span class="n">dir_alias</span><span class="o">.</span><span class="n">rename_column</span><span class="p">(</span><span class="s1">'col2'</span><span class="p">,</span> <span class="s1">'alias'</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="rmall">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/util/index.html#kai.reduce.util.rmall">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">rmall</span><span class="p">(</span><span class="n">files</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Remove list of files without confirmation.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Remove list of files without confirmation."""</span>
     <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">access</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">F_OK</span><span class="p">):</span> <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
 
@@ -107,7 +107,7 @@
 <div class="viewcode-block" id="mkdir">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/util/index.html#kai.reduce.util.mkdir">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">mkdir</span><span class="p">(</span><span class="nb">dir</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Make directory if it doesn&#39;t already exist.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Make directory if it doesn't already exist."""</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="nb">dir</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
@@ -123,15 +123,15 @@
 <div class="viewcode-block" id="getcwd">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/util/index.html#kai.reduce.util.getcwd">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">getcwd</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    IRAF doesn&#39;t like long file names. This reduces them.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    IRAF doesn't like long file names. This reduces them.</span>
+<span class="sd">    """</span>
     <span class="n">curdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
 
     <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dir_alias</span><span class="p">)):</span>
-        <span class="n">curdir</span> <span class="o">=</span> <span class="n">curdir</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">dir_alias</span><span class="p">[</span><span class="s1">&#39;dir&#39;</span><span class="p">][</span><span class="n">ii</span><span class="p">],</span> <span class="n">dir_alias</span><span class="p">[</span><span class="s1">&#39;alias&#39;</span><span class="p">][</span><span class="n">ii</span><span class="p">])</span>
+        <span class="n">curdir</span> <span class="o">=</span> <span class="n">curdir</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">dir_alias</span><span class="p">[</span><span class="s1">'dir'</span><span class="p">][</span><span class="n">ii</span><span class="p">],</span> <span class="n">dir_alias</span><span class="p">[</span><span class="s1">'alias'</span><span class="p">][</span><span class="n">ii</span><span class="p">])</span>
 
-    <span class="n">curdir</span> <span class="o">+=</span> <span class="s1">&#39;/&#39;</span>
+    <span class="n">curdir</span> <span class="o">+=</span> <span class="s1">'/'</span>
 
     <span class="k">return</span> <span class="n">curdir</span></div>
 
@@ -140,11 +140,11 @@
 <div class="viewcode-block" id="trimdir">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/util/index.html#kai.reduce.util.trimdir">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">trimdir</span><span class="p">(</span><span class="n">olddir</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    IRAF doesn&#39;t like long file names. This reduces them.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    IRAF doesn't like long file names. This reduces them.</span>
+<span class="sd">    """</span>
     <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dir_alias</span><span class="p">)):</span>
-        <span class="n">olddir</span> <span class="o">=</span> <span class="n">olddir</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">dir_alias</span><span class="p">[</span><span class="s1">&#39;dir&#39;</span><span class="p">][</span><span class="n">ii</span><span class="p">],</span> <span class="n">dir_alias</span><span class="p">[</span><span class="s1">&#39;alias&#39;</span><span class="p">][</span><span class="n">ii</span><span class="p">])</span>
+        <span class="n">olddir</span> <span class="o">=</span> <span class="n">olddir</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">dir_alias</span><span class="p">[</span><span class="s1">'dir'</span><span class="p">][</span><span class="n">ii</span><span class="p">],</span> <span class="n">dir_alias</span><span class="p">[</span><span class="s1">'alias'</span><span class="p">][</span><span class="n">ii</span><span class="p">])</span>
 
     <span class="k">return</span> <span class="n">olddir</span></div>
 
@@ -153,15 +153,15 @@
 <div class="viewcode-block" id="cp_change_prefix">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/util/index.html#kai.reduce.util.cp_change_prefix">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">cp_change_prefix</span><span class="p">(</span><span class="n">arg1</span><span class="p">,</span> <span class="n">arg2</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Takes files beginning with arg1 and replaces them with arg2</span>
 <span class="sd">    Must be in the directory where files live</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="c1"># Find files in this directory beginning with arg1</span>
-    <span class="n">files</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
-    <span class="c1"># Ignore files beginning with &#39;.&#39;</span>
-    <span class="n">files</span> <span class="o">=</span> <span class="p">[</span><span class="n">filename</span> <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">files</span> <span class="k">if</span> <span class="n">filename</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;.&#39;</span><span class="p">]</span>
+    <span class="n">files</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="s2">"."</span><span class="p">)</span>
+    <span class="c1"># Ignore files beginning with '.'</span>
+    <span class="n">files</span> <span class="o">=</span> <span class="p">[</span><span class="n">filename</span> <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">files</span> <span class="k">if</span> <span class="n">filename</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">'.'</span><span class="p">]</span>
 
     <span class="n">ln</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">arg1</span><span class="p">)</span>
 
@@ -179,15 +179,15 @@
 <div class="viewcode-block" id="cp_change_suffix">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/util/index.html#kai.reduce.util.cp_change_suffix">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">cp_change_suffix</span><span class="p">(</span><span class="n">arg1</span><span class="p">,</span> <span class="n">arg2</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Takes files ending with arg1 and replaces them with arg2</span>
 <span class="sd">    Must be in the directory where files live</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="c1"># Find files in this directory ending with arg1</span>
-    <span class="n">files</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
-    <span class="c1"># Ignore files beginning with &#39;.&#39;</span>
-    <span class="n">files</span> <span class="o">=</span> <span class="p">[</span><span class="n">filename</span> <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">files</span> <span class="k">if</span> <span class="n">filename</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;.&#39;</span><span class="p">]</span>
+    <span class="n">files</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="s2">"."</span><span class="p">)</span>
+    <span class="c1"># Ignore files beginning with '.'</span>
+    <span class="n">files</span> <span class="o">=</span> <span class="p">[</span><span class="n">filename</span> <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">files</span> <span class="k">if</span> <span class="n">filename</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">'.'</span><span class="p">]</span>
 
     <span class="n">ln</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">arg1</span><span class="p">)</span>
 
@@ -205,46 +205,46 @@
 <div class="viewcode-block" id="update_header_coords">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/util/index.html#kai.reduce.util.update_header_coords">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">update_header_coords</span><span class="p">(</span><span class="n">fileList</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Updates coordinates in the header for XREF, YREF</span>
 <span class="sd">    and XSTREHL, and YSTREHL.</span>
 <span class="sd"> </span>
 <span class="sd">    fileList : list of files to update</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
-    <span class="n">_files</span> <span class="o">=</span> <span class="n">Table</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">fileList</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;ascii&#39;</span><span class="p">,</span> <span class="n">header_start</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">_files</span> <span class="o">=</span> <span class="n">Table</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">fileList</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">'ascii'</span><span class="p">,</span> <span class="n">header_start</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
     <span class="n">cols</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">_files</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
     <span class="n">files</span> <span class="o">=</span> <span class="n">_files</span><span class="p">[</span><span class="n">cols</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
-    <span class="n">files</span> <span class="o">=</span> <span class="p">[</span><span class="n">files</span><span class="p">[</span><span class="n">ff</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">ff</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">files</span><span class="p">))]</span>
+    <span class="n">files</span> <span class="o">=</span> <span class="p">[</span><span class="n">files</span><span class="p">[</span><span class="n">ff</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">'.'</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">ff</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">files</span><span class="p">))]</span>
 
     <span class="k">for</span> <span class="n">ff</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">files</span><span class="p">)):</span>
-        <span class="c1"># Open .coo file and read 16C&#39;s coordinates</span>
-        <span class="n">coo</span> <span class="o">=</span> <span class="n">Table</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">files</span><span class="p">[</span><span class="n">ff</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.coo&#39;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;ascii&#39;</span><span class="p">,</span> <span class="n">header_start</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="c1"># Open .coo file and read 16C's coordinates</span>
+        <span class="n">coo</span> <span class="o">=</span> <span class="n">Table</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">files</span><span class="p">[</span><span class="n">ff</span><span class="p">]</span> <span class="o">+</span> <span class="s1">'.coo'</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">'ascii'</span><span class="p">,</span> <span class="n">header_start</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
         <span class="n">coo_cols</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">coo</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
         <span class="n">xref</span> <span class="o">=</span> <span class="n">coo</span><span class="p">[</span><span class="n">coo_cols</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
         <span class="n">yref</span> <span class="o">=</span> <span class="n">coo</span><span class="p">[</span><span class="n">coo_cols</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
 
-        <span class="c1"># Open .coord file and read strehl source&#39;s coordinates</span>
-        <span class="n">coord</span> <span class="o">=</span> <span class="n">Table</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">files</span><span class="p">[</span><span class="n">ff</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.coord&#39;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;ascii&#39;</span><span class="p">,</span> <span class="n">header_start</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="c1"># Open .coord file and read strehl source's coordinates</span>
+        <span class="n">coord</span> <span class="o">=</span> <span class="n">Table</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">files</span><span class="p">[</span><span class="n">ff</span><span class="p">]</span> <span class="o">+</span> <span class="s1">'.coord'</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">'ascii'</span><span class="p">,</span> <span class="n">header_start</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
         <span class="n">coord_cols</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">coord</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
         <span class="n">xstr</span> <span class="o">=</span> <span class="n">coord</span><span class="p">[</span><span class="n">coord_cols</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
         <span class="n">ystr</span> <span class="o">=</span> <span class="n">coord</span><span class="p">[</span><span class="n">coord_cols</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
 
         <span class="c1"># Open image and write reference star x,y to fits header</span>
-        <span class="n">fits</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">files</span><span class="p">[</span><span class="n">ff</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span><span class="p">)</span>
+        <span class="n">fits</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">files</span><span class="p">[</span><span class="n">ff</span><span class="p">]</span> <span class="o">+</span> <span class="s1">'.fits'</span><span class="p">)</span>
 
-        <span class="n">fits</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="s1">&#39;XREF&#39;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">%.3f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">xref</span><span class="p">,</span>
-                              <span class="s1">&#39;Cross Corr Reference Src x&#39;</span><span class="p">)</span>
-        <span class="n">fits</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="s1">&#39;YREF&#39;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">%.3f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">yref</span><span class="p">,</span>
-                              <span class="s1">&#39;Cross Corr Reference Src y&#39;</span><span class="p">)</span>
-        <span class="n">fits</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="s1">&#39;XSTREHL&#39;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">%.3f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">xstr</span><span class="p">,</span>
-                              <span class="s1">&#39;Strehl Reference Src x&#39;</span><span class="p">)</span>
-        <span class="n">fits</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="s1">&#39;YSTREHL&#39;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">%.3f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">ystr</span><span class="p">,</span>
-                              <span class="s1">&#39;Strehl Reference Src y&#39;</span><span class="p">)</span>
+        <span class="n">fits</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="s1">'XREF'</span><span class="p">,</span> <span class="s2">"</span><span class="si">%.3f</span><span class="s2">"</span> <span class="o">%</span> <span class="n">xref</span><span class="p">,</span>
+                              <span class="s1">'Cross Corr Reference Src x'</span><span class="p">)</span>
+        <span class="n">fits</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="s1">'YREF'</span><span class="p">,</span> <span class="s2">"</span><span class="si">%.3f</span><span class="s2">"</span> <span class="o">%</span> <span class="n">yref</span><span class="p">,</span>
+                              <span class="s1">'Cross Corr Reference Src y'</span><span class="p">)</span>
+        <span class="n">fits</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="s1">'XSTREHL'</span><span class="p">,</span> <span class="s2">"</span><span class="si">%.3f</span><span class="s2">"</span> <span class="o">%</span> <span class="n">xstr</span><span class="p">,</span>
+                              <span class="s1">'Strehl Reference Src x'</span><span class="p">)</span>
+        <span class="n">fits</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="s1">'YSTREHL'</span><span class="p">,</span> <span class="s2">"</span><span class="si">%.3f</span><span class="s2">"</span> <span class="o">%</span> <span class="n">ystr</span><span class="p">,</span>
+                              <span class="s1">'Strehl Reference Src y'</span><span class="p">)</span>
 
         <span class="c1"># Output fits file</span>
-        <span class="n">_out</span> <span class="o">=</span> <span class="s1">&#39;new_hdr/&#39;</span> <span class="o">+</span> <span class="n">files</span><span class="p">[</span><span class="n">ff</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span>
-        <span class="n">fits</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">writeto</span><span class="p">(</span><span class="n">_out</span><span class="p">,</span> <span class="n">output_verify</span><span class="o">=</span><span class="s1">&#39;silentfix&#39;</span><span class="p">)</span>
+        <span class="n">_out</span> <span class="o">=</span> <span class="s1">'new_hdr/'</span> <span class="o">+</span> <span class="n">files</span><span class="p">[</span><span class="n">ff</span><span class="p">]</span> <span class="o">+</span> <span class="s1">'.fits'</span>
+        <span class="n">fits</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">writeto</span><span class="p">(</span><span class="n">_out</span><span class="p">,</span> <span class="n">output_verify</span><span class="o">=</span><span class="s1">'silentfix'</span><span class="p">)</span>
 
     <span class="k">return</span></div>
 
@@ -253,19 +253,19 @@
 <div class="viewcode-block" id="imarith">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/util/index.html#kai.reduce.util.imarith">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">imarith</span><span class="p">(</span><span class="n">img_list1</span><span class="p">,</span> <span class="n">operator</span><span class="p">,</span> <span class="n">img_list2</span><span class="p">,</span> <span class="n">out_list</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Replace the IRAF imarith functionality with exactly the same</span>
 <span class="sd">    thing implemented in python.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># Check to see if we are inputting a text file</span>
-    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">img_list1</span><span class="p">)</span> <span class="ow">and</span> <span class="n">img_list1</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;@&#39;</span><span class="p">):</span>
-        <span class="n">img_list1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">img_list1</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;U&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">img_list1</span><span class="p">)</span> <span class="ow">and</span> <span class="n">img_list1</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">'@'</span><span class="p">):</span>
+        <span class="n">img_list1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">img_list1</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"U"</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">img_list2</span><span class="p">)</span> <span class="ow">and</span> <span class="n">img_list2</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;@&#39;</span><span class="p">):</span>
-        <span class="n">img_list2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">img_list2</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;U&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">img_list2</span><span class="p">)</span> <span class="ow">and</span> <span class="n">img_list2</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">'@'</span><span class="p">):</span>
+        <span class="n">img_list2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">img_list2</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"U"</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">out_list</span><span class="p">)</span> <span class="ow">and</span> <span class="n">out_list</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;@&#39;</span><span class="p">):</span>
-        <span class="n">out_list</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">out_list</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;U&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">out_list</span><span class="p">)</span> <span class="ow">and</span> <span class="n">out_list</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">'@'</span><span class="p">):</span>
+        <span class="n">out_list</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">out_list</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"U"</span><span class="p">)</span>
 
     <span class="c1"># Check that everything is array like.</span>
     <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">img_list1</span><span class="p">):</span>
@@ -277,22 +277,22 @@
     <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">out_list</span><span class="p">):</span>
         <span class="n">out_list</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">out_list</span><span class="p">])</span>
 
-    <span class="c1"># Check that we don&#39;t have lists with size&gt;1 and of different sizes.</span>
+    <span class="c1"># Check that we don't have lists with size&gt;1 and of different sizes.</span>
     <span class="n">l1</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">img_list1</span><span class="p">)</span>
     <span class="n">l2</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">img_list2</span><span class="p">)</span>
     <span class="n">lo</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">out_list</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">l1</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">l2</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">l1</span> <span class="o">!=</span> <span class="n">l2</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;Mis-matched lengths of file lists: img_list1 = </span><span class="si">%d</span><span class="s1">, img_list2 = </span><span class="si">%d</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">l1</span><span class="p">,</span> <span class="n">l2</span><span class="p">)</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s1">'Mis-matched lengths of file lists: img_list1 = </span><span class="si">%d</span><span class="s1">, img_list2 = </span><span class="si">%d</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">l1</span><span class="p">,</span> <span class="n">l2</span><span class="p">)</span>
         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">l1</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">lo</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">l1</span> <span class="o">!=</span> <span class="n">lo</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;Mis-matched lengths of file lists: img_list1 = </span><span class="si">%d</span><span class="s1">, out_list = </span><span class="si">%d</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">l1</span><span class="p">,</span> <span class="n">lo</span><span class="p">)</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s1">'Mis-matched lengths of file lists: img_list1 = </span><span class="si">%d</span><span class="s1">, out_list = </span><span class="si">%d</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">l1</span><span class="p">,</span> <span class="n">lo</span><span class="p">)</span>
         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">lo</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">l2</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">lo</span> <span class="o">!=</span> <span class="n">l2</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;Mis-matched lengths of file lists: out_list = </span><span class="si">%d</span><span class="s1">, img_list2 = </span><span class="si">%d</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lo</span><span class="p">,</span> <span class="n">l2</span><span class="p">)</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s1">'Mis-matched lengths of file lists: out_list = </span><span class="si">%d</span><span class="s1">, img_list2 = </span><span class="si">%d</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lo</span><span class="p">,</span> <span class="n">l2</span><span class="p">)</span>
         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">lo</span> <span class="o">!=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">([</span><span class="n">l1</span><span class="p">,</span> <span class="n">l2</span><span class="p">]):</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;Mis-matched lengths of file lists: out_list = </span><span class="si">%d</span><span class="s1">, img_list1 = </span><span class="si">%d</span><span class="s1">, img_list2 = </span><span class="si">%d</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lo</span><span class="p">,</span> <span class="n">l1</span><span class="p">,</span> <span class="n">l2</span><span class="p">)</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s1">'Mis-matched lengths of file lists: out_list = </span><span class="si">%d</span><span class="s1">, img_list1 = </span><span class="si">%d</span><span class="s1">, img_list2 = </span><span class="si">%d</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lo</span><span class="p">,</span> <span class="n">l1</span><span class="p">,</span> <span class="n">l2</span><span class="p">)</span>
         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="c1"># Loop through files and apply the operations.</span>
@@ -307,17 +307,17 @@
         <span class="k">elif</span> <span class="n">ii</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">img2</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getdata</span><span class="p">(</span><span class="n">img_list2</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 
-        <span class="k">if</span> <span class="n">operator</span> <span class="o">==</span> <span class="s1">&#39;+&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">operator</span> <span class="o">==</span> <span class="s1">'+'</span><span class="p">:</span>
             <span class="n">out</span> <span class="o">=</span> <span class="n">img1</span> <span class="o">+</span> <span class="n">img2</span>
-        <span class="k">if</span> <span class="n">operator</span> <span class="o">==</span> <span class="s1">&#39;-&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">operator</span> <span class="o">==</span> <span class="s1">'-'</span><span class="p">:</span>
             <span class="n">out</span> <span class="o">=</span> <span class="n">img1</span> <span class="o">-</span> <span class="n">img2</span>
-        <span class="k">if</span> <span class="n">operator</span> <span class="o">==</span> <span class="s1">&#39;*&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">operator</span> <span class="o">==</span> <span class="s1">'*'</span><span class="p">:</span>
             <span class="n">out</span> <span class="o">=</span> <span class="n">img1</span> <span class="o">*</span> <span class="n">img2</span>
-        <span class="k">if</span> <span class="n">operator</span> <span class="o">==</span> <span class="s1">&#39;/&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">operator</span> <span class="o">==</span> <span class="s1">'/'</span><span class="p">:</span>
             <span class="n">out</span> <span class="o">=</span> <span class="n">img1</span> <span class="o">/</span> <span class="n">img2</span>
             <span class="n">out</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">out</span><span class="p">)</span> <span class="o">==</span> <span class="kc">False</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">0</span>
 
-        <span class="n">fits</span><span class="o">.</span><span class="n">writeto</span><span class="p">(</span><span class="n">out_list</span><span class="p">[</span><span class="n">ii</span><span class="p">],</span> <span class="n">out</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="n">hdr1</span><span class="p">,</span> <span class="n">output_verify</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">fits</span><span class="o">.</span><span class="n">writeto</span><span class="p">(</span><span class="n">out_list</span><span class="p">[</span><span class="n">ii</span><span class="p">],</span> <span class="n">out</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="n">hdr1</span><span class="p">,</span> <span class="n">output_verify</span><span class="o">=</span><span class="s1">'ignore'</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="k">return</span></div>
 

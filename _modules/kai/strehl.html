@@ -86,7 +86,7 @@
 <div class="viewcode-block" id="calc_strehl">
 <a class="viewcode-back" href="../../autoapi/kai/strehl/index.html#kai.strehl.calc_strehl">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">calc_strehl</span><span class="p">(</span><span class="n">file_list</span><span class="p">,</span> <span class="n">out_file</span><span class="p">,</span> <span class="n">apersize</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Calculate the Strehl, FWHM, and RMS WFE for each image in a </span>
 <span class="sd">    list of files. The output is stored into the specified &lt;out_file&gt;</span>
 <span class="sd">    text file. The FWHM (and Strehl) is calculated over the specified </span>
@@ -115,20 +115,20 @@
 
 <span class="sd">    aper_size : float (def = 0.3 arcsec)</span>
 <span class="sd">        The aperture size over which to calculate the Strehl and FWHM. </span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="c1"># Setup the output file and format.</span>
-    <span class="n">_out</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">out_file</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+    <span class="n">_out</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">out_file</span><span class="p">,</span> <span class="s1">'w'</span><span class="p">)</span>
 
-    <span class="n">fmt_hdr</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{img:&lt;30s}</span><span class="s1"> </span><span class="si">{strehl:&gt;7s}</span><span class="s1"> </span><span class="si">{rms:&gt;7s}</span><span class="s1"> </span><span class="si">{fwhm:&gt;7s}</span><span class="s1">  </span><span class="si">{mjd:&gt;10s}</span><span class="se">\n</span><span class="s1">&#39;</span>
-    <span class="n">fmt_dat</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{img:&lt;30s}</span><span class="s1"> </span><span class="si">{strehl:7.3f}</span><span class="s1"> </span><span class="si">{rms:7.1f}</span><span class="s1"> </span><span class="si">{fwhm:7.2f}</span><span class="s1">  </span><span class="si">{mjd:10.4f}</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="n">fmt_hdr</span> <span class="o">=</span> <span class="s1">'</span><span class="si">{img:&lt;30s}</span><span class="s1"> </span><span class="si">{strehl:&gt;7s}</span><span class="s1"> </span><span class="si">{rms:&gt;7s}</span><span class="s1"> </span><span class="si">{fwhm:&gt;7s}</span><span class="s1">  </span><span class="si">{mjd:&gt;10s}</span><span class="se">\n</span><span class="s1">'</span>
+    <span class="n">fmt_dat</span> <span class="o">=</span> <span class="s1">'</span><span class="si">{img:&lt;30s}</span><span class="s1"> </span><span class="si">{strehl:7.3f}</span><span class="s1"> </span><span class="si">{rms:7.1f}</span><span class="s1"> </span><span class="si">{fwhm:7.2f}</span><span class="s1">  </span><span class="si">{mjd:10.4f}</span><span class="se">\n</span><span class="s1">'</span>
     
-    <span class="n">_out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">fmt_hdr</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">img</span><span class="o">=</span><span class="s1">&#39;#Filename&#39;</span><span class="p">,</span> <span class="n">strehl</span><span class="o">=</span><span class="s1">&#39;Strehl&#39;</span><span class="p">,</span> <span class="n">rms</span><span class="o">=</span><span class="s1">&#39;RMSwfe&#39;</span><span class="p">,</span> <span class="n">fwhm</span><span class="o">=</span><span class="s1">&#39;FWHM&#39;</span><span class="p">,</span> <span class="n">mjd</span><span class="o">=</span><span class="s1">&#39;MJD&#39;</span><span class="p">))</span>
-    <span class="n">_out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">fmt_hdr</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">img</span><span class="o">=</span><span class="s1">&#39;#()&#39;</span><span class="p">,</span> <span class="n">strehl</span><span class="o">=</span><span class="s1">&#39;()&#39;</span><span class="p">,</span> <span class="n">rms</span><span class="o">=</span><span class="s1">&#39;(nm)&#39;</span><span class="p">,</span> <span class="n">fwhm</span><span class="o">=</span><span class="s1">&#39;(mas)&#39;</span><span class="p">,</span> <span class="n">mjd</span><span class="o">=</span><span class="s1">&#39;(UT)&#39;</span><span class="p">))</span>
+    <span class="n">_out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">fmt_hdr</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">img</span><span class="o">=</span><span class="s1">'#Filename'</span><span class="p">,</span> <span class="n">strehl</span><span class="o">=</span><span class="s1">'Strehl'</span><span class="p">,</span> <span class="n">rms</span><span class="o">=</span><span class="s1">'RMSwfe'</span><span class="p">,</span> <span class="n">fwhm</span><span class="o">=</span><span class="s1">'FWHM'</span><span class="p">,</span> <span class="n">mjd</span><span class="o">=</span><span class="s1">'MJD'</span><span class="p">))</span>
+    <span class="n">_out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">fmt_hdr</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">img</span><span class="o">=</span><span class="s1">'#()'</span><span class="p">,</span> <span class="n">strehl</span><span class="o">=</span><span class="s1">'()'</span><span class="p">,</span> <span class="n">rms</span><span class="o">=</span><span class="s1">'(nm)'</span><span class="p">,</span> <span class="n">fwhm</span><span class="o">=</span><span class="s1">'(mas)'</span><span class="p">,</span> <span class="n">mjd</span><span class="o">=</span><span class="s1">'(UT)'</span><span class="p">))</span>
 
     <span class="c1"># Find the root directory where the calibration files live.</span>
     <span class="n">base_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span>
-    <span class="n">cal_dir</span> <span class="o">=</span> <span class="n">base_path</span> <span class="o">+</span> <span class="s1">&#39;/data/diffrac_lim_img/&#39;</span> <span class="o">+</span> <span class="n">instrument</span><span class="o">.</span><span class="n">telescope</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span>
+    <span class="n">cal_dir</span> <span class="o">=</span> <span class="n">base_path</span> <span class="o">+</span> <span class="s1">'/data/diffrac_lim_img/'</span> <span class="o">+</span> <span class="n">instrument</span><span class="o">.</span><span class="n">telescope</span> <span class="o">+</span> <span class="s1">'/'</span>
 
     <span class="c1"># We are going to assume that everything in this list</span>
     <span class="c1"># has the same camera, filter, plate scale, etc. </span>
@@ -139,14 +139,14 @@
     <span class="nb">print</span><span class="p">(</span><span class="n">filt</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">wavelength</span><span class="p">)</span>
 
     <span class="c1"># Get the diffraction limited image for this filter.</span>
-    <span class="n">dl_img_file</span> <span class="o">=</span> <span class="n">cal_dir</span> <span class="o">+</span> <span class="n">filt</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span>
+    <span class="n">dl_img_file</span> <span class="o">=</span> <span class="n">cal_dir</span> <span class="o">+</span> <span class="n">filt</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">+</span> <span class="s1">'.fits'</span>
     <span class="n">dl_img</span><span class="p">,</span> <span class="n">dl_hdr</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getdata</span><span class="p">(</span><span class="n">dl_img_file</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="c1"># Get the DL image scale and re-scale it to match the science iamge.</span>
-    <span class="k">if</span> <span class="s1">&#39;Keck&#39;</span> <span class="ow">in</span> <span class="n">instrument</span><span class="o">.</span><span class="n">telescope</span><span class="p">:</span> 
+    <span class="k">if</span> <span class="s1">'Keck'</span> <span class="ow">in</span> <span class="n">instrument</span><span class="o">.</span><span class="n">telescope</span><span class="p">:</span> 
         <span class="n">scale_dl</span> <span class="o">=</span> <span class="mf">0.009952</span>  <span class="c1"># Hard-coded</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">scale_dl</span> <span class="o">=</span> <span class="n">dl_img</span><span class="p">[</span><span class="s1">&#39;PIXSCALE&#39;</span><span class="p">]</span>
+        <span class="n">scale_dl</span> <span class="o">=</span> <span class="n">dl_img</span><span class="p">[</span><span class="s1">'PIXSCALE'</span><span class="p">]</span>
     <span class="n">rescale</span> <span class="o">=</span> <span class="n">scale_dl</span> <span class="o">/</span> <span class="n">scale</span>
 
     <span class="k">if</span> <span class="n">rescale</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
@@ -164,7 +164,7 @@
     <span class="c1"># We will normalize our Strehl by this value. We will do the same on the</span>
     <span class="c1"># data later on.</span>
     <span class="n">peak_coords_dl</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unravel_index</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">dl_img</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="kc">None</span><span class="p">),</span> <span class="n">dl_img</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>    
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Strehl using peak coordinates&#39;</span><span class="p">,</span><span class="n">peak_coords_dl</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'Strehl using peak coordinates'</span><span class="p">,</span><span class="n">peak_coords_dl</span><span class="p">)</span>
     <span class="c1"># Calculate the peak flux ratio</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">dl_peak_flux_ratio</span> <span class="o">=</span> <span class="n">calc_peak_flux_ratio</span><span class="p">(</span><span class="n">dl_img</span><span class="p">,</span> <span class="n">peak_coords_dl</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">skysub</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
@@ -182,7 +182,7 @@
             
         <span class="n">_out</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
     <span class="k">except</span> <span class="n">astropy</span><span class="o">.</span><span class="n">nddata</span><span class="o">.</span><span class="n">PartialOverlapError</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;calc_strehl has caught an exception, not calculating Strehl: astropy.nddata.PartialOverlapError&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"calc_strehl has caught an exception, not calculating Strehl: astropy.nddata.PartialOverlapError"</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">file_list</span><span class="p">)):</span>
             <span class="n">_out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">fmt_dat</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">img</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span> <span class="n">strehl</span><span class="o">=-</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">rms</span><span class="o">=-</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">fwhm</span><span class="o">=-</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">mjd</span><span class="o">=</span><span class="n">mjd</span><span class="p">))</span>
             <span class="nb">print</span><span class="p">(</span><span class="n">fmt_dat</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">img</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span> <span class="n">strehl</span><span class="o">=-</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">rms</span><span class="o">=-</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">fwhm</span><span class="o">=-</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">mjd</span><span class="o">=</span><span class="n">mjd</span><span class="p">))</span>
@@ -202,16 +202,16 @@
     <span class="n">scale</span> <span class="o">=</span> <span class="n">instrument</span><span class="o">.</span><span class="n">get_plate_scale</span><span class="p">(</span><span class="n">hdr</span><span class="p">)</span>
     
     <span class="c1"># Read in the coordinate file to get the position of the Strehl source. </span>
-    <span class="n">coo_file</span> <span class="o">=</span> <span class="n">img_file</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.fits&#39;</span><span class="p">,</span> <span class="s1">&#39;.coo&#39;</span><span class="p">)</span>
-    <span class="n">_coo</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">coo_file</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
+    <span class="n">coo_file</span> <span class="o">=</span> <span class="n">img_file</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">'.fits'</span><span class="p">,</span> <span class="s1">'.coo'</span><span class="p">)</span>
+    <span class="n">_coo</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">coo_file</span><span class="p">,</span> <span class="s1">'r'</span><span class="p">)</span>
     <span class="n">coo_tmp</span> <span class="o">=</span> <span class="n">_coo</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
     <span class="n">coords</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">coo_tmp</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">float</span><span class="p">(</span><span class="n">coo_tmp</span><span class="p">[</span><span class="mi">1</span><span class="p">])])</span>
     <span class="n">coords</span> <span class="o">-=</span> <span class="mi">1</span>  <span class="c1"># Coordinate were 1 based; but python is 0 based.</span>
     
     <span class="c1"># Use Strehl source coordinates in the header, if available and recorded</span>
-    <span class="k">if</span> <span class="s1">&#39;XSTREHL&#39;</span> <span class="ow">in</span> <span class="n">hdr</span><span class="p">:</span>
-        <span class="n">coords</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;XSTREHL&#39;</span><span class="p">]),</span>
-                           <span class="nb">float</span><span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;YSTREHL&#39;</span><span class="p">])])</span>
+    <span class="k">if</span> <span class="s1">'XSTREHL'</span> <span class="ow">in</span> <span class="n">hdr</span><span class="p">:</span>
+        <span class="n">coords</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="s1">'XSTREHL'</span><span class="p">]),</span>
+                           <span class="nb">float</span><span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="s1">'YSTREHL'</span><span class="p">])])</span>
         <span class="n">coords</span> <span class="o">-=</span> <span class="mi">1</span>     <span class="c1"># Coordinate were 1 based; but python is 0 based.</span>
     
     
@@ -243,7 +243,7 @@
         <span class="n">stddev</span> <span class="o">=</span> <span class="p">(</span><span class="n">g2d</span><span class="o">.</span><span class="n">x_stddev_0</span><span class="o">.</span><span class="n">value</span> <span class="o">+</span> <span class="n">g2d</span><span class="o">.</span><span class="n">y_stddev_0</span><span class="o">.</span><span class="n">value</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>
         <span class="n">fwhm</span> <span class="o">=</span> <span class="mf">2.355</span> <span class="o">*</span> <span class="n">stddev</span>
 
-        <span class="nb">print</span><span class="p">(</span><span class="n">img_file</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">iters</span><span class="p">,</span> <span class="n">fwhm</span><span class="p">,</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">img_file</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">'/'</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">iters</span><span class="p">,</span> <span class="n">fwhm</span><span class="p">,</span>
                   <span class="n">g2d</span><span class="o">.</span><span class="n">x_mean_0</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">g2d</span><span class="o">.</span><span class="n">y_mean_0</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">fwhm_boxsize</span><span class="o">*</span><span class="n">box_scale</span><span class="p">)</span>
 
         <span class="c1"># Update the coordinates if they are reasonable. </span>
@@ -261,7 +261,7 @@
 
     <span class="c1"># Normalize by the same from the DL image to get the Strehl.</span>
     <span class="n">strehl</span> <span class="o">=</span> <span class="n">peak_flux_ratio</span> <span class="o">/</span> <span class="n">dl_peak_flux_ratio</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;peak flux ratio = &#39;</span><span class="p">,</span> <span class="n">peak_flux_ratio</span><span class="p">,</span> <span class="s1">&#39; dl peak flux ratio = &#39;</span><span class="p">,</span> <span class="n">dl_peak_flux_ratio</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'peak flux ratio = '</span><span class="p">,</span> <span class="n">peak_flux_ratio</span><span class="p">,</span> <span class="s1">' dl peak flux ratio = '</span><span class="p">,</span> <span class="n">dl_peak_flux_ratio</span><span class="p">)</span>
 
     <span class="c1"># Convert the Strehl to a RMS WFE using the Marechal approximation.</span>
     <span class="n">rms_wfe</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span> <span class="o">-</span><span class="mf">1.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">strehl</span><span class="p">))</span> <span class="o">*</span> <span class="n">wavelength</span> <span class="o">*</span> <span class="mf">1.0e3</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
@@ -274,7 +274,7 @@
         <span class="n">fwhm</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.0</span>
         <span class="n">rms_wfe</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.0</span>
 
-    <span class="n">fmt_dat</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{img:&lt;30s}</span><span class="s1"> </span><span class="si">{strehl:7.3f}</span><span class="s1"> </span><span class="si">{rms:7.1f}</span><span class="s1"> </span><span class="si">{fwhm:7.2f}</span><span class="s1"> </span><span class="si">{xpos:6.1f}</span><span class="s1"> </span><span class="si">{ypos:6.1f}</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="n">fmt_dat</span> <span class="o">=</span> <span class="s1">'</span><span class="si">{img:&lt;30s}</span><span class="s1"> </span><span class="si">{strehl:7.3f}</span><span class="s1"> </span><span class="si">{rms:7.1f}</span><span class="s1"> </span><span class="si">{fwhm:7.2f}</span><span class="s1"> </span><span class="si">{xpos:6.1f}</span><span class="s1"> </span><span class="si">{ypos:6.1f}</span><span class="se">\n</span><span class="s1">'</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">fmt_dat</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">img</span><span class="o">=</span><span class="n">img_file</span><span class="p">,</span> <span class="n">strehl</span><span class="o">=</span><span class="n">strehl</span><span class="p">,</span> <span class="n">rms</span><span class="o">=</span><span class="n">rms_wfe</span><span class="p">,</span> <span class="n">fwhm</span><span class="o">=</span><span class="n">fwhm</span><span class="p">,</span> <span class="n">xpos</span><span class="o">=</span><span class="n">coords</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ypos</span><span class="o">=</span><span class="n">coords</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
     
     <span class="k">return</span> <span class="n">strehl</span><span class="p">,</span> <span class="n">fwhm</span><span class="p">,</span> <span class="n">rms_wfe</span></div>
@@ -283,7 +283,7 @@
 <div class="viewcode-block" id="calc_peak_flux_ratio">
 <a class="viewcode-back" href="../../autoapi/kai/strehl/index.html#kai.strehl.calc_peak_flux_ratio">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">calc_peak_flux_ratio</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">coords</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">skysub</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    img : 2D numpy array</span>
 <span class="sd">        The image on which to calculate the flux ratio of the peak to a </span>
 <span class="sd">        wide-aperture.</span>
@@ -294,10 +294,10 @@
 <span class="sd">    radius : int</span>
 <span class="sd">        The radius, in pixels, of the wide-aperture. </span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># Make a cutout of the image around the specified coordinates.</span>
     <span class="n">boxsize</span> <span class="o">=</span> <span class="p">(</span><span class="n">radius</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
-    <span class="n">img_cut</span> <span class="o">=</span> <span class="n">Cutout2D</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">coords</span><span class="p">,</span> <span class="n">boxsize</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;strict&#39;</span><span class="p">)</span>
+    <span class="n">img_cut</span> <span class="o">=</span> <span class="n">Cutout2D</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">coords</span><span class="p">,</span> <span class="n">boxsize</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">'strict'</span><span class="p">)</span>
 
     <span class="c1"># Determine the peak flux in this window.</span>
     <span class="n">iy</span><span class="p">,</span> <span class="n">ix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unravel_index</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">img_cut</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="kc">None</span><span class="p">),</span> <span class="n">img_cut</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
@@ -308,19 +308,19 @@
     <span class="c1"># Then normalize by the same thing from the reference DL image. </span>
     <span class="n">aper</span> <span class="o">=</span> <span class="n">CircularAperture</span><span class="p">(</span><span class="n">coords</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="n">radius</span><span class="p">)</span>
     <span class="n">aper_out</span> <span class="o">=</span> <span class="n">aperture_photometry</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">aper</span><span class="p">)</span>
-    <span class="n">aper_sum</span> <span class="o">=</span> <span class="n">aper_out</span><span class="p">[</span><span class="s1">&#39;aperture_sum&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">aper_sum</span> <span class="o">=</span> <span class="n">aper_out</span><span class="p">[</span><span class="s1">'aperture_sum'</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
 
     <span class="k">if</span> <span class="n">skysub</span><span class="p">:</span>
         <span class="n">sky_rad_inn</span> <span class="o">=</span> <span class="n">radius</span> <span class="o">+</span> <span class="mi">20</span>
         <span class="n">sky_rad_out</span> <span class="o">=</span> <span class="n">radius</span> <span class="o">+</span> <span class="mi">30</span>
         <span class="n">sky_aper</span> <span class="o">=</span> <span class="n">CircularAnnulus</span><span class="p">(</span><span class="n">coords</span><span class="p">,</span> <span class="n">sky_rad_inn</span><span class="p">,</span> <span class="n">sky_rad_out</span><span class="p">)</span>
         <span class="n">sky_aper_out</span> <span class="o">=</span> <span class="n">aperture_photometry</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">sky_aper</span><span class="p">)</span>
-        <span class="n">sky_aper_sum</span> <span class="o">=</span> <span class="n">sky_aper_out</span><span class="p">[</span><span class="s1">&#39;aperture_sum&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">sky_aper_sum</span> <span class="o">=</span> <span class="n">sky_aper_out</span><span class="p">[</span><span class="s1">'aperture_sum'</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
 
         <span class="n">aper_sum</span> <span class="o">-=</span> <span class="n">sky_aper_sum</span>
 
     <span class="c1"># Calculate the peak pixel flux / wide-aperture flux</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;peak_flux = &#39;</span><span class="p">,</span> <span class="n">peak_flux</span><span class="p">,</span> <span class="s1">&#39; aper_sum = &#39;</span><span class="p">,</span> <span class="n">aper_sum</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'peak_flux = '</span><span class="p">,</span> <span class="n">peak_flux</span><span class="p">,</span> <span class="s1">' aper_sum = '</span><span class="p">,</span> <span class="n">aper_sum</span><span class="p">)</span>
     <span class="n">peak_flux_ratio</span> <span class="o">=</span> <span class="n">peak_flux</span> <span class="o">/</span> <span class="n">aper_sum</span>
     
     <span class="k">return</span> <span class="n">peak_flux_ratio</span></div>
@@ -330,7 +330,7 @@
 <a class="viewcode-back" href="../../autoapi/kai/strehl/index.html#kai.strehl.fit_gaussian2d">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">fit_gaussian2d</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">coords</span><span class="p">,</span> <span class="n">boxsize</span><span class="p">,</span> <span class="n">plot</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                        <span class="n">fwhm_min</span><span class="o">=</span><span class="mf">1.7</span><span class="p">,</span> <span class="n">fwhm_max</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">pos_delta_max</span><span class="o">=</span><span class="mf">1.7</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Calculate the FWHM of an objected located at the pixel</span>
 <span class="sd">    coordinates in the image. The FWHM will be estimated </span>
 <span class="sd">    from a cutout with the specified boxsize.</span>
@@ -349,9 +349,9 @@
 <span class="sd">        The maximum allowed FWHM for constraining the fit (pixels).</span>
 <span class="sd">    pos_delta_max : float, optional</span>
 <span class="sd">        The maximum allowed positional offset for constraining the fit (pixels).</span>
-<span class="sd">        This ensures that the fitter doesn&#39;t wonder off to a bad pixel.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">cutout_obj</span> <span class="o">=</span> <span class="n">Cutout2D</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">coords</span><span class="p">,</span> <span class="n">boxsize</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;strict&#39;</span><span class="p">)</span>
+<span class="sd">        This ensures that the fitter doesn't wonder off to a bad pixel.</span>
+<span class="sd">    """</span>
+    <span class="n">cutout_obj</span> <span class="o">=</span> <span class="n">Cutout2D</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">coords</span><span class="p">,</span> <span class="n">boxsize</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">'strict'</span><span class="p">)</span>
     <span class="n">cutout</span> <span class="o">=</span> <span class="n">cutout_obj</span><span class="o">.</span><span class="n">data</span>
     <span class="n">x1d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">cutout</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
     <span class="n">y1d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">cutout</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
@@ -396,25 +396,25 @@
         <span class="n">plt</span><span class="o">.</span><span class="n">subplots_adjust</span><span class="p">(</span><span class="n">left</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">wspace</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">cutout</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="n">mod_img</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">vmax</span><span class="o">=</span><span class="n">mod_img</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span>
-                   <span class="n">origin</span><span class="o">=</span><span class="s1">&#39;lower&#39;</span><span class="p">)</span>
+                   <span class="n">origin</span><span class="o">=</span><span class="s1">'lower'</span><span class="p">)</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">()</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Original&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">"Original"</span><span class="p">)</span>
         
         <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">mod_img</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="n">mod_img</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">vmax</span><span class="o">=</span><span class="n">mod_img</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span>
-                   <span class="n">origin</span><span class="o">=</span><span class="s1">&#39;lower&#39;</span><span class="p">)</span>
+                   <span class="n">origin</span><span class="o">=</span><span class="s1">'lower'</span><span class="p">)</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">()</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Model&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">"Model"</span><span class="p">)</span>
         
         <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">cutout</span> <span class="o">-</span> <span class="n">mod_img</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="s1">&#39;lower&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">cutout</span> <span class="o">-</span> <span class="n">mod_img</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="s1">'lower'</span><span class="p">)</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">()</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Orig - Mod&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">"Orig - Mod"</span><span class="p">)</span>
         
         <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
         
         <span class="c1"># plt.show(block=0)</span>
-        <span class="c1"># plt.savefig(&#39;strehl_fit.pdf&#39;)</span>
+        <span class="c1"># plt.savefig('strehl_fit.pdf')</span>
         <span class="c1"># pdb.set_trace()</span>
         
     <span class="c1"># Adjust Gaussian parameters to the original coordinates.</span>

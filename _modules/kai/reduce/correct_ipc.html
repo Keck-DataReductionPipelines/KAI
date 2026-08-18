@@ -130,16 +130,16 @@
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/correct_ipc/index.html#kai.reduce.correct_ipc.test_correct_ipc">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">test_correct_ipc</span><span class="p">():</span>
     <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
-    <span class="n">fn</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s1">&#39;~/work/OI.20190726.09561.fits&#39;</span><span class="p">)</span>
+    <span class="n">fn</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s1">'~/work/OI.20190726.09561.fits'</span><span class="p">)</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">astropy.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">fits</span>
     <span class="n">im</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getdata</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span>
 
     <span class="n">cim</span> <span class="o">=</span> <span class="n">correct_ipc</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="mf">6.6e-3</span><span class="p">,</span> <span class="n">strip_reference</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
-    <span class="n">out_fn</span> <span class="o">=</span> <span class="s1">&#39;test.fits&#39;</span>
+    <span class="n">out_fn</span> <span class="o">=</span> <span class="s1">'test.fits'</span>
     <span class="n">fits</span><span class="o">.</span><span class="n">writeto</span><span class="p">(</span><span class="n">out_fn</span><span class="p">,</span> <span class="n">cim</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
 
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">'__main__'</span><span class="p">:</span>
     <span class="n">test_correct_ipc</span><span class="p">()</span>
 
     

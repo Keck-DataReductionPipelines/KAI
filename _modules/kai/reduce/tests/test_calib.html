@@ -87,13 +87,13 @@
 
         <span class="n">mod_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">calib</span><span class="o">.</span><span class="vm">__file__</span><span class="p">))</span>
 
-        <span class="n">epoch_dir</span> <span class="o">=</span> <span class="n">mod_path</span> <span class="o">+</span> <span class="s1">&#39;/../data/test_epoch/17may21/&#39;</span>
-        <span class="n">reduce_dir</span> <span class="o">=</span> <span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">&#39;reduce/&#39;</span>
-        <span class="n">raw_dir</span> <span class="o">=</span> <span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">&#39;raw/&#39;</span>
+        <span class="n">epoch_dir</span> <span class="o">=</span> <span class="n">mod_path</span> <span class="o">+</span> <span class="s1">'/../data/test_epoch/17may21/'</span>
+        <span class="n">reduce_dir</span> <span class="o">=</span> <span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">'reduce/'</span>
+        <span class="n">raw_dir</span> <span class="o">=</span> <span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">'raw/'</span>
 
         <span class="n">dark_files</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">214</span><span class="p">,</span> <span class="mi">223</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="n">dark_out</span> <span class="o">=</span> <span class="s1">&#39;dark_30.0s_1ca.fits&#39;</span>
-        <span class="n">dark_out_full_path</span> <span class="o">=</span> <span class="n">reduce_dir</span> <span class="o">+</span> <span class="s1">&#39;calib/darks/&#39;</span> <span class="o">+</span> <span class="n">dark_out</span>  <span class="c1"># only use for testing</span>
+        <span class="n">dark_out</span> <span class="o">=</span> <span class="s1">'dark_30.0s_1ca.fits'</span>
+        <span class="n">dark_out_full_path</span> <span class="o">=</span> <span class="n">reduce_dir</span> <span class="o">+</span> <span class="s1">'calib/darks/'</span> <span class="o">+</span> <span class="n">dark_out</span>  <span class="c1"># only use for testing</span>
 
         <span class="c1"># If file exists, delete it.</span>
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">dark_out_full_path</span><span class="p">):</span>
@@ -126,14 +126,14 @@
 
         <span class="n">mod_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">calib</span><span class="o">.</span><span class="vm">__file__</span><span class="p">))</span>
 
-        <span class="n">epoch_dir</span> <span class="o">=</span> <span class="n">mod_path</span> <span class="o">+</span> <span class="s1">&#39;/../data/test_epoch/17may21/&#39;</span>
-        <span class="n">reduce_dir</span> <span class="o">=</span> <span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">&#39;reduce/&#39;</span>
-        <span class="n">raw_dir</span> <span class="o">=</span> <span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">&#39;raw/&#39;</span>
+        <span class="n">epoch_dir</span> <span class="o">=</span> <span class="n">mod_path</span> <span class="o">+</span> <span class="s1">'/../data/test_epoch/17may21/'</span>
+        <span class="n">reduce_dir</span> <span class="o">=</span> <span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">'reduce/'</span>
+        <span class="n">raw_dir</span> <span class="o">=</span> <span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">'raw/'</span>
 
         <span class="n">off_files</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">184</span><span class="p">,</span> <span class="mi">202</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
         <span class="n">on_files</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">185</span><span class="p">,</span> <span class="mi">203</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
-        <span class="n">flat_out</span> <span class="o">=</span> <span class="s1">&#39;flat.fits&#39;</span>
-        <span class="n">flat_out_full_path</span> <span class="o">=</span> <span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">&#39;reduce/calib/flats/&#39;</span> <span class="o">+</span> <span class="n">flat_out</span>
+        <span class="n">flat_out</span> <span class="o">=</span> <span class="s1">'flat.fits'</span>
+        <span class="n">flat_out_full_path</span> <span class="o">=</span> <span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">'reduce/calib/flats/'</span> <span class="o">+</span> <span class="n">flat_out</span>
 
         <span class="c1"># If file exists, delete it.</span>
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">flat_out_full_path</span><span class="p">):</span>
@@ -160,12 +160,12 @@
 
         <span class="n">mod_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">calib</span><span class="o">.</span><span class="vm">__file__</span><span class="p">))</span>
 
-        <span class="n">epoch_dir</span> <span class="o">=</span> <span class="n">mod_path</span> <span class="o">+</span> <span class="s1">&#39;/../data/test_epoch/17may21/&#39;</span>
-        <span class="n">reduce_dir</span> <span class="o">=</span> <span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">&#39;reduce/&#39;</span>
-        <span class="n">raw_dir</span> <span class="o">=</span> <span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">&#39;raw/&#39;</span>
+        <span class="n">epoch_dir</span> <span class="o">=</span> <span class="n">mod_path</span> <span class="o">+</span> <span class="s1">'/../data/test_epoch/17may21/'</span>
+        <span class="n">reduce_dir</span> <span class="o">=</span> <span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">'reduce/'</span>
+        <span class="n">raw_dir</span> <span class="o">=</span> <span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">'raw/'</span>
 
-        <span class="n">mask_out</span> <span class="o">=</span> <span class="s1">&#39;supermask.fits&#39;</span>
-        <span class="n">mask_out_full_path</span> <span class="o">=</span> <span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">&#39;reduce/calib/masks/&#39;</span> <span class="o">+</span> <span class="n">mask_out</span>
+        <span class="n">mask_out</span> <span class="o">=</span> <span class="s1">'supermask.fits'</span>
+        <span class="n">mask_out_full_path</span> <span class="o">=</span> <span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">'reduce/calib/masks/'</span> <span class="o">+</span> <span class="n">mask_out</span>
         
         <span class="c1"># If file exists, delete it.</span>
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">mask_out_full_path</span><span class="p">):</span>
@@ -173,8 +173,8 @@
 
         <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">reduce_dir</span><span class="p">)</span>
             
-        <span class="n">calib</span><span class="o">.</span><span class="n">makemask</span><span class="p">(</span><span class="s1">&#39;dark_30.0s_1ca.fits&#39;</span><span class="p">,</span> <span class="s1">&#39;flat.fits&#39;</span><span class="p">,</span>
-                   <span class="s1">&#39;supermask.fits&#39;</span><span class="p">)</span>
+        <span class="n">calib</span><span class="o">.</span><span class="n">makemask</span><span class="p">(</span><span class="s1">'dark_30.0s_1ca.fits'</span><span class="p">,</span> <span class="s1">'flat.fits'</span><span class="p">,</span>
+                   <span class="s1">'supermask.fits'</span><span class="p">)</span>
 
         <span class="c1"># Check that file was created.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">mask_out_full_path</span><span class="p">))</span>
@@ -187,7 +187,7 @@
 
 
 
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">'__main__'</span><span class="p">:</span>
     <span class="n">unittest</span><span class="o">.</span><span class="n">main</span><span class="p">()</span>
 </pre></div>
 

@@ -81,11 +81,11 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">test_alignComboFlyStar</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">mod_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">calib</span><span class="o">.</span><span class="vm">__file__</span><span class="p">))</span>
 
-        <span class="n">root_dir</span> <span class="o">=</span> <span class="n">mod_pat</span> <span class="o">+</span> <span class="s1">&#39;/../data/test_epoch/&#39;</span>
-        <span class="n">epoch_dir</span> <span class="o">=</span> <span class="n">mod_path</span> <span class="o">+</span> <span class="s1">&#39;/../data/test_epoch/17may21/&#39;</span>
-        <span class="n">combo_dir</span> <span class="o">=</span> <span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">&#39;combo/&#39;</span>
+        <span class="n">root_dir</span> <span class="o">=</span> <span class="n">mod_pat</span> <span class="o">+</span> <span class="s1">'/../data/test_epoch/'</span>
+        <span class="n">epoch_dir</span> <span class="o">=</span> <span class="n">mod_path</span> <span class="o">+</span> <span class="s1">'/../data/test_epoch/17may21/'</span>
+        <span class="n">combo_dir</span> <span class="o">=</span> <span class="n">epoch_dir</span> <span class="o">+</span> <span class="s1">'combo/'</span>
 
-        <span class="n">analysisObject</span> <span class="o">=</span> <span class="n">analysis</span><span class="o">.</span><span class="n">Analysis</span><span class="p">(</span><span class="s1">&#39;17may21&#39;</span><span class="p">,</span> <span class="n">filt</span><span class="o">=</span><span class="s1">&#39;kp&#39;</span><span class="p">,</span> <span class="n">rootDir</span><span class="o">=</span><span class="n">root_dir</span><span class="p">)</span>
+        <span class="n">analysisObject</span> <span class="o">=</span> <span class="n">analysis</span><span class="o">.</span><span class="n">Analysis</span><span class="p">(</span><span class="s1">'17may21'</span><span class="p">,</span> <span class="n">filt</span><span class="o">=</span><span class="s1">'kp'</span><span class="p">,</span> <span class="n">rootDir</span><span class="o">=</span><span class="n">root_dir</span><span class="p">)</span>
 
 
 
@@ -94,7 +94,7 @@
 
 
 
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">'__main__'</span><span class="p">:</span>
     <span class="n">unittest</span><span class="o">.</span><span class="n">main</span><span class="p">()</span>
 </pre></div>
 

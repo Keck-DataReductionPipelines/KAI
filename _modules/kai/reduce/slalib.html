@@ -75,12 +75,12 @@
 <div class="viewcode-block" id="refco">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/slalib/index.html#kai.reduce.slalib.refco">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">refco</span><span class="p">(</span><span class="n">HM</span><span class="p">,</span> <span class="n">TDK</span><span class="p">,</span> <span class="n">PMB</span><span class="p">,</span> <span class="n">RH</span><span class="p">,</span> <span class="n">WL</span><span class="p">,</span> <span class="n">PHI</span><span class="p">,</span> <span class="n">TLR</span><span class="p">,</span> <span class="n">EPS</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Determine the constants A and B in the atmospheric refraction</span>
 <span class="sd">    model dZ = A tan Z + B tan**3 Z.</span>
 <span class="sd"> </span>
-<span class="sd">    Z is the &quot;observed&quot; zenith distance (i.e. affected by refraction)</span>
-<span class="sd">    and dZ is what to add to Z to give the &quot;topocentric&quot; (i.e. in vacuo)</span>
+<span class="sd">    Z is the "observed" zenith distance (i.e. affected by refraction)</span>
+<span class="sd">    and dZ is what to add to Z to give the "topocentric" (i.e. in vacuo)</span>
 <span class="sd">    zenith distance.</span>
 <span class="sd"> </span>
 <span class="sd">    Given:</span>
@@ -120,7 +120,7 @@
 <span class="sd">    </span>
 <span class="sd">    Migrated from SLALIB (fortran) to python:</span>
 <span class="sd">    J. R. Lu -- 2015-05-13</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># Sample zenith distances: arctan(1) and arctan(4)</span>
     <span class="n">atn1</span> <span class="o">=</span> <span class="mf">0.7853981633974483</span>
     <span class="n">atn4</span> <span class="o">=</span> <span class="mf">1.325817663668033</span>
@@ -139,7 +139,7 @@
 <div class="viewcode-block" id="refro">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/slalib/index.html#kai.reduce.slalib.refro">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">refro</span><span class="p">(</span><span class="n">ZOBS</span><span class="p">,</span> <span class="n">HM</span><span class="p">,</span> <span class="n">TDK</span><span class="p">,</span> <span class="n">PMB</span><span class="p">,</span> <span class="n">RH</span><span class="p">,</span> <span class="n">WL</span><span class="p">,</span> <span class="n">PHI</span><span class="p">,</span> <span class="n">TLR</span><span class="p">,</span> <span class="n">EPS</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Atmospheric refraction for radio and optical/IR wavelengths.</span>
 <span class="sd">  </span>
 <span class="sd">    Given:</span>
@@ -184,7 +184,7 @@
 <span class="sd">  </span>
 <span class="sd">       .  Other argument values have been limited to safe values.</span>
 <span class="sd">  </span>
-<span class="sd">       .  Murray&#39;s values for the gas constants have been used</span>
+<span class="sd">       .  Murray's values for the gas constants have been used</span>
 <span class="sd">          (Vectorial Astrometry, Adam Hilger, 1983).</span>
 <span class="sd">  </span>
 <span class="sd">       .  The numerical integration phase has been rearranged for</span>
@@ -239,7 +239,7 @@
 <span class="sd">       humid sea-level sites the accuracy will not be as good.</span>
 <span class="sd">  </span>
 <span class="sd">    9  It should be noted that the relative humidity RH is formally</span>
-<span class="sd">       defined in terms of &quot;mixing ratio&quot; rather than pressures or</span>
+<span class="sd">       defined in terms of "mixing ratio" rather than pressures or</span>
 <span class="sd">       densities as is often stated.  It is the mass of water per unit</span>
 <span class="sd">       mass of dry air divided by that for saturated air at the same</span>
 <span class="sd">       temperature and pressure (see Gill 1982).</span>
@@ -250,7 +250,7 @@
 <span class="sd">  </span>
 <span class="sd">    Copyright (C) 1997 Rutherford Appleton Laboratory</span>
 <span class="sd">    Copyright (C) 1995 Association of Universities for Research in Astronomy Inc.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># Fixed parameters</span>
     
     <span class="c1"># 93 degrees in radians</span>
@@ -441,7 +441,7 @@
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">FO</span> <span class="o">=</span> <span class="n">FO</span> <span class="o">+</span> <span class="n">F</span>
 
-            <span class="c1"># Evaluate the integrand using Simpson&#39;s Rule.</span>
+            <span class="c1"># Evaluate the integrand using Simpson's Rule.</span>
             <span class="n">REFP</span> <span class="o">=</span> <span class="n">H</span> <span class="o">*</span> <span class="p">(</span><span class="n">FB</span> <span class="o">+</span> <span class="mf">4.0</span> <span class="o">*</span> <span class="n">FO</span> <span class="o">+</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">FE</span> <span class="o">+</span> <span class="n">FF</span><span class="p">)</span> <span class="o">/</span> <span class="mf">3.0</span>
 
             <span class="c1"># Has the required precision been achieved?</span>
@@ -455,7 +455,7 @@
                 <span class="c1"># Double the number of strips.</span>
                 <span class="n">IS</span> <span class="o">=</span> <span class="n">IS</span> <span class="o">+</span> <span class="n">IS</span>
 
-                <span class="c1"># Sum of all current values = sum of next pass&#39;s even values.</span>
+                <span class="c1"># Sum of all current values = sum of next pass's even values.</span>
                 <span class="n">FE</span> <span class="o">=</span> <span class="n">FE</span> <span class="o">+</span> <span class="n">FO</span>
 
                 <span class="c1"># Prepare for new odd values.</span>
@@ -486,7 +486,7 @@
 <div class="viewcode-block" id="atmt">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/slalib/index.html#kai.reduce.slalib.atmt">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">atmt</span><span class="p">(</span><span class="n">R0</span><span class="p">,</span> <span class="n">T0</span><span class="p">,</span> <span class="n">ALPHA</span><span class="p">,</span> <span class="n">GAMM2</span><span class="p">,</span> <span class="n">DELM2</span><span class="p">,</span> <span class="n">C1</span><span class="p">,</span> <span class="n">C2</span><span class="p">,</span> <span class="n">C3</span><span class="p">,</span> <span class="n">C4</span><span class="p">,</span> <span class="n">C5</span><span class="p">,</span> <span class="n">C6</span><span class="p">,</span> <span class="n">R</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Internal routine used by REFRO</span>
 <span class="sd">  </span>
 <span class="sd">    Refractive index and derivative with respect to height for the</span>
@@ -517,7 +517,7 @@
 <span class="sd">  </span>
 <span class="sd">    Copyright (C) 1997 Rutherford Appleton Laboratory</span>
 <span class="sd">    Copyright (C) 1995 Association of Universities for Research in Astronomy Inc.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">T</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">T0</span> <span class="o">-</span> <span class="n">ALPHA</span> <span class="o">*</span> <span class="p">(</span><span class="n">R</span> <span class="o">-</span> <span class="n">R0</span><span class="p">),</span> <span class="mf">320.0</span><span class="p">),</span> <span class="mf">100.0</span><span class="p">)</span>
     <span class="n">TT0</span> <span class="o">=</span> <span class="n">T</span> <span class="o">/</span> <span class="n">T0</span>
     <span class="n">TT0GM2</span> <span class="o">=</span> <span class="n">TT0</span><span class="o">**</span><span class="n">GAMM2</span>
@@ -532,7 +532,7 @@
 <div class="viewcode-block" id="atms">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/slalib/index.html#kai.reduce.slalib.atms">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">atms</span><span class="p">(</span><span class="n">RT</span><span class="p">,</span> <span class="n">TT</span><span class="p">,</span> <span class="n">DNT</span><span class="p">,</span> <span class="n">GAMAL</span><span class="p">,</span> <span class="n">R</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">  </span>
 <span class="sd">    Internal routine used by REFRO</span>
 <span class="sd">  </span>
@@ -554,7 +554,7 @@
 <span class="sd">  </span>
 <span class="sd">    Copyright (C) 1995 Rutherford Appleton Laboratory</span>
 <span class="sd">    Copyright (C) 1995 Association of Universities for Research in Astronomy Inc.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">B</span> <span class="o">=</span> <span class="n">GAMAL</span> <span class="o">/</span> <span class="n">TT</span>
     <span class="n">W</span> <span class="o">=</span> <span class="p">(</span><span class="n">DNT</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">B</span> <span class="o">*</span> <span class="p">(</span><span class="n">R</span> <span class="o">-</span> <span class="n">RT</span><span class="p">))</span>
     <span class="n">DN</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">+</span> <span class="n">W</span>
@@ -567,7 +567,7 @@
 <div class="viewcode-block" id="da1p">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/slalib/index.html#kai.reduce.slalib.da1p">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">da1p</span><span class="p">(</span><span class="n">ANGLE</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Normalize angle into range +/- pi  (double precision)</span>
 <span class="sd">  </span>
 <span class="sd">    Given:</span>
@@ -579,7 +579,7 @@
 <span class="sd">  </span>
 <span class="sd">    Copyright (C) 1995 Rutherford Appleton Laboratory</span>
 <span class="sd">    Copyright (C) 1995 Association of Universities for Research in Astronomy Inc.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">DPI</span> <span class="o">=</span> <span class="mf">3.141592653589793238462643</span>
     <span class="n">D2PI</span> <span class="o">=</span> <span class="mf">6.283185307179586476925287</span>
 

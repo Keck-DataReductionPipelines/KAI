@@ -92,39 +92,39 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">imageio</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">kai</span><span class="w"> </span><span class="kn">import</span> <span class="n">instruments</span>
 
-<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">"ignore"</span><span class="p">)</span>
 
 <div class="viewcode-block" id="kailog">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/kai_util/index.html#kai.reduce.kai_util.kailog">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">kailog</span><span class="p">(</span><span class="n">directory</span><span class="p">):</span>
-    <span class="n">makelog</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span> <span class="n">outfile</span><span class="o">=</span><span class="s1">&#39;kai.log&#39;</span><span class="p">)</span>
+    <span class="n">makelog</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span> <span class="n">outfile</span><span class="o">=</span><span class="s1">'kai.log'</span><span class="p">)</span>
 
     <span class="k">return</span></div>
 
 
 <div class="viewcode-block" id="makelog">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/kai_util/index.html#kai.reduce.kai_util.makelog">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">makelog</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span> <span class="n">outfile</span><span class="o">=</span><span class="s1">&#39;image_log.txt&#39;</span><span class="p">,</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">makelog</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span> <span class="n">outfile</span><span class="o">=</span><span class="s1">'image_log.txt'</span><span class="p">,</span>
             <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Make an electronic log for all the FITS files in the </span>
+<span class="w">    </span><span class="sd">"""Make an electronic log for all the FITS files in the </span>
 <span class="sd">    specified directory.</span>
 
 <span class="sd">    Optional</span>
 <span class="sd">    ---------</span>
 <span class="sd">    outfile : str</span>
 <span class="sd">        Output text file (def=image_log.txt)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">access</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">F_OK</span><span class="p">):</span>
-        <span class="nb">print</span><span class="p">((</span> <span class="s1">&#39;Cannot access directory &#39;</span> <span class="o">+</span> <span class="n">directory</span> <span class="p">))</span>
+        <span class="nb">print</span><span class="p">((</span> <span class="s1">'Cannot access directory '</span> <span class="o">+</span> <span class="n">directory</span> <span class="p">))</span>
 
     <span class="c1"># Remove old *flip files and the old log.</span>
-    <span class="n">old</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">directory</span> <span class="o">+</span> <span class="s1">&#39;/*flip.fits&#39;</span><span class="p">)</span>
+    <span class="n">old</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">directory</span> <span class="o">+</span> <span class="s1">'/*flip.fits'</span><span class="p">)</span>
     <span class="n">util</span><span class="o">.</span><span class="n">rmall</span><span class="p">(</span><span class="n">old</span><span class="p">)</span>
-    <span class="n">util</span><span class="o">.</span><span class="n">rmall</span><span class="p">([</span><span class="n">directory</span><span class="o">+</span><span class="s1">&#39;image_log.txt&#39;</span><span class="p">])</span>
+    <span class="n">util</span><span class="o">.</span><span class="n">rmall</span><span class="p">([</span><span class="n">directory</span><span class="o">+</span><span class="s1">'image_log.txt'</span><span class="p">])</span>
 
-    <span class="n">files</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">directory</span> <span class="o">+</span> <span class="s1">&#39;/*.fits&#39;</span><span class="p">)</span>
+    <span class="n">files</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">directory</span> <span class="o">+</span> <span class="s1">'/*.fits'</span><span class="p">)</span>
     <span class="n">files</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
-    <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">directory</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">outfile</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">directory</span> <span class="o">+</span> <span class="s1">'/'</span> <span class="o">+</span> <span class="n">outfile</span><span class="p">,</span> <span class="s1">'w'</span><span class="p">)</span>
 
     <span class="c1"># Short-hand</span>
     <span class="n">ihk</span> <span class="o">=</span> <span class="n">instrument</span><span class="o">.</span><span class="n">hdr_keys</span>
@@ -134,52 +134,52 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="n">hdr</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getheader</span><span class="p">(</span><span class="n">file</span><span class="p">,</span><span class="n">ignore_missing_end</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{0}</span><span class="s1">: </span><span class="si">{1}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">e</span><span class="p">))</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">'</span><span class="si">{0}</span><span class="s1">: </span><span class="si">{1}</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">e</span><span class="p">))</span>
             
             <span class="c1"># End of this line</span>
-            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1">'</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
             <span class="c1"># First column is frame number</span>
-            <span class="n">frame</span> <span class="o">=</span> <span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="n">ihk</span><span class="p">[</span><span class="s1">&#39;filename&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">strip</span><span class="p">())[:</span><span class="o">-</span><span class="mi">5</span><span class="p">]</span>
-            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%16s</span><span class="s1">  &#39;</span> <span class="o">%</span> <span class="n">frame</span><span class="p">)</span>
+            <span class="n">frame</span> <span class="o">=</span> <span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="n">ihk</span><span class="p">[</span><span class="s1">'filename'</span><span class="p">]]</span><span class="o">.</span><span class="n">strip</span><span class="p">())[:</span><span class="o">-</span><span class="mi">5</span><span class="p">]</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">'</span><span class="si">%16s</span><span class="s1">  '</span> <span class="o">%</span> <span class="n">frame</span><span class="p">)</span>
 
             <span class="c1"># Second column is object name</span>
-            <span class="k">if</span> <span class="n">ihk</span><span class="p">[</span><span class="s1">&#39;object_name&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">hdr</span><span class="p">:</span>
-                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%-16s</span><span class="s1">  &#39;</span> <span class="o">%</span> <span class="n">hdr</span><span class="p">[</span><span class="n">ihk</span><span class="p">[</span><span class="s1">&#39;object_name&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">ihk</span><span class="p">[</span><span class="s1">'object_name'</span><span class="p">]</span> <span class="ow">in</span> <span class="n">hdr</span><span class="p">:</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">'</span><span class="si">%-16s</span><span class="s1">  '</span> <span class="o">%</span> <span class="n">hdr</span><span class="p">[</span><span class="n">ihk</span><span class="p">[</span><span class="s1">'object_name'</span><span class="p">]]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">' '</span><span class="p">,</span> <span class="s1">''</span><span class="p">))</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%-16s</span><span class="s1">  &#39;</span> <span class="o">%</span> <span class="s1">&#39;[No object name]&#39;</span><span class="p">)</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">'</span><span class="si">%-16s</span><span class="s1">  '</span> <span class="o">%</span> <span class="s1">'[No object name]'</span><span class="p">)</span>
 
             <span class="c1"># Next is integration time, coadds, sampmode, multisam</span>
-            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%8.3f</span><span class="s1">  </span><span class="si">%3d</span><span class="s1">  &#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="n">ihk</span><span class="p">[</span><span class="s1">&#39;itime&#39;</span><span class="p">]],</span> <span class="n">hdr</span><span class="p">[</span><span class="n">ihk</span><span class="p">[</span><span class="s1">&#39;coadds&#39;</span><span class="p">]]))</span>
-            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%1d</span><span class="s1"> x </span><span class="si">%2d</span><span class="s1">  &#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="n">ihk</span><span class="p">[</span><span class="s1">&#39;sampmode&#39;</span><span class="p">]],</span> <span class="n">hdr</span><span class="p">[</span><span class="n">ihk</span><span class="p">[</span><span class="s1">&#39;nfowler&#39;</span><span class="p">]]))</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">'</span><span class="si">%8.3f</span><span class="s1">  </span><span class="si">%3d</span><span class="s1">  '</span> <span class="o">%</span> <span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="n">ihk</span><span class="p">[</span><span class="s1">'itime'</span><span class="p">]],</span> <span class="n">hdr</span><span class="p">[</span><span class="n">ihk</span><span class="p">[</span><span class="s1">'coadds'</span><span class="p">]]))</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">'</span><span class="si">%1d</span><span class="s1"> x </span><span class="si">%2d</span><span class="s1">  '</span> <span class="o">%</span> <span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="n">ihk</span><span class="p">[</span><span class="s1">'sampmode'</span><span class="p">]],</span> <span class="n">hdr</span><span class="p">[</span><span class="n">ihk</span><span class="p">[</span><span class="s1">'nfowler'</span><span class="p">]]))</span>
 
             <span class="c1"># Filter</span>
             <span class="n">filt</span> <span class="o">=</span> <span class="n">instrument</span><span class="o">.</span><span class="n">get_filter_name</span><span class="p">(</span><span class="n">hdr</span><span class="p">)</span>
         
-            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%-10s</span><span class="s1"> &#39;</span> <span class="o">%</span> <span class="n">filt</span><span class="p">)</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">'</span><span class="si">%-10s</span><span class="s1"> '</span> <span class="o">%</span> <span class="n">filt</span><span class="p">)</span>
 
             <span class="c1"># Camera name</span>
-            <span class="k">if</span> <span class="n">ihk</span><span class="p">[</span><span class="s1">&#39;camera&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">hdr</span><span class="p">:</span>
-                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%-6s</span><span class="s1"> &#39;</span> <span class="o">%</span> <span class="n">hdr</span><span class="p">[</span><span class="n">ihk</span><span class="p">[</span><span class="s1">&#39;camera&#39;</span><span class="p">]])</span>
+            <span class="k">if</span> <span class="n">ihk</span><span class="p">[</span><span class="s1">'camera'</span><span class="p">]</span> <span class="ow">in</span> <span class="n">hdr</span><span class="p">:</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">'</span><span class="si">%-6s</span><span class="s1"> '</span> <span class="o">%</span> <span class="n">hdr</span><span class="p">[</span><span class="n">ihk</span><span class="p">[</span><span class="s1">'camera'</span><span class="p">]])</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%-6s</span><span class="s1"> &#39;</span> <span class="o">%</span> <span class="s1">&#39;None&#39;</span><span class="p">)</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">'</span><span class="si">%-6s</span><span class="s1"> '</span> <span class="o">%</span> <span class="s1">'None'</span><span class="p">)</span>
 
             <span class="c1"># Shutter state</span>
-            <span class="k">if</span> <span class="n">ihk</span><span class="p">[</span><span class="s1">&#39;shutter&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">hdr</span><span class="p">:</span>
-                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%-6s</span><span class="s1"> &#39;</span> <span class="o">%</span> <span class="n">hdr</span><span class="p">[</span><span class="n">ihk</span><span class="p">[</span><span class="s1">&#39;shutter&#39;</span><span class="p">]])</span>
+            <span class="k">if</span> <span class="n">ihk</span><span class="p">[</span><span class="s1">'shutter'</span><span class="p">]</span> <span class="ow">in</span> <span class="n">hdr</span><span class="p">:</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">'</span><span class="si">%-6s</span><span class="s1"> '</span> <span class="o">%</span> <span class="n">hdr</span><span class="p">[</span><span class="n">ihk</span><span class="p">[</span><span class="s1">'shutter'</span><span class="p">]])</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%-6s</span><span class="s1"> &#39;</span> <span class="o">%</span> <span class="s1">&#39;None&#39;</span><span class="p">)</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">'</span><span class="si">%-6s</span><span class="s1"> '</span> <span class="o">%</span> <span class="s1">'None'</span><span class="p">)</span>
 
             <span class="c1"># TRICK dichroic (only for OSIRIS)</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">instrument</span><span class="p">,</span> <span class="n">instruments</span><span class="o">.</span><span class="n">OSIRIS</span><span class="p">):</span>
-                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%-6s</span><span class="s1"> &#39;</span> <span class="o">%</span> <span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;OBTDNAME&#39;</span><span class="p">])</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">'</span><span class="si">%-6s</span><span class="s1"> '</span> <span class="o">%</span> <span class="n">hdr</span><span class="p">[</span><span class="s1">'OBTDNAME'</span><span class="p">])</span>
             
             <span class="c1"># Last column is size of image </span>
-            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="s2">&quot;NAXIS1&quot;</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot; X &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="s2">&quot;NAXIS2&quot;</span><span class="p">]))</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="s2">"NAXIS1"</span><span class="p">])</span> <span class="o">+</span> <span class="s2">" X "</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="s2">"NAXIS2"</span><span class="p">]))</span>
 
             <span class="c1"># End of this line</span>
-            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
             
 
     <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
@@ -187,14 +187,14 @@
     
         
 
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">'__main__'</span><span class="p">:</span>
 <div class="viewcode-block" id="_nargs">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/kai_util/index.html#kai.reduce.kai_util._nargs">[docs]</a>
     <span class="n">_nargs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span></div>
 
     
     <span class="k">if</span> <span class="n">_nargs</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span> <span class="s1">&#39;Usage: kailog directory&#39;</span> <span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span> <span class="s1">'Usage: kailog directory'</span> <span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">kailog</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
         
@@ -203,45 +203,45 @@
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/kai_util/index.html#kai.reduce.kai_util.getAotsxy">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">getAotsxy</span><span class="p">(</span><span class="n">hdr</span><span class="p">):</span>
     <span class="c1"># Note: 04jullgs does not have LSPROP or AOTSX keywords</span>
-    <span class="k">if</span> <span class="p">(</span><span class="n">hdr</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;OUTDIR&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">!=</span> <span class="s1">&#39;/sdata904/nirc2eng/2004jul26/&#39;</span><span class="p">):</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">hdr</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;LSPROP&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;yes&#39;</span><span class="p">):</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">hdr</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'OUTDIR'</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">!=</span> <span class="s1">'/sdata904/nirc2eng/2004jul26/'</span><span class="p">):</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">hdr</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'LSPROP'</span><span class="p">)</span> <span class="o">==</span> <span class="s1">'yes'</span><span class="p">):</span>
             <span class="c1"># LGS MODE</span>
-            <span class="n">aotsxy</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;AOTSX&#39;</span><span class="p">]),</span> <span class="nb">float</span><span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;AOTSY&#39;</span><span class="p">])]</span>
+            <span class="n">aotsxy</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="s1">'AOTSX'</span><span class="p">]),</span> <span class="nb">float</span><span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="s1">'AOTSY'</span><span class="p">])]</span>
 
             <span class="c1"># Another special case: 09may01 UT had a AOTSX/Y linear drift.</span>
             <span class="c1"># Found drift with 09maylgs/clean/kp/coord.py</span>
-            <span class="k">if</span> <span class="p">((</span><span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;OUTDIR&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;/sdata903/nirc3/2009may01/&#39;</span><span class="p">):</span>
-                <span class="n">mjdobs</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;MJD-OBS&#39;</span><span class="p">])</span>
+            <span class="k">if</span> <span class="p">((</span><span class="n">hdr</span><span class="p">[</span><span class="s1">'OUTDIR'</span><span class="p">])</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s1">'/sdata903/nirc3/2009may01/'</span><span class="p">):</span>
+                <span class="n">mjdobs</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="s1">'MJD-OBS'</span><span class="p">])</span>
                 <span class="c1"># old distortion solution (pre-ship) gives:</span>
                 <span class="c1">#aotsxy[0] -= (1.895701e5*0.727) + (-3.449709*0.727) * mjdobs </span>
                 <span class="c1"># new distortion solution (yelda et al. 2010)</span>
                 <span class="n">aotsxy</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-=</span> <span class="p">(</span><span class="mf">1.903193e5</span><span class="o">*</span><span class="mf">0.727</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="o">-</span><span class="mf">3.463342</span><span class="o">*</span><span class="mf">0.727</span><span class="p">)</span> <span class="o">*</span> <span class="n">mjdobs</span> 
 
-                <span class="nb">print</span><span class="p">((</span> <span class="s1">&#39;getAotsxy: modified from </span><span class="si">%8.3f</span><span class="s1"> </span><span class="si">%8.3f</span><span class="s1"> to </span><span class="si">%8.3f</span><span class="s1"> </span><span class="si">%8.3f</span><span class="s1">&#39;</span> <span class="o">%</span> \
-                    <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;AOTSX&#39;</span><span class="p">]),</span> <span class="nb">float</span><span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;AOTSY&#39;</span><span class="p">]),</span> 
+                <span class="nb">print</span><span class="p">((</span> <span class="s1">'getAotsxy: modified from </span><span class="si">%8.3f</span><span class="s1"> </span><span class="si">%8.3f</span><span class="s1"> to </span><span class="si">%8.3f</span><span class="s1"> </span><span class="si">%8.3f</span><span class="s1">'</span> <span class="o">%</span> \
+                    <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="s1">'AOTSX'</span><span class="p">]),</span> <span class="nb">float</span><span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="s1">'AOTSY'</span><span class="p">]),</span> 
                      <span class="n">aotsxy</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">aotsxy</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="p">))</span>
 
             <span class="c1"># Another special case: 10jul06 UT had a AOTSX/Y linear drift.</span>
             <span class="c1"># Found drift with 10jullgs1/clean/kp/coord.py</span>
-            <span class="k">if</span> <span class="p">((</span><span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;OUTDIR&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;/sdata903/nirc3/2010jul06/&#39;</span><span class="p">):</span>
-                <span class="n">mjdobs</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;MJD-OBS&#39;</span><span class="p">])</span>
+            <span class="k">if</span> <span class="p">((</span><span class="n">hdr</span><span class="p">[</span><span class="s1">'OUTDIR'</span><span class="p">])</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s1">'/sdata903/nirc3/2010jul06/'</span><span class="p">):</span>
+                <span class="n">mjdobs</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="s1">'MJD-OBS'</span><span class="p">])</span>
                 <span class="c1"># new distortion solution (yelda et al. 2010)</span>
                 <span class="n">aotsxy</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-=</span> <span class="p">(</span><span class="mf">2.039106e5</span><span class="o">*</span><span class="mf">0.727</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="o">-</span><span class="mf">3.681807</span><span class="o">*</span><span class="mf">0.727</span><span class="p">)</span> <span class="o">*</span> <span class="n">mjdobs</span> 
 
-                <span class="nb">print</span><span class="p">((</span> <span class="s1">&#39;getAotsxy: modified from </span><span class="si">%8.3f</span><span class="s1"> </span><span class="si">%8.3f</span><span class="s1"> to </span><span class="si">%8.3f</span><span class="s1"> </span><span class="si">%8.3f</span><span class="s1">&#39;</span> <span class="o">%</span> \
-                    <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;AOTSX&#39;</span><span class="p">]),</span> <span class="nb">float</span><span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;AOTSY&#39;</span><span class="p">]),</span> 
+                <span class="nb">print</span><span class="p">((</span> <span class="s1">'getAotsxy: modified from </span><span class="si">%8.3f</span><span class="s1"> </span><span class="si">%8.3f</span><span class="s1"> to </span><span class="si">%8.3f</span><span class="s1"> </span><span class="si">%8.3f</span><span class="s1">'</span> <span class="o">%</span> \
+                    <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="s1">'AOTSX'</span><span class="p">]),</span> <span class="nb">float</span><span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="s1">'AOTSY'</span><span class="p">]),</span> 
                      <span class="n">aotsxy</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">aotsxy</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># NGS MODE</span>
             <span class="c1"># Note: OBFMYIM refers to X, and vice versa!</span>
-            <span class="n">aotsxy</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;OBFMYIM&#39;</span><span class="p">]),</span> <span class="nb">float</span><span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;OBFMXIM&#39;</span><span class="p">])]</span>
+            <span class="n">aotsxy</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="s1">'OBFMYIM'</span><span class="p">]),</span> <span class="nb">float</span><span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="s1">'OBFMXIM'</span><span class="p">])]</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="c1"># 04jullgs</span>
         <span class="c1"># Assumes that 04jullgs has AOTSX/AOTSY keywords were added</span>
         <span class="c1"># by hand (see raw/fix_headers.py)</span>
         <span class="c1"># Note: OBFMYIM refers to X, and vice versa!</span>
-        <span class="c1">#aotsxy = [float(hdr[&#39;OBFMYIM&#39;]), float(hdr[&#39;OBFMXIM&#39;])]</span>
-        <span class="n">aotsxy</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;AOTSX&#39;</span><span class="p">]),</span> <span class="nb">float</span><span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;AOTSY&#39;</span><span class="p">])]</span>
+        <span class="c1">#aotsxy = [float(hdr['OBFMYIM']), float(hdr['OBFMXIM'])]</span>
+        <span class="n">aotsxy</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="s1">'AOTSX'</span><span class="p">]),</span> <span class="nb">float</span><span class="p">(</span><span class="n">hdr</span><span class="p">[</span><span class="s1">'AOTSY'</span><span class="p">])]</span>
 
     <span class="k">return</span> <span class="n">aotsxy</span></div>
 
@@ -250,14 +250,14 @@
 <div class="viewcode-block" id="pix2radec">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/kai_util/index.html#kai.reduce.kai_util.pix2radec">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">pix2radec</span><span class="p">():</span>
-    <span class="nb">print</span><span class="p">(</span> <span class="s1">&#39;Not done yet&#39;</span> <span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span> <span class="s1">'Not done yet'</span> <span class="p">)</span>
     <span class="k">return</span></div>
 
 
 <div class="viewcode-block" id="radec2pix">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/kai_util/index.html#kai.reduce.kai_util.radec2pix">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">radec2pix</span><span class="p">(</span><span class="n">radec</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">posRef</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Determine pixel shifts from true RA and Dec positions.</span>
+<span class="w">    </span><span class="sd">"""Determine pixel shifts from true RA and Dec positions.</span>
 
 <span class="sd">    @param radec: a 2-element list containing the RA and Dec in degrees.</span>
 <span class="sd">    @type radec: float list</span>
@@ -268,7 +268,7 @@
 <span class="sd">    @param posRef: 2-element list containing the ra, dec positions (in degrees)</span>
 <span class="sd">            of a reference object.</span>
 <span class="sd">    @type posRef: float list</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># Expected in degrees</span>
     <span class="n">ra</span> <span class="o">=</span> <span class="n">radec</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">dec</span> <span class="o">=</span> <span class="n">radec</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
@@ -322,7 +322,7 @@
 <div class="viewcode-block" id="pcuxy2pix">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/kai_util/index.html#kai.reduce.kai_util.pcuxy2pix">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">pcuxy2pix</span><span class="p">(</span><span class="n">pcuxy</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">pcuxyRef</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Determine pixel shifts from true RA and Dec positions.</span>
+<span class="w">    </span><span class="sd">"""Determine pixel shifts from true RA and Dec positions.</span>
 
 <span class="sd">    @param pcuxy: a 2-element list containing the PCU x and y in mm.</span>
 <span class="sd">    @type pcuxy: float list</span>
@@ -332,7 +332,7 @@
 <span class="sd">    @type scale: float</span>
 <span class="sd">    @param pcuxyRef: 2-element list containing the  PCU x, y positions (in mm) in the reference position.</span>
 <span class="sd">    @type pcuxyRef: float list</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     
     <span class="c1"># Since our reference point is the centre of the pinhole mask, which is the rotation axis, the position angle has no effect, there is just translation.</span>
     <span class="n">d_x</span> <span class="o">=</span> <span class="p">(</span><span class="n">pcuxy</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="n">pcuxyRef</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="n">scale</span> <span class="c1">#positive x mm = positive pixels</span>
@@ -344,14 +344,14 @@
 <div class="viewcode-block" id="pix2xyarcsec">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/kai_util/index.html#kai.reduce.kai_util.pix2xyarcsec">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">pix2xyarcsec</span><span class="p">(</span><span class="n">xypix</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">sgra</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Determine  E and N offsets from Sgr A* (in arcsec) from </span>
+<span class="w">    </span><span class="sd">"""Determine  E and N offsets from Sgr A* (in arcsec) from </span>
 <span class="sd">    pixel positions and the pixel position of Sgr A*.</span>
 
 <span class="sd">    xypix: 2-element list containing the RA and Dec in degrees.</span>
 <span class="sd">    phi: position angle (E of N) in degrees.</span>
 <span class="sd">    scale: arcsec per pixel.</span>
 <span class="sd">    sgra: 2-element list containing the pixel position of Sgr A*.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># Expected in arcseconds</span>
     <span class="n">xpix</span> <span class="o">=</span> <span class="n">xypix</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">sgra</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">ypix</span> <span class="o">=</span> <span class="n">xypix</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">sgra</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
@@ -370,12 +370,12 @@
 <div class="viewcode-block" id="xyarcsec2pix">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/kai_util/index.html#kai.reduce.kai_util.xyarcsec2pix">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">xyarcsec2pix</span><span class="p">(</span><span class="n">xyarcsec</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">scale</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Determine pixel shifts from E and N offsets from Sgr A*.</span>
+<span class="w">    </span><span class="sd">"""Determine pixel shifts from E and N offsets from Sgr A*.</span>
 
 <span class="sd">    xyarcsec: 2-element list containing the RA and Dec in degrees.</span>
 <span class="sd">    phi: position angle (E of N) in degrees.</span>
 <span class="sd">    scale: arcsec per pixel.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># Expected in arcseconds</span>
     <span class="n">xarc</span> <span class="o">=</span> <span class="n">xyarcsec</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">yarc</span> <span class="o">=</span> <span class="n">xyarcsec</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
@@ -394,24 +394,24 @@
 <div class="viewcode-block" id="rotate_coo">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/kai_util/index.html#kai.reduce.kai_util.rotate_coo">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">rotate_coo</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Rotate the coordinates in the *.coo files for data sets</span>
+<span class="w">    </span><span class="sd">"""Rotate the coordinates in the *.coo files for data sets</span>
 <span class="sd">    containing images at different PAs.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># Rotate around center of image, and keep origin at center</span>
-    <span class="k">if</span> <span class="n">instrument</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;NIRC2&#39;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">instrument</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">'NIRC2'</span><span class="p">:</span>
         <span class="n">xin</span> <span class="o">=</span> <span class="mf">512.</span>
         <span class="n">yin</span> <span class="o">=</span> <span class="mf">512.</span>
         <span class="n">xout</span> <span class="o">=</span> <span class="mf">512.</span>
         <span class="n">yout</span> <span class="o">=</span> <span class="mf">512.</span>
         
-    <span class="k">elif</span> <span class="n">instrument</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;OSIRIS&#39;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">instrument</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">'OSIRIS'</span><span class="p">:</span>
         <span class="n">xin</span> <span class="o">=</span> <span class="mf">1024.</span>
         <span class="n">yin</span> <span class="o">=</span> <span class="mf">1024.</span>
         <span class="n">xout</span> <span class="o">=</span> <span class="mf">1024.</span>
         <span class="n">yout</span> <span class="o">=</span> <span class="mf">1024.</span>
 
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Inst not supported. Edit kai_util.rotate_coo to specify center of new instrument&#39;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">'Inst not supported. Edit kai_util.rotate_coo to specify center of new instrument'</span><span class="p">)</span>
   
     <span class="n">cos</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">phi</span><span class="p">))</span>
     <span class="n">sin</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">phi</span><span class="p">))</span>
@@ -454,24 +454,24 @@
 
     <span class="n">tmin</span> <span class="o">=</span> <span class="n">t</span> <span class="o">/</span> <span class="mf">60.0</span>
 
-    <span class="nb">print</span><span class="p">((</span> <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">Integration time: </span><span class="si">%.3f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">tint</span> <span class="p">))</span>
-    <span class="nb">print</span><span class="p">((</span> <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">Number of Coadds: </span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">coadds</span> <span class="p">))</span>
-    <span class="nb">print</span><span class="p">((</span> <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">Number of Dither Positions: </span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">ndithers</span> <span class="p">))</span>
-    <span class="nb">print</span><span class="p">((</span> <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">Frames at each Position: </span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">nframes</span> <span class="p">))</span>
-    <span class="nb">print</span><span class="p">((</span> <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">Number of Reads: </span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">reads</span> <span class="p">))</span>
-    <span class="nb">print</span><span class="p">((</span> <span class="s1">&#39;Total elapsed observing time = </span><span class="si">%5d</span><span class="s1"> sec (or </span><span class="si">%5.1f</span><span class="s1"> min)&#39;</span> <span class="o">%</span> \
+    <span class="nb">print</span><span class="p">((</span> <span class="s1">'</span><span class="se">\t</span><span class="s1">Integration time: </span><span class="si">%.3f</span><span class="s1">'</span> <span class="o">%</span> <span class="n">tint</span> <span class="p">))</span>
+    <span class="nb">print</span><span class="p">((</span> <span class="s1">'</span><span class="se">\t</span><span class="s1">Number of Coadds: </span><span class="si">%d</span><span class="s1">'</span> <span class="o">%</span> <span class="n">coadds</span> <span class="p">))</span>
+    <span class="nb">print</span><span class="p">((</span> <span class="s1">'</span><span class="se">\t</span><span class="s1">Number of Dither Positions: </span><span class="si">%d</span><span class="s1">'</span> <span class="o">%</span> <span class="n">ndithers</span> <span class="p">))</span>
+    <span class="nb">print</span><span class="p">((</span> <span class="s1">'</span><span class="se">\t</span><span class="s1">Frames at each Position: </span><span class="si">%d</span><span class="s1">'</span> <span class="o">%</span> <span class="n">nframes</span> <span class="p">))</span>
+    <span class="nb">print</span><span class="p">((</span> <span class="s1">'</span><span class="se">\t</span><span class="s1">Number of Reads: </span><span class="si">%d</span><span class="s1">'</span> <span class="o">%</span> <span class="n">reads</span> <span class="p">))</span>
+    <span class="nb">print</span><span class="p">((</span> <span class="s1">'Total elapsed observing time = </span><span class="si">%5d</span><span class="s1"> sec (or </span><span class="si">%5.1f</span><span class="s1"> min)'</span> <span class="o">%</span> \
           <span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">tmin</span><span class="p">)</span> <span class="p">))</span></div>
 
 
 <div class="viewcode-block" id="plotKeyword">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/kai_util/index.html#kai.reduce.kai_util.plotKeyword">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">plotKeyword</span><span class="p">(</span><span class="n">keyword1</span><span class="p">,</span> <span class="n">keyword2</span><span class="p">,</span> <span class="n">imgList</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Pass in a file containing a list of images. For each of these</span>
 <span class="sd">    images, read out the values of the header keywords specified.</span>
 <span class="sd">    Then plot each of the keywords against each other.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">tab</span> <span class="o">=</span> <span class="n">Table</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">imgList</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;ascii&#39;</span><span class="p">,</span> <span class="n">header_start</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="n">tab</span> <span class="o">=</span> <span class="n">Table</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">imgList</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">'ascii'</span><span class="p">,</span> <span class="n">header_start</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 
     <span class="n">files</span> <span class="o">=</span> <span class="p">[</span><span class="n">tab</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tab</span><span class="p">))]</span>
 
@@ -490,7 +490,7 @@
     <span class="kn">import</span><span class="w"> </span><span class="nn">pylab</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">py</span>
     <span class="n">py</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
 
-    <span class="n">py</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">value1</span><span class="p">,</span> <span class="n">value2</span><span class="p">,</span> <span class="s1">&#39;k.&#39;</span><span class="p">)</span>
+    <span class="n">py</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">value1</span><span class="p">,</span> <span class="n">value2</span><span class="p">,</span> <span class="s1">'k.'</span><span class="p">)</span>
     <span class="n">py</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="n">keyword1</span><span class="p">)</span>
     <span class="n">py</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="n">keyword2</span><span class="p">)</span>
 
@@ -501,7 +501,7 @@
 <div class="viewcode-block" id="restackCoadd">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/kai_util/index.html#kai.reduce.kai_util.restackCoadd">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">restackCoadd</span><span class="p">(</span><span class="n">clean_directory</span><span class="p">,</span> <span class="n">raw_directory</span><span class="p">,</span> <span class="n">raw_unp_directory</span><span class="p">,</span> <span class="n">save_diagnostics</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">save_coadds</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Process unprocessed FITS frames and coadds to align star positions, stack them,</span>
 <span class="sd">    and optionally save diagnostics and intermediate outputs. This stacks to the first coadd.</span>
 
@@ -515,9 +515,9 @@
 <span class="sd">    @type save_diagnostics: bool</span>
 <span class="sd">    @param save_coadds: If True, saves individual coadd FITS frames.</span>
 <span class="sd">    @type save_coadds: bool</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">recenter_star</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">x_init</span><span class="p">,</span> <span class="n">y_init</span><span class="p">,</span> <span class="n">box</span><span class="o">=</span><span class="mi">12</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Recenter a star near (x_init, y_init) using centroiding on a small cutout.</span>
 
 <span class="sd">        @param image_path: Path to the FITS file to measure.</span>
@@ -530,7 +530,7 @@
 <span class="sd">        @type box: int</span>
 <span class="sd">        @return: Refined (x, y) coordinates.</span>
 <span class="sd">        @rtype: tuple(float, float)</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="c1"># Make a cutout around the initial guess</span>
             <span class="n">position</span> <span class="o">=</span> <span class="p">(</span><span class="n">x_init</span><span class="p">,</span> <span class="n">y_init</span><span class="p">)</span>
@@ -546,35 +546,35 @@
             <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">x_refined</span><span class="p">),</span> <span class="nb">float</span><span class="p">(</span><span class="n">y_refined</span><span class="p">)</span>
 
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Centroiding failed: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Centroiding failed: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">x_init</span><span class="p">,</span> <span class="n">y_init</span>
             
     <span class="c1"># Create log file for tracking offset measurements of IRS16C</span>
-    <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">raw_unp_directory</span> <span class="o">+</span> <span class="s1">&#39;/restack.log&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
-    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%16s</span><span class="s1">  &#39;</span> <span class="o">%</span> <span class="s1">&#39;#frame&#39;</span><span class="p">)</span>
-    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%16s</span><span class="s1">  &#39;</span> <span class="o">%</span> <span class="s1">&#39;frame_x&#39;</span><span class="p">)</span>
-    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%16s</span><span class="s1">  &#39;</span> <span class="o">%</span> <span class="s1">&#39;frame_y&#39;</span><span class="p">)</span>
-    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%16s</span><span class="s1">  &#39;</span> <span class="o">%</span> <span class="s1">&#39;coadd&#39;</span><span class="p">)</span>
-    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%16s</span><span class="s1">  &#39;</span> <span class="o">%</span> <span class="s1">&#39;coadd_x&#39;</span><span class="p">)</span>
-    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%16s</span><span class="s1">  &#39;</span> <span class="o">%</span> <span class="s1">&#39;coadd_y&#39;</span><span class="p">)</span>
-    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%16s</span><span class="s1">  &#39;</span> <span class="o">%</span> <span class="s1">&#39;dx&#39;</span><span class="p">)</span>
-    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%16s</span><span class="s1">  &#39;</span> <span class="o">%</span> <span class="s1">&#39;dy&#39;</span><span class="p">)</span>
-    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">raw_unp_directory</span> <span class="o">+</span> <span class="s1">'/restack.log'</span><span class="p">,</span> <span class="s1">'w'</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">'</span><span class="si">%16s</span><span class="s1">  '</span> <span class="o">%</span> <span class="s1">'#frame'</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">'</span><span class="si">%16s</span><span class="s1">  '</span> <span class="o">%</span> <span class="s1">'frame_x'</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">'</span><span class="si">%16s</span><span class="s1">  '</span> <span class="o">%</span> <span class="s1">'frame_y'</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">'</span><span class="si">%16s</span><span class="s1">  '</span> <span class="o">%</span> <span class="s1">'coadd'</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">'</span><span class="si">%16s</span><span class="s1">  '</span> <span class="o">%</span> <span class="s1">'coadd_x'</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">'</span><span class="si">%16s</span><span class="s1">  '</span> <span class="o">%</span> <span class="s1">'coadd_y'</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">'</span><span class="si">%16s</span><span class="s1">  '</span> <span class="o">%</span> <span class="s1">'dx'</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">'</span><span class="si">%16s</span><span class="s1">  '</span> <span class="o">%</span> <span class="s1">'dy'</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1">'</span><span class="p">)</span>
     
-    <span class="n">stack_mode</span> <span class="o">=</span> <span class="s1">&#39;per_coadd&#39;</span>
+    <span class="n">stack_mode</span> <span class="o">=</span> <span class="s1">'per_coadd'</span>
     <span class="n">unp_loc</span> <span class="o">=</span> <span class="n">raw_unp_directory</span>
     
     <span class="c1"># Organize raw frame indices</span>
-    <span class="n">unp_files</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">/n_unp_*.fits&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">unp_loc</span><span class="p">)))</span>
+    <span class="n">unp_files</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s1">'</span><span class="si">{}</span><span class="s1">/n_unp_*.fits'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">unp_loc</span><span class="p">)))</span>
     <span class="n">wildcards</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">([</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">f</span><span class="p">)[</span><span class="mi">6</span><span class="p">:</span><span class="o">-</span><span class="mi">5</span><span class="p">]</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">unp_files</span><span class="p">])</span>
 
     <span class="c1"># Create folders to save diagnostics in for each frame</span>
     <span class="k">if</span> <span class="n">save_diagnostics</span><span class="p">:</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">/restack_diagnostics/&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">unp_loc</span><span class="p">)):</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">/restack_diagnostics/&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">unp_loc</span><span class="p">))</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="s2">"</span><span class="si">{}</span><span class="s2">/restack_diagnostics/"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">unp_loc</span><span class="p">)):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="s2">"</span><span class="si">{}</span><span class="s2">/restack_diagnostics/"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">unp_loc</span><span class="p">))</span>
     
         <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">wildcards</span><span class="p">:</span>
-            <span class="n">dir_path</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">/restack_diagnostics/n</span><span class="si">{}</span><span class="s1">/&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">unp_loc</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span>
+            <span class="n">dir_path</span> <span class="o">=</span> <span class="s1">'</span><span class="si">{}</span><span class="s1">/restack_diagnostics/n</span><span class="si">{}</span><span class="s1">/'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">unp_loc</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">dir_path</span><span class="p">):</span>
                 <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">dir_path</span><span class="p">)</span>
 
@@ -584,15 +584,15 @@
         <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span>
         
         <span class="c1"># Get reference raw header from raw_directory</span>
-        <span class="n">ref_header</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getheader</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">/n</span><span class="si">{}</span><span class="s1">.fits&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">raw_directory</span><span class="p">,</span> <span class="n">w</span><span class="p">))</span>
+        <span class="n">ref_header</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getheader</span><span class="p">(</span><span class="s1">'</span><span class="si">{}</span><span class="s1">/n</span><span class="si">{}</span><span class="s1">.fits'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">raw_directory</span><span class="p">,</span> <span class="n">w</span><span class="p">))</span>
         <span class="n">filt</span> <span class="o">=</span> <span class="n">instrument</span><span class="o">.</span><span class="n">get_filter_name</span><span class="p">(</span><span class="n">ref_header</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
         
 
         <span class="c1"># Get initial reference position from clean_directory .coo file</span>
-        <span class="n">ref_coo</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">/</span><span class="si">{}</span><span class="s1">/c</span><span class="si">{}</span><span class="s1">.coo&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">clean_directory</span><span class="p">,</span> <span class="n">filt</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span>
+        <span class="n">ref_coo</span> <span class="o">=</span> <span class="s1">'</span><span class="si">{}</span><span class="s1">/</span><span class="si">{}</span><span class="s1">/c</span><span class="si">{}</span><span class="s1">.coo'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">clean_directory</span><span class="p">,</span> <span class="n">filt</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">ref_coo</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">: .coo file not found. Make sure this exists, or create one manually.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ref_coo</span><span class="p">))</span>
+            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="s2">"</span><span class="si">{}</span><span class="s2">: .coo file not found. Make sure this exists, or create one manually."</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ref_coo</span><span class="p">))</span>
             <span class="k">continue</span>
 
         <span class="n">ref_x</span><span class="p">,</span> <span class="n">ref_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">ref_coo</span><span class="p">)</span>
@@ -607,7 +607,7 @@
                 <span class="n">num_reads</span> <span class="o">=</span> <span class="n">read_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
                 <span class="n">header</span> <span class="o">=</span> <span class="n">hdul</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span>
 
-                <span class="k">if</span> <span class="n">stack_mode</span> <span class="o">==</span> <span class="s1">&#39;per_coadd&#39;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">stack_mode</span> <span class="o">==</span> <span class="s1">'per_coadd'</span><span class="p">:</span>
                     <span class="n">n_half</span> <span class="o">=</span> <span class="n">num_reads</span> <span class="o">//</span> <span class="mi">2</span>
                     <span class="n">avg_initial</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">read_data</span><span class="p">[:</span><span class="n">n_half</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
                     <span class="n">avg_final</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">read_data</span><span class="p">[</span><span class="o">-</span><span class="n">n_half</span><span class="p">:],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
@@ -628,19 +628,19 @@
             <span class="n">x_new</span><span class="p">,</span> <span class="n">y_new</span> <span class="o">=</span> <span class="n">recenter_star</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">ref_x</span><span class="p">,</span> <span class="n">ref_y</span><span class="p">,</span> <span class="n">box</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
             
             <span class="c1"># Log motion diagnostics</span>
-            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%16s</span><span class="s1">  &#39;</span> <span class="o">%</span> <span class="s1">&#39;n</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">w</span><span class="p">))</span>
-            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%16s</span><span class="s1">  &#39;</span> <span class="o">%</span> <span class="n">ref_x</span><span class="p">)</span>
-            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%16s</span><span class="s1">  &#39;</span> <span class="o">%</span> <span class="n">ref_y</span><span class="p">)</span>
-            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%16s</span><span class="s1">  &#39;</span> <span class="o">%</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">idx</span><span class="p">))</span>
-            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%16s</span><span class="s1">  &#39;</span> <span class="o">%</span> <span class="nb">round</span><span class="p">(</span><span class="n">x_new</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
-            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%16s</span><span class="s1">  &#39;</span> <span class="o">%</span> <span class="nb">round</span><span class="p">(</span><span class="n">y_new</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">'</span><span class="si">%16s</span><span class="s1">  '</span> <span class="o">%</span> <span class="s1">'n</span><span class="si">{}</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">w</span><span class="p">))</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">'</span><span class="si">%16s</span><span class="s1">  '</span> <span class="o">%</span> <span class="n">ref_x</span><span class="p">)</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">'</span><span class="si">%16s</span><span class="s1">  '</span> <span class="o">%</span> <span class="n">ref_y</span><span class="p">)</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">'</span><span class="si">%16s</span><span class="s1">  '</span> <span class="o">%</span> <span class="s1">'</span><span class="si">{}</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">idx</span><span class="p">))</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">'</span><span class="si">%16s</span><span class="s1">  '</span> <span class="o">%</span> <span class="nb">round</span><span class="p">(</span><span class="n">x_new</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">'</span><span class="si">%16s</span><span class="s1">  '</span> <span class="o">%</span> <span class="nb">round</span><span class="p">(</span><span class="n">y_new</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
             
             <span class="n">dx</span> <span class="o">=</span> <span class="n">ref_x</span> <span class="o">-</span> <span class="n">x_new</span>
             <span class="n">dy</span> <span class="o">=</span> <span class="n">ref_y</span> <span class="o">-</span> <span class="n">y_new</span>
             
-            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%16s</span><span class="s1">  &#39;</span> <span class="o">%</span> <span class="nb">round</span><span class="p">(</span><span class="n">dx</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
-            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%16s</span><span class="s1">  &#39;</span> <span class="o">%</span> <span class="nb">round</span><span class="p">(</span><span class="n">dy</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
-            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">'</span><span class="si">%16s</span><span class="s1">  '</span> <span class="o">%</span> <span class="nb">round</span><span class="p">(</span><span class="n">dx</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">'</span><span class="si">%16s</span><span class="s1">  '</span> <span class="o">%</span> <span class="nb">round</span><span class="p">(</span><span class="n">dy</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1">'</span><span class="p">)</span>
             
             <span class="n">dx_positions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ref_x</span> <span class="o">-</span> <span class="n">x_new</span><span class="p">)</span>
             <span class="n">dy_positions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ref_y</span> <span class="o">-</span> <span class="n">y_new</span><span class="p">)</span>
@@ -654,10 +654,10 @@
             <span class="c1"># Save individual coadd if flag is on</span>
             <span class="k">if</span> <span class="n">save_coadds</span><span class="p">:</span>
                 <span class="n">header</span> <span class="o">=</span> <span class="n">ref_header</span>
-                <span class="n">header</span><span class="p">[</span><span class="s2">&quot;COADD&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">idx</span>
+                <span class="n">header</span><span class="p">[</span><span class="s2">"COADD"</span><span class="p">]</span> <span class="o">=</span> <span class="n">idx</span>
                 <span class="n">hdu</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">PrimaryHDU</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">frame</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="n">header</span><span class="p">)</span>
-                <span class="n">hdu</span><span class="o">.</span><span class="n">writeto</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">/n</span><span class="si">{}</span><span class="s1">_</span><span class="si">{}</span><span class="s1">.fits&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">unp_loc</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">idx</span><span class="p">)),</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Saved FRAME: n</span><span class="si">{}</span><span class="s2"> -- COADD: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">idx</span><span class="p">)))</span>
+                <span class="n">hdu</span><span class="o">.</span><span class="n">writeto</span><span class="p">(</span><span class="s1">'</span><span class="si">{}</span><span class="s1">/n</span><span class="si">{}</span><span class="s1">_</span><span class="si">{}</span><span class="s1">.fits'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">unp_loc</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">idx</span><span class="p">)),</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">"Saved FRAME: n</span><span class="si">{}</span><span class="s2"> -- COADD: </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">idx</span><span class="p">)))</span>
                 
             <span class="c1"># Plot motion diagnostics if flag is on</span>
             <span class="k">if</span> <span class="n">save_diagnostics</span><span class="p">:</span>
@@ -665,18 +665,18 @@
                 <span class="n">half_box</span> <span class="o">=</span> <span class="n">box_size</span> <span class="o">//</span> <span class="mi">2</span>
 
                 <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
-                <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="s1">&#39;lower&#39;</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">,</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="s1">'lower'</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">'gray'</span><span class="p">,</span>
                           <span class="n">vmin</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="n">vmax</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="mi">99</span><span class="p">))</span>
 
                 <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">ref_x</span> <span class="o">-</span> <span class="n">half_box</span><span class="p">,</span> <span class="n">ref_x</span> <span class="o">+</span> <span class="n">half_box</span><span class="p">)</span>
                 <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">ref_y</span> <span class="o">-</span> <span class="n">half_box</span><span class="p">,</span> <span class="n">ref_y</span> <span class="o">+</span> <span class="n">half_box</span><span class="p">)</span>
 
-                <span class="n">ax</span><span class="o">.</span><span class="n">add_patch</span><span class="p">(</span><span class="n">Circle</span><span class="p">((</span><span class="n">ref_x</span><span class="p">,</span> <span class="n">ref_y</span><span class="p">),</span> <span class="n">radius</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Frame .coo&#39;</span><span class="p">))</span>
-                <span class="n">ax</span><span class="o">.</span><span class="n">add_patch</span><span class="p">(</span><span class="n">Circle</span><span class="p">((</span><span class="n">x_new</span><span class="p">,</span> <span class="n">y_new</span><span class="p">),</span> <span class="n">radius</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Coadd .coo&#39;</span><span class="p">))</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">add_patch</span><span class="p">(</span><span class="n">Circle</span><span class="p">((</span><span class="n">ref_x</span><span class="p">,</span> <span class="n">ref_y</span><span class="p">),</span> <span class="n">radius</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'blue'</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">'Frame .coo'</span><span class="p">))</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">add_patch</span><span class="p">(</span><span class="n">Circle</span><span class="p">((</span><span class="n">x_new</span><span class="p">,</span> <span class="n">y_new</span><span class="p">),</span> <span class="n">radius</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'red'</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">'Coadd .coo'</span><span class="p">))</span>
                 <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
-                <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;COADD: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">idx</span><span class="p">)))</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">"COADD: </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">idx</span><span class="p">)))</span>
                 <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
-                <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">/restack_diagnostics/n</span><span class="si">{}</span><span class="s1">/coadd</span><span class="si">{:04d}</span><span class="s1">.png&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">unp_loc</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">idx</span><span class="p">)))</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">'</span><span class="si">{}</span><span class="s1">/restack_diagnostics/n</span><span class="si">{}</span><span class="s1">/coadd</span><span class="si">{:04d}</span><span class="s1">.png'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">unp_loc</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">idx</span><span class="p">)))</span>
                 <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
             
         <span class="c1"># Plot shifts in x and y if flag is on</span>
@@ -691,58 +691,58 @@
             <span class="c1"># Plot Δx and Δy over time (frame index)</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_offsets</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;blue&#39;</span><span class="p">)</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Coadd number&#39;</span><span class="p">)</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;x Offset [pixels]&#39;</span><span class="p">)</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">linestyle</span> <span class="o">=</span> <span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;red&#39;</span><span class="p">)</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;x over coadds&#39;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_offsets</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">'x'</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">'o'</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="s1">'blue'</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">'Coadd number'</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">'x Offset [pixels]'</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">linestyle</span> <span class="o">=</span> <span class="s1">'--'</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="s1">'red'</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">'x over coadds'</span><span class="p">)</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="n">ymin</span><span class="p">,</span> <span class="n">ymax</span><span class="p">)</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
 
             <span class="c1"># Quiver plot: motion vectors</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">y_offsets</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;green&#39;</span><span class="p">)</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Coadd number&#39;</span><span class="p">)</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;y Offset [pixels]&#39;</span><span class="p">)</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;y over coadds&#39;</span><span class="p">)</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">linestyle</span> <span class="o">=</span> <span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;red&#39;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">y_offsets</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">'y'</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">'o'</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="s1">'green'</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">'Coadd number'</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">'y Offset [pixels]'</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">'y over coadds'</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">linestyle</span> <span class="o">=</span> <span class="s1">'--'</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="s1">'red'</span><span class="p">)</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="n">ymin</span><span class="p">,</span> <span class="n">ymax</span><span class="p">)</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
 
             <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">/restack_diagnostics/n</span><span class="si">{}</span><span class="s1">/movement_per_coadd.png&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">unp_loc</span><span class="p">,</span> <span class="n">w</span><span class="p">))</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">'</span><span class="si">{}</span><span class="s1">/restack_diagnostics/n</span><span class="si">{}</span><span class="s1">/movement_per_coadd.png'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">unp_loc</span><span class="p">,</span> <span class="n">w</span><span class="p">))</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Saved motion diagnostics plot&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">"Saved motion diagnostics plot"</span><span class="p">)</span>
 
         <span class="c1"># Final re-stacked image output</span>
-        <span class="n">ref_header</span><span class="p">[</span><span class="s1">&#39;STACKED&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="n">ref_header</span><span class="p">[</span><span class="s1">&#39;NFRAMES&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">diff_frames</span><span class="p">)</span>
+        <span class="n">ref_header</span><span class="p">[</span><span class="s1">'STACKED'</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">ref_header</span><span class="p">[</span><span class="s1">'NFRAMES'</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">diff_frames</span><span class="p">)</span>
         <span class="n">hdu</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">PrimaryHDU</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">stack</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="n">ref_header</span><span class="p">)</span>
 
         <span class="c1"># Save to subdir</span>
-        <span class="n">final_fits_path</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">/n</span><span class="si">{}</span><span class="s1">.fits&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">unp_loc</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span>
+        <span class="n">final_fits_path</span> <span class="o">=</span> <span class="s1">'</span><span class="si">{}</span><span class="s1">/n</span><span class="si">{}</span><span class="s1">.fits'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">unp_loc</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span>
         <span class="n">hdu</span><span class="o">.</span><span class="n">writeto</span><span class="p">(</span><span class="n">final_fits_path</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Re-stacked frame: n</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">w</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"Re-stacked frame: n</span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">w</span><span class="p">))</span>
 
         <span class="c1"># Make GIF of coadd shifting if flag is on</span>
         <span class="k">if</span> <span class="n">save_diagnostics</span><span class="p">:</span>
             <span class="c1"># Make GIF from coadd images</span>
-            <span class="n">coadd_pngs</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">/restack_diagnostics/n</span><span class="si">{}</span><span class="s1">/coadd*.png&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">unp_loc</span><span class="p">,</span> <span class="n">w</span><span class="p">)))</span>
-            <span class="n">gif_path</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">/restack_diagnostics/n</span><span class="si">{}</span><span class="s1">/n</span><span class="si">{}</span><span class="s1">_coadds.gif&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">unp_loc</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span>
+            <span class="n">coadd_pngs</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s1">'</span><span class="si">{}</span><span class="s1">/restack_diagnostics/n</span><span class="si">{}</span><span class="s1">/coadd*.png'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">unp_loc</span><span class="p">,</span> <span class="n">w</span><span class="p">)))</span>
+            <span class="n">gif_path</span> <span class="o">=</span> <span class="s1">'</span><span class="si">{}</span><span class="s1">/restack_diagnostics/n</span><span class="si">{}</span><span class="s1">/n</span><span class="si">{}</span><span class="s1">_coadds.gif'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">unp_loc</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span>
 
             <span class="n">images</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">for</span> <span class="n">png</span> <span class="ow">in</span> <span class="n">coadd_pngs</span><span class="p">:</span>
                 <span class="k">try</span><span class="p">:</span>
                     <span class="n">images</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">imageio</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">png</span><span class="p">))</span>
                 <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Skipping </span><span class="si">{}</span><span class="s2"> — </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">png</span><span class="p">,</span> <span class="n">e</span><span class="p">))</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">"Skipping </span><span class="si">{}</span><span class="s2"> — </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">png</span><span class="p">,</span> <span class="n">e</span><span class="p">))</span>
 
             <span class="k">if</span> <span class="n">images</span><span class="p">:</span>
                 <span class="n">imageio</span><span class="o">.</span><span class="n">mimsave</span><span class="p">(</span><span class="n">gif_path</span><span class="p">,</span> <span class="n">images</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
-                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;GIF saved to </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">gif_path</span><span class="p">))</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">"GIF saved to </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">gif_path</span><span class="p">))</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No valid PNGs found for </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">w</span><span class="p">))</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">"No valid PNGs found for </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">w</span><span class="p">))</span>
 
         
     <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
@@ -751,7 +751,7 @@
 <div class="viewcode-block" id="add_wcs_keywords">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/kai_util/index.html#kai.reduce.kai_util.add_wcs_keywords">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">add_wcs_keywords</span><span class="p">(</span><span class="n">header</span><span class="p">,</span> <span class="n">instrument</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Adds WCS keywords to file. </span>
 <span class="sd">    If WCS exists, this overwrites it.</span>
 
@@ -762,12 +762,12 @@
 
 <span class="sd">    instrument: instrument object</span>
 <span class="sd">        Instrument obejct from kai.instruments</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">ra</span><span class="p">,</span> <span class="n">dec</span> <span class="o">=</span> <span class="n">instrument</span><span class="o">.</span><span class="n">get_radec</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
     <span class="n">rotposn</span> <span class="o">=</span> <span class="n">instrument</span><span class="o">.</span><span class="n">get_position_angle</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
     <span class="n">pixel_scale</span> <span class="o">=</span> <span class="n">instrument</span><span class="o">.</span><span class="n">get_plate_scale</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
-    <span class="n">naxis1</span> <span class="o">=</span> <span class="n">header</span><span class="p">[</span><span class="s1">&#39;NAXIS1&#39;</span><span class="p">]</span>
-    <span class="n">naxis2</span> <span class="o">=</span> <span class="n">header</span><span class="p">[</span><span class="s1">&#39;NAXIS2&#39;</span><span class="p">]</span>
+    <span class="n">naxis1</span> <span class="o">=</span> <span class="n">header</span><span class="p">[</span><span class="s1">'NAXIS1'</span><span class="p">]</span>
+    <span class="n">naxis2</span> <span class="o">=</span> <span class="n">header</span><span class="p">[</span><span class="s1">'NAXIS2'</span><span class="p">]</span>
 
     <span class="n">crpix1</span> <span class="o">=</span> <span class="n">naxis1</span><span class="o">/</span><span class="mi">2</span> <span class="o">+</span> <span class="mf">0.5</span>
     <span class="n">crpix2</span> <span class="o">=</span> <span class="n">naxis2</span><span class="o">/</span><span class="mi">2</span> <span class="o">+</span> <span class="mf">0.5</span>
@@ -788,48 +788,48 @@
     <span class="c1"># Add/update WCS keywords</span>
     <span class="n">wcs_keywords</span> <span class="o">=</span> <span class="p">{</span>
         <span class="c1"># Coordinate system</span>
-        <span class="s1">&#39;CTYPE1&#39;</span><span class="p">:</span> <span class="s1">&#39;RA---TAN&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;CTYPE2&#39;</span><span class="p">:</span> <span class="s1">&#39;DEC--TAN&#39;</span><span class="p">,</span>
+        <span class="s1">'CTYPE1'</span><span class="p">:</span> <span class="s1">'RA---TAN'</span><span class="p">,</span>
+        <span class="s1">'CTYPE2'</span><span class="p">:</span> <span class="s1">'DEC--TAN'</span><span class="p">,</span>
         
         <span class="c1"># Reference coordinates</span>
-        <span class="s1">&#39;CRVAL1&#39;</span><span class="p">:</span> <span class="n">ra</span><span class="p">,</span>
-        <span class="s1">&#39;CRVAL2&#39;</span><span class="p">:</span> <span class="n">dec</span><span class="p">,</span>
+        <span class="s1">'CRVAL1'</span><span class="p">:</span> <span class="n">ra</span><span class="p">,</span>
+        <span class="s1">'CRVAL2'</span><span class="p">:</span> <span class="n">dec</span><span class="p">,</span>
         
         <span class="c1"># Reference pixels</span>
-        <span class="s1">&#39;CRPIX1&#39;</span><span class="p">:</span> <span class="n">crpix1</span><span class="p">,</span>
-        <span class="s1">&#39;CRPIX2&#39;</span><span class="p">:</span> <span class="n">crpix2</span><span class="p">,</span>
+        <span class="s1">'CRPIX1'</span><span class="p">:</span> <span class="n">crpix1</span><span class="p">,</span>
+        <span class="s1">'CRPIX2'</span><span class="p">:</span> <span class="n">crpix2</span><span class="p">,</span>
         
         <span class="c1"># CD matrix (includes scale and rotation)</span>
-        <span class="s1">&#39;CD1_1&#39;</span><span class="p">:</span> <span class="n">cd1_1</span><span class="p">,</span>
-        <span class="s1">&#39;CD1_2&#39;</span><span class="p">:</span> <span class="n">cd1_2</span><span class="p">,</span>
-        <span class="s1">&#39;CD2_1&#39;</span><span class="p">:</span> <span class="n">cd2_1</span><span class="p">,</span>
-        <span class="s1">&#39;CD2_2&#39;</span><span class="p">:</span> <span class="n">cd2_2</span><span class="p">,</span>
+        <span class="s1">'CD1_1'</span><span class="p">:</span> <span class="n">cd1_1</span><span class="p">,</span>
+        <span class="s1">'CD1_2'</span><span class="p">:</span> <span class="n">cd1_2</span><span class="p">,</span>
+        <span class="s1">'CD2_1'</span><span class="p">:</span> <span class="n">cd2_1</span><span class="p">,</span>
+        <span class="s1">'CD2_2'</span><span class="p">:</span> <span class="n">cd2_2</span><span class="p">,</span>
         
         <span class="c1"># Coordinate system</span>
-        <span class="s1">&#39;RADESYS&#39;</span><span class="p">:</span> <span class="s1">&#39;ICRS&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;EQUINOX&#39;</span><span class="p">:</span> <span class="mf">2000.0</span><span class="p">,</span>
+        <span class="s1">'RADESYS'</span><span class="p">:</span> <span class="s1">'ICRS'</span><span class="p">,</span>
+        <span class="s1">'EQUINOX'</span><span class="p">:</span> <span class="mf">2000.0</span><span class="p">,</span>
         
         <span class="c1"># WCS comments</span>
-        <span class="s1">&#39;CUNIT1&#39;</span><span class="p">:</span> <span class="s1">&#39;deg&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;CUNIT2&#39;</span><span class="p">:</span> <span class="s1">&#39;deg&#39;</span>
+        <span class="s1">'CUNIT1'</span><span class="p">:</span> <span class="s1">'deg'</span><span class="p">,</span>
+        <span class="s1">'CUNIT2'</span><span class="p">:</span> <span class="s1">'deg'</span>
     <span class="p">}</span>
 
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Adding WCS to &#39;</span><span class="p">,</span> <span class="n">header</span><span class="p">[</span><span class="s1">&#39;DATAFILE&#39;</span><span class="p">])</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'Adding WCS to '</span><span class="p">,</span> <span class="n">header</span><span class="p">[</span><span class="s1">'DATAFILE'</span><span class="p">])</span>
     <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">wcs_keywords</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="n">header</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
     
     <span class="c1"># Add comments for clarity</span>
-    <span class="n">header</span><span class="o">.</span><span class="n">comments</span><span class="p">[</span><span class="s1">&#39;CTYPE1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Coordinate type for axis 1&#39;</span>
-    <span class="n">header</span><span class="o">.</span><span class="n">comments</span><span class="p">[</span><span class="s1">&#39;CTYPE2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Coordinate type for axis 2&#39;</span>
-    <span class="n">header</span><span class="o">.</span><span class="n">comments</span><span class="p">[</span><span class="s1">&#39;CRVAL1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Reference RA in decimal degrees&#39;</span>
-    <span class="n">header</span><span class="o">.</span><span class="n">comments</span><span class="p">[</span><span class="s1">&#39;CRVAL2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Reference Dec in decimal degrees&#39;</span>
-    <span class="n">header</span><span class="o">.</span><span class="n">comments</span><span class="p">[</span><span class="s1">&#39;CRPIX1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Reference pixel for axis 1&#39;</span>
-    <span class="n">header</span><span class="o">.</span><span class="n">comments</span><span class="p">[</span><span class="s1">&#39;CRPIX2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Reference pixel for axis 2&#39;</span>
-    <span class="n">header</span><span class="o">.</span><span class="n">comments</span><span class="p">[</span><span class="s1">&#39;CD1_1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Transformation matrix element&#39;</span>
-    <span class="n">header</span><span class="o">.</span><span class="n">comments</span><span class="p">[</span><span class="s1">&#39;CD1_2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Transformation matrix element&#39;</span>
-    <span class="n">header</span><span class="o">.</span><span class="n">comments</span><span class="p">[</span><span class="s1">&#39;CD2_1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Transformation matrix element&#39;</span>
-    <span class="n">header</span><span class="o">.</span><span class="n">comments</span><span class="p">[</span><span class="s1">&#39;CD2_2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Transformation matrix element&#39;</span>
+    <span class="n">header</span><span class="o">.</span><span class="n">comments</span><span class="p">[</span><span class="s1">'CTYPE1'</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'Coordinate type for axis 1'</span>
+    <span class="n">header</span><span class="o">.</span><span class="n">comments</span><span class="p">[</span><span class="s1">'CTYPE2'</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'Coordinate type for axis 2'</span>
+    <span class="n">header</span><span class="o">.</span><span class="n">comments</span><span class="p">[</span><span class="s1">'CRVAL1'</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'Reference RA in decimal degrees'</span>
+    <span class="n">header</span><span class="o">.</span><span class="n">comments</span><span class="p">[</span><span class="s1">'CRVAL2'</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'Reference Dec in decimal degrees'</span>
+    <span class="n">header</span><span class="o">.</span><span class="n">comments</span><span class="p">[</span><span class="s1">'CRPIX1'</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'Reference pixel for axis 1'</span>
+    <span class="n">header</span><span class="o">.</span><span class="n">comments</span><span class="p">[</span><span class="s1">'CRPIX2'</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'Reference pixel for axis 2'</span>
+    <span class="n">header</span><span class="o">.</span><span class="n">comments</span><span class="p">[</span><span class="s1">'CD1_1'</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'Transformation matrix element'</span>
+    <span class="n">header</span><span class="o">.</span><span class="n">comments</span><span class="p">[</span><span class="s1">'CD1_2'</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'Transformation matrix element'</span>
+    <span class="n">header</span><span class="o">.</span><span class="n">comments</span><span class="p">[</span><span class="s1">'CD2_1'</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'Transformation matrix element'</span>
+    <span class="n">header</span><span class="o">.</span><span class="n">comments</span><span class="p">[</span><span class="s1">'CD2_2'</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'Transformation matrix element'</span>
 
     <span class="k">return</span> <span class="n">header</span></div>
 

@@ -90,7 +90,7 @@
             <span class="n">dark_frame</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">skyscale</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="n">raw_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">reduce_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
             <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Make short wavelength (not L-band or longer) skies.</span>
 <span class="sd">    </span>
 <span class="sd">    Parameters</span>
@@ -98,10 +98,10 @@
 <span class="sd">    files : list of int</span>
 <span class="sd">        Integer list of the files. Does not require padded zeros.</span>
 <span class="sd">    nite : str</span>
-<span class="sd">        Name for night of observation (e.g.: &quot;nite1&quot;), used as suffix</span>
+<span class="sd">        Name for night of observation (e.g.: "nite1"), used as suffix</span>
 <span class="sd">        inside the reduce sub-directories.</span>
 <span class="sd">    wave : str</span>
-<span class="sd">        Name for the observation passband (e.g.: &quot;kp&quot;)</span>
+<span class="sd">        Name for the observation passband (e.g.: "kp")</span>
 <span class="sd">    dark_frame : str, default=None</span>
 <span class="sd">        File name for the dark frame in order to carry out dark correction.</span>
 <span class="sd">        If not provided, dark frame is not subtracted and a warning is thrown.</span>
@@ -111,7 +111,7 @@
 <span class="sd">        Turn on for scaling skies before subtraction.</span>
 <span class="sd">    raw_dir : str, optional</span>
 <span class="sd">        Directory where raw files are stored. By default,</span>
-<span class="sd">        assumes that raw files are stored in &#39;../raw&#39;</span>
+<span class="sd">        assumes that raw files are stored in '../raw'</span>
 <span class="sd">    reduce_dir : str, optional</span>
 <span class="sd">        Directory such as &lt;epoch&gt;/reduce/ with contents including</span>
 <span class="sd">        the calib/, calib/darks/, etc. directories live.</span>
@@ -119,26 +119,26 @@
 <span class="sd">        If epoch_dir is None, then use the current working directory.</span>
 <span class="sd">    instrument : instruments object, optional</span>
 <span class="sd">        Instrument of data. Default is `instruments.default_inst`</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">rawDir</span><span class="p">,</span> <span class="n">redDir</span> <span class="o">=</span> <span class="n">get_raw_reduce_directories</span><span class="p">(</span><span class="n">raw_dir</span><span class="p">,</span> <span class="n">reduce_dir</span><span class="p">)</span>
 
-    <span class="n">waveDir</span> <span class="o">=</span> <span class="n">redDir</span> <span class="o">+</span> <span class="n">wave</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span>
-    <span class="n">skyDir</span> <span class="o">=</span> <span class="n">waveDir</span> <span class="o">+</span> <span class="s1">&#39;sky_&#39;</span> <span class="o">+</span> <span class="n">nite</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span>
+    <span class="n">waveDir</span> <span class="o">=</span> <span class="n">redDir</span> <span class="o">+</span> <span class="n">wave</span> <span class="o">+</span> <span class="s1">'/'</span>
+    <span class="n">skyDir</span> <span class="o">=</span> <span class="n">waveDir</span> <span class="o">+</span> <span class="s1">'sky_'</span> <span class="o">+</span> <span class="n">nite</span> <span class="o">+</span> <span class="s1">'/'</span>
 
     <span class="c1"># Make new directory for the current passband and switch into it</span>
     <span class="n">util</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">wave</span><span class="p">)</span>
     <span class="n">util</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">skyDir</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;raw dir: &#39;</span><span class="p">,</span> <span class="n">rawDir</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;sky dir: &#39;</span><span class="p">,</span> <span class="n">skyDir</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;wave dir: &#39;</span><span class="p">,</span> <span class="n">waveDir</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'raw dir: '</span><span class="p">,</span> <span class="n">rawDir</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'sky dir: '</span><span class="p">,</span> <span class="n">skyDir</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'wave dir: '</span><span class="p">,</span> <span class="n">waveDir</span><span class="p">)</span>
 
-    <span class="n">skylist</span> <span class="o">=</span> <span class="n">skyDir</span> <span class="o">+</span> <span class="s1">&#39;skies_to_combine.lis&#39;</span>
-    <span class="n">output</span> <span class="o">=</span> <span class="n">skyDir</span> <span class="o">+</span> <span class="s1">&#39;sky_&#39;</span> <span class="o">+</span> <span class="n">wave</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span>
+    <span class="n">skylist</span> <span class="o">=</span> <span class="n">skyDir</span> <span class="o">+</span> <span class="s1">'skies_to_combine.lis'</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">skyDir</span> <span class="o">+</span> <span class="s1">'sky_'</span> <span class="o">+</span> <span class="n">wave</span> <span class="o">+</span> <span class="s1">'.fits'</span>
 
     <span class="n">util</span><span class="o">.</span><span class="n">rmall</span><span class="p">([</span><span class="n">skylist</span><span class="p">,</span> <span class="n">output</span><span class="p">])</span>
 
     <span class="n">nn</span> <span class="o">=</span> <span class="n">instrument</span><span class="o">.</span><span class="n">make_filenames</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="n">rootDir</span><span class="o">=</span><span class="n">skyDir</span><span class="p">)</span>  <span class="c1"># copy of raw sky</span>
-    <span class="n">nsc</span> <span class="o">=</span> <span class="n">instrument</span><span class="o">.</span><span class="n">make_filenames</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="n">rootDir</span><span class="o">=</span><span class="n">skyDir</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;scale&#39;</span><span class="p">)</span>  <span class="c1"># scaled sky</span>
+    <span class="n">nsc</span> <span class="o">=</span> <span class="n">instrument</span><span class="o">.</span><span class="n">make_filenames</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="n">rootDir</span><span class="o">=</span><span class="n">skyDir</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">'scale'</span><span class="p">)</span>  <span class="c1"># scaled sky</span>
     <span class="n">skies</span> <span class="o">=</span> <span class="n">instrument</span><span class="o">.</span><span class="n">make_filenames</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="n">rootDir</span><span class="o">=</span><span class="n">rawDir</span><span class="p">)</span>  <span class="c1"># original raw sky</span>
 
     <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">nn</span><span class="p">)):</span>
@@ -147,33 +147,33 @@
         <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">skies</span><span class="p">[</span><span class="n">ii</span><span class="p">],</span> <span class="n">nn</span><span class="p">[</span><span class="n">ii</span><span class="p">])</span>
 
     <span class="c1"># Write out the sources of the sky files</span>
-    <span class="n">data_sources_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">redDir</span> <span class="o">+</span> <span class="s1">&#39;data_sources.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">)</span>
-    <span class="n">data_sources_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;---</span><span class="se">\n</span><span class="s1"># Sky Files (</span><span class="si">{0}</span><span class="s1">)</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">wave</span><span class="p">))</span>
+    <span class="n">data_sources_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">redDir</span> <span class="o">+</span> <span class="s1">'data_sources.txt'</span><span class="p">,</span> <span class="s1">'a'</span><span class="p">)</span>
+    <span class="n">data_sources_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">'---</span><span class="se">\n</span><span class="s1"># Sky Files (</span><span class="si">{0}</span><span class="s1">)</span><span class="se">\n</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">wave</span><span class="p">))</span>
 
     <span class="k">for</span> <span class="n">cur_file</span> <span class="ow">in</span> <span class="n">skies</span><span class="p">:</span>
-        <span class="n">out_line</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{0}</span><span class="s1"> (</span><span class="si">{1}</span><span class="s1">)</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cur_file</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">())</span>
+        <span class="n">out_line</span> <span class="o">=</span> <span class="s1">'</span><span class="si">{0}</span><span class="s1"> (</span><span class="si">{1}</span><span class="s1">)</span><span class="se">\n</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cur_file</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">())</span>
         <span class="n">data_sources_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">out_line</span><span class="p">)</span>
 
     <span class="n">data_sources_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
     <span class="c1"># If dark frame is provided, carry out dark correction</span>
     <span class="k">if</span> <span class="n">dark_frame</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">dark_file</span> <span class="o">=</span> <span class="n">redDir</span> <span class="o">+</span> <span class="s1">&#39;/calib/darks/&#39;</span> <span class="o">+</span> <span class="n">dark_frame</span>
+        <span class="n">dark_file</span> <span class="o">=</span> <span class="n">redDir</span> <span class="o">+</span> <span class="s1">'/calib/darks/'</span> <span class="o">+</span> <span class="n">dark_frame</span>
 
         <span class="c1"># Read in dark frame data</span>
         <span class="n">dark_data</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getdata</span><span class="p">(</span><span class="n">dark_file</span><span class="p">,</span> <span class="n">ignore_missing_end</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="c1"># Go through each sky file</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">skies</span><span class="p">)):</span>
-            <span class="k">with</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">nn</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;readonly&#39;</span><span class="p">,</span> <span class="n">output_verify</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">,</span> <span class="n">ignore_missing_end</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">as</span> <span class="n">cur_sky</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">nn</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">mode</span><span class="o">=</span><span class="s1">'readonly'</span><span class="p">,</span> <span class="n">output_verify</span><span class="o">=</span><span class="s1">'ignore'</span><span class="p">,</span> <span class="n">ignore_missing_end</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">as</span> <span class="n">cur_sky</span><span class="p">:</span>
                 <span class="n">sky_data</span> <span class="o">=</span> <span class="n">cur_sky</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span>
                 <span class="n">sky_header</span> <span class="o">=</span> <span class="n">cur_sky</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span>
             <span class="n">sky_data</span> <span class="o">=</span> <span class="n">sky_data</span> <span class="o">-</span> <span class="n">dark_data</span>
             <span class="n">sky_hdu</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">PrimaryHDU</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">sky_data</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="n">sky_header</span><span class="p">)</span>
-            <span class="n">sky_hdu</span><span class="o">.</span><span class="n">writeto</span><span class="p">(</span><span class="n">nn</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">output_verify</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">sky_hdu</span><span class="o">.</span><span class="n">writeto</span><span class="p">(</span><span class="n">nn</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">output_verify</span><span class="o">=</span><span class="s1">'ignore'</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">warning_message</span> <span class="o">=</span> <span class="s1">&#39;Dark frame not provided for makesky().&#39;</span>
-        <span class="n">warning_message</span> <span class="o">+=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Using sky frames without dark subtraction.&#39;</span>
+        <span class="n">warning_message</span> <span class="o">=</span> <span class="s1">'Dark frame not provided for makesky().'</span>
+        <span class="n">warning_message</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">Using sky frames without dark subtraction.'</span>
 
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">warning_message</span><span class="p">)</span>
 
@@ -187,16 +187,16 @@
 
     <span class="c1"># scale skies to common median</span>
     <span class="k">if</span> <span class="n">skyscale</span><span class="p">:</span>
-        <span class="n">_skylog</span> <span class="o">=</span> <span class="n">skyDir</span> <span class="o">+</span> <span class="s1">&#39;sky_scale.log&#39;</span>
+        <span class="n">_skylog</span> <span class="o">=</span> <span class="n">skyDir</span> <span class="o">+</span> <span class="s1">'sky_scale.log'</span>
         <span class="n">util</span><span class="o">.</span><span class="n">rmall</span><span class="p">([</span><span class="n">_skylog</span><span class="p">])</span>
-        <span class="n">f_skylog</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">_skylog</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+        <span class="n">f_skylog</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">_skylog</span><span class="p">,</span> <span class="s1">'w'</span><span class="p">)</span>
 
         <span class="n">sky_mean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">skies</span><span class="p">)],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">skies</span><span class="p">)):</span>
             <span class="c1"># Get the sigma-clipped mean and stddev on the dark</span>
             <span class="n">img_sky</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getdata</span><span class="p">(</span><span class="n">nn</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">ignore_missing_end</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">parse_version</span><span class="p">(</span><span class="n">astropy</span><span class="o">.</span><span class="n">__version__</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">parse_version</span><span class="p">(</span><span class="s1">&#39;3.0&#39;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">parse_version</span><span class="p">(</span><span class="n">astropy</span><span class="o">.</span><span class="n">__version__</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">parse_version</span><span class="p">(</span><span class="s1">'3.0'</span><span class="p">):</span>
                 <span class="n">sky_stats</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">sigma_clipped_stats</span><span class="p">(</span><span class="n">img_sky</span><span class="p">,</span>
                                                       <span class="n">sigma</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
                                                       <span class="n">iters</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
@@ -215,27 +215,27 @@
             <span class="n">_nn</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">_nn</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span> <span class="o">*</span> <span class="n">sky_scale</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
             <span class="n">_nn</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">writeto</span><span class="p">(</span><span class="n">nsc</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
 
-            <span class="n">skyf</span> <span class="o">=</span> <span class="n">nn</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">((</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">   skymean=</span><span class="si">%10.2f</span><span class="s1">   skyscale=</span><span class="si">%10.2f</span><span class="s1">&#39;</span> <span class="o">%</span>
+            <span class="n">skyf</span> <span class="o">=</span> <span class="n">nn</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">'/'</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">((</span><span class="s1">'</span><span class="si">%s</span><span class="s1">   skymean=</span><span class="si">%10.2f</span><span class="s1">   skyscale=</span><span class="si">%10.2f</span><span class="s1">'</span> <span class="o">%</span>
                    <span class="p">(</span><span class="n">skyf</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">skyf</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">],</span> <span class="n">sky_mean</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">sky_scale</span><span class="p">[</span><span class="n">i</span><span class="p">])))</span>
-            <span class="n">f_skylog</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">   </span><span class="si">%10.2f</span><span class="s1">  </span><span class="si">%10.2f</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">%</span>
+            <span class="n">f_skylog</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">'</span><span class="si">%s</span><span class="s1">   </span><span class="si">%10.2f</span><span class="s1">  </span><span class="si">%10.2f</span><span class="se">\n</span><span class="s1">'</span> <span class="o">%</span>
                            <span class="p">(</span><span class="n">nn</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">sky_mean</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">sky_scale</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
 
         <span class="c1"># Make list for combinng</span>
-        <span class="n">f_on</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">skylist</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
-        <span class="n">f_on</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">nsc</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">f_on</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">skylist</span><span class="p">,</span> <span class="s1">'w'</span><span class="p">)</span>
+        <span class="n">f_on</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1">'</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">nsc</span><span class="p">)</span> <span class="o">+</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span><span class="p">)</span>
         <span class="n">f_on</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
-        <span class="c1"># skylist = skyDir + &#39;scale????.fits&#39;</span>
+        <span class="c1"># skylist = skyDir + 'scale????.fits'</span>
         <span class="n">f_skylog</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="n">skies_to_combine</span> <span class="o">=</span> <span class="n">nsc</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="c1"># Make list for combinng</span>
-        <span class="n">f_on</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">skylist</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
-        <span class="n">f_on</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">nn</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">f_on</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">skylist</span><span class="p">,</span> <span class="s1">'w'</span><span class="p">)</span>
+        <span class="n">f_on</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1">'</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">nn</span><span class="p">)</span> <span class="o">+</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span><span class="p">)</span>
         <span class="n">f_on</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
-        <span class="c1"># skylist = skyDir + &#39;n????.fits&#39;</span>
+        <span class="c1"># skylist = skyDir + 'n????.fits'</span>
 
     <span class="c1"># Combine the skies</span>
     <span class="n">img_stack</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># stack of image data</span>
@@ -248,7 +248,7 @@
 
     <span class="c1"># Stack the darks with sigma clipping, median combine.</span>
     <span class="n">sk_avg</span><span class="p">,</span> <span class="n">sk_med</span><span class="p">,</span> <span class="n">sk_std</span> <span class="o">=</span> <span class="n">astropy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">sigma_clipped_stats</span><span class="p">(</span><span class="n">img_stack</span><span class="p">,</span>
-                                                               <span class="n">cenfunc</span><span class="o">=</span><span class="s1">&#39;median&#39;</span><span class="p">,</span>
+                                                               <span class="n">cenfunc</span><span class="o">=</span><span class="s1">'median'</span><span class="p">,</span>
                                                                <span class="n">sigma_lower</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
                                                                <span class="n">sigma_upper</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
                                                                <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
@@ -266,8 +266,8 @@
                <span class="n">dark_frame</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">number</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">rejectHsigma</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
                <span class="n">raw_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">reduce_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Make L&#39; skies by carefully treating the ROTPPOSN angle</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Make L' skies by carefully treating the ROTPPOSN angle</span>
 <span class="sd">    of the K-mirror. Uses 3 skies combined (set by number keyword).</span>
 <span class="sd">    </span>
 <span class="sd">    Parameters</span>
@@ -275,10 +275,10 @@
 <span class="sd">    files : list of int</span>
 <span class="sd">        Integer list of the files. Does not require padded zeros.</span>
 <span class="sd">    nite : str</span>
-<span class="sd">        Name for night of observation (e.g.: &quot;nite1&quot;), used as suffix</span>
+<span class="sd">        Name for night of observation (e.g.: "nite1"), used as suffix</span>
 <span class="sd">        inside the reduce sub-directories.</span>
 <span class="sd">    wave : str</span>
-<span class="sd">        Name for the observation passband (e.g.: &quot;lp&quot;)</span>
+<span class="sd">        Name for the observation passband (e.g.: "lp")</span>
 <span class="sd">    dark_frame : str, default=None</span>
 <span class="sd">        File name for the dark frame in order to carry out dark correction.</span>
 <span class="sd">        If not provided, dark frame is not subtracted and a warning is thrown.</span>
@@ -290,7 +290,7 @@
 <span class="sd">        remove stars or galaxies when using science images to make the sky.</span>
 <span class="sd">    raw_dir : str, optional</span>
 <span class="sd">        Directory where raw files are stored. By default,</span>
-<span class="sd">        assumes that raw files are stored in &#39;../raw&#39;</span>
+<span class="sd">        assumes that raw files are stored in '../raw'</span>
 <span class="sd">    reduce_dir : str, optional</span>
 <span class="sd">        Directory such as &lt;epoch&gt;/reduce/ with contents including</span>
 <span class="sd">        the calib/, calib/darks/, etc. directories live.</span>
@@ -298,20 +298,20 @@
 <span class="sd">        If epoch_dir is None, then use the current working directory.</span>
 <span class="sd">    instrument : instruments object, optional</span>
 <span class="sd">        Instrument of data. Default is `instruments.default_inst`</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">rawDir</span><span class="p">,</span> <span class="n">redDir</span> <span class="o">=</span> <span class="n">get_raw_reduce_directories</span><span class="p">(</span><span class="n">raw_dir</span><span class="p">,</span> <span class="n">reduce_dir</span><span class="p">)</span>
 
-    <span class="n">waveDir</span> <span class="o">=</span> <span class="n">redDir</span> <span class="o">+</span> <span class="n">wave</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span>
-    <span class="n">skyDir</span> <span class="o">=</span> <span class="n">waveDir</span> <span class="o">+</span> <span class="s1">&#39;sky_&#39;</span> <span class="o">+</span> <span class="n">nite</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span>
+    <span class="n">waveDir</span> <span class="o">=</span> <span class="n">redDir</span> <span class="o">+</span> <span class="n">wave</span> <span class="o">+</span> <span class="s1">'/'</span>
+    <span class="n">skyDir</span> <span class="o">=</span> <span class="n">waveDir</span> <span class="o">+</span> <span class="s1">'sky_'</span> <span class="o">+</span> <span class="n">nite</span> <span class="o">+</span> <span class="s1">'/'</span>
 
     <span class="c1"># Make new directory for the current passband and switch into it</span>
     <span class="n">util</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">waveDir</span><span class="p">)</span>
     <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">waveDir</span><span class="p">)</span>
 
     <span class="n">util</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">skyDir</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;raw dir: &#39;</span><span class="p">,</span> <span class="n">rawDir</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;sky dir: &#39;</span><span class="p">,</span> <span class="n">skyDir</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;wave dir: &#39;</span><span class="p">,</span> <span class="n">waveDir</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'raw dir: '</span><span class="p">,</span> <span class="n">rawDir</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'sky dir: '</span><span class="p">,</span> <span class="n">skyDir</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'wave dir: '</span><span class="p">,</span> <span class="n">waveDir</span><span class="p">)</span>
 
     <span class="c1"># Copy over the raw sky files into the sky directory</span>
     <span class="n">skies</span> <span class="o">=</span> <span class="n">instrument</span><span class="o">.</span><span class="n">make_filenames</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="n">rootDir</span><span class="o">=</span><span class="n">skyDir</span><span class="p">)</span>
@@ -322,49 +322,49 @@
         <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">raw</span><span class="p">[</span><span class="n">ii</span><span class="p">],</span> <span class="n">skies</span><span class="p">[</span><span class="n">ii</span><span class="p">])</span>
 
     <span class="c1"># Write out the sources of the sky files</span>
-    <span class="n">data_sources_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">redDir</span> <span class="o">+</span> <span class="s1">&#39;data_sources.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">)</span>
-    <span class="n">data_sources_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;---</span><span class="se">\n</span><span class="s1"># Sky Files (</span><span class="si">{0}</span><span class="s1">)</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">wave</span><span class="p">))</span>
+    <span class="n">data_sources_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">redDir</span> <span class="o">+</span> <span class="s1">'data_sources.txt'</span><span class="p">,</span> <span class="s1">'a'</span><span class="p">)</span>
+    <span class="n">data_sources_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">'---</span><span class="se">\n</span><span class="s1"># Sky Files (</span><span class="si">{0}</span><span class="s1">)</span><span class="se">\n</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">wave</span><span class="p">))</span>
 
     <span class="k">for</span> <span class="n">cur_file</span> <span class="ow">in</span> <span class="n">raw</span><span class="p">:</span>
-        <span class="n">out_line</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{0}</span><span class="s1"> (</span><span class="si">{1}</span><span class="s1">)</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cur_file</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">())</span>
+        <span class="n">out_line</span> <span class="o">=</span> <span class="s1">'</span><span class="si">{0}</span><span class="s1"> (</span><span class="si">{1}</span><span class="s1">)</span><span class="se">\n</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cur_file</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">())</span>
         <span class="n">data_sources_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">out_line</span><span class="p">)</span>
 
     <span class="n">data_sources_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
-    <span class="n">_rawlis</span> <span class="o">=</span> <span class="n">skyDir</span> <span class="o">+</span> <span class="s1">&#39;raw.lis&#39;</span>
-    <span class="n">_nlis</span> <span class="o">=</span> <span class="n">skyDir</span> <span class="o">+</span> <span class="s1">&#39;n.lis&#39;</span>
-    <span class="n">_skyRot</span> <span class="o">=</span> <span class="n">skyDir</span> <span class="o">+</span> <span class="s1">&#39;skyRot.txt&#39;</span>
-    <span class="n">_txt</span> <span class="o">=</span> <span class="n">skyDir</span> <span class="o">+</span> <span class="s1">&#39;rotpposn.txt&#39;</span>
-    <span class="n">_out</span> <span class="o">=</span> <span class="n">skyDir</span> <span class="o">+</span> <span class="s1">&#39;sky&#39;</span>
-    <span class="n">_log</span> <span class="o">=</span> <span class="n">_out</span> <span class="o">+</span> <span class="s1">&#39;.log&#39;</span>
+    <span class="n">_rawlis</span> <span class="o">=</span> <span class="n">skyDir</span> <span class="o">+</span> <span class="s1">'raw.lis'</span>
+    <span class="n">_nlis</span> <span class="o">=</span> <span class="n">skyDir</span> <span class="o">+</span> <span class="s1">'n.lis'</span>
+    <span class="n">_skyRot</span> <span class="o">=</span> <span class="n">skyDir</span> <span class="o">+</span> <span class="s1">'skyRot.txt'</span>
+    <span class="n">_txt</span> <span class="o">=</span> <span class="n">skyDir</span> <span class="o">+</span> <span class="s1">'rotpposn.txt'</span>
+    <span class="n">_out</span> <span class="o">=</span> <span class="n">skyDir</span> <span class="o">+</span> <span class="s1">'sky'</span>
+    <span class="n">_log</span> <span class="o">=</span> <span class="n">_out</span> <span class="o">+</span> <span class="s1">'.log'</span>
     <span class="n">util</span><span class="o">.</span><span class="n">rmall</span><span class="p">([</span><span class="n">_rawlis</span><span class="p">,</span> <span class="n">_nlis</span><span class="p">,</span> <span class="n">_skyRot</span><span class="p">,</span> <span class="n">_txt</span><span class="p">,</span> <span class="n">_out</span><span class="p">,</span> <span class="n">_log</span><span class="p">])</span>
-    <span class="n">util</span><span class="o">.</span><span class="n">rmall</span><span class="p">([</span><span class="n">sky</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span> <span class="k">for</span> <span class="n">sky</span> <span class="ow">in</span> <span class="n">skies</span><span class="p">])</span>
+    <span class="n">util</span><span class="o">.</span><span class="n">rmall</span><span class="p">([</span><span class="n">sky</span> <span class="o">+</span> <span class="s1">'.fits'</span> <span class="k">for</span> <span class="n">sky</span> <span class="ow">in</span> <span class="n">skies</span><span class="p">])</span>
 
-    <span class="nb">open</span><span class="p">(</span><span class="n">_rawlis</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">raw</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
-    <span class="nb">open</span><span class="p">(</span><span class="n">_nlis</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">skies</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="nb">open</span><span class="p">(</span><span class="n">_rawlis</span><span class="p">,</span> <span class="s1">'w'</span><span class="p">)</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1">'</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">raw</span><span class="p">)</span> <span class="o">+</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span><span class="p">)</span>
+    <span class="nb">open</span><span class="p">(</span><span class="n">_nlis</span><span class="p">,</span> <span class="s1">'w'</span><span class="p">)</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1">'</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">skies</span><span class="p">)</span> <span class="o">+</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span><span class="p">)</span>
 
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;makesky_lp: Getting raw files&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'makesky_lp: Getting raw files'</span><span class="p">)</span>
 
     <span class="n">write_sky_rot_file</span><span class="p">(</span><span class="n">_rawlis</span><span class="p">,</span> <span class="n">_nlis</span><span class="p">,</span> <span class="n">_skyRot</span><span class="p">)</span>
 
     <span class="c1"># If dark frame is provided, carry out dark correction</span>
     <span class="k">if</span> <span class="n">dark_frame</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">dark_file</span> <span class="o">=</span> <span class="n">redDir</span> <span class="o">+</span> <span class="s1">&#39;/calib/darks/&#39;</span> <span class="o">+</span> <span class="n">dark_frame</span>
+        <span class="n">dark_file</span> <span class="o">=</span> <span class="n">redDir</span> <span class="o">+</span> <span class="s1">'/calib/darks/'</span> <span class="o">+</span> <span class="n">dark_frame</span>
 
         <span class="c1"># Read in dark frame data</span>
         <span class="n">dark_data</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getdata</span><span class="p">(</span><span class="n">dark_file</span><span class="p">,</span> <span class="n">ignore_missing_end</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="c1"># Go through each sky file</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">skies</span><span class="p">)):</span>
-            <span class="k">with</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">skies</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;readonly&#39;</span><span class="p">,</span> <span class="n">output_verify</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">,</span> <span class="n">ignore_missing_end</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">as</span> <span class="n">cur_sky</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">skies</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">mode</span><span class="o">=</span><span class="s1">'readonly'</span><span class="p">,</span> <span class="n">output_verify</span><span class="o">=</span><span class="s1">'ignore'</span><span class="p">,</span> <span class="n">ignore_missing_end</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">as</span> <span class="n">cur_sky</span><span class="p">:</span>
                 <span class="n">sky_data</span> <span class="o">=</span> <span class="n">cur_sky</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span>
                 <span class="n">sky_header</span> <span class="o">=</span> <span class="n">cur_sky</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span>
             <span class="n">sky_data</span> <span class="o">=</span> <span class="n">sky_data</span> <span class="o">-</span> <span class="n">dark_data</span>
             <span class="n">sky_hdu</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">PrimaryHDU</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">sky_data</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="n">sky_header</span><span class="p">)</span>
-            <span class="n">sky_hdu</span><span class="o">.</span><span class="n">writeto</span><span class="p">(</span><span class="n">skies</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">output_verify</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">sky_hdu</span><span class="o">.</span><span class="n">writeto</span><span class="p">(</span><span class="n">skies</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">output_verify</span><span class="o">=</span><span class="s1">'ignore'</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">warning_message</span> <span class="o">=</span> <span class="s1">&#39;Dark frame not provided for makesky_lp().&#39;</span>
-        <span class="n">warning_message</span> <span class="o">+=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Using sky frames without dark subtraction.&#39;</span>
+        <span class="n">warning_message</span> <span class="o">=</span> <span class="s1">'Dark frame not provided for makesky_lp().'</span>
+        <span class="n">warning_message</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">Using sky frames without dark subtraction.'</span>
 
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">warning_message</span><span class="p">)</span>
 
@@ -386,12 +386,12 @@
     <span class="n">files</span> <span class="o">=</span> <span class="n">files</span><span class="p">[</span><span class="n">sidx</span><span class="p">]</span>
 
     <span class="c1"># Open some logging files</span>
-    <span class="n">f_log</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">_log</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
-    <span class="n">f_txt</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">_txt</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+    <span class="n">f_log</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">_log</span><span class="p">,</span> <span class="s1">'w'</span><span class="p">)</span>
+    <span class="n">f_txt</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">_txt</span><span class="p">,</span> <span class="s1">'w'</span><span class="p">)</span>
 
     <span class="c1"># Skip the first and last since we are going to </span>
     <span class="c1"># average every NN files.</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;makesky_lp: Combining to make skies.&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'makesky_lp: Combining to make skies.'</span><span class="p">)</span>
     <span class="n">startIdx</span> <span class="o">=</span> <span class="n">number</span> <span class="o">/</span> <span class="mi">2</span>
     <span class="n">stopIdx</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">sidx</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="n">number</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">startIdx</span><span class="p">,</span> <span class="n">stopIdx</span><span class="p">):</span>
@@ -404,13 +404,13 @@
         <span class="n">angleTmp</span> <span class="o">=</span> <span class="n">angles</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">stop</span><span class="p">]</span>
         <span class="n">angle_avg</span> <span class="o">=</span> <span class="n">angleTmp</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
 
-        <span class="n">sky</span> <span class="o">=</span> <span class="s1">&#39;sky</span><span class="si">%.1f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">angle_avg</span><span class="p">)</span>
-        <span class="n">skyFits</span> <span class="o">=</span> <span class="n">skyDir</span> <span class="o">+</span> <span class="n">sky</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span>
+        <span class="n">sky</span> <span class="o">=</span> <span class="s1">'sky</span><span class="si">%.1f</span><span class="s1">'</span> <span class="o">%</span> <span class="p">(</span><span class="n">angle_avg</span><span class="p">)</span>
+        <span class="n">skyFits</span> <span class="o">=</span> <span class="n">skyDir</span> <span class="o">+</span> <span class="n">sky</span> <span class="o">+</span> <span class="s1">'.fits'</span>
         <span class="n">util</span><span class="o">.</span><span class="n">rmall</span><span class="p">([</span><span class="n">skyFits</span><span class="p">])</span>
 
         <span class="c1"># Make short names</span>
         <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">)):</span>
-            <span class="n">tmp</span> <span class="o">=</span> <span class="p">(</span><span class="n">short</span><span class="p">[</span><span class="n">j</span><span class="p">])</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="p">(</span><span class="n">short</span><span class="p">[</span><span class="n">j</span><span class="p">])</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="s1">'/'</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
             <span class="n">short</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmp</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
 
         <span class="c1"># Load up the FITS files.</span>
@@ -423,19 +423,19 @@
         <span class="n">img_stack</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">img_stack</span><span class="p">)</span>
 
         <span class="c1"># Log the short names of the sky frames in this stack.</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">sky</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">short</span><span class="p">)))</span>
-        <span class="n">f_log</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">:&#39;</span> <span class="o">%</span> <span class="n">sky</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">'</span><span class="si">%s</span><span class="s1">: </span><span class="si">%s</span><span class="s1">'</span> <span class="o">%</span> <span class="p">(</span><span class="n">sky</span><span class="p">,</span> <span class="s2">" "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">short</span><span class="p">)))</span>
+        <span class="n">f_log</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">'</span><span class="si">%s</span><span class="s1">:'</span> <span class="o">%</span> <span class="n">sky</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">short</span><span class="p">)):</span>
-            <span class="n">f_log</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39; </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">short</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
+            <span class="n">f_log</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">' </span><span class="si">%s</span><span class="s1">'</span> <span class="o">%</span> <span class="n">short</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
         <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">angleTmp</span><span class="p">)):</span>
-            <span class="n">f_log</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39; </span><span class="si">%6.1f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">angleTmp</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
-        <span class="n">f_log</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">f_log</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">' </span><span class="si">%6.1f</span><span class="s1">'</span> <span class="o">%</span> <span class="n">angleTmp</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
+        <span class="n">f_log</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1">'</span><span class="p">)</span>
 
         <span class="c1"># Decide if we are using mean or median.</span>
         <span class="k">if</span> <span class="n">number</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
-            <span class="n">cenfunc</span> <span class="o">=</span> <span class="s1">&#39;mean&#39;</span>
+            <span class="n">cenfunc</span> <span class="o">=</span> <span class="s1">'mean'</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">cenfunc</span> <span class="o">=</span> <span class="s1">&#39;median&#39;</span>
+            <span class="n">cenfunc</span> <span class="o">=</span> <span class="s1">'median'</span>
 
         <span class="c1"># Stack the images.</span>
         <span class="n">sk_avg</span><span class="p">,</span> <span class="n">sk_med</span><span class="p">,</span> <span class="n">sk_std</span> <span class="o">=</span> <span class="n">astropy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">sigma_clipped_stats</span><span class="p">(</span><span class="n">img_stack</span><span class="p">,</span>
@@ -449,17 +449,17 @@
             <span class="n">sk_img</span> <span class="o">=</span> <span class="n">sk_med</span>
 
         <span class="n">sk_hdr</span> <span class="o">=</span> <span class="n">hdr_stack</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="n">sk_hdr</span><span class="p">[</span><span class="s1">&#39;SKYCOMB&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">sky</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">short</span><span class="p">))</span>
+        <span class="n">sk_hdr</span><span class="p">[</span><span class="s1">'SKYCOMB'</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'</span><span class="si">%s</span><span class="s1">: </span><span class="si">%s</span><span class="s1">'</span> <span class="o">%</span> <span class="p">(</span><span class="n">sky</span><span class="p">,</span> <span class="s1">' '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">short</span><span class="p">))</span>
         <span class="n">fits</span><span class="o">.</span><span class="n">writeto</span><span class="p">(</span><span class="n">skyFits</span><span class="p">,</span> <span class="n">sk_img</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="n">sk_hdr</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="c1"># Save output sky angle to txt file.</span>
-        <span class="n">f_txt</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%13s</span><span class="s1"> </span><span class="si">%8.3f</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">sky</span><span class="p">,</span> <span class="n">angle_avg</span><span class="p">))</span>
+        <span class="n">f_txt</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">'</span><span class="si">%13s</span><span class="s1"> </span><span class="si">%8.3f</span><span class="se">\n</span><span class="s1">'</span> <span class="o">%</span> <span class="p">(</span><span class="n">sky</span><span class="p">,</span> <span class="n">angle_avg</span><span class="p">))</span>
 
     <span class="n">f_txt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
     <span class="n">f_log</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
     <span class="c1"># Change back to original directory</span>
-    <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="s1">&#39;../&#39;</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="s1">'../'</span><span class="p">)</span>
 
     <span class="k">return</span></div>
 
@@ -470,7 +470,7 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">makesky_fromsci</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="n">nite</span><span class="p">,</span> <span class="n">wave</span><span class="p">,</span>
                     <span class="n">raw_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">reduce_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                     <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Make short wavelength (not L-band or longer) skies from the science exposures</span>
 <span class="sd">    themselves. We use strong clipping to get rid of stars. This should only be used</span>
 <span class="sd">    on sparser science fields.</span>
@@ -480,13 +480,13 @@
 <span class="sd">    files : list of int</span>
 <span class="sd">        Integer list of the files. Does not require padded zeros.</span>
 <span class="sd">    nite : str</span>
-<span class="sd">        Name for night of observation (e.g.: &quot;nite1&quot;), used as suffix</span>
+<span class="sd">        Name for night of observation (e.g.: "nite1"), used as suffix</span>
 <span class="sd">        inside the reduce sub-directories.</span>
 <span class="sd">    wave : str</span>
-<span class="sd">        Name for the observation passband (e.g.: &quot;kp&quot;)</span>
+<span class="sd">        Name for the observation passband (e.g.: "kp")</span>
 <span class="sd">    raw_dir : str, optional</span>
 <span class="sd">        Directory where raw files are stored. By default,</span>
-<span class="sd">        assumes that raw files are stored in &#39;../raw&#39;</span>
+<span class="sd">        assumes that raw files are stored in '../raw'</span>
 <span class="sd">    reduce_dir : str, optional</span>
 <span class="sd">        Directory such as &lt;epoch&gt;/reduce/ with contents including</span>
 <span class="sd">        the calib/, calib/darks/, etc. directories live.</span>
@@ -494,31 +494,31 @@
 <span class="sd">        If epoch_dir is None, then use the current working directory.</span>
 <span class="sd">    instrument : instruments object, optional</span>
 <span class="sd">        Instrument of data. Default is `instruments.default_inst`</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">rawDir</span><span class="p">,</span> <span class="n">redDir</span> <span class="o">=</span> <span class="n">get_raw_reduce_directories</span><span class="p">(</span><span class="n">raw_dir</span><span class="p">,</span> <span class="n">reduce_dir</span><span class="p">)</span>
 
     <span class="n">util</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">wave</span><span class="p">)</span>
     <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">wave</span><span class="p">)</span>
 
-    <span class="n">waveDir</span> <span class="o">=</span> <span class="n">redDir</span> <span class="o">+</span> <span class="n">wave</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span>
-    <span class="n">skyDir</span> <span class="o">=</span> <span class="n">waveDir</span> <span class="o">+</span> <span class="s1">&#39;sky_&#39;</span> <span class="o">+</span> <span class="n">nite</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span>
+    <span class="n">waveDir</span> <span class="o">=</span> <span class="n">redDir</span> <span class="o">+</span> <span class="n">wave</span> <span class="o">+</span> <span class="s1">'/'</span>
+    <span class="n">skyDir</span> <span class="o">=</span> <span class="n">waveDir</span> <span class="o">+</span> <span class="s1">'sky_'</span> <span class="o">+</span> <span class="n">nite</span> <span class="o">+</span> <span class="s1">'/'</span>
 
     <span class="c1"># Make new directory for the current passband and switch into it</span>
     <span class="n">util</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">wave</span><span class="p">)</span>
     <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">wave</span><span class="p">)</span>
 
     <span class="n">util</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">skyDir</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;raw dir: &#39;</span><span class="p">,</span> <span class="n">rawDir</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;sky dir: &#39;</span><span class="p">,</span> <span class="n">skyDir</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;wave dir: &#39;</span><span class="p">,</span> <span class="n">waveDir</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'raw dir: '</span><span class="p">,</span> <span class="n">rawDir</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'sky dir: '</span><span class="p">,</span> <span class="n">skyDir</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'wave dir: '</span><span class="p">,</span> <span class="n">waveDir</span><span class="p">)</span>
 
-    <span class="n">skylist</span> <span class="o">=</span> <span class="n">skyDir</span> <span class="o">+</span> <span class="s1">&#39;skies_to_combine.lis&#39;</span>
-    <span class="n">output</span> <span class="o">=</span> <span class="n">skyDir</span> <span class="o">+</span> <span class="s1">&#39;sky_&#39;</span> <span class="o">+</span> <span class="n">wave</span> <span class="o">+</span> <span class="s1">&#39;.fits&#39;</span>
+    <span class="n">skylist</span> <span class="o">=</span> <span class="n">skyDir</span> <span class="o">+</span> <span class="s1">'skies_to_combine.lis'</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">skyDir</span> <span class="o">+</span> <span class="s1">'sky_'</span> <span class="o">+</span> <span class="n">wave</span> <span class="o">+</span> <span class="s1">'.fits'</span>
 
     <span class="n">util</span><span class="o">.</span><span class="n">rmall</span><span class="p">([</span><span class="n">skylist</span><span class="p">,</span> <span class="n">output</span><span class="p">])</span>
 
     <span class="n">nn</span> <span class="o">=</span> <span class="n">instrument</span><span class="o">.</span><span class="n">make_filenames</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="n">rootDir</span><span class="o">=</span><span class="n">skyDir</span><span class="p">)</span>
-    <span class="n">nsc</span> <span class="o">=</span> <span class="n">instrument</span><span class="o">.</span><span class="n">make_filenames</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="n">rootDir</span><span class="o">=</span><span class="n">skyDir</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;scale&#39;</span><span class="p">)</span>
+    <span class="n">nsc</span> <span class="o">=</span> <span class="n">instrument</span><span class="o">.</span><span class="n">make_filenames</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="n">rootDir</span><span class="o">=</span><span class="n">skyDir</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">'scale'</span><span class="p">)</span>
     <span class="n">skies</span> <span class="o">=</span> <span class="n">instrument</span><span class="o">.</span><span class="n">make_filenames</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="n">rootDir</span><span class="o">=</span><span class="n">rawDir</span><span class="p">)</span>
 
     <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">nn</span><span class="p">)):</span>
@@ -527,11 +527,11 @@
         <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">skies</span><span class="p">[</span><span class="n">ii</span><span class="p">],</span> <span class="n">nn</span><span class="p">[</span><span class="n">ii</span><span class="p">])</span>
 
     <span class="c1"># Write out the sources of the sky files</span>
-    <span class="n">data_sources_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">redDir</span> <span class="o">+</span> <span class="s1">&#39;data_sources.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">)</span>
-    <span class="n">data_sources_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;---</span><span class="se">\n</span><span class="s1"># Sky Files (</span><span class="si">{0}</span><span class="s1">)</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">wave</span><span class="p">))</span>
+    <span class="n">data_sources_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">redDir</span> <span class="o">+</span> <span class="s1">'data_sources.txt'</span><span class="p">,</span> <span class="s1">'a'</span><span class="p">)</span>
+    <span class="n">data_sources_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">'---</span><span class="se">\n</span><span class="s1"># Sky Files (</span><span class="si">{0}</span><span class="s1">)</span><span class="se">\n</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">wave</span><span class="p">))</span>
 
     <span class="k">for</span> <span class="n">cur_file</span> <span class="ow">in</span> <span class="n">skies</span><span class="p">:</span>
-        <span class="n">out_line</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{0}</span><span class="s1"> (</span><span class="si">{1}</span><span class="s1">)</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cur_file</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">())</span>
+        <span class="n">out_line</span> <span class="o">=</span> <span class="s1">'</span><span class="si">{0}</span><span class="s1"> (</span><span class="si">{1}</span><span class="s1">)</span><span class="se">\n</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cur_file</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">())</span>
         <span class="n">data_sources_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">out_line</span><span class="p">)</span>
 
     <span class="n">data_sources_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
@@ -546,7 +546,7 @@
 
     <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">nn</span><span class="p">)):</span>
         <span class="n">img_sky</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getdata</span><span class="p">(</span><span class="n">nn</span><span class="p">[</span><span class="n">ii</span><span class="p">],</span> <span class="n">ignore_missing_end</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">parse_version</span><span class="p">(</span><span class="n">astropy</span><span class="o">.</span><span class="n">__version__</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">parse_version</span><span class="p">(</span><span class="s1">&#39;3.0&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">parse_version</span><span class="p">(</span><span class="n">astropy</span><span class="o">.</span><span class="n">__version__</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">parse_version</span><span class="p">(</span><span class="s1">'3.0'</span><span class="p">):</span>
             <span class="n">sky_stats</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">sigma_clipped_stats</span><span class="p">(</span><span class="n">img_sky</span><span class="p">,</span>
                                                   <span class="n">sigma_lower</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">sigma_upper</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
                                                   <span class="n">iters</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
@@ -577,7 +577,7 @@
 
     <span class="c1"># Stack the darks with sigma clipping, median combine.</span>
     <span class="n">sk_avg</span><span class="p">,</span> <span class="n">sk_med</span><span class="p">,</span> <span class="n">sk_std</span> <span class="o">=</span> <span class="n">astropy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">sigma_clipped_stats</span><span class="p">(</span><span class="n">img_stack_msk</span><span class="p">,</span>
-                                                               <span class="n">cenfunc</span><span class="o">=</span><span class="s1">&#39;median&#39;</span><span class="p">,</span>
+                                                               <span class="n">cenfunc</span><span class="o">=</span><span class="s1">'median'</span><span class="p">,</span>
                                                                <span class="n">sigma_lower</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
                                                                <span class="n">sigma_upper</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
                                                                <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
@@ -586,7 +586,7 @@
     <span class="n">fits</span><span class="o">.</span><span class="n">writeto</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">sk_med</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="n">hdr_stack</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="c1"># Change back to original directory</span>
-    <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="s1">&#39;../&#39;</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="s1">'../'</span><span class="p">)</span>
 
     <span class="k">return</span></div>
 
@@ -595,8 +595,8 @@
 <div class="viewcode-block" id="read_sky_rot_file">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/sky/index.html#kai.reduce.sky.read_sky_rot_file">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">read_sky_rot_file</span><span class="p">(</span><span class="n">sky_rot_file</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read in the list of files and rotation angles.&quot;&quot;&quot;</span>
-    <span class="n">rotTab</span> <span class="o">=</span> <span class="n">Table</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">sky_rot_file</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;ascii&#39;</span><span class="p">,</span> <span class="n">header_start</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<span class="w">    </span><span class="sd">"""Read in the list of files and rotation angles."""</span>
+    <span class="n">rotTab</span> <span class="o">=</span> <span class="n">Table</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">sky_rot_file</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">'ascii'</span><span class="p">,</span> <span class="n">header_start</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
     <span class="n">cols</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">rotTab</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
     <span class="n">files</span> <span class="o">=</span> <span class="n">rotTab</span><span class="p">[</span><span class="n">cols</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
     <span class="n">angles</span> <span class="o">=</span> <span class="n">rotTab</span><span class="p">[</span><span class="n">cols</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
@@ -608,27 +608,27 @@
 <div class="viewcode-block" id="write_sky_rot_file">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/sky/index.html#kai.reduce.sky.write_sky_rot_file">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">write_sky_rot_file</span><span class="p">(</span><span class="n">rawlis</span><span class="p">,</span> <span class="n">nlis</span><span class="p">,</span> <span class="n">skyRot</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Write the list of files and rotation angles in Lp.</span>
+<span class="w">    </span><span class="sd">"""Write the list of files and rotation angles in Lp.</span>
 <span class="sd">    Created to avoid using pyraf which causes issues when dealing</span>
-<span class="sd">    with non-fits conforming headers.&quot;&quot;&quot;</span>
+<span class="sd">    with non-fits conforming headers."""</span>
     <span class="c1"># 1. Copy file</span>
     <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">rawlis</span><span class="p">,</span> <span class="n">nlis</span><span class="p">)</span>
     <span class="c1"># 2. Loop through files to obtain ROTPPOSN header and append to list</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">nlis</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
-        <span class="n">contents</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">contents</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1">'</span><span class="p">)</span>
     <span class="n">rot</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">fit</span> <span class="ow">in</span> <span class="n">contents</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="k">with</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">fit</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;readonly&#39;</span><span class="p">,</span> <span class="n">output_verify</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">,</span>
+            <span class="k">with</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">fit</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">'readonly'</span><span class="p">,</span> <span class="n">output_verify</span><span class="o">=</span><span class="s1">'ignore'</span><span class="p">,</span>
                            <span class="n">ignore_missing_end</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">as</span> <span class="n">rot_hdu</span><span class="p">:</span>
                 <span class="n">rot_header</span> <span class="o">=</span> <span class="n">rot_hdu</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span>
-                <span class="n">rot</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rot_header</span><span class="p">[</span><span class="s1">&#39;ROTPPOSN&#39;</span><span class="p">])</span>
+                <span class="n">rot</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rot_header</span><span class="p">[</span><span class="s1">'ROTPPOSN'</span><span class="p">])</span>
         <span class="k">except</span><span class="p">:</span>
             <span class="k">continue</span>
     <span class="c1"># 3. Write in skyRot the name of the file and the header values</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">skyRot</span><span class="p">,</span> <span class="s1">&#39;at&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">edit</span><span class="p">:</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">skyRot</span><span class="p">,</span> <span class="s1">'at'</span><span class="p">)</span> <span class="k">as</span> <span class="n">edit</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">jj</span><span class="p">,</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">rot</span><span class="p">):</span>
-            <span class="n">edit</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">contents</span><span class="p">[</span><span class="n">jj</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">ii</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">edit</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">contents</span><span class="p">[</span><span class="n">jj</span><span class="p">]</span> <span class="o">+</span> <span class="s1">'</span><span class="se">\t</span><span class="s1">'</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">ii</span><span class="p">)</span> <span class="o">+</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span><span class="p">)</span>
 
     <span class="k">return</span></div>
 
@@ -639,14 +639,14 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">get_raw_reduce_directories</span><span class="p">(</span><span class="n">raw_dir</span><span class="p">,</span> <span class="n">reduce_dir</span><span class="p">):</span>
     <span class="c1"># Determine directory locations</span>
     <span class="k">if</span> <span class="n">reduce_dir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">redDir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span>  <span class="c1"># Reduce directory.</span>
+        <span class="n">redDir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span> <span class="o">+</span> <span class="s1">'/'</span>  <span class="c1"># Reduce directory.</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">redDir</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">trimdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">reduce_dir</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span>
+        <span class="n">redDir</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">trimdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">reduce_dir</span><span class="p">)</span> <span class="o">+</span> <span class="s1">'/'</span><span class="p">)</span>
     <span class="c1"># Set location of raw data</span>
     <span class="k">if</span> <span class="n">raw_dir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">rawDir</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">trimdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">raw_dir</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span>
+        <span class="n">rawDir</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">trimdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">raw_dir</span><span class="p">)</span> <span class="o">+</span> <span class="s1">'/'</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">rawDir</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">trimdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">redDir</span> <span class="o">+</span> <span class="s1">&#39;../raw&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span>
+        <span class="n">rawDir</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">trimdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">redDir</span> <span class="o">+</span> <span class="s1">'../raw'</span><span class="p">)</span> <span class="o">+</span> <span class="s1">'/'</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">rawDir</span><span class="p">,</span> <span class="n">redDir</span></div>
 
 

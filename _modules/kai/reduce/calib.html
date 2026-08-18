@@ -95,7 +95,7 @@
              <span class="n">raw_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
              <span class="n">reduce_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
              <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Make dark image for imaging data. Makes a calib/ directory</span>
 <span class="sd">    and stores all output there. All output and temporary files</span>
 <span class="sd">    will be created in a darks/ subdirectory.</span>
@@ -108,7 +108,7 @@
 <span class="sd">        Output file name. Include the .fits extension.</span>
 <span class="sd">    raw_dir : str, optional</span>
 <span class="sd">        Directory where raw files are stored. By default,</span>
-<span class="sd">        assumes that raw files are stored in &#39;../raw&#39;</span>
+<span class="sd">        assumes that raw files are stored in '../raw'</span>
 <span class="sd">    reduce_dir : str, optional</span>
 <span class="sd">        Directory such as &lt;epoch&gt;/reduce/ with contents including</span>
 <span class="sd">        the calib/, calib/darks/, etc. directories live.</span>
@@ -116,41 +116,41 @@
 <span class="sd">        If epoch_dir is None, then use the current working directory.</span>
 <span class="sd">    instrument : instruments object, optional</span>
 <span class="sd">        Instrument of data. Default is `instruments.default_inst`</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">rawDir</span><span class="p">,</span> <span class="n">redDir</span> <span class="o">=</span> <span class="n">get_raw_reduce_directories</span><span class="p">(</span><span class="n">raw_dir</span><span class="p">,</span> <span class="n">reduce_dir</span><span class="p">)</span>
-    <span class="n">curDir</span> <span class="o">=</span> <span class="n">redDir</span> <span class="o">+</span> <span class="s1">&#39;calib/&#39;</span>
-    <span class="n">darkDir</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">trimdir</span><span class="p">(</span><span class="n">curDir</span> <span class="o">+</span> <span class="s1">&#39;darks/&#39;</span><span class="p">)</span>
+    <span class="n">curDir</span> <span class="o">=</span> <span class="n">redDir</span> <span class="o">+</span> <span class="s1">'calib/'</span>
+    <span class="n">darkDir</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">trimdir</span><span class="p">(</span><span class="n">curDir</span> <span class="o">+</span> <span class="s1">'darks/'</span><span class="p">)</span>
 
     <span class="n">util</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">curDir</span><span class="p">)</span>
     <span class="n">util</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">darkDir</span><span class="p">)</span>
 
     <span class="n">_out</span> <span class="o">=</span> <span class="n">darkDir</span> <span class="o">+</span> <span class="n">output</span>
-    <span class="n">_outlis</span> <span class="o">=</span> <span class="n">_out</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.fits&#39;</span><span class="p">,</span> <span class="s1">&#39;.lis&#39;</span><span class="p">)</span>
+    <span class="n">_outlis</span> <span class="o">=</span> <span class="n">_out</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">'.fits'</span><span class="p">,</span> <span class="s1">'.lis'</span><span class="p">)</span>
     <span class="n">util</span><span class="o">.</span><span class="n">rmall</span><span class="p">([</span><span class="n">_out</span><span class="p">,</span> <span class="n">_outlis</span><span class="p">])</span>
 
     <span class="n">darks_orig</span> <span class="o">=</span> <span class="n">instrument</span><span class="o">.</span><span class="n">make_filenames</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="n">rootDir</span><span class="o">=</span><span class="n">rawDir</span><span class="p">)</span>
 
     <span class="c1"># Write out the sources of the dark files</span>
-    <span class="n">data_sources_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">redDir</span> <span class="o">+</span> <span class="s1">&#39;data_sources.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">)</span>
-    <span class="n">data_sources_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;---</span><span class="se">\n</span><span class="s1"># Dark Files for </span><span class="si">{0}</span><span class="s1"> </span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">output</span><span class="p">))</span>
+    <span class="n">data_sources_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">redDir</span> <span class="o">+</span> <span class="s1">'data_sources.txt'</span><span class="p">,</span> <span class="s1">'a'</span><span class="p">)</span>
+    <span class="n">data_sources_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">'---</span><span class="se">\n</span><span class="s1"># Dark Files for </span><span class="si">{0}</span><span class="s1"> </span><span class="se">\n</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">output</span><span class="p">))</span>
 
     <span class="k">for</span> <span class="n">cur_file</span> <span class="ow">in</span> <span class="n">darks_orig</span><span class="p">:</span>
-        <span class="n">out_line</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{0}</span><span class="s1"> (</span><span class="si">{1}</span><span class="s1">)</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cur_file</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">())</span>
+        <span class="n">out_line</span> <span class="o">=</span> <span class="s1">'</span><span class="si">{0}</span><span class="s1"> (</span><span class="si">{1}</span><span class="s1">)</span><span class="se">\n</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cur_file</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">())</span>
         <span class="n">data_sources_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">out_line</span><span class="p">)</span>
 
     <span class="n">data_sources_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
     <span class="c1"># Create a file with the list of images that go into the dark</span>
-    <span class="n">f_on</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">_outlis</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
-    <span class="n">f_on</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">darks_orig</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">f_on</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">_outlis</span><span class="p">,</span> <span class="s1">'w'</span><span class="p">)</span>
+    <span class="n">f_on</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1">'</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">darks_orig</span><span class="p">)</span> <span class="o">+</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span><span class="p">)</span>
     <span class="n">f_on</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
     <span class="n">img_stack</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">hdr_stack</span> <span class="o">=</span> <span class="p">[]</span>
 
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;makedark: Making dark </span><span class="si">{</span><span class="n">_out</span><span class="si">}</span><span class="s1"> with the following images:&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'makedark: Making dark </span><span class="si">{</span><span class="n">_out</span><span class="si">}</span><span class="s1"> with the following images:'</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">darks_orig</span><span class="p">)):</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="se">\t</span><span class="si">{</span><span class="n">darks_orig</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="se">\t</span><span class="si">{</span><span class="n">darks_orig</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
         <span class="n">img</span><span class="p">,</span> <span class="n">hdr</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getdata</span><span class="p">(</span><span class="n">darks_orig</span><span class="p">[</span><span class="n">ii</span><span class="p">],</span> <span class="n">header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">ignore_missing_end</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">img_stack</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
         <span class="n">hdr_stack</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">hdr</span><span class="p">)</span>
@@ -158,7 +158,7 @@
 
     <span class="c1"># Stack the darks with sigma clipping, median combine.</span>
     <span class="n">dk_avg</span><span class="p">,</span> <span class="n">dk_med</span><span class="p">,</span> <span class="n">dk_std</span> <span class="o">=</span> <span class="n">astropy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">sigma_clipped_stats</span><span class="p">(</span><span class="n">img_stack</span><span class="p">,</span>
-                                                               <span class="n">cenfunc</span><span class="o">=</span><span class="s1">&#39;median&#39;</span><span class="p">,</span>
+                                                               <span class="n">cenfunc</span><span class="o">=</span><span class="s1">'median'</span><span class="p">,</span>
                                                                <span class="n">sigma_lower</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
                                                                <span class="n">sigma_upper</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
                                                                <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
@@ -176,7 +176,7 @@
              <span class="n">dark_frame</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">normalizeFirst</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
              <span class="n">raw_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">reduce_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
              <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Make flat field image for imaging data. Makes a calib/ directory</span>
 <span class="sd">    and stores all output there. All output and temporary files</span>
 <span class="sd">    will be created in a flats/ subdirectory.</span>
@@ -204,7 +204,7 @@
 <span class="sd">        such as in the case of twilight flats.</span>
 <span class="sd">    raw_dir : str, optional</span>
 <span class="sd">        Directory where raw files are stored. By default,</span>
-<span class="sd">        assumes that raw files are stored in &#39;../raw&#39;</span>
+<span class="sd">        assumes that raw files are stored in '../raw'</span>
 <span class="sd">    reduce_dir : str, optional</span>
 <span class="sd">        Directory such as &lt;epoch&gt;/reduce/ with contents including</span>
 <span class="sd">        the calib/, calib/darks/, etc. directories live.</span>
@@ -212,19 +212,19 @@
 <span class="sd">        If epoch_dir is None, then use the current working directory.</span>
 <span class="sd">    instrument : instruments object, optional</span>
 <span class="sd">        Instrument of data. Default is `instruments.default_inst`</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">rawDir</span><span class="p">,</span> <span class="n">redDir</span> <span class="o">=</span> <span class="n">get_raw_reduce_directories</span><span class="p">(</span><span class="n">raw_dir</span><span class="p">,</span> <span class="n">reduce_dir</span><span class="p">)</span>
-    <span class="n">curDir</span> <span class="o">=</span> <span class="n">redDir</span> <span class="o">+</span> <span class="s1">&#39;calib/&#39;</span>
-    <span class="n">flatDir</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">trimdir</span><span class="p">(</span><span class="n">curDir</span> <span class="o">+</span> <span class="s1">&#39;flats/&#39;</span><span class="p">)</span>
+    <span class="n">curDir</span> <span class="o">=</span> <span class="n">redDir</span> <span class="o">+</span> <span class="s1">'calib/'</span>
+    <span class="n">flatDir</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">trimdir</span><span class="p">(</span><span class="n">curDir</span> <span class="o">+</span> <span class="s1">'flats/'</span><span class="p">)</span>
 
     <span class="n">util</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">curDir</span><span class="p">)</span>
     <span class="n">util</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">flatDir</span><span class="p">)</span>
 
-    <span class="n">_on</span> <span class="o">=</span> <span class="n">flatDir</span> <span class="o">+</span> <span class="s1">&#39;lampsOn.fits&#39;</span>
-    <span class="n">_off</span> <span class="o">=</span> <span class="n">flatDir</span> <span class="o">+</span> <span class="s1">&#39;lampsOff.fits&#39;</span>
+    <span class="n">_on</span> <span class="o">=</span> <span class="n">flatDir</span> <span class="o">+</span> <span class="s1">'lampsOn.fits'</span>
+    <span class="n">_off</span> <span class="o">=</span> <span class="n">flatDir</span> <span class="o">+</span> <span class="s1">'lampsOff.fits'</span>
     <span class="n">_out</span> <span class="o">=</span> <span class="n">flatDir</span> <span class="o">+</span> <span class="n">output</span>
-    <span class="n">_onlis</span> <span class="o">=</span> <span class="n">flatDir</span> <span class="o">+</span> <span class="s1">&#39;on.lis&#39;</span>
-    <span class="n">_offlis</span> <span class="o">=</span> <span class="n">flatDir</span> <span class="o">+</span> <span class="s1">&#39;off.lis&#39;</span>
+    <span class="n">_onlis</span> <span class="o">=</span> <span class="n">flatDir</span> <span class="o">+</span> <span class="s1">'on.lis'</span>
+    <span class="n">_offlis</span> <span class="o">=</span> <span class="n">flatDir</span> <span class="o">+</span> <span class="s1">'off.lis'</span>
 
     <span class="n">util</span><span class="o">.</span><span class="n">rmall</span><span class="p">([</span><span class="n">_on</span><span class="p">,</span> <span class="n">_off</span><span class="p">,</span> <span class="n">_out</span><span class="p">,</span> <span class="n">_onlis</span><span class="p">,</span> <span class="n">_offlis</span><span class="p">])</span>
 
@@ -244,64 +244,64 @@
         <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">lampsoff</span><span class="p">[</span><span class="n">ii</span><span class="p">],</span> <span class="n">lampsoff_copied</span><span class="p">[</span><span class="n">ii</span><span class="p">])</span>
 
     <span class="c1"># Write out the sources of the flat files</span>
-    <span class="n">data_sources_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">redDir</span> <span class="o">+</span> <span class="s1">&#39;data_sources.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">)</span>
+    <span class="n">data_sources_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">redDir</span> <span class="o">+</span> <span class="s1">'data_sources.txt'</span><span class="p">,</span> <span class="s1">'a'</span><span class="p">)</span>
 
     <span class="n">data_sources_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
-        <span class="s1">&#39;---</span><span class="se">\n</span><span class="s1"># Flat Files for </span><span class="si">{0}</span><span class="s1">, Lamps On</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">output</span><span class="p">))</span>
+        <span class="s1">'---</span><span class="se">\n</span><span class="s1"># Flat Files for </span><span class="si">{0}</span><span class="s1">, Lamps On</span><span class="se">\n</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">output</span><span class="p">))</span>
     <span class="k">for</span> <span class="n">cur_file</span> <span class="ow">in</span> <span class="n">lampson</span><span class="p">:</span>
-        <span class="n">out_line</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{0}</span><span class="s1"> (</span><span class="si">{1}</span><span class="s1">)</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cur_file</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">())</span>
+        <span class="n">out_line</span> <span class="o">=</span> <span class="s1">'</span><span class="si">{0}</span><span class="s1"> (</span><span class="si">{1}</span><span class="s1">)</span><span class="se">\n</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cur_file</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">())</span>
         <span class="n">data_sources_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">out_line</span><span class="p">)</span>
 
     <span class="n">data_sources_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
-        <span class="s1">&#39;---</span><span class="se">\n</span><span class="s1"># Flat Files for </span><span class="si">{0}</span><span class="s1">, Lamps Off</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">output</span><span class="p">))</span>
+        <span class="s1">'---</span><span class="se">\n</span><span class="s1"># Flat Files for </span><span class="si">{0}</span><span class="s1">, Lamps Off</span><span class="se">\n</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">output</span><span class="p">))</span>
     <span class="k">for</span> <span class="n">cur_file</span> <span class="ow">in</span> <span class="n">lampsoff</span><span class="p">:</span>
-        <span class="n">out_line</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{0}</span><span class="s1"> (</span><span class="si">{1}</span><span class="s1">)</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cur_file</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">())</span>
+        <span class="n">out_line</span> <span class="o">=</span> <span class="s1">'</span><span class="si">{0}</span><span class="s1"> (</span><span class="si">{1}</span><span class="s1">)</span><span class="se">\n</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cur_file</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">())</span>
         <span class="n">data_sources_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">out_line</span><span class="p">)</span>
 
     <span class="n">data_sources_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
     <span class="c1"># If dark frame is provided, load it up.</span>
     <span class="k">if</span> <span class="n">dark_frame</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">dark_file</span> <span class="o">=</span> <span class="n">redDir</span> <span class="o">+</span> <span class="s1">&#39;/calib/darks/&#39;</span> <span class="o">+</span> <span class="n">dark_frame</span>
+        <span class="n">dark_file</span> <span class="o">=</span> <span class="n">redDir</span> <span class="o">+</span> <span class="s1">'/calib/darks/'</span> <span class="o">+</span> <span class="n">dark_frame</span>
 
         <span class="c1"># Read in dark frame data</span>
         <span class="n">dark_data</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getdata</span><span class="p">(</span><span class="n">dark_file</span><span class="p">,</span> <span class="n">ignore_missing_end</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">warning_message</span> <span class="o">=</span> <span class="s1">&#39;Dark frame not provided for makeflat().&#39;</span>
-        <span class="n">warning_message</span> <span class="o">+=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Using flat frames without dark subtraction.&#39;</span>
+        <span class="n">warning_message</span> <span class="o">=</span> <span class="s1">'Dark frame not provided for makeflat().'</span>
+        <span class="n">warning_message</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">Using flat frames without dark subtraction.'</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">warning_message</span><span class="p">)</span>
 
     <span class="c1"># Go through each flat file and subtract dark, linearity correct (inline, overwrite copied file).</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;makeflat: Making flat lamps on with the following images:&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'makeflat: Making flat lamps on with the following images:'</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">lampson_copied</span><span class="p">)):</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="se">\t</span><span class="si">{</span><span class="n">lampson_copied</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="se">\t</span><span class="si">{</span><span class="n">lampson_copied</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
 
         <span class="c1"># Dark subtraction</span>
         <span class="k">if</span> <span class="n">dark_frame</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">cur_flat</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">lampson_copied</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;update&#39;</span><span class="p">,</span> <span class="n">ignore_missing_end</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">output_verify</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
-            <span class="n">cur_flat</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">cur_flat</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;float64&quot;</span><span class="p">)</span> <span class="o">-</span> <span class="n">dark_data</span>
-            <span class="n">cur_flat</span><span class="o">.</span><span class="n">flush</span><span class="p">(</span><span class="n">output_verify</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
-            <span class="n">cur_flat</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">output_verify</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+            <span class="n">cur_flat</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">lampson_copied</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">mode</span><span class="o">=</span><span class="s1">'update'</span><span class="p">,</span> <span class="n">ignore_missing_end</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">output_verify</span><span class="o">=</span><span class="s1">'ignore'</span><span class="p">)</span>
+            <span class="n">cur_flat</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">cur_flat</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">"float64"</span><span class="p">)</span> <span class="o">-</span> <span class="n">dark_data</span>
+            <span class="n">cur_flat</span><span class="o">.</span><span class="n">flush</span><span class="p">(</span><span class="n">output_verify</span><span class="o">=</span><span class="s1">'ignore'</span><span class="p">)</span>
+            <span class="n">cur_flat</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">output_verify</span><span class="o">=</span><span class="s1">'ignore'</span><span class="p">)</span>
 
         <span class="c1"># Linearity correction</span>
         <span class="n">lin_correction</span><span class="o">.</span><span class="n">lin_correction</span><span class="p">(</span><span class="n">lampson_copied</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">instrument</span><span class="o">=</span><span class="n">instrument</span><span class="p">)</span>
 
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;makeflat: Making flat lamps off with the following images:&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'makeflat: Making flat lamps off with the following images:'</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">lampsoff_copied</span><span class="p">)):</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="se">\t</span><span class="si">{</span><span class="n">lampsoff_copied</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="se">\t</span><span class="si">{</span><span class="n">lampsoff_copied</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
 
         <span class="c1"># Dark subtraction</span>
         <span class="k">if</span> <span class="n">dark_frame</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">cur_flat</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">lampsoff_copied</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;update&#39;</span><span class="p">,</span> <span class="n">ignore_missing_end</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">output_verify</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
-            <span class="n">cur_flat</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">cur_flat</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;float64&quot;</span><span class="p">)</span> <span class="o">-</span> <span class="n">dark_data</span>
-            <span class="n">cur_flat</span><span class="o">.</span><span class="n">flush</span><span class="p">(</span><span class="n">output_verify</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
-            <span class="n">cur_flat</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">output_verify</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+            <span class="n">cur_flat</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">lampsoff_copied</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">mode</span><span class="o">=</span><span class="s1">'update'</span><span class="p">,</span> <span class="n">ignore_missing_end</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">output_verify</span><span class="o">=</span><span class="s1">'ignore'</span><span class="p">)</span>
+            <span class="n">cur_flat</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">cur_flat</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">"float64"</span><span class="p">)</span> <span class="o">-</span> <span class="n">dark_data</span>
+            <span class="n">cur_flat</span><span class="o">.</span><span class="n">flush</span><span class="p">(</span><span class="n">output_verify</span><span class="o">=</span><span class="s1">'ignore'</span><span class="p">)</span>
+            <span class="n">cur_flat</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">output_verify</span><span class="o">=</span><span class="s1">'ignore'</span><span class="p">)</span>
 
         <span class="c1"># Linearity correction</span>
         <span class="n">lin_correction</span><span class="o">.</span><span class="n">lin_correction</span><span class="p">(</span><span class="n">lampsoff_copied</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">instrument</span><span class="o">=</span><span class="n">instrument</span><span class="p">)</span>
 
 
-    <span class="c1"># Gather up and stack the lamps-off files. Final median-combined image is &#39;off_med&#39;</span>
+    <span class="c1"># Gather up and stack the lamps-off files. Final median-combined image is 'off_med'</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">lampsoff_copied</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
         <span class="n">stack_off</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">lampsoff_copied</span><span class="p">)):</span>
@@ -311,7 +311,7 @@
 
         <span class="c1"># Stack the lamps off flats with sigma clipping, median combine.</span>
         <span class="n">off_avg</span><span class="p">,</span> <span class="n">off_med</span><span class="p">,</span> <span class="n">off_std</span> <span class="o">=</span> <span class="n">astropy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">sigma_clipped_stats</span><span class="p">(</span><span class="n">stack_off</span><span class="p">,</span>
-                                                               <span class="n">cenfunc</span><span class="o">=</span><span class="s1">&#39;median&#39;</span><span class="p">,</span>
+                                                               <span class="n">cenfunc</span><span class="o">=</span><span class="s1">'median'</span><span class="p">,</span>
                                                                <span class="n">sigma_lower</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
                                                                <span class="n">sigma_upper</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
                                                                <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
@@ -333,12 +333,12 @@
 
         <span class="c1"># Subtract the off-lamps (if we have them)</span>
         <span class="k">if</span> <span class="n">off_med</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">img</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;float64&quot;</span><span class="p">)</span> <span class="o">-</span> <span class="n">off_med</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;float64&quot;</span><span class="p">)</span>
+            <span class="n">img</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">"float64"</span><span class="p">)</span> <span class="o">-</span> <span class="n">off_med</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">"float64"</span><span class="p">)</span>
 
         <span class="c1"># Normalize before combining if specified.</span>
         <span class="k">if</span> <span class="n">normalizeFirst</span><span class="p">:</span>
             <span class="c1"># Determine central area for normalization, avoid edges. Leave a 10% gap on each side.</span>
-            <span class="n">norm_gap_size</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.1</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;int&#39;</span><span class="p">)</span>
+            <span class="n">norm_gap_size</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.1</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">'int'</span><span class="p">)</span>
             <span class="n">norm_lo</span> <span class="o">=</span> <span class="n">norm_gap_size</span>
             <span class="n">norm_hi</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">shape</span> <span class="o">-</span> <span class="n">norm_gap_size</span>
             <span class="n">norm_value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span> <span class="n">img</span><span class="p">[</span><span class="n">norm_lo</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span><span class="n">norm_hi</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">norm_lo</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span><span class="n">norm_hi</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="p">)</span>
@@ -351,13 +351,13 @@
 
     <span class="c1"># Stack the lamps off flats with sigma clipping, median combine.</span>
     <span class="n">on_avg</span><span class="p">,</span> <span class="n">on_med</span><span class="p">,</span> <span class="n">on_std</span> <span class="o">=</span> <span class="n">astropy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">sigma_clipped_stats</span><span class="p">(</span><span class="n">stack_on</span><span class="p">,</span>
-                                                               <span class="n">cenfunc</span><span class="o">=</span><span class="s1">&#39;median&#39;</span><span class="p">,</span>
+                                                               <span class="n">cenfunc</span><span class="o">=</span><span class="s1">'median'</span><span class="p">,</span>
                                                                <span class="n">sigma_lower</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
                                                                <span class="n">sigma_upper</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
                                                                <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
     <span class="c1"># Normalize the final flat.</span>
-    <span class="n">norm_gap_size</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.1</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">on_med</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;int&#39;</span><span class="p">)</span>
+    <span class="n">norm_gap_size</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.1</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">on_med</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">'int'</span><span class="p">)</span>
     <span class="n">norm_lo</span> <span class="o">=</span> <span class="n">norm_gap_size</span>
     <span class="n">norm_hi</span> <span class="o">=</span> <span class="n">on_med</span><span class="o">.</span><span class="n">shape</span> <span class="o">-</span> <span class="n">norm_gap_size</span>
     <span class="n">norm_value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">on_med</span><span class="p">[</span><span class="n">norm_lo</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span><span class="n">norm_hi</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">norm_lo</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span><span class="n">norm_hi</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
@@ -368,13 +368,13 @@
     <span class="n">fits</span><span class="o">.</span><span class="n">writeto</span><span class="p">(</span><span class="n">_out</span><span class="p">,</span> <span class="n">on_med</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="n">hdr</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="c1"># Save some records of which files went into the stack.</span>
-    <span class="n">f_on</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">_onlis</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
-    <span class="n">f_on</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lampson_copied</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">f_on</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">_onlis</span><span class="p">,</span> <span class="s1">'w'</span><span class="p">)</span>
+    <span class="n">f_on</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1">'</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lampson_copied</span><span class="p">)</span> <span class="o">+</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span><span class="p">)</span>
     <span class="n">f_on</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
     <span class="k">if</span> <span class="n">off_med</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">f_off</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">_offlis</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
-        <span class="n">f_off</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lampsoff_copied</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">f_off</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">_offlis</span><span class="p">,</span> <span class="s1">'w'</span><span class="p">)</span>
+        <span class="n">f_off</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1">'</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lampsoff_copied</span><span class="p">)</span> <span class="o">+</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span><span class="p">)</span>
         <span class="n">f_off</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
     <span class="k">return</span></div>
@@ -385,7 +385,7 @@
 <div class="viewcode-block" id="makemask">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/calib/index.html#kai.reduce.calib.makemask">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">makemask</span><span class="p">(</span><span class="n">dark</span><span class="p">,</span> <span class="n">flat</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">reduce_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">,</span> <span class="n">mask_ref_pixels</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Make bad pixel mask for imaging data. Makes a calib/ directory</span>
 <span class="sd">    and stores all output there. All output and temporary files</span>
 <span class="sd">    will be created in a masks/ subdirectory.</span>
@@ -415,12 +415,12 @@
 <span class="sd">    mask_ref_pixels : bool, optional</span>
 <span class="sd">        Determines whether to add edge reference pixels to mask with mask value = 2.</span>
 <span class="sd">        Default is True.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">rawDir</span><span class="p">,</span> <span class="n">redDir</span> <span class="o">=</span> <span class="n">get_raw_reduce_directories</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">reduce_dir</span><span class="p">)</span>
-    <span class="n">calDir</span> <span class="o">=</span> <span class="n">redDir</span> <span class="o">+</span> <span class="s1">&#39;calib/&#39;</span>
-    <span class="n">maskDir</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">trimdir</span><span class="p">(</span><span class="n">calDir</span> <span class="o">+</span> <span class="s1">&#39;masks/&#39;</span><span class="p">)</span>
-    <span class="n">flatDir</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">trimdir</span><span class="p">(</span><span class="n">calDir</span> <span class="o">+</span> <span class="s1">&#39;flats/&#39;</span><span class="p">)</span>
-    <span class="n">darkDir</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">trimdir</span><span class="p">(</span><span class="n">calDir</span> <span class="o">+</span> <span class="s1">&#39;darks/&#39;</span><span class="p">)</span>
+    <span class="n">calDir</span> <span class="o">=</span> <span class="n">redDir</span> <span class="o">+</span> <span class="s1">'calib/'</span>
+    <span class="n">maskDir</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">trimdir</span><span class="p">(</span><span class="n">calDir</span> <span class="o">+</span> <span class="s1">'masks/'</span><span class="p">)</span>
+    <span class="n">flatDir</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">trimdir</span><span class="p">(</span><span class="n">calDir</span> <span class="o">+</span> <span class="s1">'flats/'</span><span class="p">)</span>
+    <span class="n">darkDir</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">trimdir</span><span class="p">(</span><span class="n">calDir</span> <span class="o">+</span> <span class="s1">'darks/'</span><span class="p">)</span>
 
     <span class="n">util</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">calDir</span><span class="p">)</span>
     <span class="n">util</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">maskDir</span><span class="p">)</span>
@@ -428,7 +428,7 @@
     <span class="n">_out</span> <span class="o">=</span> <span class="n">maskDir</span> <span class="o">+</span> <span class="n">output</span>
     <span class="n">_dark</span> <span class="o">=</span> <span class="n">darkDir</span> <span class="o">+</span> <span class="n">dark</span>
     <span class="n">_flat</span> <span class="o">=</span> <span class="n">flatDir</span> <span class="o">+</span> <span class="n">flat</span>
-    <span class="n">_inst_mask</span> <span class="o">=</span> <span class="n">module_dir</span> <span class="o">+</span> <span class="s1">&#39;/masks/&#39;</span> <span class="o">+</span>  <span class="n">instrument</span><span class="o">.</span><span class="n">get_bad_pixel_mask_name</span><span class="p">()</span>
+    <span class="n">_inst_mask</span> <span class="o">=</span> <span class="n">module_dir</span> <span class="o">+</span> <span class="s1">'/masks/'</span> <span class="o">+</span>  <span class="n">instrument</span><span class="o">.</span><span class="n">get_bad_pixel_mask_name</span><span class="p">()</span>
 
     <span class="n">util</span><span class="o">.</span><span class="n">rmall</span><span class="p">([</span><span class="n">_out</span><span class="p">])</span>
 
@@ -437,13 +437,13 @@
     <span class="c1">##########</span>
     <span class="n">whatDir</span> <span class="o">=</span> <span class="n">redDir</span> <span class="o">+</span> <span class="n">dark</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">whatDir</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;makemask: Making mask </span><span class="si">{</span><span class="n">_out</span><span class="si">}</span><span class="s1"> with the following:&#39;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="se">\t</span><span class="si">{</span><span class="n">_dark</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="se">\t</span><span class="si">{</span><span class="n">_flat</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'makemask: Making mask </span><span class="si">{</span><span class="n">_out</span><span class="si">}</span><span class="s1"> with the following:'</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="se">\t</span><span class="si">{</span><span class="n">_dark</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="se">\t</span><span class="si">{</span><span class="n">_flat</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
 
     <span class="c1"># Get the sigma-clipped mean and stddev on the dark</span>
     <span class="n">img_dk</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getdata</span><span class="p">(</span><span class="n">_dark</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">parse_version</span><span class="p">(</span><span class="n">astropy</span><span class="o">.</span><span class="n">__version__</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">parse_version</span><span class="p">(</span><span class="s1">&#39;3.0&#39;</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">parse_version</span><span class="p">(</span><span class="n">astropy</span><span class="o">.</span><span class="n">__version__</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">parse_version</span><span class="p">(</span><span class="s1">'3.0'</span><span class="p">):</span>
         <span class="n">dark_stats</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">sigma_clipped_stats</span><span class="p">(</span><span class="n">img_dk</span><span class="p">,</span>
                                                <span class="n">sigma</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
                                                <span class="n">iters</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
@@ -463,7 +463,7 @@
     <span class="c1"># Make dead pixel mask</span>
     <span class="c1">##########</span>
     <span class="n">img_fl</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getdata</span><span class="p">(</span><span class="n">_flat</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">parse_version</span><span class="p">(</span><span class="n">astropy</span><span class="o">.</span><span class="n">__version__</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">parse_version</span><span class="p">(</span><span class="s1">&#39;3.0&#39;</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">parse_version</span><span class="p">(</span><span class="n">astropy</span><span class="o">.</span><span class="n">__version__</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">parse_version</span><span class="p">(</span><span class="s1">'3.0'</span><span class="p">):</span>
         <span class="n">flat_stats</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">sigma_clipped_stats</span><span class="p">(</span><span class="n">img_dk</span><span class="p">,</span>
                                                <span class="n">sigma</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
                                                <span class="n">iters</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
@@ -500,7 +500,7 @@
     <span class="n">ofile</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">unmask</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">ofile</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">ofile</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">reference_pixels</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span>
-    <span class="n">ofile</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">writeto</span><span class="p">(</span><span class="n">_out</span><span class="p">,</span> <span class="n">output_verify</span><span class="o">=</span><span class="s1">&#39;silentfix&#39;</span><span class="p">)</span>
+    <span class="n">ofile</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">writeto</span><span class="p">(</span><span class="n">_out</span><span class="p">,</span> <span class="n">output_verify</span><span class="o">=</span><span class="s1">'silentfix'</span><span class="p">)</span>
 
     <span class="k">return</span></div>
 
@@ -509,7 +509,7 @@
 <div class="viewcode-block" id="make_instrument_mask">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/calib/index.html#kai.reduce.calib.make_instrument_mask">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">make_instrument_mask</span><span class="p">(</span><span class="n">dark</span><span class="p">,</span> <span class="n">flat</span><span class="p">,</span> <span class="n">outDir</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Make the static bad pixel mask for the instrument. This only needs to be</span>
+<span class="w">    </span><span class="sd">"""Make the static bad pixel mask for the instrument. This only needs to be</span>
 <span class="sd">    run once. This creates a file called nirc2mask.fits or osiris_img_mask.fits</span>
 <span class="sd">    which is subsequently used throughout the pipeline. The dark should be a long</span>
 <span class="sd">    integration dark.</span>
@@ -523,10 +523,10 @@
 <span class="sd">        The full absolute path to a medianed flat file. This is</span>
 <span class="sd">        used to construct a dead pixel mask.</span>
 <span class="sd">    outDir : str</span>
-<span class="sd">        full path to output directory with &#39;/&#39; at the end.</span>
+<span class="sd">        full path to output directory with '/' at the end.</span>
 <span class="sd">    instrument : instruments object, optional</span>
 <span class="sd">        Instrument of data. Default is `instruments.default_inst`</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">_out</span> <span class="o">=</span> <span class="n">outDir</span> <span class="o">+</span> <span class="n">instrument</span><span class="o">.</span><span class="n">get_bad_pixel_mask_name</span><span class="p">()</span>
     <span class="n">_dark</span> <span class="o">=</span> <span class="n">dark</span>
     <span class="n">_flat</span> <span class="o">=</span> <span class="n">flat</span>
@@ -538,7 +538,7 @@
     <span class="c1">##########</span>
     <span class="c1"># Get the sigma-clipped mean and stddev on the dark</span>
     <span class="n">img_dk</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getdata</span><span class="p">(</span><span class="n">_dark</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">parse_version</span><span class="p">(</span><span class="n">astropy</span><span class="o">.</span><span class="n">__version__</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">parse_version</span><span class="p">(</span><span class="s1">&#39;3.0&#39;</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">parse_version</span><span class="p">(</span><span class="n">astropy</span><span class="o">.</span><span class="n">__version__</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">parse_version</span><span class="p">(</span><span class="s1">'3.0'</span><span class="p">):</span>
         <span class="n">dark_stats</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">sigma_clipped_stats</span><span class="p">(</span><span class="n">img_dk</span><span class="p">,</span>
                                                <span class="n">sigma</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
                                                <span class="n">iters</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
@@ -552,13 +552,13 @@
     <span class="c1"># Clip out the very hot pixels.</span>
     <span class="n">hi</span> <span class="o">=</span> <span class="n">dark_mean</span> <span class="o">+</span> <span class="p">(</span><span class="mf">15.0</span> <span class="o">*</span> <span class="n">dark_stddev</span><span class="p">)</span>
     <span class="n">hot</span> <span class="o">=</span> <span class="n">img_dk</span> <span class="o">&gt;</span> <span class="n">hi</span>
-    <span class="nb">print</span><span class="p">((</span><span class="s1">&#39;Found </span><span class="si">%d</span><span class="s1"> hot pixels&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">hot</span><span class="o">.</span><span class="n">sum</span><span class="p">())))</span>
+    <span class="nb">print</span><span class="p">((</span><span class="s1">'Found </span><span class="si">%d</span><span class="s1"> hot pixels'</span> <span class="o">%</span> <span class="p">(</span><span class="n">hot</span><span class="o">.</span><span class="n">sum</span><span class="p">())))</span>
 
     <span class="c1">##########</span>
     <span class="c1"># Make dead pixel mask</span>
     <span class="c1">##########</span>
     <span class="n">img_fl</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getdata</span><span class="p">(</span><span class="n">_flat</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">parse_version</span><span class="p">(</span><span class="n">astropy</span><span class="o">.</span><span class="n">__version__</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">parse_version</span><span class="p">(</span><span class="s1">&#39;3.0&#39;</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">parse_version</span><span class="p">(</span><span class="n">astropy</span><span class="o">.</span><span class="n">__version__</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">parse_version</span><span class="p">(</span><span class="s1">'3.0'</span><span class="p">):</span>
         <span class="n">flat_stats</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">sigma_clipped_stats</span><span class="p">(</span><span class="n">img_dk</span><span class="p">,</span>
                                                <span class="n">sigma</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
                                                <span class="n">iters</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
@@ -575,7 +575,7 @@
     <span class="n">hi</span> <span class="o">=</span> <span class="n">flat_mean</span> <span class="o">+</span> <span class="p">(</span><span class="mf">15.0</span> <span class="o">*</span> <span class="n">flat_stddev</span><span class="p">)</span>
 
     <span class="n">dead</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_or</span><span class="p">(</span><span class="n">img_fl</span> <span class="o">&gt;</span> <span class="n">hi</span><span class="p">,</span> <span class="n">img_fl</span> <span class="o">&lt;</span> <span class="n">lo</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">((</span><span class="s1">&#39;Found </span><span class="si">%d</span><span class="s1"> dead pixels&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">dead</span><span class="o">.</span><span class="n">sum</span><span class="p">())))</span>
+    <span class="nb">print</span><span class="p">((</span><span class="s1">'Found </span><span class="si">%d</span><span class="s1"> dead pixels'</span> <span class="o">%</span> <span class="p">(</span><span class="n">dead</span><span class="o">.</span><span class="n">sum</span><span class="p">())))</span>
 
     <span class="c1"># Combine into a final supermask</span>
     <span class="n">new_file</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">_flat</span><span class="p">)</span>
@@ -585,14 +585,14 @@
     <span class="n">unmask</span> <span class="o">=</span> <span class="p">(</span><span class="n">mask</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
     <span class="n">new_file</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">unmask</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">new_file</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
-    <span class="n">new_file</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">writeto</span><span class="p">(</span><span class="n">_out</span><span class="p">,</span> <span class="n">output_verify</span><span class="o">=</span><span class="s1">&#39;silentfix&#39;</span><span class="p">)</span></div>
+    <span class="n">new_file</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">writeto</span><span class="p">(</span><span class="n">_out</span><span class="p">,</span> <span class="n">output_verify</span><span class="o">=</span><span class="s1">'silentfix'</span><span class="p">)</span></div>
 
 
 
 <div class="viewcode-block" id="analyzeDarkCalib">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/calib/index.html#kai.reduce.calib.analyzeDarkCalib">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">analyzeDarkCalib</span><span class="p">(</span><span class="n">firstFrame</span><span class="p">,</span> <span class="n">raw_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">reduce_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">skipcombo</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Reduce data from the dark_calib script that should be run once</span>
 <span class="sd">    a summer in order to test the dark current and readnoise.</span>
 
@@ -605,16 +605,16 @@
 <span class="sd">        Number of the first frame.</span>
 <span class="sd">    raw_dir : str, optional</span>
 <span class="sd">        Directory where raw files are stored. By default,</span>
-<span class="sd">        assumes that raw files are stored in &#39;../raw&#39;</span>
+<span class="sd">        assumes that raw files are stored in '../raw'</span>
 <span class="sd">    reduce_dir : str, optional</span>
 <span class="sd">        Directory such as &lt;epoch&gt;/reduce/ with contents including</span>
 <span class="sd">        the calib/, calib/darks/, etc. directories live.</span>
 <span class="sd">        Files will be output into reduce_dir + calib/darks/.</span>
 <span class="sd">        If epoch_dir is None, then use the current working directory.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">rawDir</span><span class="p">,</span> <span class="n">redDir</span> <span class="o">=</span> <span class="n">get_raw_reduce_directories</span><span class="p">(</span><span class="n">raw_dir</span><span class="p">,</span> <span class="n">reduce_dir</span><span class="p">)</span>
-    <span class="n">curDir</span> <span class="o">=</span> <span class="n">redDir</span> <span class="o">+</span> <span class="s1">&#39;calib/&#39;</span>
-    <span class="n">darkDir</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">trimdir</span><span class="p">(</span><span class="n">curDir</span> <span class="o">+</span> <span class="s1">&#39;darks/&#39;</span><span class="p">)</span>
+    <span class="n">curDir</span> <span class="o">=</span> <span class="n">redDir</span> <span class="o">+</span> <span class="s1">'calib/'</span>
+    <span class="n">darkDir</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">trimdir</span><span class="p">(</span><span class="n">curDir</span> <span class="o">+</span> <span class="s1">'darks/'</span><span class="p">)</span>
 
     <span class="n">util</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">curDir</span><span class="p">)</span>
     <span class="n">util</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">darkDir</span><span class="p">)</span>
@@ -622,14 +622,14 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">printStats</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">tint</span><span class="p">,</span> <span class="n">sampmode</span><span class="p">,</span> <span class="n">reads</span><span class="p">):</span>
         <span class="n">files</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">frame</span><span class="o">+</span><span class="mi">3</span><span class="p">))</span>
 
-        <span class="n">fileName</span> <span class="o">=</span> <span class="s1">&#39;dark_</span><span class="si">%d</span><span class="s1">s_1ca_</span><span class="si">%d</span><span class="s1">_</span><span class="si">%d</span><span class="s1">sm.fits&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">tint</span><span class="p">,</span> <span class="n">sampmode</span><span class="p">,</span> <span class="n">reads</span><span class="p">)</span>
+        <span class="n">fileName</span> <span class="o">=</span> <span class="s1">'dark_</span><span class="si">%d</span><span class="s1">s_1ca_</span><span class="si">%d</span><span class="s1">_</span><span class="si">%d</span><span class="s1">sm.fits'</span> <span class="o">%</span> <span class="p">(</span><span class="n">tint</span><span class="p">,</span> <span class="n">sampmode</span><span class="p">,</span> <span class="n">reads</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="n">skipcombo</span> <span class="o">==</span> <span class="kc">False</span><span class="p">):</span>
             <span class="n">makedark</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="n">fileName</span><span class="p">)</span>
 
         <span class="c1"># Get the sigma-clipped mean and stddev on the dark</span>
         <span class="n">img_dk</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getdata</span><span class="p">(</span><span class="n">darkDir</span> <span class="o">+</span> <span class="n">fileName</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">parse_version</span><span class="p">(</span><span class="n">astropy</span><span class="o">.</span><span class="n">__version__</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">parse_version</span><span class="p">(</span><span class="s1">&#39;3.0&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">parse_version</span><span class="p">(</span><span class="n">astropy</span><span class="o">.</span><span class="n">__version__</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">parse_version</span><span class="p">(</span><span class="s1">'3.0'</span><span class="p">):</span>
             <span class="n">dark_stats</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">sigma_clipped_stats</span><span class="p">(</span><span class="n">img_dk</span><span class="p">,</span>
                                                    <span class="n">sigma</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
                                                    <span class="n">iters</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
@@ -676,28 +676,28 @@
 
     <span class="c1"># Calculate the readnoise</span>
     <span class="n">rdnoise</span> <span class="o">=</span> <span class="n">dStdvs</span> <span class="o">*</span> <span class="mf">4.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">reads</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2.0</span><span class="p">))</span>
-    <span class="nb">print</span><span class="p">((</span><span class="s1">&#39;READNOISE per read: &#39;</span><span class="p">,</span> <span class="n">rdnoise</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">((</span><span class="s1">'READNOISE per read: '</span><span class="p">,</span> <span class="n">rdnoise</span><span class="p">))</span>
 
 
     <span class="c1">##########</span>
     <span class="c1"># Print Stuff Out</span>
     <span class="c1">##########</span>
-    <span class="n">outFile</span> <span class="o">=</span> <span class="n">darkDir</span> <span class="o">+</span> <span class="s1">&#39;analyzeDarkCalib.out&#39;</span>
+    <span class="n">outFile</span> <span class="o">=</span> <span class="n">darkDir</span> <span class="o">+</span> <span class="s1">'analyzeDarkCalib.out'</span>
     <span class="n">util</span><span class="o">.</span><span class="n">rmall</span><span class="p">([</span><span class="n">outFile</span><span class="p">])</span>
-    <span class="n">_out</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">outFile</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">)</span>
-    <span class="n">hdr</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%8s</span><span class="s1">  </span><span class="si">%5s</span><span class="s1">  &amp;9s  </span><span class="si">%9s</span><span class="s1">  </span><span class="si">%4s</span><span class="s1">  </span><span class="si">%6s</span><span class="s1">&#39;</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Sampmode  Reads  Noise(DN)  Noise(e-)  Tint  Coadds&#39;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;--------  -----  ---------  ---------  ----  ------&#39;</span><span class="p">)</span>
+    <span class="n">_out</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">outFile</span><span class="p">,</span><span class="s1">'w'</span><span class="p">)</span>
+    <span class="n">hdr</span> <span class="o">=</span> <span class="s1">'</span><span class="si">%8s</span><span class="s1">  </span><span class="si">%5s</span><span class="s1">  &amp;9s  </span><span class="si">%9s</span><span class="s1">  </span><span class="si">%4s</span><span class="s1">  </span><span class="si">%6s</span><span class="s1">'</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'Sampmode  Reads  Noise(DN)  Noise(e-)  Tint  Coadds'</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'--------  -----  ---------  ---------  ----  ------'</span><span class="p">)</span>
 
-    <span class="n">_out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;Sampmode  Reads  Noise(DN)  Noise(e-)  Tint  Coadds</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
-    <span class="n">_out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;--------  -----  ---------  ---------  ----  ------</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">_out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">'Sampmode  Reads  Noise(DN)  Noise(e-)  Tint  Coadds</span><span class="se">\n</span><span class="s1">'</span><span class="p">)</span>
+    <span class="n">_out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">'--------  -----  ---------  ---------  ----  ------</span><span class="se">\n</span><span class="s1">'</span><span class="p">)</span>
 
     <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">lenDarks</span><span class="p">):</span>
-        <span class="nb">print</span><span class="p">((</span><span class="s1">&#39;</span><span class="si">%8d</span><span class="s1">  </span><span class="si">%5d</span><span class="s1">  </span><span class="si">%9.1f</span><span class="s1">  </span><span class="si">%9.1f</span><span class="s1">  </span><span class="si">%4d</span><span class="s1">  1&#39;</span> <span class="o">%</span> \
+        <span class="nb">print</span><span class="p">((</span><span class="s1">'</span><span class="si">%8d</span><span class="s1">  </span><span class="si">%5d</span><span class="s1">  </span><span class="si">%9.1f</span><span class="s1">  </span><span class="si">%9.1f</span><span class="s1">  </span><span class="si">%4d</span><span class="s1">  1'</span> <span class="o">%</span> \
                <span class="p">(</span><span class="n">samps</span><span class="p">[</span><span class="n">ii</span><span class="p">],</span> <span class="n">reads</span><span class="p">[</span><span class="n">ii</span><span class="p">],</span> <span class="n">dStdvs</span><span class="p">[</span><span class="n">ii</span><span class="p">],</span> <span class="n">dStdvs</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span> <span class="o">*</span> <span class="mf">4.0</span><span class="p">,</span> <span class="n">tints</span><span class="p">[</span><span class="n">ii</span><span class="p">])))</span>
         
     <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">lenDarks</span><span class="p">):</span>
-        <span class="n">_out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%8d</span><span class="s1">  </span><span class="si">%5d</span><span class="s1">  </span><span class="si">%9.1f</span><span class="s1">  </span><span class="si">%9.1f</span><span class="s1">  </span><span class="si">%4d</span><span class="s1">  1</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">%</span> \
+        <span class="n">_out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">'</span><span class="si">%8d</span><span class="s1">  </span><span class="si">%5d</span><span class="s1">  </span><span class="si">%9.1f</span><span class="s1">  </span><span class="si">%9.1f</span><span class="s1">  </span><span class="si">%4d</span><span class="s1">  1</span><span class="se">\n</span><span class="s1">'</span> <span class="o">%</span> \
                    <span class="p">(</span><span class="n">samps</span><span class="p">[</span><span class="n">ii</span><span class="p">],</span> <span class="n">reads</span><span class="p">[</span><span class="n">ii</span><span class="p">],</span> <span class="n">dStdvs</span><span class="p">[</span><span class="n">ii</span><span class="p">],</span> <span class="n">dStdvs</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span> <span class="o">*</span> <span class="mf">4.0</span><span class="p">,</span> <span class="n">tints</span><span class="p">[</span><span class="n">ii</span><span class="p">]))</span>
 
     <span class="n">_out</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
@@ -710,14 +710,14 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">get_raw_reduce_directories</span><span class="p">(</span><span class="n">raw_dir</span><span class="p">,</span> <span class="n">reduce_dir</span><span class="p">):</span>
     <span class="c1"># Determine directory locations</span>
     <span class="k">if</span> <span class="n">reduce_dir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">redDir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span>  <span class="c1"># Reduce directory.</span>
+        <span class="n">redDir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span> <span class="o">+</span> <span class="s1">'/'</span>  <span class="c1"># Reduce directory.</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">redDir</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">trimdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">reduce_dir</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span>
+        <span class="n">redDir</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">trimdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">reduce_dir</span><span class="p">)</span> <span class="o">+</span> <span class="s1">'/'</span><span class="p">)</span>
     <span class="c1"># Set location of raw data</span>
     <span class="k">if</span> <span class="n">raw_dir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">rawDir</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">trimdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">raw_dir</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span>
+        <span class="n">rawDir</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">trimdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">raw_dir</span><span class="p">)</span> <span class="o">+</span> <span class="s1">'/'</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">rawDir</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">trimdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">redDir</span> <span class="o">+</span> <span class="s1">&#39;../raw&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span>
+        <span class="n">rawDir</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">trimdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">redDir</span> <span class="o">+</span> <span class="s1">'../raw'</span><span class="p">)</span> <span class="o">+</span> <span class="s1">'/'</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">rawDir</span><span class="p">,</span> <span class="n">redDir</span></div>
 
   

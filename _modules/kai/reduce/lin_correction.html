@@ -78,7 +78,7 @@
 <div class="viewcode-block" id="lin_correction">
 <a class="viewcode-back" href="../../../autoapi/kai/reduce/lin_correction/index.html#kai.reduce.lin_correction.lin_correction">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">lin_correction</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">instruments</span><span class="o">.</span><span class="n">default_inst</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Perform linearity correction on input file, as defined below</span>
 <span class="sd">    </span>
 <span class="sd">    x = (FITS_orig) / (No. of coadds)</span>
@@ -94,9 +94,9 @@
 <span class="sd">        File path of FITS file to perform linearity correction</span>
 <span class="sd">    instrument : instruments object, optional</span>
 <span class="sd">        Instrument of data. Default is `instruments.default_inst`</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># Extract header and image data</span>
-    <span class="n">hdul</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;update&#39;</span><span class="p">,</span> <span class="n">ignore_missing_end</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">hdul</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">'update'</span><span class="p">,</span> <span class="n">ignore_missing_end</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     
     <span class="n">im_header</span> <span class="o">=</span> <span class="n">hdul</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span>
     <span class="n">im_data</span> <span class="o">=</span> <span class="n">hdul</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span>
@@ -108,7 +108,7 @@
         <span class="k">return</span>
     
     <span class="c1"># Perform correction</span>
-    <span class="n">num_coadds</span> <span class="o">=</span> <span class="n">im_header</span><span class="p">[</span><span class="s1">&#39;COADDS&#39;</span><span class="p">]</span>
+    <span class="n">num_coadds</span> <span class="o">=</span> <span class="n">im_header</span><span class="p">[</span><span class="s1">'COADDS'</span><span class="p">]</span>
     
     <span class="n">x</span> <span class="o">=</span> <span class="n">im_data</span> <span class="o">/</span> <span class="n">num_coadds</span>
 
@@ -138,8 +138,8 @@
     <span class="c1"># Write out corrected image data to file</span>
     <span class="n">hdul</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">im_data_corrected</span>
     
-    <span class="n">hdul</span><span class="o">.</span><span class="n">flush</span><span class="p">(</span><span class="n">output_verify</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
-    <span class="n">hdul</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">output_verify</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+    <span class="n">hdul</span><span class="o">.</span><span class="n">flush</span><span class="p">(</span><span class="n">output_verify</span><span class="o">=</span><span class="s1">'ignore'</span><span class="p">)</span>
+    <span class="n">hdul</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">output_verify</span><span class="o">=</span><span class="s1">'ignore'</span><span class="p">)</span>
     
     <span class="k">return</span></div>
 

@@ -78,7 +78,7 @@
 <a class="viewcode-back" href="../../../autoapi/kai/mtf/mmm/index.html#kai.mtf.mmm.mmm">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">mmm</span><span class="p">(</span><span class="n">sky_vector</span><span class="p">,</span> <span class="n">highbad</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">readnoise</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">integer</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">debug</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">silent</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Estimate the sky background in a stellar contaminated field.</span>
 
 <span class="sd">    MMM assumes that contaminated sky pixel values overwhelmingly display </span>
@@ -105,7 +105,7 @@
 <span class="sd">                   then the values of skymod, SIGMA and SKEW will be printed.</span>
 <span class="sd">    </span>
 <span class="sd">     OPTIONAL KEYWORD INPUTS:</span>
-<span class="sd">           HIGHBAD - scalar value of the (lowest) &quot;bad&quot; pixel level (e.g. cosmic </span>
+<span class="sd">           HIGHBAD - scalar value of the (lowest) "bad" pixel level (e.g. cosmic </span>
 <span class="sd">                    rays or saturated pixels) If not supplied, then there is </span>
 <span class="sd">                    assumed to be no high bad pixels.</span>
 <span class="sd">           READNOISE - Scalar giving the read noise (or minimum noise for any </span>
@@ -128,7 +128,7 @@
 <span class="sd">          NSKY - Integer scalar giving the number of pixels actually used for the</span>
 <span class="sd">                 sky computation (after outliers have been removed).</span>
 <span class="sd">     NOTES:</span>
-<span class="sd">           (1) Program assumes that low &quot;bad&quot; pixels (e.g. bad CCD columns) have</span>
+<span class="sd">           (1) Program assumes that low "bad" pixels (e.g. bad CCD columns) have</span>
 <span class="sd">           already been deleted from the SKY vector.</span>
 <span class="sd">           (2) MMM was updated in June 2004 to better match more recent versions</span>
 <span class="sd">           of DAOPHOT.</span>
@@ -148,7 +148,7 @@
 <span class="sd">             </span>
 <span class="sd">     REVISION HISTORY:</span>
 <span class="sd">           Adapted from Python to IDL -- J. R. Lu 2010-05-30</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     
     <span class="c1"># Set up some parameters</span>
     <span class="n">mxiter</span> <span class="o">=</span> <span class="mi">30</span>   <span class="c1"># Maximum number of iterations allowed</span>
@@ -157,14 +157,14 @@
 
     <span class="k">if</span> <span class="n">nsky</span> <span class="o">&lt;</span> <span class="n">minsky</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">silent</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;ERROR Input vector must contain at least </span><span class="si">%d</span><span class="s1"> elements&#39;</span> <span class="o">%</span> \
+            <span class="nb">print</span><span class="p">(</span><span class="s1">'ERROR Input vector must contain at least </span><span class="si">%d</span><span class="s1"> elements'</span> <span class="o">%</span> \
                 <span class="n">minsky</span><span class="p">)</span>
         <span class="k">return</span>
 
     <span class="n">nlast</span> <span class="o">=</span> <span class="n">nsky</span> <span class="o">-</span> <span class="mi">1</span>    <span class="c1"># Subscript of last pixel in the sky array</span>
 
     <span class="k">if</span> <span class="n">debug</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Processing </span><span class="si">%d</span><span class="s1"> element array&#39;</span><span class="p">,</span> <span class="n">nsky</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">'Processing </span><span class="si">%d</span><span class="s1"> element array'</span><span class="p">,</span> <span class="n">nsky</span><span class="p">)</span>
 
     <span class="n">sz_sky</span> <span class="o">=</span> <span class="n">sky_vector</span><span class="o">.</span><span class="n">shape</span>
     
@@ -186,7 +186,7 @@
     
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">good</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">silent</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;ERROR No sky values fall within </span><span class="si">%d</span><span class="s1"> and </span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">cut1</span><span class="p">,</span> <span class="n">cut2</span><span class="p">))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">'ERROR No sky values fall within </span><span class="si">%d</span><span class="s1"> and </span><span class="si">%d</span><span class="s1">'</span> <span class="o">%</span> <span class="p">(</span><span class="n">cut1</span><span class="p">,</span> <span class="n">cut2</span><span class="p">))</span>
         <span class="k">return</span>
 
     <span class="c1"># Subtract the median to improve arithmetic accuracy</span>
@@ -221,13 +221,13 @@
         
         <span class="k">if</span> <span class="n">niter</span> <span class="o">&gt;</span> <span class="n">mxiter</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">silent</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;ERROR Too many (</span><span class="si">%d</span><span class="s1">) iterations, unable to compute sky&#39;</span> <span class="o">%</span>\
+                <span class="nb">print</span><span class="p">(</span><span class="s1">'ERROR Too many (</span><span class="si">%d</span><span class="s1">) iterations, unable to compute sky'</span> <span class="o">%</span>\
                     <span class="n">niter</span><span class="p">)</span>
             <span class="k">return</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="n">maximm</span> <span class="o">-</span> <span class="n">minimm</span> <span class="o">&lt;</span> <span class="n">minsky</span><span class="p">):</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">silent</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;ERROR Too few (</span><span class="si">%d</span><span class="s1">) valid sky elements, unable to compute sky&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">maximm</span> <span class="o">-</span> <span class="n">minimm</span><span class="p">))</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">'ERROR Too few (</span><span class="si">%d</span><span class="s1">) valid sky elements, unable to compute sky'</span> <span class="o">%</span> <span class="p">(</span><span class="n">maximm</span> <span class="o">-</span> <span class="n">minimm</span><span class="p">))</span>
             <span class="k">return</span>
 
         <span class="c1"># compute Chauvenet rejection criterion</span>
@@ -302,7 +302,7 @@
         <span class="n">nsky</span> <span class="o">=</span> <span class="n">maximm</span> <span class="o">-</span> <span class="n">minimm</span>
         <span class="k">if</span> <span class="n">nsky</span> <span class="o">&lt;</span> <span class="n">minsky</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">silent</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;ERROR Outlier rejection left too few sky elements.&#39;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">'ERROR Outlier rejection left too few sky elements.'</span><span class="p">)</span>
             <span class="k">return</span>
 
         <span class="n">skymn</span> <span class="o">=</span> <span class="nb">sum</span> <span class="o">/</span> <span class="n">nsky</span>
@@ -355,19 +355,19 @@
     <span class="n">nsky</span> <span class="o">=</span> <span class="n">maximm</span> <span class="o">-</span> <span class="n">minimm</span>
         
     <span class="k">if</span> <span class="n">debug</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;MMM: Number of unrejected sky elements: </span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">nsky</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;MMM: Number of iterations: </span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">niter</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;MMM: Mode, Sigma, Skew of sky vector: &#39;</span><span class="p">,</span> <span class="n">skymode</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">skew</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">'MMM: Number of unrejected sky elements: </span><span class="si">%d</span><span class="s1">'</span> <span class="o">%</span> <span class="n">nsky</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">'MMM: Number of iterations: </span><span class="si">%d</span><span class="s1">'</span> <span class="o">%</span> <span class="n">niter</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">'MMM: Mode, Sigma, Skew of sky vector: '</span><span class="p">,</span> <span class="n">skymode</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">skew</span><span class="p">)</span>
         
     <span class="c1"># outputs:</span>
     <span class="c1"># sky, skymod, sigma, skew, Nsky</span>
 
     <span class="c1"># Make our output object</span>
     <span class="n">output</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="n">output</span><span class="p">[</span><span class="s1">&#39;mode&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">skymode</span>
-    <span class="n">output</span><span class="p">[</span><span class="s1">&#39;sigma&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sigma</span>
-    <span class="n">output</span><span class="p">[</span><span class="s1">&#39;skew&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">skew</span>
-    <span class="n">output</span><span class="p">[</span><span class="s1">&#39;n&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">nsky</span>
+    <span class="n">output</span><span class="p">[</span><span class="s1">'mode'</span><span class="p">]</span> <span class="o">=</span> <span class="n">skymode</span>
+    <span class="n">output</span><span class="p">[</span><span class="s1">'sigma'</span><span class="p">]</span> <span class="o">=</span> <span class="n">sigma</span>
+    <span class="n">output</span><span class="p">[</span><span class="s1">'skew'</span><span class="p">]</span> <span class="o">=</span> <span class="n">skew</span>
+    <span class="n">output</span><span class="p">[</span><span class="s1">'n'</span><span class="p">]</span> <span class="o">=</span> <span class="n">nsky</span>
 
     <span class="k">return</span> <span class="n">output</span></div>
 
