@@ -12,7 +12,29 @@ from kai import strehl
 from datetime import datetime
 import subprocess
 import pylab as py
+import pandas as pd
 import pdb
+from multiprocessing import Pool
+
+def idl_process_run(batch_file):
+    """
+    Function to help run parallel processes for IDL, used for StarFinder
+    
+    Parameters
+    ----------
+    batch_file : str
+        Path of the bath file containing the IDL command to run
+    """
+    
+    batch_file_log = batch_file + '.log'
+    
+    cmd = 'idl < ' + batch_file + ' >& ' + batch_file_log            
+    #os.system(cmd)
+    subp = subprocess.Popen(cmd, shell=True, executable="/bin/tcsh")
+    tmp = subp.communicate()
+    
+    return
+
 
 class Analysis(object):
     """
@@ -26,7 +48,8 @@ class Analysis(object):
                  combo_stf_dir = None,
                  epochDirSuffix=None, imgSuffix=None, stfDir=None,
                  useDistorted=False, cleanList='c.lis',
-                 airopa_mode='single', stf_version=None,
+                 airopa_mode='single', stf_version=None, stf_debug=False,
+                 stf_parallelize=True,
                  instrument=instruments.default_inst):
         """
         Set up Analysis object.
@@ -56,28 +79,44 @@ class Analysis(object):
             (e.g.: 'v3_1')
         instrument : instruments object, optional
             Instrument of data. Default is `instruments.default_inst`
+        stf_debug : boolean, default=False
+            Keyword to specify if starfinder should be run in debug mode
+        stf_parallelize : boolean, default=True
+            Keyword to specify if starfinder runs on main map and sub maps
+            should be run in parallel.
+            By default, runs in parallel (all 4 run together).
         """
         # Setup default parameters
         self.type = 'ao'
-        self.corrMain = 0.8
-        self.corrSub = 0.6
-        self.corrClean = 0.7
+        self.corrMain = [0.8]
+        self.corrSub = [0.6]
+        self.corrClean = [0.7]
         # airopa mode can be "legacy", "single", or "variable"
         self.airopa_mode = airopa_mode
         self.trimfake = 1
         self.stfFlags = ''
+        self.stf_debug = stf_debug
+        self.stf_parallelize = stf_parallelize
 
         self.starlist = rootDir + 'source_list/psf_central.dat'
         self.labellist = rootDir+ 'source_list/label.dat'
+        self.labellist_accel = True
         self.orbitlist = rootDir+ 'source_list/orbits.dat'
         self.calFile = rootDir + 'source_list/photo_calib.dat'
 
         # Keep track of the instrument these images are from.
         # We need this to get things like plate scale, etc.
         self.instrument = instrument
-        
-        self.calStars = ['irs16NW', 'S3-22', 'S1-17', 'S1-34', 'S4-3', 'S1-1',
-                         'S1-21', 'S3-370', 'S3-88', 'S3-36', 'S2-63']
+        if 'lp' in filt or 'ms' in filt:
+            self.calStars = [
+                'S3-22', 'S1-23', 'S1-3', 'S1-14', 'S1-1', 'S1-12', 'S1-13',
+                'S1-15'
+            ]
+        else:
+            self.calStars = [
+                'S3-22', 'S2-22', 'S4-3', 'S1-34', 'S1-1', 'S1-21', 'S3-370',
+                'S3-88', 'S2-75', 'S3-51', 'S3-348'
+                ]
         self.calFlags = '-f 1 -R '
         self.mapFilter2Cal = {'kp': 'Kp', 'h': 'H', 'lp': 'Lp_o1', 'ms': 'Ms_o1'}
         if 'kp' in filt:
@@ -249,40 +288,101 @@ class Analysis(object):
             
             os.chdir(self.dirComboStf)
             if self.type == 'ao':
-                # Write an IDL batch file
-                fileIDLbatch = 'idlbatch_combo_' + self.filt
-                fileIDLlog = fileIDLbatch + '.log'
-                util.rmall([fileIDLlog, fileIDLbatch])
-
-                _batch = open(fileIDLbatch, 'w')
-                _batch.write("find_stf_new, ")
-                _batch.write("'" + self.epoch + "', ")
-                _batch.write("'" + self.filt + "', ")
-                _batch.write("corr_main=%3.1f, " % self.corrMain)
-                _batch.write("corr_subs=%3.1f, " % self.corrSub)
-                # Only send in the deblend flag if using it!
-                if self.deblend != None:
-                    _batch.write("deblend=" + str(self.deblend) + ", ")
-                _batch.write("cooStar='" + self.cooStar + "', ")
-                _batch.write("suffixEpoch='" + self.suffix + "', ")
-                _batch.write("imgSuffix='" + self.imgSuffix + "', ")
-                _batch.write("starlist='" + self.starlist + "', ")
-                if self.airopa_mode == 'legacy':
-                    _batch.write("/legacy, ")
-                if self.airopa_mode == 'variable':
-                    _batch.write("/aoopt, ")
-                _batch.write("trimfake=" + str(self.trimfake) + ", ")
-                if not oldPsf:
-                    _batch.write("/makePsf, ")
+                # Write an IDL batch file for the main map and each submap
+                batch_files = []
+                batch_file_logs = []
                 
-                _batch.write("rootDir='" + self.rootDir + "'")
-
-                # Support for arbitrary starfinder flags.
-                _batch.write(self.stfFlags)
+                combos = ['main', '1', '2', '3']
                 
-                _batch.write("\n")
-                _batch.write("exit\n")
-                _batch.close()
+                for cur_combo in combos:
+                    batch_file = 'idlbatch_main_' + self.filt
+                    batch_file_log = batch_file + '.log'
+                    
+                    if cur_combo != 'main':
+                        batch_file = 'idlbatch_sm{0}_{1}'.format(cur_combo, self.filt)
+                        batch_file_log = batch_file + '.log'
+                    
+                    util.rmall([batch_file, batch_file_log])
+                
+                    batch_out = ""
+                    
+                    combo_file_path = "{0}/mag{1}_{2}.fits".format(
+                        self.dirCombo, self.epoch, self.filt,
+                    )
+                    
+                    if cur_combo != 'main':
+                        combo_file_path = "{0}/m{1}_{2}_{3}.fits".format(
+                            self.dirCombo, self.epoch, self.filt, cur_combo,
+                        )
+                    
+                    batch_out += "find_stf, "
+                    batch_out += "'{0}', ".format(combo_file_path)
+                    
+                    if cur_combo == 'main':
+                        batch_out += "{0}, ".format(self.corrMain)
+                    else:
+                        batch_out += "{0}, ".format(self.corrSub)
+                    
+                    batch_out += "ttStar='TTstar', gsStar='', "
+                
+                    # Add deblend flag if using it
+                    if self.deblend != None:
+                        batch_out += "deblend={0}, ".format(self.deblend)
+                
+                    if not oldPsf:
+                        batch_out += "/makePsf, "
+                
+                    batch_out += "makeRes=1, "
+                    batch_out += "makeStars=1, "
+                    
+                    if self.airopa_mode == 'legacy':
+                        batch_out += "/legacy, "
+                
+                    if self.airopa_mode == 'variable':
+                        batch_out += "/aoopt, "
+                
+                    batch_out += "cooStar='{0}', ".format(self.cooStar)
+                    batch_out += "starlist='{0}', ".format(self.starlist)
+                    batch_out += "trimfake={0}, ".format(self.trimfake)
+                
+                    if self.stf_debug:
+                        batch_out += "/debug, "
+                
+                    batch_out += "fixPsf=1, "
+                    batch_out += "backboxFWHM=25, "
+                    batch_out += "flat=1, "
+                    batch_out += "subtract=1"
+                    
+                    # Support for arbitrary starfinder flags.
+                    if self.stfFlags != '': 
+                        batch_out += ", {0}".format(self.stfFlags)
+                
+                    batch_out += "\n"
+                    batch_out += "exit\n"
+                    
+                    # Write out the current batch file's contents
+                    with open(batch_file, 'w') as out_file:
+                        out_file.write(batch_out)
+                    
+                    batch_files.append(batch_file)
+                    batch_file_logs.append(batch_file_log)
+                
+                if self.stf_parallelize:
+                    stf_pool = Pool(processes=4)
+                    
+                    stf_pool.map(idl_process_run, batch_files)
+                else:
+                    for batch_file in batch_files:
+                        idl_process_run(batch_file)
+                
+                # Combine all log files into one combo log file
+                # (to preserve backward compatibility for code that reads log files)
+                fileIDLlog = 'idlbatch_combo_' + self.filt + '.log'
+                with open(fileIDLlog, 'wb') as out_file:
+                    for log_file in batch_file_logs:
+                        with open(log_file, 'rb') as in_file:
+                            out_file.write(in_file.read())
+                
             elif self.type == 'speckle':
                 fileIDLbatch = 'idlbatch_combo' 
                 fileIDLlog = fileIDLbatch + '.log'
@@ -291,8 +391,8 @@ class Analysis(object):
                 _batch = open(fileIDLbatch, 'w')
                 _batch.write("find_new_speck, ")
                 _batch.write("'" + self.epoch + "', ")
-                _batch.write("corr_main=%3.1f, " % self.corrMain)
-                _batch.write("corr_subs=%3.1f, " % self.corrSub)
+                _batch.write("corr_main={0}, " % self.corrMain)
+                _batch.write("corr_subs={0}, " % self.corrSub)
                 _batch.write("starlist='" + self.starlist + "', ")
                 if self.airopa_mode == 'legacy':
                     _batch.write("/legacy, ")
@@ -309,18 +409,21 @@ class Analysis(object):
                 _batch.write("\n")
                 _batch.write("exit\n")
                 _batch.close()
-            
-            cmd = 'idl < ' + fileIDLbatch + ' >& ' + fileIDLlog            
-            #os.system(cmd)
-            subp = subprocess.Popen(cmd, shell=True, executable="/bin/tcsh")
-            tmp = subp.communicate()
-            
+                
+                cmd = 'idl < ' + fileIDLbatch + ' >& ' + fileIDLlog            
+                #os.system(cmd)
+                subp = subprocess.Popen(cmd, shell=True, executable="/bin/tcsh")
+                tmp = subp.communicate()
+             
             # Write data_sources file
             data_sources_file = open(self.dirComboStf + '/data_sources.txt', 'w')
             data_sources_file.write('---\n# Starfinder run on image files\n')
             
             # Copy over the starfinder FITS files to the current directory
             epoch_file_root = 'mag{0}_{1}'.format(self.epoch, self.filt)
+            
+            if os.path.exists(self.dirCombo + epoch_file_root + '_psf.fits') == False:
+                raise Exception('starfinder likely failed - see ' + self.dirCombo + 'starfinder/idlbatch_combo_{0}.log'.format(self.filt) + ' for more details')
             
             shutil.copyfile(self.dirCombo + epoch_file_root + '_back.fits',
                             epoch_file_root + '_back.fits')
@@ -335,7 +438,7 @@ class Analysis(object):
                 epoch_file_root + '.fits', self.dirCombo,
                 epoch_file_root + '.fits', datetime.now())
             data_sources_file.write(out_line)
-            
+             
             # Copy over submap starfinder FITS files to the current directory
             epoch_sub_root = 'm{0}_{1}'.format(self.epoch, self.filt)
             
@@ -363,7 +466,6 @@ class Analysis(object):
             # Copy over the PSF starlist that was used (for posterity).
             outPsfs = 'mag%s%s_%s_psf_list.txt' % (self.epoch, self.imgSuffix, self.filt)
             shutil.copyfile(self.starlist, outPsfs)
-            
             
             # Run the Strehl calculator to calculate Strehl on StarFinder PSFs
             # Need list of PSFs file and coo files associated with each PSF file
@@ -542,12 +644,16 @@ class Analysis(object):
                 fileMain = 'mag%s_%3.1f_stf.lis' % \
                 (self.epoch, self.corrMain)
             else:
+                if type(self.corrMain) == float:
+                    corrMain_val = self.corrMain
+                else:
+                    corrMain_val = self.corrMain[0]
                 if self.deblend == 1:
                     fileMain = 'mag%s%s_%s_%3.1fd_stf.lis' % \
-                    (self.epoch, self.imgSuffix, self.filt, self.corrMain)
+                    (self.epoch, self.imgSuffix, self.filt, corrMain_val)
                 else:
                     fileMain = 'mag%s%s_%s_%3.1f_stf.lis' % \
-                    (self.epoch, self.imgSuffix, self.filt, self.corrMain)
+                    (self.epoch, self.imgSuffix, self.filt, corrMain_val)
             print(cmd + fileMain)
 
             # Now call from within python... don't bother with command line anymore.
@@ -562,14 +668,18 @@ class Analysis(object):
             for ss in range(self.numSubMaps):
                 if self.type == 'speckle':
                     fileSub = 'm%s_%d_%3.1f_stf.lis' % \
-                        (self.epoch, ss+1, self.corrSub)
+                        (self.epoch, ss+1, self.corrSub[0])
                 else:
+                    if type(self.corrSub) == float:
+                        corrSub_val = self.corrSub
+                    else:
+                        corrSub_val = self.corrSub[0]
                     if self.deblend == 1:
                         fileSub = 'm%s%s_%s_%d_%3.1fd_stf.lis' % \
-                        (self.epoch, self.imgSuffix, self.filt, ss+1, self.corrSub)
+                        (self.epoch, self.imgSuffix, self.filt, ss+1, corrSub_val)
                     else:
                         fileSub = 'm%s%s_%s_%d_%3.1f_stf.lis' % \
-                        (self.epoch, self.imgSuffix, self.filt, ss+1, self.corrSub)
+                        (self.epoch, self.imgSuffix, self.filt, ss+1, corrSub_val)
 
                 print(cmd + fileSub)
                 
@@ -577,7 +687,20 @@ class Analysis(object):
                 args = argsTmp.split()[1:]
                 calibrate.main(args)
 
+            # Checks that calibrateCombo() didn't fail
+            zp_val = np.loadtxt(fileSub[:-8] + '_stf_cal.zer', comments="#", usecols=(0,))
+            if np.isnan(zp_val) == True:
+                raise Exception('calibrateCombo() likely failed and produced a nan zeropoint, see above printouts')
+                
+            if self.type == 'ao':
+                file_ext = '_' + self.filt
+            else:
+                file_ext = self.filt
+            
+
+            
             os.chdir(self.dirStart)
+            
         except:
             os.chdir(self.dirStart)
             raise
@@ -631,6 +754,50 @@ class Analysis(object):
             os.chdir(self.dirStart)
             raise
 
+    def alignComboFlyStar(self):
+        print('ALIGN_RMS combo')
+
+        from flystar import align, starlists, transforms
+
+        # Include filter for AO images
+        if self.type == 'ao':
+            file_ext = '_' + self.filt
+        else:
+            file_ext = self.filt
+
+        # Include deblend flag in starlist name
+        if self.deblend == 1:
+            deblend_str = 'd'
+        else:
+            deblend_str = ''
+
+        main_map_root = f'mag{self.epoch}{self.imgSuffix}{file_ext}'
+        main_map_root += '_{self.corrMain:3.1f}{deblend_str}'
+        main_map_root += '_stf_cal.lis'
+
+        sub_map_roots = []
+        for ss in range(self.numSubMaps):
+            sub_map_root = f'm{self.epoch}{self.imgSuffix}{file_ext}_{ss+1:d}'
+            sub_map_root += '_{self.corrSub:3.1f}{deblend_str}'
+            sub_map_root += '_stf_cal.lis'
+            sub_map_roots.append( sub_map_root )
+
+        main_list = starlists.StarList.from_lis_file(self.dirComboStf + main_map_root)
+        sub_lists = []
+        for ss in range(self.numSubMaps):
+            sub_lists.append( starlists.StarList.from_lis_file(self.dirComboStf + sub_map_roots[ss]) )
+
+        msc = align.MosaicToRef(main_list, sub_lists, ref_index=0, iters=2,
+                                  dr_tol=[1,1], dm_tol=[0.5,0.3],
+                                  trans_class=transforms.PolyTransform,
+                                  trans_args={'order':0},
+                                  verbose=True)
+        msc.fit()
+
+        # align_rms -- combo and make final list.
+
+        return
+
     def alignCombo(self):
         print('ALIGN_RMS combo')
 
@@ -653,24 +820,32 @@ class Analysis(object):
             os.chdir(self.dirComboAln)
 
             # Put the files in to the align*.list file
-            alnList1 = 'align%s%s_%3.1f.list' % (self.imgSuffix, file_ext, self.corrMain)
-            alnList2 = 'align%s%s_%3.1f_named.list' % (self.imgSuffix, file_ext, self.corrMain)
+            if type(self.corrMain) == float:
+                corrMain_val = self.corrMain
+            else:
+                corrMain_val = self.corrMain[0]
+            alnList1 = 'align%s%s_%3.1f.list' % (self.imgSuffix, file_ext, corrMain_val)
+            alnList2 = 'align%s%s_%3.1f_named.list' % (self.imgSuffix, file_ext, corrMain_val)
 
 
             _list = open(alnList1, 'w')
             if self.deblend == 1:
                 _list.write('../mag%s%s%s_%3.1fd_stf_cal.lis %d ref\n' %
-                            (self.epoch, self.imgSuffix, file_ext, self.corrMain, alignType))
+                            (self.epoch, self.imgSuffix, file_ext, corrMain_val, alignType))
             else:
                 _list.write('../mag%s%s%s_%3.1f_stf_cal.lis %d ref\n' %
-                            (self.epoch, self.imgSuffix, file_ext, self.corrMain, alignType))
+                            (self.epoch, self.imgSuffix, file_ext, corrMain_val, alignType))
             for ss in range(self.numSubMaps):
+                if type(self.corrSub) == float:
+                        corrSub_val = self.corrSub
+                else:
+                    corrSub_val = self.corrSub[0]
                 if self.deblend == 1:
                     _list.write('../m%s%s%s_%d_%3.1fd_stf_cal.lis %d\n' %
-                                (self.epoch, self.imgSuffix, file_ext, ss+1, self.corrSub, alignType))
+                                (self.epoch, self.imgSuffix, file_ext, ss+1, corrSub_val, alignType))
                 else:
                     _list.write('../m%s%s%s_%d_%3.1f_stf_cal.lis %d\n' %
-                                (self.epoch, self.imgSuffix, file_ext, ss+1, self.corrSub, alignType))
+                                (self.epoch, self.imgSuffix, file_ext, ss+1, corrSub_val, alignType))
 
                     
             _list.close()
@@ -679,7 +854,7 @@ class Analysis(object):
 
             # Make an unlabeled version
             cmd = 'java -Xmx1024m align %s ' % (self.alignFlags)
-            cmd += '-r align%s%s_%3.1f ' % (self.imgSuffix, file_ext, self.corrMain)
+            cmd += '-r align%s%s_%3.1f ' % (self.imgSuffix, file_ext, corrMain_val)
             cmd += alnList1
             print(cmd)
             #os.system(cmd)
@@ -688,11 +863,23 @@ class Analysis(object):
 
             # Make a named/labeled version
             cmd = 'java -Xmx1024m align %s ' % (self.alignFlags)
+
             #cmd += '-N %s ' % self.labellist
-            cmd += '-accel_file %s ' % self.labellist
+            #cmd += '-accel_file %s ' % self.labellist
+
+
+            # Support label.dat files with or without accelerations.
+            if self.labellist_accel:
+                cmd += '-accel_file %s ' % self.labellist
+            else:
+                cmd += '-N %s ' % self.labellist
+                
+
             if (self.orbitlist != None) and (self.orbitlist != ''):
                 cmd += '-o %s ' % self.orbitlist
-            cmd += '-r align%s%s_%3.1f_named ' % (self.imgSuffix, file_ext, self.corrMain)
+            
+            cmd += '-r align%s%s_%3.1f_named ' % (self.imgSuffix, file_ext, corrMain_val)
+
             cmd += alnList2
             print(cmd)
 
@@ -701,33 +888,33 @@ class Analysis(object):
 
 
             align_options = 'align%s%s_%3.1f %d -e' % \
-              (self.imgSuffix, file_ext, self.corrMain, self.minSubMaps)
+              (self.imgSuffix, file_ext, corrMain_val, self.minSubMaps)
             align_rms.run(align_options.split())
 
             align_options = 'align%s%s_%3.1f_named %d -e' % \
-              (self.imgSuffix, file_ext, self.corrMain, self.minSubMaps)
+              (self.imgSuffix, file_ext, corrMain_val, self.minSubMaps)
             align_rms.run(align_options.split())
 
 
             # Move the resulting files to their final resting place
             os.rename('align%s%s_%3.1f_rms.lis' % 
-                      (self.imgSuffix, file_ext, self.corrMain),
+                      (self.imgSuffix, file_ext, corrMain_val),
                       '../mag%s%s%s_rms.lis' % 
                       (self.epoch, self.imgSuffix, file_ext))
             os.rename('align%s%s_%3.1f_named_rms.lis' % 
-                      (self.imgSuffix, file_ext, self.corrMain),
+                      (self.imgSuffix, file_ext, corrMain_val),
                       '../mag%s%s%s_rms_named.lis' % 
                       (self.epoch, self.imgSuffix, file_ext))
 
             # Copy over the label.dat and orbit.dat file that was used.
             shutil.copyfile(self.labellist,
                             'align%s%s_%3.1f_named_label_list.txt' % 
-                            (self.imgSuffix, file_ext, self.corrMain))
+                            (self.imgSuffix, file_ext, corrMain_val))
                             
             if (self.orbitlist != None) and (self.orbitlist != ''):
                 shutil.copyfile(self.orbitlist,
                                 'align%s%s_%3.1f_named_orbit_list.txt' % 
-                                (self.imgSuffix, file_ext, self.corrMain))
+                                (self.imgSuffix, file_ext, corrMain_val))
 
             # Now plot up the results
             plotSuffix = self.imgSuffix + file_ext
@@ -736,6 +923,14 @@ class Analysis(object):
                          raw=True, suffix=plotSuffix, magCutOff=self.plotPosMagCut)
 
             os.chdir(self.dirStart)
+
+            if type(self.corrMain) == list:
+                for val in self.corrMain:
+                    if os.path.exists(self.dirCombo + 'starfinder/align/align%s%s_%3.1f.scale' % (self.imgSuffix, file_ext, val)) == False:
+                        raise Exception('alignCombo() likely failed, see above printouts')
+            else:
+                if os.path.exists(self.dirCombo + 'starfinder/align/align%s%s_%3.1f.scale' % (self.imgSuffix, file_ext, self.corrMain)) == False:
+                    raise Exception('alignCombo() likely failed, see above printouts')
         except:
             os.chdir(self.dirStart)
             raise
