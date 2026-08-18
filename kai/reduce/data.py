@@ -1,12 +1,21 @@
 import os, sys
+import pylab as plt
 from astropy.io import fits
 from astropy.table import Table
 from astropy.time import Time
 from astropy import stats
+from astropy import wcs
+from astropy.nddata.utils import Cutout2D
+from astropy.nddata import CCDData
+from astropy.nddata import block_replicate
+from astropy import units as u
+from astropy.coordinates import SkyCoord
+import ccdproc as ccdp
 import math
-from pyraf import iraf as ir
+import drizzle
+import kai
 from . import kai_util
-from kai.reduce import util
+from kai.reduce import util, lin_correction
 from kai import instruments
 from kai import strehl
 import time
@@ -17,37 +26,31 @@ from . import bfixpix
 import subprocess
 import copy
 import shutil
+import warnings
 from datetime import datetime
+from scipy.ndimage import shift
+from scipy.optimize import least_squares
+from scipy.ndimage import rotate
+from scipy.fft import fftn, ifftn, fftshift, ifftshift
+from scipy.signal import windows
+
+from scipy import ndimage
+from scipy.interpolate import griddata
+
 
 module_dir = os.path.dirname(__file__)
-
-# Remember to change these if you are going to use the wide camera.
-# You can change them in your reduce.py file after importing data.py
-# Narrow Camera
-distCoef = ''
-# distXgeoim = module_dir + '/distortion/nirc2_narrow_xgeoim.fits'
-# distYgeoim = module_dir + '/distortion/nirc2_narrow_ygeoim.fits'
-#changing to test new distortion solutions right now
-#distXgeoim = '/g/lu/data/m53/2015may/dist_sol/Leg_6r9_may_X.fits'
-#distYgeoim = '/g/lu/data/m53/2015may/dist_sol/Leg_6r9_may_Y.fits'
-# Wide Camera
-#distCoef = module_dir + '/distortion/coeffs/nirc2_cubic_wide'
-#distXgeoim = ''
-#distYgeoim = ''
-# Wide Camera Hai Fu
-#distCoef = ' '
-#distXgeoim = module_dir + '/distortion/nirc2_wide_X_distortion.fits'
-#distYgeoim = module_dir + '/distortion/nirc2_wide_Y_distortion.fits'
 
 supermaskName = 'supermask.fits'
 outputVerify = 'ignore'
 
-
-def clean(files, nite, wave, refSrc, strSrc, badColumns=None, field=None,
-          skyscale=False, skyfile=None, angOff=0.0, cent_box=12,
-          fixDAR=True, use_koa_weather=False,
-          raw_dir=None, clean_dir=None,
-          instrument=instruments.default_inst, check_ref_loc=True, update_from_AO = True):
+def clean(files, nite, wave, refSrc, strSrc,
+        dark_frame=None,
+        badColumns=None, field=None,
+        skyscale=False, skyfile=None, angOff=0.0, cent_box=12,
+        fixDAR=True, use_koa_weather=False,
+        raw_dir=None, clean_dir=None,
+        instrument=instruments.default_inst, check_ref_loc=True,
+        ref_offset_method='aotsxy'):
     """
     Clean near infrared NIRC2 or OSIRIS images.
 
@@ -87,6 +90,16 @@ def clean(files, nite, wave, refSrc, strSrc, badColumns=None, field=None,
     wave : str
         Name for the observation passband (e.g.: "kp"), used as
         a wavelength suffix
+    refSrc : [float, float]
+        x and y coordinates for the reference source, provided as a list of two
+        float coordinates.
+    strSrc : [float, float]
+        x and y coordinates for the Strehl source, provided as a list of two
+        float coordinates.
+    dark_frame : str, default=None
+        File name for the dark frame in order to carry out dark correction.
+        If not provided, dark frame is not subtracted and a warning is thrown.
+        Assumes dark file is located under ./calib/darks/
     field : str, default=None
         Optional prefix for clean directory and final
         combining. All clean files will be put into <field_><wave>. You
@@ -120,35 +133,45 @@ def clean(files, nite, wave, refSrc, strSrc, badColumns=None, field=None,
         assumes that clean files will be stored in '../clean'
     instrument : instruments object, optional
         Instrument of data. Default is `instruments.default_inst`
+    ref_offset_method : str, default='aotsxy'
+        Method to calculate offsets from reference image.
+        Options are 'aotsxy' or 'radec'.
+        In images where 'aotsxy' keywords aren't reliable, 'radec' calculated
+        offsets may work better.
     """
-    
+
+    # Determine directory locations
+    redDir = os.getcwd() + '/'
+    rootDir = util.trimdir(os.path.abspath(redDir + '../') + '/')
+
+    # Set location of raw data
+    rawDir = rootDir + 'raw/'
+    # Check if user has specified a specific raw directory
+    if raw_dir is not None:
+        if raw_dir.startswith('/'):
+            rawDir = util.trimdir(os.path.abspath(raw_dir) + '/')
+        else:
+            rawDir = util.trimdir(os.path.abspath(redDir + raw_dir) + '/')
+
+    waveDir = util.trimdir(os.path.abspath(redDir + wave) + '/')
+    sciDir = util.trimdir(os.path.abspath(waveDir + '/sci_' + nite) + '/')
+
     # Make sure directory for current passband exists and switch into it
     util.mkdir(wave)
     os.chdir(wave)
     
-    # Determine directory locatons
-    waveDir = os.getcwd() + '/'
-    redDir = util.trimdir(os.path.abspath(waveDir + '../') + '/')
-    rootDir = util.trimdir(os.path.abspath(redDir + '../') + '/')
-    
-    sciDir = waveDir + '/sci_' + nite + '/'
     util.mkdir(sciDir)
-    ir.cd(sciDir)
+    os.chdir(sciDir)
 
-    # Set location of raw data
-    rawDir = rootDir + 'raw/'
-    
-    # Check if user has specified a specific raw directory
-    if raw_dir is not None:
-        rawDir = util.trimdir(os.path.abspath(raw_dir) + '/')
-    
     # Setup the clean directory
     cleanRoot = rootDir + 'clean/'
-    
     # Check if user has specified a specific clean directory
     if clean_dir is not None:
-        cleanRoot = util.trimdir(os.path.abspath(clean_dir) + '/')
-    
+        if clean_dir.startswith('/'):
+            cleanRoot = util.trimdir(os.path.abspath(clean_dir) + '/')
+        else:
+            cleanRoot = util.trimdir(os.path.abspath(redDir + clean_dir) + '/')
+
     if field is not None:
         clean = cleanRoot + field + '_' + wave + '/'
     else:
@@ -182,8 +205,13 @@ def clean(files, nite, wave, refSrc, strSrc, badColumns=None, field=None,
         # This is the image for which refSrc is relevant.
         firstFile = instrument.make_filenames([files[0]], rootDir=rawDir)[0]
         hdr1 = fits.getheader(firstFile, ignore_missing_end=True)
-        radecRef = [float(hdr1['RA']), float(hdr1['DEC'])]
+        radecRef = instrument.get_radec(hdr1)
         aotsxyRef = kai_util.getAotsxy(hdr1)
+
+        if ref_offset_method == 'pcu':
+            pcuxyRef = instrument.get_pcuxyRef(hdr1)
+        else:
+            pcuxyRef = None
 
         # Setup a Sky object that will figure out the sky subtraction
         skyDir = waveDir + 'sky_' + nite + '/'
@@ -204,7 +232,20 @@ def clean(files, nite, wave, refSrc, strSrc, badColumns=None, field=None,
         else:
             imgsize = imgsizeY
         setup_drizzle(imgsize)
-
+        
+        # Read in dark frame data
+        # Throw warning if dark frame not provided for dark correction
+        if dark_frame is not None:
+            dark_file = redDir + '/calib/darks/' + dark_frame
+            
+            # Read in dark frame data
+            dark_data = fits.getdata(dark_file, ignore_missing_end=True)
+        else:
+            warning_message = 'Dark frame not provided for clean().'
+            warning_message += '\nCleaning without dark subtraction.'
+        
+            warnings.warn(warning_message)
+        
         ##########
         # Loop through the list of images
         ##########
@@ -236,26 +277,66 @@ def clean(files, nite, wave, refSrc, strSrc, badColumns=None, field=None,
             data_sources_file.write(out_line)
 
             # Clean up if these files previously existed
-            util.rmall([_cp, _ss, _ff, _ff_f, _ff_s, _bp, _cd, _ce, _cc,
-                        _wgt, _statmask, _crmask, _mask, _pers, _max, _coo, _rcoo, _dlog])
+            util.rmall([
+                _cp, _ss, _ff, _ff_f, _ff_s, _bp, _cd, _ce, _cc,
+                _wgt, _statmask, _crmask, _mask, _pers, _max, _coo,
+                _rcoo, _dlog,
+            ])
 
             ### Copy the raw file to local directory ###
-            ir.imcopy(_raw, _cp, verbose='no')
+            if os.path.exists(_cp): os.remove(_cp)
+            # Save as the primary HDU since Osiris saves as SCI by default
+            raw_file = fits.open(_raw, ignore_missing_end=True)
+            cp_primary_hdu = fits.PrimaryHDU(data=raw_file[0].data, header=raw_file[0].header)
+            cp_primary_hdu.name = 'PRIMARY'
+            cp_primary_hdu.header.pop('EXTNAME', None)
+            cp_primary_hdu.header.pop('EXTVER', None)
+            cp_primary_hdu.writeto(_cp, output_verify='ignore')
+            #shutil.copy(_raw, _cp)
+
+            # FIXME Add KAI version to header
+            #with fits.open(_cp, mode="update") as filehandle:
+            #    filehandle[0].header['ORIGIN'] = 'KAI v' + kai.__version__
             
+            
+
             ### Make persistance mask ###
             # - Checked images, this doesn't appear to be a large effect.
             #clean_persistance(_cp, _pers, instrument=instrument)
-
+            
+            # Dark correction
+            if dark_frame is not None:
+                with fits.open(_cp, mode='denywrite', output_verify = 'ignore', 
+                ignore_missing_end=True) as cur_frame:
+                    frame_data = cur_frame[0].data
+                    frame_header = cur_frame[0].header
+                frame_data = frame_data - dark_data
+                frame_hdu = fits.PrimaryHDU(data=frame_data, 
+                header=frame_header)
+                frame_hdu.writeto(_cp, 
+                output_verify='ignore', 
+                overwrite=True)
+            
+            # Linearity correction
+            if instrument == 'NIRC2':
+                lin_correction.lin_correction(_cp, instrument=instrument)
+            
             ### Sky subtract ###
             # Get the proper sky for this science frame.
             # It might be scaled or there might be a specific one for L'.
             sky = skyObj.getSky(_cp)
 
-            ir.imarith(_cp, '-', sky, _ss)
+            util.imarith(_cp, '-', sky, _ss)
+            
+            # Check if sky subtraction is correct 
+            # or if scale sky must be applied
+            ss = fits.getdata(_ss)
+            if np.median(ss) < -10:
+                raise Exception('Sky subtraction caused negative image. Rerun clean() with skyscale = True')
 
             ### Flat field ###
-            ir.imarith(_ss, '/', flat, _ff)
-
+            util.imarith(_ss, '/', flat, _ff)
+            
             ### Make a static bad pixel mask ###
             # _statmask = supermask + bad columns
             clean_get_supermask(_statmask, _supermask, badColumns)
@@ -266,7 +347,7 @@ def clean(files, nite, wave, refSrc, strSrc, badColumns=None, field=None,
             util.rmall([_ff_s])
 
             ### Fix cosmic rays and make cosmic ray mask. ###
-            clean_cosmicrays(_ff_f, _crmask, wave)
+            clean_cosmicrays(_ff_f, _crmask, wave, _supermask)
 
             ### Combine static and cosmic ray mask ###
             # This will be used in combine later on.
@@ -280,7 +361,9 @@ def clean(files, nite, wave, refSrc, strSrc, badColumns=None, field=None,
             clean_drizzle(distXgeoim, distYgeoim, _bp, _ce, _wgt, _dlog,
                           fixDAR=fixDAR, instrument=instrument,
                           use_koa_weather=use_koa_weather)
-
+            
+            hdr = fits.getheader(_raw, ignore_missing_end=True)
+            
             ### Make .max file ###
             # Determine the non-linearity level. Raw data level of
             # non-linearity is 12,000 but we subtracted
@@ -290,21 +373,25 @@ def clean(files, nite, wave, refSrc, strSrc, badColumns=None, field=None,
             nonlinSky = skyObj.getNonlinearCorrection(sky)
 
             coadds = fits.getval(_ss, instrument.hdr_keys['coadds'])
-            satLevel = (coadds*instrument.get_saturation_level()) - nonlinSky - bkg
-            file(_max, 'w').write(str(satLevel))
+            sat_level_units = instrument.get_saturation_level_units()
+            if sat_level_units == 'DN':
+                satLevel = (coadds*instrument.get_saturation_level(hdr)) - nonlinSky - bkg
+                open(_max, 'w').write(str(satLevel))
+            elif sat_level_units == 'DN/coadd':
+                satLevel = (instrument.get_saturation_level(hdr)) - nonlinSky - bkg
+                open(_max, 'w').write(str(satLevel))
 
             ### Rename and clean up files ###
-            ir.imrename(_bp, _cd)
+            shutil.move(_bp, _cd)
             # util.rmall([_cp, _ss, _ff, _ff_f])
 
             ### Make the *.coo file and update headers ###
             # First check if PA is not zero
-            hdr = fits.getheader(_raw, ignore_missing_end=True)
             phi = instrument.get_position_angle(hdr)
 
             clean_makecoo(_ce, _cc, refSrc, strSrc, aotsxyRef, radecRef,
                           instrument=instrument, check_loc=check_ref_loc,
-                          cent_box=cent_box,update_from_AO=update_from_AO)
+                          cent_box=cent_box, offset_method=ref_offset_method,pcuxyRef=pcuxyRef)
 
             ### Move to the clean directory ###
             util.rmall([clean + _cc, clean + _coo, clean + _rcoo,
@@ -326,10 +413,11 @@ def clean(files, nite, wave, refSrc, strSrc, badColumns=None, field=None,
     finally:
         # Move back up to the original directory
         #skyObj.close()
-        ir.cd('../')
+        os.chdir('../')
+        os.chdir(redDir)
 
     # Change back to original directory
-    os.chdir('../')
+    os.chdir(redDir)
 
 def clean_get_supermask(_statmask, _supermask, badColumns):
     """
@@ -407,11 +495,13 @@ def clean_lp(files, nite, wave, refSrc, strSrc, angOff, skyfile):
           angOff=angOff, skyfile=skyfile)
 
 def combine(files, wave, outroot, field=None, outSuffix=None,
-            trim=False, weight=None, fwhm_max=0, submaps=0,
+            trim=False, weight=None, fwhm_max=0, strehl_trim_min = None,
+            submaps=0,
             fixDAR=True, use_koa_weather=False,
             mask=True,
             clean_dirs=None, combo_dir=None,
             instrument=instruments.default_inst,
+            debug_plot_correlation=False
            ):
     """
     Accepts a list of cleaned images and does a weighted combining after
@@ -455,6 +545,12 @@ def combine(files, wave, outroot, field=None, outSuffix=None,
     fwhm_max : float, default=0
         The maximum allowed FWHM for keeping frames when trimming is turned on.
         If set to default=0 and trim=True, then we use FWHM < 1.25 * FWHM.min().
+    strehl_trim_min : float or None, default = None
+        The minimum strehl value allowed when trimming is turned on. When a value
+        is specified, both FWHM and strehl trimming are performed.
+        Recommended *ONLY* when AO performance is bad leading to a tight core, but
+        very poor PSF otherwise.
+        If None, then will not trim on strehl. 
     submaps : int, default=0
         Set to the number of submaps to be made (def=0).
     fixDAR : boolean, default = True
@@ -476,6 +572,7 @@ def combine(files, wave, outroot, field=None, outSuffix=None,
     """
     
     # Setup some files and directories
+    waveDir = util.getcwd()
     redDir = util.getcwd()
     rootDir = util.trimdir( os.path.abspath(redDir + '../') + '/')
     
@@ -578,6 +675,12 @@ def combine(files, wave, outroot, field=None, outSuffix=None,
             shutil.copy(source_clean_dir + 'c' + source_file_root + '.coo',
                         dest_clean_dir + 'c' + dest_file_root + '.coo')
             
+            try: 
+                shutil.copy(source_clean_dir + 'c' + source_file_root + '.rcoo',
+                        dest_clean_dir + 'c' + dest_file_root + '.rcoo')
+            except:
+                print('No rcoo files to copy')
+            
             shutil.copy(source_clean_dir + 'distort/cd' + source_file_root + '.fits',
                         dest_clean_dir + 'distort/cd' + dest_file_root + '.fits')
             
@@ -666,6 +769,8 @@ def combine(files, wave, outroot, field=None, outSuffix=None,
     if trim:
         roots, strehls, fwhm, weights = trim_on_fwhm(roots, strehls, fwhm,
                                                      fwhm_max=fwhm_max)
+        if strehl_trim_min is not None:
+            roots, strehls, fwhm, weights = trim_on_strehl(roots, strehls, fwhm, strehl_trim_min)
 
     ##########
     # Weighting
@@ -673,7 +778,7 @@ def combine(files, wave, outroot, field=None, outSuffix=None,
     if weight == 'strehl':
         weights = weight_by_strehl(roots, strehls)
 
-    if ((weight is not None) and (weight is not 'strehl')):
+    if ((weight is not None) and (weight != 'strehl')):
         # Assume weight is set to a filename
         if not os.path.exists(weight):
             raise ValueError('Weights file does not exist, %s' % weight)
@@ -696,7 +801,7 @@ def combine(files, wave, outroot, field=None, outSuffix=None,
 
     # See if all images are at same PA, if not, rotate all to PA = 0
     # temporarily. This needs to be done to get correct shifts.
-    diffPA = combine_rotation(cleanDir, roots, instrument=instrument)
+    diffPA, phis = combine_rotation(cleanDir, roots, instrument=instrument)
 
     # Make a table of coordinates for the reference source.
     # These serve as initial estimates for the shifts.
@@ -706,17 +811,19 @@ def combine(files, wave, outroot, field=None, outSuffix=None,
     # Keep record of files that went into this combine
     combine_lis(_out + '.lis', cleanDir, roots, diffPA)
 
+
     # Register images to get shifts.
-    shiftsTab = combine_register(_out, refImage, diffPA)
+    shiftsTab = combine_register(_out, refImage, diffPA, instrument=instrument,
+                                 plot_correlation=debug_plot_correlation)
 
     # Determine the size of the output image from max shifts
-    xysize = combine_size(shiftsTab, refImage, _out, _sub, submaps)
+    xysize = combine_size(shiftsTab, refImage, _out, _sub, submaps, phis)
 
     ##########
     # Sort frames -- recall that submaps assume sorted by FWHM.
     ##########
     roots, strehls, fwhm, weights, shiftsTab = sort_frames(roots, strehls, fwhm, weights, shiftsTab)
-
+               
     # Combine all the images together.
     combine_drizzle(xysize, cleanDir, roots, _out, weights, shiftsTab,
                     wave, diffPA, fixDAR=fixDAR, mask=mask, instrument=instrument,
@@ -731,39 +838,131 @@ def combine(files, wave, outroot, field=None, outSuffix=None,
 
     # Remove *.lis_r file & rotated rcoo files, if any - these
     # were just needed to get the proper shifts for xregister
-    _lisr = _out + '.lis_r'
-    util.rmall([_lisr])
-    for i in range(len(allroots)):
-        _rcoo = cleanDir + 'c' + str(allroots[i]) + '.rcoo'
-        util.rmall([_rcoo])
+    #_lisr = _out + '.lis_r'
+    #util.rmall([_lisr])
+    #for i in range(len(allroots)):
+    #    _rcoo = cleanDir + 'c' + str(allroots[i]) + '.rcoo'
+    #    util.rmall([_rcoo])
     
     # Change back to original directory
-    os.chdir('../')
+    os.chdir(redDir)
 
-def rot_img(root, phi, cleanDir):
-    """Rotate images to PA=0 if they have a different PA from one
-    another. If the entire data set is taken at a single PA, leave
-    it as is. Do this only if set includes various PAs.
+
+def rot_img(root, phi, cleanDir, edit_header_PA = False):
     """
-    pa = str(phi)
-    ir.unlearn('rotate')
-    ir.rotate.verbose = 'no'
-    ir.rotate.boundary = 'constant'
-    ir.rotate.constant = 0
-    ir.rotate.interpolant = 'spline3'
+    Rotate image with scipy.ndimage.rotate. Only the image is rotated.
+    The header WCS is not modified. The output imageis pre-pended with 'r'
+    instead of 'c'.
+
+    Parameters
+    ----------
+    root : str
+        Root name of the file to rotate. Do not include the prefix (e.g. 'c').
+    phi : float
+        Angle to rotate the input image to get to PA=0.
+    cleanDir : str
+        The clean directory to find the input image and save the output rotated image.
+    edit_header_PA : bool
+        Default is False.
+    """
 
     inCln = cleanDir + 'c' + root + '.fits'
     outCln = cleanDir + 'r' + root + '.fits'
 
-    util.rmall([outCln])
+    in_img, in_hdr = fits.getdata(inCln, header=True)
+    in_wcs, rot_mat, new_coord_mat = rotate_wcs(in_hdr, phi)
+    
+    if in_wcs.wcs.has_cd():
+        new_cd = new_coord_mat
+    elif in_wcs.wcs.has_pc():
+        new_pc = new_coord_mat
 
-    if (phi != 0):
-        print('Rotating frame: ',root)
-        ir.rotate(inCln, outCln, pa)
-    else:
-        ir.imcopy(inCln, outCln, verbose='no')
+    # Rotate the image
+    print('Rotating frame: ',root)
+    #in_img[np.where(np.isnan(in_img) == True)] = 0
+    out_img = rotate(in_img, -phi, order=3, mode='constant', cval=0, reshape=False)
+    
+    
+    out_hdr = copy.deepcopy(in_hdr)
+    
+    
+    # Don't use the default to_header for these
+    # params since it switches PC to CD
+    # https://github.com/astropy/astropy/issues/1084
+    if in_wcs.wcs.has_cd():  # CD matrix
+        out_hdr['CD1_1'] = new_cd[0][0]
+        out_hdr['CD1_2'] = new_cd[0][1]
+        out_hdr['CD2_1'] = new_cd[1][0]
+        out_hdr['CD2_2'] = new_cd[1][1]
+    
+    elif in_wcs.wcs.has_pc():  # PC matrix + CDELT
+        out_hdr['PC1_1'] = new_pc[0][0]
+        out_hdr['PC1_2'] = new_pc[0][1]
+        out_hdr['PC2_1'] = new_pc[1][0]
+        out_hdr['PC2_2'] = new_pc[1][1]
+    
+    #CCD to image transform
+    ltm = np.dot(rot_mat, [[1, 0],[0, 1]])
+    out_hdr['LTM1_1'] = ltm[0][0]
+    out_hdr['LTM1_2'] = ltm[1][0]
+    out_hdr['LTM2_1'] = ltm[0][1]
+    out_hdr['LTM2_2'] = ltm[1][1]
+
+    # CCD to image tranform part 2
+    # Assuming rotation around center
+    img_size_x = in_hdr['NAXIS1']
+    img_size_y = in_hdr['NAXIS2']
+    orig_arr = np.concatenate((img_size_x/2*np.ones((2,1)), img_size_y/2*np.ones((2,1))), axis =1)
+    add_arr = np.array([img_size_x/2, img_size_y/2])
+    rotated_arr = np.dot(-rot_mat, orig_arr) + add_arr
+    out_hdr['LTV1'] = rotated_arr[0][0]
+    out_hdr['LTV2'] = rotated_arr[1][1]
+    
+    # Deletes the incorrectly generated PC
+    # if relevant (https://github.com/astropy/astropy/issues/1084)
+    if not in_wcs.wcs.has_pc():
+        try:
+            del out_hdr['PC1_1']
+            del out_hdr['PC1_2']
+            del out_hdr['PC2_1']
+            del out_hdr['PC2_2']
+        except:
+            pass
+
+    if edit_header_PA:
+        out_hdr['PA'] = out_hdr['ROTPOSN'] + phi
+        
+    fits.writeto(outCln, out_img, out_hdr, output_verify=outputVerify,
+                    overwrite=True)
 
     return
+
+def rotate_wcs(hdr, phi):
+    in_wcs = wcs.WCS(hdr)
+
+    # Rotate the WCS
+    theta = np.deg2rad(phi)
+    sina = np.sin(theta)
+    cosa = np.cos(theta)
+    rot_mat = np.array([[cosa, -sina],
+                        [sina, cosa]])
+    
+    if in_wcs.wcs.has_cd():  # CD matrix
+        new_cd = np.dot(rot_mat, in_wcs.wcs.cd)
+        in_wcs.wcs.cd = new_cd
+        in_wcs.wcs.set()
+        return in_wcs, rot_mat, new_cd
+
+    elif in_wcs.wcs.has_pc():  # PC matrix + CDELT
+        new_pc = np.dot(rot_mat, in_wcs.wcs.get_pc())
+        in_wcs.wcs.pc = new_pc
+        in_wcs.wcs.set()
+        return in_wcs, rot_mat, new_pc
+        
+    else:
+        raise TypeError("Unsupported wcs type (only CD or PC matrix allowed)")
+
+    
 
 def gcSourceXY(name, label_file='/Users/jlu/data/gc/source_list/label.dat'):
     """
@@ -893,7 +1092,7 @@ def calcStrehl(files, wave,
                            droppedFiles)
     
     # Switch back to parent directory
-    os.chdir('../')
+    os.chdir(redDir)
 
 def weight_by_strehl(roots, strehls):
     """
@@ -947,6 +1146,24 @@ def trim_on_fwhm(roots, strehls, fwhm, fwhm_max=0):
 
     print('combine: Keeping %d frames with FWHM < %4.1f' \
         % (len(roots), fwhm_max))
+
+    return (roots, strehls, fwhm, weights)
+
+def trim_on_strehl(roots, strehls, fwhm, strehl_trim_min):
+    """
+    Take a list of files and trim based on the strehl. 
+
+    The returned arrays contain only those files that pass the above criteria.
+    """
+    # Pull out those we want to include in the combining
+    keep = np.where(strehls >= strehl_trim_min)[0]
+    strehls = strehls[keep]
+    fwhm = fwhm[keep]
+    roots = [roots[i] for i in keep]
+    weights = np.array( [1.0/len(roots)] * len(roots) )
+
+    print('combine: Keeping %d frames with strehl > %4.1f' \
+        % (len(roots), strehl_trim_min))
 
     return (roots, strehls, fwhm, weights)
 
@@ -1015,11 +1232,11 @@ def trim_table_by_name(outroots, tableFileName):
 
     return newtable
 
-
 def combine_drizzle(imgsize, cleanDir, roots, outroot, weights, shifts,
                     wave, diffPA, fixDAR=True, use_koa_weather=False,
                     mask=True, instrument=instruments.default_inst,
                    ):
+    
     _fits = outroot + '.fits'
     _tmpfits = outroot + '_tmp.fits'
     _wgt = outroot + '_sig.fits'
@@ -1028,24 +1245,8 @@ def combine_drizzle(imgsize, cleanDir, roots, outroot, weights, shifts,
 
     util.rmall([_fits, _tmpfits, _wgt, _dlog])
 
-    # Make directory for individually drizzled and pre-shifted images.
-    #util.mkdir(cleanDir + 'shifted')
-
-    # Prep drizzle stuff
-    setup_drizzle(imgsize)
-
-    # BUG: with context... when many files are drizzled
-    # together, a new, bigger context file is created, but this
-    # fails with a Bus error.
-    #ir.drizzle.outcont = _ctx
-    ir.drizzle.outcont = ''
-    ir.drizzle.fillval = 0.
-
     satLvl_combo = 0.0
 
-    # Set a cleanDir variable in IRAF. This avoids the long-filename problem.
-    ir.set(cleanDir=cleanDir)
-    
     # Variable to store weighted sum of MJDs
     mjd_weightedSum = 0.0
 
@@ -1055,94 +1256,222 @@ def combine_drizzle(imgsize, cleanDir, roots, outroot, weights, shifts,
     
     print('combine: drizzling images together')
     f_dlog = open(_dlog, 'a')
+    kernel = 'lanczos3'
+    driz = drizzle.resample.Drizzle(kernel = kernel,
+                    out_shape = (imgsize, imgsize), #np.shape(cdwt_img),
+                    fillval = 0
+                    )
+
+    imgsize_half = imgsize / 2.0
+    
+    f_dlog.write('- Base dir: ' + cleanDir + '\n')                 
     for i in range(len(roots)):
+        f_dlog.write(time.ctime() + '\n')
+        f_dlog.write('- {} is image {} to be drizzled'.format(roots[i], i) + '\n')
+        
         # Cleaned image
         _c = cleanDir + 'c' + roots[i] + '.fits'
-        _c_ir = _c.replace(cleanDir, 'cleanDir$')
 
         # Cleaned but distorted image
         _cd = cleanDir + 'distort/cd' + roots[i] + '.fits'
-        _cdwt = cleanDir + 'weight/cdwt.fits'
-        _cd_ir = _cd.replace(cleanDir, 'cleanDir$')
-        _cdwt_ir = _cdwt.replace(cleanDir, 'cleanDir$')
+        _cdwt = cleanDir + 'weight/cdwt' + roots[i] + '.fits'
 
         util.rmall([_cdwt])
 
         # Multiply each distorted image by it's weight
-        ir.imarith(_cd_ir, '*', weights[i], _cdwt_ir)
+        fits_cd = fits.open(_cd)
+        cdwt_img = fits_cd[0].data * weights[i]   # Keep image variable for drizzling later
+        fits_cd[0].data = cdwt_img                # Also save the weighted image to a file.
+        fits_cd[0].header[instrument.hdr_keys['itime']] *= weights[i]
+        fits_cd.writeto(_cdwt, output_verify=outputVerify)
 
-        # Fix the ITIME header keyword so that it matches (weighted).
-        # Drizzle will add all the ITIMEs together, just as it adds the flux.
-        itime = fits.getval(_cdwt, instrument.hdr_keys['itime'])
-        itime *= weights[i]
-        fits.setval(_cdwt, instrument.hdr_keys['itime'], value=itime)
+        # Padd size (must be same as in combine_size)
+        imgsize_orig = np.max(cdwt_img.shape)
+        padd_1percent = int(np.floor(imgsize_orig * 0.01))
+        padd_bigger_img = (imgsize - imgsize_orig) / 2.0
 
         # Get pixel shifts
         xsh = shifts[i][1]
         ysh = shifts[i][2]
 
-        # Read in PA of each file to feed into drizzle for rotation
-        hdr = fits.getheader(_c, ignore_missing_end=True)
-        phi = instrument.get_position_angle(hdr)
-        if (diffPA == 1):
-            ir.drizzle.rot = phi
+        # For the first image, read in the header, otherwise use
+        # the loaded in header from the previously drizzled image
+        if i == 0:
+            hdr = fits.getheader(_cd, ignore_missing_end=True)
 
+        # Read in PA of each file to feed into drizzle for rotation
+        hdr_current_img = fits.getheader(_cd, ignore_missing_end=True)
+        phi = instrument.get_position_angle(hdr_current_img)
+        if (diffPA == 1):
+             _, _, cd_mat = rotate_wcs(hdr_current_img, phi)
+             #cd_mat = rot_img(roots[i], phi, cleanDir, return_cd_only = True)
+
+        # Setup distortion maps to include both geometric and differential atmospheric
+        # refraction corrections (if specified).
         if (fixDAR == True):
             darRoot = _cdwt.replace('.fits', 'geo')
-            (xgeoim, ygeoim) = dar.darPlusDistortion(
+            (_xgeoim, _ygeoim) = dar.darPlusDistortion(
                                    _cdwt, darRoot,
                                    xgeoim=distXgeoim,
                                    ygeoim=distYgeoim,
                                    instrument=instrument,
                                    use_koa_weather=use_koa_weather)
-
-            xgeoim = xgeoim.replace(cleanDir, 'cleanDir$')
-            ygeoim = ygeoim.replace(cleanDir, 'cleanDir$')
-            ir.drizzle.xgeoim = xgeoim
-            ir.drizzle.ygeoim = ygeoim
         else:
-            ir.drizzle.xgeoim = distXgeoim
-            ir.drizzle.ygeoim = distYgeoim
+            _xgeoim = distXgeoim
+            _ygeoim = distYgeoim
 
-        
+        f_dlog.write('- Input data image: clean' + _cdwt.split('/clean')[1] + '\n')
+        f_dlog.write('- X-shift distortion image: clean' + _xgeoim.split('/clean')[1] + '\n')
+        f_dlog.write('- Y-shift distortion image: clean' + _ygeoim.split('/clean')[1] + '\n')
+
+        # Get exposure time
+        itime_keyword = 'ITIME'
+        exp_time = hdr_current_img[itime_keyword]
+
         # Read in MJD of current file from FITS header
-        mjd = float(hdr['MJD-OBS'])
+        mjd = instrument.get_mjd(hdr)
         mjd_weightedSum += weights[i] * mjd
         
-        # Drizzle this file ontop of all previous ones.
-        f_dlog.write(time.ctime())
-
+        # weight the image by multiplying by mask
+        # this is what is said to be done by in_mask in the iraf version 
+        # (https://ftp.eso.org/scisoft/scisoft4/sources/iraf/extern/eis/doc/drizzle.hlp.html)
         if (mask == True):
-            _mask = 'cleanDir$masks/mask' + roots[i] + '.fits'
+            _mask = cleanDir + 'masks/mask' + roots[i] + '.fits'
+            mask_img = fits.getdata(_mask)
+            wgt_in = np.ones(np.shape(mask_img))*mask_img
+            f_dlog.write('- Mask image: clean' + _mask.split('/clean')[1] + '\n')
         else:
-            _mask = ''
-        ir.drizzle.in_mask = _mask
-        ir.drizzle.outweig = _wgt
-        ir.drizzle.xsh = xsh
-        ir.drizzle.ysh = ysh
-        ir.drizzle.outnx = imgsize
-        ir.drizzle.outny = imgsize
+            wgt_in = np.ones(np.shape(cdwt_img))
         
         print('Drizzling: ', roots[i])
         print('     xsh = {0:8.2f}'.format( xsh ))
         print('     ysh = {0:8.2f}'.format( ysh ))
         print('  weight = {0:8.2f}'.format( weights[i] ))
         print('   outnx = {0:8d}'.format( imgsize ))
-        ir.drizzle(_cdwt_ir, _tmpfits, Stdout=f_dlog)
+
+        # We tell it the input is distorted/shifted and we want to undistort it
+        wcs_in = wcs.WCS(hdr_current_img)
+        wcs_out = wcs.WCS(hdr_current_img)
+
+        if (diffPA == 1):
+            f_dlog.write('- Rotating image. phi = {} \n'.format(phi))
+            wcs_in.wcs.cd = cd_mat
+
+        f_dlog.write('- Shifting image. xshift = {0:8.2f}, yshift = {1:8.2f} \n'.format(xsh, ysh))
+        wcs_in.wcs.crpix = [cdwt_img.shape[0]/2.0, cdwt_img.shape[1]/2.0]
+        wcs_out.wcs.crpix = [(imgsize / 2.0) + xsh, (imgsize / 2.0) + ysh]
+    
+        xgeoim = fits.getdata(_xgeoim).astype('float32')
+        ygeoim = fits.getdata(_ygeoim).astype('float32')
+    
+        xdist = wcs.DistortionLookupTable( xgeoim, [0, 0], [0, 0], [1, 1])
+        ydist = wcs.DistortionLookupTable( ygeoim, [0, 0], [0, 0], [1, 1])
+    
+        wcs_in.cpdis1 = xdist
+        wcs_in.cpdis2 = ydist
+
+        pixmap = drizzle.utils.calc_pixmap(wcs_in, wcs_out)
+        
+        # Drizzle this file ontop of all previous ones
+        
+        # Catches case when exposure time is a fraction of a second
+        if exp_time > 0 and exp_time < 1:
+            wht_scale = exp_time
+            pixfrac = 1.0
+            driz.add_image(cdwt_img, pixmap = pixmap, 
+                                weight_map = wgt_in,
+                                exptime = 1,
+                                xmax = int(imgsize),
+                                ymax = int(imgsize),
+                                wht_scale = wht_scale,
+                                pixfrac = pixfrac,
+                                in_units = 'counts')
+        else:
+            wht_scale = 1.0
+            pixfrac = 1.0
+            driz.add_image(cdwt_img, pixmap = pixmap,
+                                weight_map = wgt_in,
+                                exptime = exp_time,
+                                xmax = int(imgsize),
+                                ymax = int(imgsize),
+                                wht_scale = wht_scale,
+                                pixfrac = pixfrac,
+                                in_units = 'counts')
+        f_dlog.write('- Drizzling onto full output image. Kernel: ' + kernel + '\n')
+    
+        #swtich from output cps to counts by multiplying by total counts
+        out_img = driz.out_img * driz._texptime
+        img_hdu = fits.PrimaryHDU(data=out_img, header=hdr)
+
+        # import pylab as plt
+        # plt.figure(1)
+        # plt.clf()
+        # plt.imshow(out_img, vmin=0, vmax=100)
+        # plt.show()
+        
+
+        # make header
+        if i == 0:
+            # set CRPIX by the first image
+            shift_crpix1 = wcs_out.wcs.crpix[0] + (imgsize - np.shape(cdwt_img)[0])/2 + xsh
+            shift_crpix2 = wcs_out.wcs.crpix[1] + (imgsize - np.shape(cdwt_img)[0])/2 + ysh
+            img_hdu.header.set('CRPIX1', shift_crpix1 + wcs_in.cpdis1.get_offset(shift_crpix1, shift_crpix2))
+            img_hdu.header.set('CRPIX2', shift_crpix2 + wcs_in.cpdis2.get_offset(shift_crpix1, shift_crpix2))
+        img_hdu.header.set('D{0:03d}VER'.format(i + 1), 'DRIZZLE VERSION {}'.format(drizzle.__version__))
+        img_hdu.header.set('D{0:03d}DATA'.format(i + 1), 'clean' + _cdwt.split('/clean')[1], 'Drizzle, input data image')
+        img_hdu.header.set('D{0:03d}DEXP'.format(i + 1), exp_time, 'Drizzle, input image exposure time (s)')
+        img_hdu.header.set('D{0:03d}OUDA'.format(i + 1), 'combo' + _tmpfits.split('/combo')[1], 'Drizzle, output data image')
+        img_hdu.header.set('D{0:03d}OUWE'.format(i + 1), 'combo' + _wgt.split('/combo')[1], 'Drizzle, output weighting image')
+        img_hdu.header.set('D{0:03d}OUCO'.format(i + 1), '', 'Drizzle, output context image')
+        if (mask == True):
+            img_hdu.header.set('D{0:03d}MASK'.format(i + 1), 'clean' + _mask.split('/clean')[1], 'Drizzle, input mask')
+        else:
+            img_hdu.header.set('D{0:03d}MASK'.format(i + 1), '', 'Drizzle, input mask')
+        img_hdu.header.set('D{0:03d}WTSC'.format(i + 1), wht_scale, 'Drizzle, weighting factor for input image')
+        img_hdu.header.set('D{0:03d}KERN'.format(i + 1), kernel, 'Drizzle, form of weight distribution kernel')
+        img_hdu.header.set('D{0:03d}PIXF'.format(i + 1), pixfrac, 'Drizzle, linear size of drop')
+        img_hdu.header.set('D{0:03d}COEF'.format(i + 1), '', 'Drizzle, coefficients file name')
+        img_hdu.header.set('D{0:03d}XGIM'.format(i + 1), 'clean' + _xgeoim.split('/clean')[1], 'Drizzle, X distortion image name')
+        img_hdu.header.set('D{0:03d}YGIM'.format(i + 1), 'clean' + _ygeoim.split('/clean')[1], 'Drizzle, Y distortion image name')
+        img_hdu.header.set('D{0:03d}SCAL'.format(i + 1), 1, 'Drizzle, scale (pixel size) of output image')
+        if (diffPA == 1):
+            img_hdu.header.set('D{0:03d}ROT'.format(i + 1), phi, 'Drizzle, rotation angle, degrees anticlockwise')
+        else:
+            img_hdu.header.set('D{0:03d}ROT'.format(i + 1), 0, 'Drizzle, rotation angle, degrees anticlockwise')
+        img_hdu.header.set('D{0:03d}XSH'.format(i + 1), xsh, 'Drizzle, X shift applied')
+        img_hdu.header.set('D{0:03d}YSH'.format(i + 1), ysh, 'Drizzle, Y shift applied')
+        img_hdu.header.set('D{0:03d}SFTU'.format(i + 1), 'pixels', 'Drizzle, units used for shifts (output or input)')
+        img_hdu.header.set('D{0:03d}SFTF'.format(i + 1), 'pixels', 'Drizzle, frame in which shifts were applied') #this might be wrong
+        img_hdu.header.set('D{0:03d}EXKY'.format(i + 1), itime_keyword, 'Drizzle, exposure keyword name in input image')
+        img_hdu.header.set('D{0:03d}INUN'.format(i + 1), 'counts', 'Drizzle, units of input image - counts or cps')
+        img_hdu.header.set('D{0:03d}OUUN'.format(i + 1), 'counts', 'Drizzle, units of output image - counts or cps')
+        img_hdu.header.set('D{0:03d}FVAL'.format(i + 1), '0', 'Drizzle, fill value for zero weight output pixel')
+                       
+        img_hdu.writeto(_tmpfits, output_verify='ignore', 
+                                    overwrite=True)
+
+        hdr = img_hdu.header
+
+        wgt_hdu = fits.PrimaryHDU(data=driz.out_wht, header=hdr)
+        wgt_hdu.writeto(_wgt, output_verify='ignore', 
+                                    overwrite=True)
+
+        f_dlog.write('- Output data image: combo' + _tmpfits.split('/combo')[1] + '\n')
+        f_dlog.write('- Output weight image: combo' + _wgt.split('/combo')[1] + '\n')
 
         # Read .max file with saturation level for final combined image
         # by weighting each individual satLevel and summing.
         # Read in each satLevel from individual .max files
         _max = cleanDir + 'c' + roots[i] + '.max'
-        #getsatLvl = Table.read(_max, format='ascii.no_header') #changed from , header_start=None
-        #satLvl = getsatLvl[0][0]
         getsatLvl = open(_max)
         satLvl = float(getsatLvl.read())
         getsatLvl.close()
         satLvl_wt = satLvl * weights[i]
         satLvl_combo += satLvl_wt
 
-    f_dlog.close()
+    f_dlog.write('Writing final images')
+    print(_cdwt)
+    print(_tmpfits)
 
     print('satLevel for combo image = ', satLvl_combo)
     # Write the combo saturation level to a file
@@ -1157,7 +1486,7 @@ def combine_drizzle(imgsize, cleanDir, roots, outroot, weights, shifts,
     
     tmp_stats = stats.sigma_clipped_stats(fits_f[0].data,
                                           sigma_upper=1, sigma_lower=10,
-                                          iters=5)
+                                          maxiters=5)
     sci_mean = tmp_stats[0]
     sci_stddev = tmp_stats[2]
 
@@ -1170,10 +1499,11 @@ def combine_drizzle(imgsize, cleanDir, roots, outroot, weights, shifts,
         phi = 0.7
         fits_f[0].header.set('ROTPOSN', "%.5f" % phi,
                               'rotator user position')
+        if 'PA' in fits_f[0].header:
+            fits_f[0].header.set('PA', phi,
+                              'PA set by KAI')
 
     # Add keyword with distortion image information
-    fits_f[0].header.set('DISTCOEF', "%s" % distCoef,
-                          'Distortion Coefficients File')
     fits_f[0].header.set('DISTORTX', "%s" % distXgeoim,
                           'X Distortion Image')
     fits_f[0].header.set('DISTORTY', "%s" % distYgeoim,
@@ -1187,15 +1517,42 @@ def combine_drizzle(imgsize, cleanDir, roots, outroot, weights, shifts,
     mjd_weightedMean = mjd_weightedSum / np.sum(weights)
     time_obs = Time(mjd_weightedMean, format='mjd')
     
-    fits_f[0].header.set('MJD-OBS', mjd_weightedMean, 'Weighted modified julian date of combined observations')
+    fits_f[0].header.set(
+        'MJD-OBS', mjd_weightedMean,
+        'Weighted modified julian date of combined observations'
+    )
+    fits_f[0].header.set(
+        'MJD', mjd_weightedMean,
+        'Weighted modified julian date of combined observations'
+    )
     
     ## Also update date field in header
-    fits_f[0].header.set('DATE', '{0}'.format(time_obs.fits), 'Weighted observation date')
-    
+    fits_f[0].header.set(
+        'DATE', '{0}'.format(time_obs.fits),
+        'Weighted observation date'
+    )
+
+    # Put in number of drizzle images
+    fits_f[0].header.set('NDRIZIM', len(roots), 
+                         'Drizzle, number of images drizzled onto this out')
+
+    # save weight file
+    f_dlog.write('- Output weighting image: combo' + _wgt.split('/combo')[1] + '\n')
+    wgt_hdu = fits.PrimaryHDU(data=driz.out_wht, header=hdr)
+    wgt_hdu.writeto(_wgt, output_verify='ignore', 
+                                overwrite=True)
     
     # Save to final fits file.
+    f_dlog.write('- Output data image: combo' + _tmpfits.split('/combo')[1] + '\n')
     fits_f[0].writeto(_fits, output_verify=outputVerify)
-    util.rmall([_tmpfits, _cdwt])
+    util.rmall([_tmpfits])
+
+    for i in range(len(roots)):
+        _cdwt = cleanDir + 'weight/cdwt' + roots[i] + '.fits'
+        util.rmall([_cdwt])
+
+    f_dlog.close()
+                       
 
 def combine_submaps(
         imgsize, cleanDir, roots, outroot, weights,
@@ -1212,20 +1569,19 @@ def combine_submaps(
           Starfinder can't deal with.
     """
 
-    extend = ['_1', '_2', '_3']
+    extend = []
+    for i in range(1 ,submaps+1):
+        extend.append('_{}'.format(i))
+    #extend = ['_1', '_2', '_3']
     _out = [outroot + end for end in extend]
     _fits = [o + '.fits' for o in _out]
     _tmp = [o + '_tmp.fits' for o in _out]
     _wgt = [o + '_sig.fits' for o in _out]
     _log = [o + '_driz.log' for o in _out]
     _max = [o + '.max' for o in _out]
+    output_hdrs = [{} for o in _out]
 
     util.rmall(_fits + _tmp + _wgt + _log + _max)
-
-    # Prep drizzle stuff
-    setup_drizzle(imgsize)
-    print('Drizzle imgsize = ', imgsize)
-    ir.drizzle.outcont = ''
 
     satLvl_tot = np.zeros(submaps, dtype=float)
     satLvl_sub = np.zeros(submaps, dtype=float)
@@ -1243,30 +1599,39 @@ def combine_submaps(
     hdr0 = fits.getheader(cleanDir + 'c' + roots[0] + '.fits')
     distXgeoim, distYgeoim = instrument.get_distortion_maps(hdr0)
 
-    # Set a cleanDir variable in IRAF. This avoids the long-filename problem.
-    ir.set(cleanDir=cleanDir)
+    # Make one drizzle object per submap
+    driz = []
+    kernel = 'lanczos3'
+    for i in range(submaps):
+        driz.append(drizzle.resample.Drizzle(kernel = kernel,
+                        out_shape = (imgsize, imgsize),
+                        fillval = 0
+                        ))
 
+    for log in f_log:
+        log.write('- Base dir: ' + cleanDir + '\n')
+        
     for i in range(len(roots)):
         # Cleaned image
         _c = cleanDir + 'c' + roots[i] + '.fits'
-        _c_ir = _c.replace(cleanDir, 'cleanDir$')
 
         # Cleaned but distorted image
         _cd = cleanDir + 'distort/cd' + roots[i] + '.fits'
-        cdwt = cleanDir + 'weight/cdwt.fits'
-        _cd_ir = _cd.replace(cleanDir, 'cleanDir$')
-        _cdwt_ir = cdwt.replace(cleanDir, 'cleanDir$')
+        cdwt = cleanDir + 'weight/cdwt' + roots[i] + '.fits'
 
         # Multiply each distorted image by it's weight
         util.rmall([cdwt])
 
-        ir.imarith(_cd, '*', weights[i], _cdwt_ir)
+        fits_cd = fits.open(_cd)
+        cdwt_img = fits_cd[0].data * weights[i]   # Keep image variable for drizzling later
+        fits_cd[0].data = cdwt_img
+        fits_cd[0].header[instrument.hdr_keys['itime']] *= weights[i]
+        fits_cd.writeto(cdwt, output_verify=outputVerify)
         
-        # Fix the ITIME header keyword so that it matches (weighted).
-        # Drizzle will add all the ITIMEs together, just as it adds the flux.
-        itime = fits.getval(cdwt, instrument.hdr_keys['itime'])
-        itime *= weights[i]
-        fits.setval(cdwt, instrument.hdr_keys['itime'], value=itime)
+        # Padd size (must be same as in combine_size)
+        imgsize_orig = np.max(cdwt_img.shape)
+        padd_1percent = int(np.floor(imgsize_orig * 0.01))
+        padd_bigger_img = (imgsize - imgsize_orig) / 2.0
         
         # Get pixel shifts
         xsh = shifts[i][1]
@@ -1277,21 +1642,33 @@ def combine_submaps(
         fits_im = _tmp[sub]
         wgt = _wgt[sub]
         log = f_log[sub]
+
+        log.write(time.ctime() + '\n')
+        log.write('- {} is image {} to be drizzled'.format(roots[i], i) + '\n')
         
+        # For the first image of each submap, read in the header, otherwise use
+        # the loaded in header from the previously drizzled image
+        img_in_submap = int(i/submaps)
+        if img_in_submap == 0:
+            hdr = fits.getheader(_c, ignore_missing_end=True)
+        else:
+            hdr = fits.getheader(fits_im, ignore_missing_end=True)
+            
         # Read in PA of each file to feed into drizzle for rotation
-        hdr = fits.getheader(_c,ignore_missing_end=True)
-        phi = instrument.get_position_angle(hdr)
+        hdr_current_img = fits.getheader(_c, ignore_missing_end=True)
+        # Each submap will build its header on the first image in submap
+        if bool(output_hdrs[sub]) == False:
+            output_hdrs[sub] = hdr_current_img
+        phi = instrument.get_position_angle(hdr_current_img)
         if (diffPA == 1):
-            ir.drizzle.rot = phi
+             _, _, cd_mat = rotate_wcs(hdr_current_img, phi)
 
         # Calculate saturation level for submaps
         # by weighting each individual satLevel and summing.
         # Read in each satLevel from individual .max files
         max_indiv = cleanDir + 'c' + roots[i] + '.max'
         satfile = open(max_indiv)
-        satLvl = float(satfile.read()) #changed to simple i/o because the astropy table was breaking for a textfile with a single entry
-        #getsatLvl = Table.read(max_indiv, format='ascii', header_start=None)
-        #satLvl = getsatLvl[0][0]
+        satLvl = float(satfile.read())
         satLvl_wt = satLvl * weights[i]
         satLvl_tot[sub] += satLvl_wt
         
@@ -1303,45 +1680,134 @@ def combine_submaps(
         if (fixDAR == True):
             darRoot = cdwt.replace('.fits', 'geo')
             print('submap: ',cdwt)
-            (xgeoim, ygeoim) = dar.darPlusDistortion(
+            (_xgeoim, _ygeoim) = dar.darPlusDistortion(
                                    cdwt, darRoot,
                                    xgeoim=distXgeoim,
                                    ygeoim=distYgeoim,
                                    instrument=instrument,
                                    use_koa_weather=use_koa_weather)
-            xgeoim = xgeoim.replace(cleanDir, 'cleanDir$')
-            ygeoim = ygeoim.replace(cleanDir, 'cleanDir$')
-            ir.drizzle.xgeoim = xgeoim
-            ir.drizzle.ygeoim = ygeoim
         else:
-            ir.drizzle.xgeoim = distXgeoim
-            ir.drizzle.ygeoim = distYgeoim
+            _xgeoim = distXgeoim
+            _ygeoim = distYgeoim
+
+        log.write('- Input data image: clean' + cdwt.split('/clean')[1] + '\n')
+        log.write('- X-shift distortion image: clean' + _xgeoim.split('/clean')[1] + '\n')
+        log.write('- Y-shift distortion image: clean' + _ygeoim.split('/clean')[1] + '\n')
+
+        # Get exposure time
+        itime_keyword = 'ITIME'
+        exp_time = hdr_current_img[itime_keyword]
 
         # Read in MJD of current file from FITS header
-        mjd = float(hdr['MJD-OBS'])
+        mjd = instrument.get_mjd(hdr)
         mjd_weightedSums[sub] += weights[i] * mjd
         
         # Drizzle this file ontop of all previous ones.
-        log.write(time.ctime())
 
+        # weight the image by multiplying by mask
+        # this is what is said to be done by in_mask in the iraf version 
+        # (https://ftp.eso.org/scisoft/scisoft4/sources/iraf/extern/eis/doc/drizzle.hlp.html)
         if (mask == True):
-            _mask = 'cleanDir$masks/mask' + roots[i] + '.fits'
-            #_mask = cleanDir + 'masks/mask' + roots[i] + '.fits'
+            _mask = cleanDir + 'masks/mask' + roots[i] + '.fits'
+            mask_img = fits.getdata(_mask)
+            wgt_in = np.ones(np.shape(mask_img))*mask_img
+            log.write('- Mask image: clean' + _mask.split('/clean')[1] + '\n')
         else:
-            _mask = ''
-        ir.drizzle.in_mask = _mask
-        ir.drizzle.outweig = wgt
-        ir.drizzle.xsh = xsh
-        ir.drizzle.ysh = ysh
+            wgt_in = np.ones(np.shape(cdwt_img))
+            
+        # We tell it the input its distorted/shfited and we want to undistort it
+        wcs_in = wcs.WCS(hdr_current_img)
+        wcs_out = wcs.WCS(hdr_current_img)
 
-        ir.drizzle(_cdwt_ir, fits_im, Stdout=log)
+        log.write('- Shifting image. xshift = {0:8.2f}, yshift = {1:8.2f} \n'.format(xsh, ysh))
+        wcs_in.wcs.crpix = [cdwt_img.shape[0]/2.0, cdwt_img.shape[1]/2.0]
+        wcs_out.wcs.crpix = [(imgsize / 2.0) + xsh, (imgsize / 2.0) + ysh]
+        
+        xgeoim = fits.getdata(_xgeoim).astype('float32')
+        ygeoim = fits.getdata(_ygeoim).astype('float32')
+    
+        xdist = wcs.DistortionLookupTable( xgeoim, [0, 0], [0, 0], [1, 1])
+        ydist = wcs.DistortionLookupTable( ygeoim, [0, 0], [0, 0], [1, 1])
+    
+        wcs_in.cpdis1 = xdist
+        wcs_in.cpdis2 = ydist
+    
+        pixmap = drizzle.utils.calc_pixmap(wcs_in, wcs_out)
+
+        # Catches case when exposure time is a fraction of a second
+        if exp_time > 0 and exp_time < 1:
+            wht_scale = exp_time
+            pixfrac = 1.0
+            driz[sub].add_image(cdwt_img, pixmap = pixmap, 
+                                weight_map = wgt_in,
+                                exptime = 1,
+                                xmax = int(imgsize),
+                                ymax = int(imgsize),
+                                wht_scale = wht_scale,
+                                pixfrac = pixfrac,
+                                in_units = 'counts')
+        else:
+            wht_scale = 1.0
+            pixfrac = 1.0
+            driz[sub].add_image(cdwt_img, pixmap = pixmap, 
+                                weight_map = wgt_in,
+                                exptime = exp_time,
+                                xmax = int(imgsize),
+                                ymax = int(imgsize),
+                                wht_scale = wht_scale,
+                                pixfrac = pixfrac,
+                                in_units = 'counts')
+        log.write('- Drizzling onto full output image. Kernel: ' + kernel + '\n')
+        
+        #swtich from output cps to counts by multiplying by total counts
+        out_img = driz[sub].out_img * driz[sub]._texptime
+        img_hdu = fits.PrimaryHDU(data=out_img, header=hdr)
+
+        # make header
+        if img_in_submap == 0:
+            # set CRPIX by the first image
+            shift_crpix1 = wcs_out.wcs.crpix[0] + (imgsize - np.shape(cdwt_img)[0])/2 + xsh
+            shift_crpix2 = wcs_out.wcs.crpix[1] + (imgsize - np.shape(cdwt_img)[0])/2 + ysh
+            img_hdu.header.set('CRPIX1', shift_crpix1 + wcs_in.cpdis1.get_offset(shift_crpix1, shift_crpix2))
+            img_hdu.header.set('CRPIX2', shift_crpix2 + wcs_in.cpdis2.get_offset(shift_crpix1, shift_crpix2))
+        img_hdu.header.set('D{0:03d}VER'.format(img_in_submap + 1), 'DRIZZLE VERSION {}'.format(drizzle.__version__))
+        img_hdu.header.set('D{0:03d}DATA'.format(img_in_submap + 1), 'clean' + cdwt.split('/clean')[1], 'Drizzle, input data image')
+        img_hdu.header.set('D{0:03d}DEXP'.format(img_in_submap + 1), exp_time, 'Drizzle, input image exposure time (s)')
+        img_hdu.header.set('D{0:03d}OUDA'.format(img_in_submap + 1), 'combo' + fits_im.split('/combo')[1], 'Drizzle, output data image')
+        img_hdu.header.set('D{0:03d}OUWE'.format(img_in_submap + 1), 'combo' + wgt.split('/combo')[1], 'Drizzle, output weighting image')
+        img_hdu.header.set('D{0:03d}OUCO'.format(img_in_submap + 1), '', 'Drizzle, output context image')
+        if (mask == True):
+            img_hdu.header.set('D{0:03d}MASK'.format(img_in_submap + 1), 'clean' + _mask.split('/clean')[1], 'Drizzle, input mask')
+        else:
+            img_hdu.header.set('D{0:03d}MASK'.format(img_in_submap + 1), '', 'Drizzle, input mask')
+        img_hdu.header.set('D{0:03d}WTSC'.format(img_in_submap + 1), wht_scale, 'Drizzle, weighting factor for input image')
+        img_hdu.header.set('D{0:03d}KERN'.format(img_in_submap + 1), kernel, 'Drizzle, form of weight distribution kernel')
+        img_hdu.header.set('D{0:03d}PIXF'.format(img_in_submap + 1), pixfrac, 'Drizzle, linear size of drop')
+        img_hdu.header.set('D{0:03d}COEF'.format(img_in_submap + 1), '', 'Drizzle, coefficients file name')
+        img_hdu.header.set('D{0:03d}XGIM'.format(img_in_submap + 1), 'clean' + _xgeoim.split('/clean')[1], 'Drizzle, X distortion image name')
+        img_hdu.header.set('D{0:03d}YGIM'.format(img_in_submap + 1), 'clean' + _ygeoim.split('/clean')[1], 'Drizzle, Y distortion image name')
+        img_hdu.header.set('D{0:03d}SCAL'.format(img_in_submap + 1), 1, 'Drizzle, scale (pixel size) of output image')
+        if (diffPA == 1):
+            img_hdu.header.set('D{0:03d}ROT'.format(img_in_submap + 1), phi, 'Drizzle, rotation angle, degrees anticlockwise')
+        else:
+            img_hdu.header.set('D{0:03d}ROT'.format(img_in_submap + 1), 0, 'Drizzle, rotation angle, degrees anticlockwise')
+        img_hdu.header.set('D{0:03d}XSH'.format(img_in_submap + 1), xsh, 'Drizzle, X shift applied')
+        img_hdu.header.set('D{0:03d}YSH'.format(img_in_submap + 1), ysh, 'Drizzle, Y shift applied')
+        img_hdu.header.set('D{0:03d}SFTU'.format(img_in_submap + 1), 'pixels', 'Drizzle, units used for shifts (output or input)')
+        img_hdu.header.set('D{0:03d}SFTF'.format(img_in_submap + 1), 'pixels', 'Drizzle, frame in which shifts were applied') #this might be wrong
+        img_hdu.header.set('D{0:03d}EXKY'.format(img_in_submap + 1), itime_keyword, 'Drizzle, exposure keyword name in input image')
+        img_hdu.header.set('D{0:03d}INUN'.format(img_in_submap + 1), 'counts', 'Drizzle, units of input image - counts or cps')
+        img_hdu.header.set('D{0:03d}OUUN'.format(img_in_submap + 1), 'counts', 'Drizzle, units of output image - counts or cps')
+        img_hdu.header.set('D{0:03d}FVAL'.format(img_in_submap + 1), '0', 'Drizzle, fill value for zero weight output pixel')
+        
+        img_hdu.writeto(fits_im, output_verify='ignore', 
+                                    overwrite=True)
+        
+        log.write('- Output data image: combo' + fits_im.split('/combo')[1] + '\n')
     
     # Calculate weighted MJDs for each submap
     mjd_weightedMeans = mjd_weightedSums / weightsTot
     submaps_time_obs = Time(mjd_weightedMeans, format='mjd')
-    
-    for f in f_log:
-        f.close()
         
     print('satLevel for submaps = ', satLvl_sub)
     # Write the saturation level for each submap to a file
@@ -1358,13 +1824,15 @@ def combine_submaps(
         # and if all goes well...don't ever correct negative pixels to zero.
         tmp_stats = stats.sigma_clipped_stats(fits_f[0].data,
                                           sigma_upper=1, sigma_lower=10,
-                                          iters=5)
+                                          maxiters=5)
         sci_mean = tmp_stats[0]
         sci_stddev = tmp_stats[2]
 
         # Find and fix really bad pixels
         idx = np.where(fits_f[0].data < (sci_mean - 10*sci_stddev))
         fits_f[0].data[idx] = 0.0
+        
+        f_log[s].write('- Removed {} bad pixels'.format(len(idx)) + '\n')
 
         # Normalize properly
         fits_f[0].data = fits_f[0].data / weightsTot[s]
@@ -1372,15 +1840,9 @@ def combine_submaps(
         # Fix the ITIME header keyword so that it matches (weighted).
         itime = fits_f[0].header.get('ITIME')
         itime /= weightsTot[s]
-        #fits_f[0].header.update('ITIME', '%.5f' % itime)
-        fits_f[0].header['ITIME'] = ('%.5f' % itime)
-
-        # Set the ROTPOSN value for the combined submaps.
-
         fits_f[0].header.set('ITIME', '%.5f' % itime)
         
         # Set the ROTPOSN value for the combined submaps. 
-
         if (diffPA == 1):
             phi = 0.7
             fits_f[0].header.set('ROTPOSN', "%.5f" % phi,
@@ -1391,19 +1853,56 @@ def combine_submaps(
                               'X Distortion Image')
         fits_f[0].header.set('DISTORTY', "%s" % distYgeoim,
                               'Y Distortion Image')
+
+        # Fix the DATASEC header keyword, if it exists.
+        if 'DATASEC' in fits_f[0].header:
+            fits_f[0].header['DATASEC'] = '[1:{0:d},1:{0:d}]'.format(imgsize)
         
         # Store weighted MJDs in header
-        fits_f[0].header.set('MJD-OBS', mjd_weightedMeans[s], 'Weighted modified julian date of combined observations')
-    
+        fits_f[0].header.set(
+            'MJD-OBS',
+            mjd_weightedMeans[s],
+            'Weighted modified julian date of combined observations',
+        )
+        fits_f[0].header.set(
+            'MJD',
+            mjd_weightedMeans[s],
+            'Weighted modified julian date of combined observations',
+        )
+        
         ## Also update date field in header
-        fits_f[0].header.set('DATE', '{0}'.format(submaps_time_obs[s].fits), 'Weighted observation date')
+        fits_f[0].header.set(
+            'DATE',
+            '{0}'.format(submaps_time_obs[s].fits),
+            'Weighted observation date',
+        )
+
+        # Deletes ref pixels and strehl pixel ref on submaps
+        # CRITICAL for making starfinder run
+        del fits_f[0].header['XREF']
+        del fits_f[0].header['YREF']
+        del fits_f[0].header['XSTREHL']
+        del fits_f[0].header['YSTREHL']
+
+        f_log[s].write('Writing final images \n')
         
         # Write out final submap fits file
+        f_log[s].write('- Output data image: combo' + _fits[s].split('/combo')[1] + '\n')
         fits_f[0].writeto(_fits[s], output_verify=outputVerify)
+
+        f_log[s].write('- Output weighting image: combo' + _wgt[s].split('/combo')[1] + '\n')
+        wgt_hdu = fits.PrimaryHDU(data=driz[s].out_wht, header=hdr)
+        wgt_hdu.writeto(_wgt[s], output_verify='ignore', 
+                                    overwrite=True)
     
-    
+    for f in f_log:
+        f.close()
+        
     util.rmall(_tmp)
-    util.rmall([cdwt])
+    for i in range(len(roots)):
+        _cdwt = cleanDir + 'weight/cdwt' + roots[i] + '.fits'
+        util.rmall([_cdwt])
+    #util.rmall([cdwt])
 
 
 def combine_rotation(cleanDir, roots, instrument=instruments.default_inst):
@@ -1418,10 +1917,12 @@ def combine_rotation(cleanDir, roots, instrument=instruments.default_inst):
     diffPA = 0
 
     clean_files = instrument.make_filenames(roots, rootDir=cleanDir, prefix='c')
+    phis = np.zeros(len(clean_files))
 
     for cc in range(len(clean_files)):
         hdr = fits.getheader(clean_files[cc], ignore_missing_end=True)
         phi = instrument.get_position_angle(hdr)
+        phis[cc] = phi
 
         if cc == 0:
             phiRef = phi
@@ -1437,9 +1938,10 @@ def combine_rotation(cleanDir, roots, instrument=instruments.default_inst):
         for cc in range(len(clean_files)):
             hdr = fits.getheader(clean_files[cc], ignore_missing_end=True)
             phi = instrument.get_position_angle(hdr)
+            phis[cc] = phi
             rot_img(roots[cc], phi, cleanDir)
 
-    return (diffPA)
+    return (diffPA, phis)
 
 def sort_frames(roots, strehls, fwhm, weights, shiftsTab):
     sidx = np.argsort(fwhm)
@@ -1449,9 +1951,9 @@ def sort_frames(roots, strehls, fwhm, weights, shiftsTab):
     fwhm = fwhm[sidx]
     weights = weights[sidx]
     roots = [roots[i] for i in sidx]
-    shiftsX = shiftsTab['col1']
+    shiftsX = shiftsTab['xshift']
     shiftsX = shiftsX[sidx]
-    shiftsY = shiftsTab['col2']
+    shiftsY = shiftsTab['yshift']
     shiftsY = shiftsY[sidx]
 
     # Move all the ones with fwhm = -1 to the end
@@ -1552,22 +2054,40 @@ def combine_lis(outfile, cleanDir, roots, diffPA):
         f_lis.write('\n'.join(rFits) + '\n')
         f_lis.close()
 
-def combine_register(outroot, refImage, diffPA):
-    shiftFile = outroot + '.shifts'
-    util.rmall([shiftFile])
+def xregister_correlation_fourier(I, R, Nx, Ny):
+    """
+    Pythonified version of algorithm from iraf xregister
+    (see algorithms https://astro.uni-bonn.de/~sysstw/lfa_html/iraf/images.xregister.html)
+    """
+    sum_I = np.sum(I) / (Nx * Ny)
+    sum_R = np.sum(R) / (Nx * Ny)
+    
+    sumsqI = np.sqrt(np.sum((I - sum_I) ** 2))
+    sumsqR = np.sqrt(np.sum((R - sum_R) ** 2))
+    
+    FFTI = np.fft.fft2((I - sum_I) / sumsqI)
+    FFTR = np.fft.fft2((R - sum_R) / sumsqR)
+    
+    correlation = np.fft.ifft2(FFTR * np.conj(FFTI))
 
-    # xregister parameters
-    ir.immatch
-    ir.unlearn('xregister')
-    ir.xregister.coords = outroot + '.coo'
-    ir.xregister.output = ''
-    ir.xregister.append = 'no'
-    ir.xregister.databasefmt = 'no'
-    ir.xregister.verbose = 'no'
-    ir.xregister.xwindow='30'
-    ir.xregister.ywindow='30'
-    ir.xregister.correlation='fourier'
-    ir.xregister.function='centroid'
+    return correlation
+
+def elliptical_gaussian_2d(params, x, y):
+    amplitude, x0, y0, sigma_x, sigma_y, theta, offset = params
+    x_prime = (x - x0) * np.cos(theta) + (y - y0) * np.sin(theta)
+    y_prime = -(x - x0) * np.sin(theta) + (y - y0) * np.cos(theta)
+    return amplitude * np.exp(-((x_prime / sigma_x) ** 2 + (y_prime / sigma_y) ** 2) / 2) + offset
+
+def residuals(params, x, y, image):
+    # Residual function for least_squares
+    return elliptical_gaussian_2d(params, x, y) - image
+
+def combine_register(outroot, refImage, diffPA, plot_correlation = False, instrument = instruments.default_inst):
+    """
+    Register all the images through a cross-correlation method.
+    """
+
+    shiftFile = outroot + '.shifts'
 
     print('combine: registering images')
     if (diffPA == 1):
@@ -1575,52 +2095,168 @@ def combine_register(outroot, refImage, diffPA):
     else:
         input = '@' + outroot + '.lis'
 
-    hdu = fits.open(refImage)
-    nx = hdu[0].header['NAXIS1']
-    ny = hdu[0].header['NAXIS2']
+    # Fetch the reference image, which all shifts will be calculated against.
+    # Also get the coordinates of the cooStar in the reference image (coo_file_ref)
+    ref_img = fits.getdata(refImage)
+    
+    # coo file starts with c even if image was rotated
+    refImage_filename = refImage.split('/')[-1]
+    if refImage_filename[0] == 'r':
+        coo_file_ref = Table.read(refImage.split(refImage_filename)[0] + 'c' + refImage_filename[1:-5] + '.rcoo',
+                                  format='ascii', header_start=None)
+    else:
+        coo_file_ref = Table.read(refImage[:-5] + '.coo', format='ascii', header_start=None)
 
-    regions = '['+str(nx/2-nx/4)+':'+str(nx/2+nx/4)+','+str(ny/2-ny/4)+':'+str(ny/2+ny/4)+']'
-    #regions = '[*,*]'
-    # print 'input = ', input
-    print('xwindow,ywindow',ir.xregister.xwindow,ir.xregister.ywindow)
-    print('refImage = ', refImage)
-    print('regions = ', regions)
-    print('shiftFile = ', shiftFile)
-
-    fileNames = Table.read(input[1:], format='ascii.no_header') # removed , header_start=None
+    # Fetch the file names and cooStar position for all images.
+    fileNames = Table.read(input[1:], format='ascii.no_header')
     fileNames = np.array(fileNames)
     fileNames = np.array(fileNames, dtype='S')
+    
     coords = Table.read(outroot + '.coo', format='ascii', header_start=None)
+
+    # Setup a shifts table for storing the final calculated shifts.
     shiftsTable_empty = np.zeros((len(fileNames), 3), dtype=float)
-    shiftsTable = Table(shiftsTable_empty, dtype=('S50', float, float)) #dtype=(float, float, 'S50')
+    shiftsTable = Table(shiftsTable_empty, dtype=('S50', float, float))
+    
+    hdrRef = fits.getheader(refImage, ignore_missing_end=True)
 
+    # Calculate the size of the large-crop box (crop-val) in pixels.
+    plate_scale = instrument.get_plate_scale(hdrRef) #arcsec/pixels
+    crop_val = 1 / plate_scale # 1 arcsec/(arcsec/pix), units = pixels
+    crop_val = int(np.round(crop_val))
+
+    # For speed, we pre-trim the reference image edges by 5%.
+    # This helps remove edge effects. 
+    five_percent = int(np.shape(ref_img)[0]*0.05)
+    ref_img_noedge = ref_img[five_percent:-five_percent, five_percent:-five_percent]
+    
+    # Loop through the images and calculate the shift for each (w.r.t. the reference image).
     for ii in range(len(fileNames)):
-        inFile = fileNames[ii]
+        fileName = fileNames[ii].decode("utf-8")
+        
+        # Load up the image, and cooStar coordinates.
+        shift_img = fits.getdata(fileName)
+        fileName_filename = fileName.split('/')[-1]
+        if fileName_filename[0] == 'r':
+            coo_name = fileName.split(fileName_filename)[0] + 'c' + fileName_filename[1:-5] + '.rcoo'
+        else:
+            coo_name = fileName[:-5] + '.coo'
+        coo_file = Table.read(coo_name, format='ascii', header_start=None)
 
-        tmpCooFile = outroot + '_tmp.coo'
-        _coo = open(tmpCooFile, 'w')
-        _coo.write('%.2f  %.2f\n' % (coords[0][0], coords[0][1]))
-        _coo.write('%.2f  %.2f\n' % (coords[ii+1][0], coords[ii+1][1])) #Changed from [0][ii+1] to [ii+1][0]
-        _coo.close()
+        # Crop off 5% of the edges of ii-th image
+        # to avoid edge effects contaminating the cross correlation.
+        shift_img_noedge = shift_img[five_percent:-five_percent, five_percent:-five_percent]
+        
+        # Figure out the overlap window between this ii-th image and the ref image.
+        xmin_ref = 0
+        xmax_ref = ref_img_noedge.shape[1]
+        ymin_ref = 0
+        ymax_ref = ref_img_noedge.shape[0]
 
-        util.rmall([shiftFile])
-        print('inFile = ', inFile)
-        ir.xregister.coords = tmpCooFile
-        ir.xregister(inFile, refImage, regions, shiftFile)
+        xmin_ii = 0
+        xmax_ii = shift_img_noedge.shape[1]
+        ymin_ii = 0
+        ymax_ii = shift_img_noedge.shape[0]
+        
+        # Apply a shift to the image to center up on the cooStar.
+        xshift = int(coo_file_ref['col1'][0] - coo_file['col1'][0])
+        yshift = int(coo_file_ref['col2'][0] - coo_file['col2'][0])
+        #global_shift_img = shift(shift_img_noedge, (xshift, yshift), mode = 'constant')  # shifted image.
 
-        # # Read in the shifts file. Column format is:
-        # # Filename.fits  xshift  yshift
-        _shifts = Table.read(shiftFile, format='ascii.no_header')
-        shiftsTable[ii][0] = _shifts[0][0]
-        shiftsTable[ii][1] = _shifts[0][1]
-        shiftsTable[ii][2] = _shifts[0][2]
+        xmin_ii += xshift
+        xmax_ii += xshift
+        ymin_ii += yshift
+        ymax_ii += yshift
+
+        # Calculate the vertices of the overlap rectangle. Note these are in the coordinate system
+        # of the 5% cropped reference image (ref_img_noedge). 
+        overlap_xmin = max(xmin_ref, xmin_ii)
+        overlap_xmax = min(xmax_ref, xmax_ii)
+        overlap_ymin = max(ymin_ref, ymin_ii)
+        overlap_ymax = min(ymax_ref, ymax_ii)
+
+        # For sanity and ease of use later on, make sure the overlap rectangle is divisible by 2.
+        if (overlap_xmax - overlap_xmin) % 2 != 0:
+            overlap_xmax -= 1
+        if (overlap_ymax - overlap_ymin) % 2 != 0:
+            overlap_ymax -= 1
+
+        # Double-check that we have overlap in both directions.
+        if overlap_xmin >= overlap_xmax or overlap_ymin >= overlap_ymax:
+            raise RuntimeError(f'Two images do not overlap: {fileName_filename} and {refImage_filename}')
+
+        # Rectangle vertices in the original coordinates of shift_img_noedge:
+        overlap_xmin_ii = overlap_xmin - xshift
+        overlap_xmax_ii = overlap_xmax - xshift
+        overlap_ymin_ii = overlap_ymin - yshift
+        overlap_ymax_ii = overlap_ymax - yshift
+
+        # Return cropped images of both the reference and ii-th image that contains only
+        # the overlapping area. This is what should be used as input into the cross-correlation.
+        # Note that this action should also center up the two images onto the same coordinate system.
+        ref_img_cropped = ref_img_noedge[overlap_ymin:overlap_ymax, overlap_xmin:overlap_xmax]
+        ii_img_cropped = shift_img_noedge[overlap_ymin_ii:overlap_ymax_ii, overlap_xmin_ii:overlap_xmax_ii]
+
+        from skimage.registration import phase_cross_correlation
+        if plot_correlation:
+            plot_corr_filename = fileName.replace('.fits', '_corr.png')
+        else:
+            plot_corr_filename = None
+
+        shift_pcc = subpixel_windowed_pcc(ref_img_cropped, ii_img_cropped, window_radius=100,
+                                          upsample_factor=50, alpha=0.5,
+                                          plot_corr_map=plot_correlation, plot_outfile=plot_corr_filename)
+        total_y_shift_pcc = shift_pcc[0] + yshift
+        total_x_shift_pcc = shift_pcc[1] + xshift
+        pcc_half_size = np.array(ref_img_cropped.shape) / 2.0
+
+        print('*** Comparing correlation methods:')
+        print(f'\t {"":<10s} {"x":<10s} {"y":<10s}')
+        print(f'\t {"coo":<10s} {xshift:10.2f} {yshift:10.2f}')
+        # print(f'\t {"manual":<10s} {total_x_shift:10.2f} {total_y_shift:8.3f}')
+        print(f'\t {"pcc":<10s} {total_x_shift_pcc:10.2f} {total_y_shift_pcc:10.2f}')
+
+        if plot_correlation:
+            import pylab as plt
+            import matplotlib.colors as mcolors
+            
+            norm = mcolors.SymLogNorm(vmin=-10, vmax=1e4, linthresh=100) 
+            
+            # plot the image cutouts used in cross-correlation.
+            plt.close(1)
+            plt.figure(1, figsize=(10, 5.2))
+            plt.clf()
+            plt.subplots_adjust(left=0.1, right=0.95, bottom=0.10, top=0.85)
+            ax1 = plt.subplot(1, 2, 1)
+            plt.imshow(ref_img_cropped, cmap='gist_heat', norm=norm)
+            plt.axis('equal')
+            plt.xlim(0, ref_img_cropped.shape[1])
+            plt.xlim(0, ref_img_cropped.shape[0])
+            plt.title(f'Cropped Ref:\n{refImage_filename}')
+            
+            plt.subplot(1, 2, 2)
+            plt.imshow(ii_img_cropped, cmap='gist_heat', norm=norm)
+            plt.axis('equal')
+            plt.xlim(0, ref_img_cropped.shape[1])
+            plt.xlim(0, ref_img_cropped.shape[0])
+            plt.title(f'Cropped ii Img:\n{fileName_filename}')
+            save_name1 = fileName.replace('.fits', '_crop.png')
+            plt.savefig(save_name1)
+
+        # Save the final shifts to the shift table.
+        shiftsTable[ii][0] = fileName.split('/')[-1]
+        shiftsTable[ii][1] = total_x_shift_pcc
+        shiftsTable[ii][2] = total_y_shift_pcc
 
 
+    # Save out the shifts table. 
     util.rmall([shiftFile])
+    shiftsTable.rename_column('col0', 'file')
+    shiftsTable.rename_column('col1', 'xshift')
+    shiftsTable.rename_column('col2', 'yshift')
     shiftsTable.write(shiftFile, format = 'ascii')
 
     return (shiftsTable)
-
 
 def combine_log(outroot, roots, strehls, fwhm, weights):
     _log = outroot + '.log'
@@ -1633,10 +2269,11 @@ def combine_log(outroot, roots, strehls, fwhm, weights):
 
     f_log.close()
 
-def combine_size(shiftsTable, refImage, outroot, subroot, submaps):
-    """Determine the final size of the fully combined image. Use the
-    shifts stored in the shiftsTable.
-
+def combine_size(shiftsTable, refImage, outroot, subroot, submaps, phis):
+    """Determine the final size of the fully combined image, accounting for
+    both shifts and rotations. Use the shifts stored in the shiftsTable and
+    rotation angles in phis.
+    
     @param shiftsTable: Table with x and y shifts for each image
     @type shiftsTable: ascii table
     @param refImage: The reference image from which the shifts are
@@ -1648,47 +2285,83 @@ def combine_size(shiftsTable, refImage, outroot, subroot, submaps):
     @param subroot: Same as outroot but for submaps
     @type subroot: string
     @param submaps: number of submaps
-    @type sbumaps: int
+    @type submaps: int
+    @param phis: Array of rotation angles in degrees for each image
+    @type phis: array-like
     """
-    x_allShifts = shiftsTable['col1']
-    y_allShifts = shiftsTable['col2']
-
-
-    xhi = abs(x_allShifts.max())
-    xlo = abs(x_allShifts.min())
-    yhi = abs(y_allShifts.max())
-    ylo = abs(y_allShifts.min())
-
-    # Make sure to include the edges of all images.
-    # Might require some extra padding on one side.
-    maxoffset = max([xlo, xhi, ylo, yhi])
-
+    x_allShifts = np.array(shiftsTable['xshift'])
+    y_allShifts = np.array(shiftsTable['yshift'])
+    phis_rad = np.deg2rad(np.array(phis))
+    
+    # Get original image size
     orig_img = fits.getdata(refImage)
     orig_size = (orig_img.shape)[0]
+    half_size = orig_size / 2.0
+    
+
+    # Calculate the four corners of the original image relative to its center
+    corners = np.array([
+        [-half_size, -half_size],
+        [half_size, -half_size],
+        [half_size, half_size],
+        [-half_size, half_size]
+    ])  # Shape: (4, 2)
+    
+    # Compute cos and sin for all angles
+    cos_phi = np.cos(phis_rad)  # Shape: (n_images,)
+    sin_phi = np.sin(phis_rad)  # Shape: (n_images,)
+    
+    # Rotate corners for all images at once
+    corners_x = corners[:, 0][:, np.newaxis]  # Shape: (4, 1)
+    corners_y = corners[:, 1][:, np.newaxis]  # Shape: (4, 1)
+
+    # Unrotate shifts (inverse rotation)
+    unrotated_xsh = x_allShifts * cos_phi + y_allShifts * sin_phi
+    unrotated_ysh = -x_allShifts * sin_phi + y_allShifts * cos_phi
+    
+    # Add unrotated shifts to corners
+    shifted_x = corners_x + unrotated_xsh
+    shifted_y = corners_y + unrotated_ysh
+    
+    rotated_x = shifted_x * cos_phi - shifted_y * sin_phi  # Shape: (4, n_images)
+    rotated_y = shifted_x * sin_phi + shifted_y * cos_phi  # Shape: (4, n_images)
+    
+    # Find the range needed: max positive and max negative extent
+    xmax = np.max(rotated_x)
+    xmin = np.min(rotated_x)
+    ymax = np.max(rotated_y)
+    ymin = np.min(rotated_y)
+
+    # Maximum offset needed from center in any direction
+    maxoffset = max(abs(xmax), abs(xmin), abs(ymax), abs(ymin))
+    
+    # Add padding
     padd = int(np.floor(orig_size * 0.01))
 
+    
     # Read in the reference star's position in the ref image and translate
     # it into the coordinates of the final main and sub maps.
     hdr = fits.getheader(refImage, ignore_missing_end=True)
     xrefSrc = float(hdr['XREF'])
     yrefSrc = float(hdr['YREF'])
-
-    xrefSrc = xrefSrc + (maxoffset + padd)
-    yrefSrc = yrefSrc + (maxoffset + padd)
-
+    xrefSrc = xrefSrc + ((maxoffset + padd) - half_size)
+    yrefSrc = yrefSrc + ((maxoffset + padd) - half_size)
+    
     cooMain = [outroot + '.coo']
     cooSubs = ['%s_%d.coo' % (subroot, i) for i in range(submaps+1)]
     cooAll = cooMain + cooSubs
-
     util.rmall(cooAll)
+    
     for coo in cooAll:
         _allCoo = open(coo, 'w')
         _allCoo.write('%9.3f %9.3f\n' % (xrefSrc, yrefSrc))
         _allCoo.close()
 
-    xysize = int(float(orig_size) + ((maxoffset + padd) * 2.0))
+    
+    xysize = int((maxoffset + padd) * 2.0) #int(float(orig_size) + ((maxoffset + padd) * 2.0))
+    
     print('combine: Size of output image is %d' % xysize)
-
+    
     return xysize
 
 def setup_drizzle(imgsize):
@@ -1700,50 +2373,360 @@ def setup_drizzle(imgsize):
     drizzle.
     @param type: str
     """
+    #from pyraf import iraf as ir
+
     # Setup the drizzle parameters we will use
-    ir.module.load('stsdas', doprint=0, hush=1)
-    ir.module.load('analysis', doprint=0, hush=1)
-    ir.module.load('dither', doprint=0, hush=1)
-    ir.unlearn('drizzle')
-    ir.drizzle.outweig = ''
-    ir.drizzle.in_mask = ''
-    ir.drizzle.wt_scl = 1
-    ir.drizzle.outnx = imgsize
-    ir.drizzle.outny = imgsize
-    ir.drizzle.pixfrac = 1
-    ir.drizzle.kernel = 'lanczos3'
-    ir.drizzle.scale = 1
-    ir.drizzle.shft_un = 'input'
-    ir.drizzle.shft_fr = 'output'
-    ir.drizzle.align = 'center'
-    ir.drizzle.expkey = 'ITIME'
-    ir.drizzle.in_un = 'counts'
-    ir.drizzle.out_un = 'counts'
+    drizzle.outweig = ''
+    drizzle.in_mask = ''
+    drizzle.wt_scl = 1
+    drizzle.outnx = imgsize
+    drizzle.outny = imgsize
+    drizzle.pixfrac = 1
+    drizzle.kernel = 'lanczos3'
+    drizzle.scale = 1
+    drizzle.shft_un = 'input'
+    drizzle.shft_fr = 'output'
+    drizzle.align = 'center'
+    drizzle.expkey = 'ITIME'
+    drizzle.in_un = 'counts'
+    drizzle.out_un = 'counts'
 
 def clean_drizzle(xgeoim, ygeoim, _bp, _cd, _wgt, _dlog,
         fixDAR=True, instrument=instruments.default_inst,
         use_koa_weather=False):
+
     # Get the distortion maps for this instrument.
-    hdr = fits.getheader(_bp)
+
+    bp_file = fits.open(_bp)
+    hdr = bp_file[0].header
+    bp_img = bp_file[0].data
     distXgeoim, distYgeoim = instrument.get_distortion_maps(hdr)
-    
+    itime_keyword = 'ITIME'
+    exp_time = hdr[itime_keyword]
+
+    # Input image size
+    imgsizeX = float(hdr['NAXIS1'])
+    imgsizeY = float(hdr['NAXIS2'])
+    if (imgsizeX >= imgsizeY):
+        imgsize = imgsizeX
+    else:
+        imgsize = imgsizeY
+    outnx = imgsize
+    outny = imgsize
+
     if (fixDAR == True):
         darRoot = _cd.replace('.fits', 'geo')
 
-        (xgeoim, ygeoim) = dar.darPlusDistortion(
+        (_xgeoim, _ygeoim) = dar.darPlusDistortion(
                                _bp, darRoot, xgeoim, ygeoim,
                                instrument=instrument,
                                use_koa_weather=use_koa_weather)
-
-        ir.drizzle.xgeoim = xgeoim
-        ir.drizzle.ygeoim = ygeoim
     else:
-        ir.drizzle.xgeoim = distXgeoim
-        ir.drizzle.ygeoim = distYgeoim
+        _xgeoim = distXgeoim
+        _ygeoim = distYgeoim
 
-    ir.drizzle(_bp, _cd, outweig=_wgt, Stdout=_dlog)
+    wgt_in = np.ones((int(outnx),int(outny)))
+    wcs_in = wcs.WCS(hdr)
+    wcs_out = wcs.WCS(hdr)
 
-def clean_cosmicrays(_ff, _mask, wave):
+    xgeoim = fits.getdata(_xgeoim).astype('float32')
+    ygeoim = fits.getdata(_ygeoim).astype('float32')
+
+    xdist = wcs.DistortionLookupTable( xgeoim, [0, 0], [0, 0], [1, 1])
+    ydist = wcs.DistortionLookupTable( ygeoim, [0, 0], [0, 0], [1, 1])
+
+    wcs_in.cpdis1 = xdist
+    wcs_in.cpdis2 = ydist
+
+    pixmap = drizzle.utils.calc_pixmap(wcs_in, wcs_out)
+
+    kernel = 'lanczos3'
+    driz = drizzle.resample.Drizzle(kernel = kernel,
+                                    out_shape = np.shape(bp_img),
+                                    fillval = 0
+                                    )
+
+    # Catches case when exposure time is a fraction of a second
+    if exp_time > 0 and exp_time < 1:
+        wht_scale = exp_time
+        pixfrac = 1.0
+        driz.add_image(bp_img, pixmap = pixmap, 
+                            exptime = 1,
+                            xmax = int(outnx),
+                            ymax = int(outny),
+                            wht_scale = wht_scale,
+                            pixfrac = pixfrac,
+                            in_units = 'counts')
+    else:
+        wht_scale = 1.0
+        pixfrac = 1.0
+        driz.add_image(bp_img, pixmap = pixmap, 
+                            exptime = exp_time,
+                            xmax = int(outnx),
+                            ymax = int(outny),
+                            wht_scale = wht_scale,
+                            pixfrac = pixfrac,
+                            in_units = 'counts')
+
+    #swtich from output cps to counts by multiplying by total counts
+    out_img = driz.out_img * driz._texptime
+    img_hdu = fits.PrimaryHDU(data=out_img, header=hdr)
+
+    # make header
+    img_hdu.header.set('CRPIX1', wcs_in.wcs.crpix[0] + wcs_in.cpdis1.get_offset(wcs_in.wcs.crpix[0], wcs_in.wcs.crpix[1]))
+    img_hdu.header.set('CRPIX2', wcs_in.wcs.crpix[1] + wcs_in.cpdis2.get_offset(wcs_in.wcs.crpix[0], wcs_in.wcs.crpix[1]))
+    img_hdu.header.set('NDRIZIM', 1, 'Drizzle, number of images drizzled onto this out')
+    img_hdu.header.set('D001VER', 'DRIZZLE VERSION {}'.format(drizzle.__version__))
+    img_hdu.header.set('D001DATA', _bp, 'Drizzle, input data image')
+    img_hdu.header.set('D001DEXP', driz._texptime, 'Drizzle, input image exposure time (s)')
+    img_hdu.header.set('D001OUDA', _cd, 'Drizzle, output data image')
+    img_hdu.header.set('D001OUWE', _wgt, 'Drizzle, output weighting image')
+    img_hdu.header.set('D001OUCO', '', 'Drizzle, output context image')
+    img_hdu.header.set('D001MASK', '', 'Drizzle, input weighting image')
+    img_hdu.header.set('D001WTSC', wht_scale, 'Drizzle, weighting factor for input image')
+    img_hdu.header.set('D001KERN', kernel, 'Drizzle, form of weight distribution kernel')
+    img_hdu.header.set('D001PIXF', pixfrac, 'Drizzle, linear size of drop')
+    img_hdu.header.set('D001COEF', '', 'Drizzle, coefficients file name')
+    img_hdu.header.set('D001XGIM', _xgeoim, 'Drizzle, X distortion image name')
+    img_hdu.header.set('D001YGIM', _ygeoim, 'Drizzle, Y distortion image name')
+    img_hdu.header.set('D001SCAL', 1, 'Drizzle, scale (pixel size) of output image')
+    img_hdu.header.set('D001ROT', 0, 'Drizzle, rotation angle, degrees anticlockwise')
+    img_hdu.header.set('D001XSH', 0, 'Drizzle, X shift applied')
+    img_hdu.header.set('D001YSH', 0, 'Drizzle, Y shift applied')
+    img_hdu.header.set('D001SFTU', 'pixels', 'Drizzle, units used for shifts (output or input)')
+    img_hdu.header.set('D001SFTF', 'pixels', 'Drizzle, frame in which shifts were applied') #this might be wrong
+    img_hdu.header.set('D001EXKY', itime_keyword, 'Drizzle, exposure keyword name in input image')
+    img_hdu.header.set('D001INUN', 'counts', 'Drizzle, units of input image - counts or cps')
+    img_hdu.header.set('D001OUUN', 'counts', 'Drizzle, units of output image - counts or cps')
+    img_hdu.header.set('D001FVAL', '0', 'Drizzle, fill value for zero weight output pixel')
+
+    img_hdu.writeto(_cd, output_verify='ignore', 
+                                overwrite=True)
+    #hdulist=fits.open(_cd)
+    #img_data = hdulist['SCI'].data
+    #img_header = hdulist['SCI'].header
+
+    #wgt_data = hdulist['WHT'].data
+    #wgt_header = hdulist['WHT'].header
+    wgt_hdu = fits.PrimaryHDU(data=driz.out_wht, header=hdr)
+    wgt_hdu.writeto(_wgt, output_verify='ignore', 
+                                overwrite=True)
+
+
+def cosmicray_median(ccd, input_mask, error_image=None, thresh=5, mbox=5, gbox=0,
+                     rbox=0, fratio = 5, star_thresh=4, thresh_in_star = 10):
+    """
+    Modified from ccdproc
+    
+    Identify cosmic rays through median technique. The median technique
+    identifies cosmic rays by identifying pixels by subtracting a median image
+    from the initial data array.
+
+    Parameters
+    ----------
+    ccd : `numpy.ndarray` or `numpy.ma.MaskedArray`
+        Data to have cosmic ray cleaned.
+
+    thresh : float, optional
+        Threshold for detecting cosmic rays.
+        Default is ``5``.
+
+    error_image : `numpy.ndarray`, float or None, optional
+        Error level. If None, the task will use the standard
+        deviation of the data. If an ndarray, it should have the same shape
+        as data.
+        Default is ``None``.
+
+    mbox : int, optional
+        Median box for detecting cosmic rays.
+        Default is ``11``.
+
+    gbox : int, optional
+        Box size to grow cosmic rays. If zero, no growing will be done.
+        Default is ``0``.
+
+    rbox : int, optional
+        Median box for calculating replacement values. If zero, no pixels will
+        be replaced.
+        Default is ``0``.
+
+    fratio : int, optional
+        Flux ratio determination for cosmic rays in stars by comparing residual
+        to nearby median.
+        Default is ``5``.
+
+    star_thresh : int, optional
+        Threshold for determining if pixels belong to a star as compared to 
+        their 25th percentile background.
+        Default is ``4``.
+
+    thresh_in_star : int, optional
+        Threshold for cosmicrays in star.
+        Default is ``10".
+
+    Notes
+    -----
+    Similar implementation to crmedian in iraf.imred.crutil.crmedian.
+
+    Returns
+    -------
+    nccd : `~astropy.nddata.CCDData` or `numpy.ndarray`
+        An object of the same type as ccd is returned. If it is a
+        `~astropy.nddata.CCDData`, the mask attribute will also be updated with
+        areas identified with cosmic rays masked.
+
+    nccd : `numpy.ndarray`
+        If an `numpy.ndarray` is provided as ccd, a boolean ndarray with the
+        cosmic rays identified will also be returned.
+
+    Examples
+    --------
+    1) Given an numpy.ndarray object, the syntax for running
+       cosmicray_median would be:
+
+       >>> newdata, mask = cosmicray_median(data, error_image=error,
+       ...                                  thresh=5, mbox=11,
+       ...                                  rbox=11, gbox=5)   # doctest: +SKIP
+
+       where error is an array that is the same shape as data but
+       includes the pixel error. This would return a data array, newdata,
+       with the bad pixels replaced by the local median from a box of 11
+       pixels; and it would return a mask indicating the bad pixels.
+
+    2) Given an `~astropy.nddata.CCDData` object with an uncertainty frame, the syntax
+       for running cosmicray_median would be:
+
+       >>> newccd = cosmicray_median(ccd, thresh=5, mbox=11,
+       ...                           rbox=11, gbox=5)   # doctest: +SKIP
+
+       The newccd object will have bad pixels in its data array replace and the
+       mask of the object will be created if it did not previously exist or be
+       updated with the detected cosmic rays.
+    """
+    data = ccd
+
+    if error_image is None:
+        error_image = data.std()
+    else:
+        if not isinstance(error_image, (float, np.ndarray, np.float32)):
+            raise TypeError('error_image is not a float or ndarray.')
+
+    # create the median image
+    marr = ndimage.median_filter(data, size=(mbox, mbox))
+
+
+    # Only look at the data array
+    if isinstance(data, np.ma.MaskedArray):
+        data = data.data
+
+    # Find the residual image
+    # Compare residual to the error in the image
+    rarr = (data - marr) /error_image
+
+    # Compare residual to the mean nearby
+    # in order to exclude stars
+    rarr2 = (data - marr) /marr
+
+    local_bg = ndimage.percentile_filter(data, 25, size=mbox*3)  # Larger box for background
+    star_indicator = (marr - local_bg) / error_image
+                         
+    # identify all sources
+    # Different criteria for stars (star indicator > star thresh) and for background (star indicator < star thresh)
+    # Larger criteria to find a cosmic ray on a star
+    crarr = ((rarr > thresh_in_star) & (rarr2 > fratio) & (star_indicator > star_thresh)) | ((rarr > thresh) & (star_indicator <= star_thresh))
+
+    # Remove reference pixels
+    ref_pixels = np.where(input_mask == 2)
+    crarr[ref_pixels] = 0
+
+    # grow the pixels
+    if gbox > 0:
+        crarr = ndimage.maximum_filter(crarr, gbox)
+
+    # replace bad pixels in the image
+    if rbox > 0:
+        # Assert shape of data is a square
+        assert np.shape(data)[0] == np.shape(data)[1]
+        ndata = loop_through_crs(data, crarr, dim = np.shape(data)[0])
+
+    return ndata, crarr
+
+def loop_through_crs(data, crarr, search_box = 5, interp_box = 10, dim = 1024):
+    # Box to search for cosmic rays must be smaller than the area you're interpretting over
+    assert search_box < interp_box
+    
+    masked_data = np.ma.masked_array(data, (crarr == 1))
+    new_data = copy.deepcopy(data)
+
+    crarr_xs = np.where(crarr == True)[0]
+    crarr_ys = np.where(crarr == True)[1]
+
+    mark_done = np.ones((dim, dim))
+    mark_done[crarr == 1] = 0
+
+    filled_vals = masked_data.filled(np.nan)
+    
+    for crarr_x, crarr_y in zip(crarr_xs, crarr_ys):
+        if mark_done[crarr_x, crarr_y] == 1:
+            continue
+        
+        # Set edges of search box and round to edges of image 
+        min_search_x = crarr_x - search_box
+        max_search_x = crarr_x + search_box
+        min_search_y = crarr_y - search_box
+        max_search_y = crarr_y + search_box
+
+        min_search_x, max_search_x = round_to_edge(min_search_x, max_search_x, 0, dim)
+        min_search_y, max_search_y = round_to_edge(min_search_y, max_search_y, 0, dim)
+
+        # Set values in search box (which will be filled in) as done
+        mark_done[min_search_x:max_search_x, min_search_y:max_search_y] = 1
+
+        # Set edges of interp box and round to edges of image 
+        min_interp_x = crarr_x - interp_box
+        max_interp_x = crarr_x + interp_box
+        min_interp_y = crarr_y - interp_box
+        max_interp_y = crarr_y + interp_box
+
+        min_interp_x, max_interp_x = round_to_edge(min_interp_x, max_interp_x, 0, dim)
+        min_interp_y, max_interp_y = round_to_edge(min_interp_y, max_interp_y, 0, dim)
+
+        # Cut out cosmic rays
+        patch_x = np.arange(min_interp_x, max_interp_x)
+        patch_y = np.arange(min_interp_y, max_interp_y)
+        masked_data_patch = masked_data[min_interp_x:max_interp_x, min_interp_y:max_interp_y]
+        x1, y1 = np.meshgrid(patch_x, patch_y, indexing='ij')
+        x = x1[~masked_data_patch.mask]
+        y = y1[~masked_data_patch.mask]
+        filtered_data = masked_data_patch[~masked_data_patch.mask]
+
+        # Prepare patch related to where we're looking for cosmic rays
+        search_patch_x = np.arange(min_search_x, max_search_x)
+        search_patch_y = np.arange(min_search_y, max_search_y)
+        x1_search_patch, y1_search_patch = np.meshgrid(search_patch_x, search_patch_y, indexing='ij')
+        masked_data_search_patch = masked_data[min_search_x:max_search_x, min_search_y:max_search_y]
+
+        # Interpolate over masked data and find interpolated values
+        # over search area (where we've looked for cosmic rays)
+        linear_interp = griddata((x, y), filtered_data.ravel(), (x1_search_patch,y1_search_patch), fill_value = 0)#np.nan)
+
+        # Set masked out cosmic ray values to interpolated values
+        new_data_patch = new_data[min_search_x:max_search_x, min_search_y:max_search_y]
+        new_data_patch[masked_data_search_patch.mask] = linear_interp[masked_data_search_patch.mask]
+        new_data[min_search_x:max_search_x, min_search_y:max_search_y] = new_data_patch
+
+    return new_data
+
+
+def round_to_edge(min_box_val, max_box_val, min_val, max_val):
+    if min_box_val < min_val:
+        min_box_val = min_val
+    if max_box_val > max_val:
+        max_box_val = max_val
+
+    return min_box_val, max_box_val
+    
+def clean_cosmicrays(_ff, _mask, wave, _input_mask, thresh=5, mbox=5, rbox=10, fratio = 5, gbox = 0, star_thresh=4, thresh_in_star = 10):
     """Clean the image of cosmicrays and make a mask containing the location
     of all the cosmicrays. The CR masks can later be used in combine() to
     keep cosmicrays from being included.
@@ -1761,84 +2744,27 @@ def clean_cosmicrays(_ff, _mask, wave):
     # for cosmicrays. Need to figure out the mean level of the
     # background.
     ff_img = fits.getdata(_ff)
+    ff_header = fits.getheader(_ff)
+
+    input_mask = fits.getdata(_input_mask)
+    
     tmp_stats = stats.sigma_clipped_stats(ff_img,
                                           sigma_upper=2, sigma_lower=5,
-                                          iters=5)
+                                          maxiters=5)
     mean = tmp_stats[0]
     stddev = tmp_stats[2]
-
-    # CR candidates are those that exceed surrounding pixels by
-    # this threshold amount.
-    crthreshold = 5.0*stddev
-
-    fluxray = 13.
-    if 'h' in wave:
-        fluxray = 10.
-    if 'kp' in wave:
-        fluxray = 13.
-    if 'lp' in wave:
-        fluxray = 10.0
-    if 'ms' in wave:
-        fluxray = 10.0
-
-    ir.module.load('noao', doprint=0, hush=1)
-    ir.module.load('imred', doprint=0, hush=1)
-    ir.module.load('crutil', doprint=0, hush=1)
-    ir.unlearn('cosmicrays')
-
-    ir.cosmicrays(_ff, ' ', crmasks=_mask, thresho=crthreshold,
-                  fluxrat=fluxray, npasses=10., window=7,
-                  interac='no', train='no', answer='NO')
-
-    ir.imcopy(_mask+'.pl', _mask, verbose='no')
-    if os.path.exists(_mask + '.pl'): os.remove(_mask + '.pl')
-
-def clean_cosmicrays2(_ff, _ff_cr, _mask, wave,
-                      instrument=instruments.default_inst):
-    """Clean the image of cosmicrays and make a mask containing the location
-    of all the cosmicrays. The CR masks can later be used in combine() to
-    keep cosmicrays from being included.
-
-    @param _ff: Flat fielded file on which to fix cosmic rays. A new
-        image will be created with the _f appended to it.
-    @type _ff: string
-    @param _ff_cr: Output image with cosmicrays fixed.
-    @type _ff_cr: string
-    @param _mask: The filename used for the resulting mask.
-    @type _mask: string
-    @parram wave: The filter of the observations (e.g. 'kp', 'lp'). This
-        is used to determine different thresholds for CR rejection.
-    @type wave: string
-    """
-    # Determine the threshold at which we should start looking
-    # for cosmicrays. Need to figure out the mean level of the
-    # background.
-    ff_img, ff_hdr = fits.getdata(_ff, header=True)
-    mean, median, stddev = stats.sigma_clipped_stats(ff_img,
-                                                     sigma_upper=2, sigma_lower=5,
-                                                     iters=5)
-
-    # Get the instrument gain
-    gain = instrument.get_gain()
-
-    sampmode = ff_hdr[instrument.hdr_keys['sampmode']]
-    numreads = ff_hdr[instrument.hdr_keys['nfowler']]
     
-    if sampmode == 2:
-        readnoise = 60
-    else:
-        readnoise = 15.0 * (16.0 / numreads)**0.5
+    newdata, crmask = cosmicray_median(ff_img, input_mask, error_image = stddev, thresh=thresh, mbox=mbox, gbox=gbox, rbox=rbox, fratio=fratio,
+                                      star_thresh = star_thresh, thresh_in_star = thresh_in_star)
+    crmask = crmask.astype(int)
 
-    from jlu.util import cosmics
-    c = cosmics.cosmicsimage(ff_img, gain=gain, readnoise=readnoise,
-                             sigclip=10, sigfrac=0.5, objlim=5.0)
-    c.run(maxiter=3)
-    fits.writeto(_ff_cr, c.cleanarray, ff_hdr,
-                   clobber=True, output_verify=outputVerify)
-    fits.writeto(_mask, np.where(c.mask==True, 1, 0), ff_hdr,
-                   clobber=True, output_verify=outputVerify)
+    ff_header.set('CRCOR', 'removed={}, thresh={}, mbox={}, gbox={}, rbox={}, fratio={}, star_thresh={}, thresh_in_star={}'.format(np.sum(crmask), thresh, mbox, gbox, rbox, fratio, star_thresh, thresh_in_star))
 
-    return
+    # Save to a temporary file.
+    fits.writeto(_mask, crmask, output_verify=outputVerify)
+    fits.writeto(_ff, newdata, header=ff_header, output_verify=outputVerify, overwrite = True)
+
+    return stddev
 
 def clean_persistance(_n, _pers, instrument=instruments.default_inst):
     """
@@ -1858,8 +2784,7 @@ def clean_persistance(_n, _pers, instrument=instruments.default_inst):
 
     # Save to an image
     fits_f[0].writeto(_pers, output_verify=outputVerify)
-
-
+    
 def clean_bkgsubtract(_ff_f, _bp):
     """Do additional background subtraction of any excess background
     flux. This isn't strictly necessary since it just removes a constant."""
@@ -1869,7 +2794,7 @@ def clean_bkgsubtract(_ff_f, _bp):
     # Calculate mean and STD for science image
     tmp_stats = stats.sigma_clipped_stats(fits_f[0].data,
                                           sigma_upper=1, sigma_lower=10,
-                                          iters=5)
+                                          maxiters=5)
     sci_mean = tmp_stats[0]
     sci_stddev = tmp_stats[2]
 
@@ -1896,8 +2821,9 @@ def clean_bkgsubtract(_ff_f, _bp):
     return bkg
 
 def clean_makecoo(_ce, _cc, refSrc, strSrc, aotsxyRef, radecRef,
-                  instrument=instruments.default_inst, check_loc=True,
-                  update_fits=True,cent_box=12, update_from_AO=None):
+        instrument=instruments.default_inst, check_loc=True,
+        update_fits=True,cent_box=12,
+        offset_method='aotsxy',pcuxyRef=None):
     """Make the *.coo file for this science image. Use the difference
     between the AOTSX/Y keywords from a reference image and each science
     image to tell how the positions of the two frames are related.
@@ -1917,16 +2843,27 @@ def clean_makecoo(_ce, _cc, refSrc, strSrc, aotsxyRef, radecRef,
     @param radecRef: The RA/DEC header values from the reference image.
     @type radecRef: array of floats with length=2 [x, y]
 
-    check_loc (bool):  If True the reference source is recentered for this frame.
-                     Use False if the offsets are large enough to move the reference source off of the image
-    update_fits : update the fits files with the reference pixel values
-    cent_box : box size to center the source (default: 12)
+    check_loc : bool, default=True
+        If True the reference source is recentered for this frame.
+        Use False if the offsets are large enough to move the reference source
+        off of the image.
+    update_fits : bool, default=True
+        Update the fits files with the reference pixel values
+    cent_box : float, default: 12
+        Box size to center the source
+    offset_method : str, default='aotsxy'
+        Method to calculate offsets from reference image.
+        Options are 'aotsxy' or 'radec'.
+        In images where 'aotsxy' keywords aren't reliable, 'radec' calculated
+        offsets may work better.
     """
-
     hdr = fits.getheader(_ce, ignore_missing_end=True)
-
-    radec = [float(hdr['RA']), float(hdr['DEC'])]
+    radec = instrument.get_radec(hdr)
     aotsxy = kai_util.getAotsxy(hdr)
+    
+    if offset_method == 'pcu':
+        pcuxy = [float(hdr['PCSFX']), float(hdr['PCSFY'])]  #New version may be PCUX and PCUY
+        pcu_scale = instrument.get_pcu_scale(hdr)
 
     # Determine the image's PA and plate scale
     phi = instrument.get_position_angle(hdr)
@@ -1936,13 +2873,16 @@ def clean_makecoo(_ce, _cc, refSrc, strSrc, aotsxyRef, radecRef,
     inst_angle = instrument.get_instrument_angle(hdr)
 
     # Calculate the pixel offsets from the reference image
-    # We've been using aotsxy2pix, but the keywords are wrong
-    # for 07maylgs and 07junlgs
-    #d_xy = kai_util.radec2pix(radec, phi, scale, radecRef)
-    if update_from_AO:
-        d_xy = kai_util.aotsxy2pix(aotsxy, scale, aotsxyRef, inst_angle=inst_angle)
+    if offset_method == 'radec':
+        d_xy = kai_util.radec2pix(radec, phi, scale, radecRef)
+    elif offset_method == 'aotsxy':
+        d_xy = kai_util.aotsxy2pix(aotsxy, scale, aotsxyRef,
+                                   inst_angle=inst_angle)
+    elif offset_method == 'pcu':
+            d_xy = kai_util.pcuxy2pix(pcuxy, phi, pcu_scale, pcuxyRef)
     else:
-        d_xy = [0, 0]
+        d_xy = kai_util.aotsxy2pix(aotsxy, scale, aotsxyRef,
+                                   inst_angle=inst_angle)
 
     # In the new image, find the REF and STRL coords
     xref = refSrc[0] + d_xy[0]
@@ -1953,16 +2893,29 @@ def clean_makecoo(_ce, _cc, refSrc, strSrc, aotsxyRef, radecRef,
 
     # re-center stars to get exact coordinates
     if check_loc:
+        image_data = fits.getdata(_ce)
+        for _ in range(5):
+            x0 = int(np.round(xref - (cent_box - 1)/2))
+            y0 = int(np.round(yref - (cent_box - 1)/2))
+            cutout = image_data[
+                y0: y0 + cent_box,
+                x0: x0 + cent_box
+            ]
+            dy, dx = ndimage.center_of_mass(cutout)
+            xref = x0 + dx
+            yref = y0 + dy
 
-        text = ir.imcntr(_ce, xref, yref, cbox=cent_box, Stdout=1)
-        values = text[0].split()
-        xref = float(values[2])
-        yref = float(values[4])
+        for _ in range(5):
+            x0 = int(np.round(xstr - (cent_box - 1)/2))
+            y0 = int(np.round(ystr - (cent_box - 1)/2))
+            cutout = image_data[
+                y0: y0 + cent_box,
+                x0: x0 + cent_box
+            ]
+            dy, dx = ndimage.center_of_mass(cutout)
+            xstr = x0 + dx
+            ystr = y0 + dy
 
-        text = ir.imcntr(_ce, xstr, ystr, cbox=cent_box, Stdout=1)
-        values = text[0].split()
-        xstr = float(values[2])
-        ystr = float(values[4])
         print('clean_makecoo: xref, yref final = {0:.2f} {1:.2f}'.format(xref, yref))
 
     # write reference star x,y to fits header
@@ -1978,19 +2931,21 @@ def clean_makecoo(_ce, _cc, refSrc, strSrc, aotsxyRef, radecRef,
                              'Strehl Reference Src y')
         fits_f[0].writeto(_cc, output_verify=outputVerify)
 
-    file(_cc.replace('.fits', '.coo'), 'w').write('%7.2f  %7.2f\n' % (xref, yref))
+    #file(_cc.replace('.fits', '.coo'), 'w').write('%7.2f  %7.2f\n' % (xref, yref))
+    open(_cc.replace('.fits', '.coo'), 'w').write('%7.2f  %7.2f\n' % (xref, yref))
 
     # Make a temporary rotated coo file, in case there are any data sets
     # with various PAs; needed for xregister; remove later
-    xyRef_rot = kai_util.rotate_coo(xref, yref, phi)
+    xyRef_rot = kai_util.rotate_coo(xref, yref, phi, instrument)
     xref_r = xyRef_rot[0]
     yref_r = xyRef_rot[1]
 
-    xyStr_rot = kai_util.rotate_coo(xstr, ystr, phi)
+    xyStr_rot = kai_util.rotate_coo(xstr, ystr, phi, instrument)
     xstr_r = xyStr_rot[0]
     ystr_r = xyStr_rot[1]
 
-    file(_cc.replace('.fits', '.rcoo'), 'w').write('%7.2f  %7.2f\n' % (xref_r, yref_r))
+    #file(_cc.replace('.fits', '.rcoo'), 'w').write('%7.2f  %7.2f\n' % (xref_r, yref_r))
+    open(_cc.replace('.fits', '.rcoo'), 'w').write('%7.2f  %7.2f\n' % (xref_r, yref_r))
 
     return
 
@@ -2105,6 +3060,7 @@ class Sky(object):
         self.f_skylog = f_skylog
 
     def getSky(self, _n):
+
         if (self.wave == 'lp' or self.wave == 'ms'):
             sky = self.getSkyLp(_n)
         else:
@@ -2113,7 +3069,7 @@ class Sky(object):
         # Edit the science image to contain the
         # original sky name that will be subtracted.
         skyOrigName = sky[sky.rfind('/')+1:]
-        ir.hedit(_n, 'SKYSUB', skyOrigName, add='yes', show='no', verify='no')
+
 
         # Now scale the sky to the science image
         skyScale = self.scaleSky(_n, sky)
@@ -2129,29 +3085,33 @@ class Sky(object):
         @param _sky: name of sky frame
         @type _sky: string
         """
+
         util.rmall([self.skyName])
 
         # scale sky to science frame
         if self.scale:
-            n_img = fits.getdata(_n)
+            n_img = fits.getdata(_n, ignore_missing_end=True)
             sci_stats = stats.sigma_clipped_stats(n_img,
                                                   sigma_upper=1, sigma_lower=10,
-                                                  iters=20)
+                                                  maxiters=20)
             sci_mean = sci_stats[0]
 
-            sky_img = fits.getdata(_sky)
+            sky_img = fits.getdata(_sky, ignore_missing_end=True)
             sky_stats = stats.sigma_clipped_stats(sky_img,
                                                   sigma_upper=5, sigma_lower=15,
-                                                  iters=5)
+                                                  maxiters=5)
             sky_mean = sky_stats[0]
             
             
             fact = sci_mean/sky_mean
             #print 'scaleSky: factor = %5f  sci_mean = %5f  sky_mean = %5f' % \
             #      (fact, sci_mean, sky_mean)
-            ir.imarith(_sky, '*', fact, self.skyName)
+            fits_sky = fits.open(_sky)
+            fits_sky[0].data *= fact
+            fits_sky.writeto(self.skyName, output_verify=outputVerify)
         else:
-            ir.imcopy(_sky, self.skyName)
+            img = fits.getdata(_sky)
+            fits.writeto(self.skyName, img, output_verify=outputVerify)
 
         return self.skyName
 
@@ -2165,12 +3125,12 @@ class Sky(object):
         @returns sky: name of sky file to use.
         @rtype sky: string
         """
+
         # Sky subtract
         # determine the best angle for sky or use manual file
 
         # -- Determine the rotpposn for this image
-        sciAng_tmp = ir.hselect(_n, "ROTPPOSN", "yes", Stdout=1)
-        sciAng = float(sciAng_tmp[0])
+        sciAng = fits.getheader(_n)['ROTPPOSN']
 
         # -- Determine the best sky rotpposn.
         skyBest = self.angFitA + (self.angFitB * sciAng)
@@ -2190,7 +3150,7 @@ class Sky(object):
             diff = [abs(skyAngle - skyBest) for skyAngle in self.skyAng]
             skyidx = np.argmin(diff)
 
-        sky = self.skyDir + self.skies[skyidx]
+        sky = self.skyDir + self.skies[skyidx] + ".fits"
 
         print(('Science = ', _n))
         print(('Sky image = ', sky))
@@ -2221,7 +3181,7 @@ class Sky(object):
         # Get the sigma-clipped mean and stddev
         sky_stats = stats.sigma_clipped_stats(sky_img,
                                               sigma_upper=4, sigma_lower=4,
-                                              iters=4)
+                                              maxiters=4)
         sky_mean = sky_stats[0]
         sky_stddev = sky_stats[2]
 
@@ -2240,68 +3200,127 @@ class Sky(object):
 
 
 def mosaic(files, wave, outroot, field=None, outSuffix=None,
-            trim=0, weight=0, fwhm_max=0, submaps=0, fixDAR=True, maskSubmap=False,
+           trim=False, weight=None, fwhm_max=0, submaps=0,
+           clean_dirs=None, combo_dir=None,
+           fixDAR=True, maskSubmap=False,
             instrument=instruments.default_inst):
-    """Accepts a list of cleaned images and does a weighted combining after
+    """
+    Accepts a list of cleaned images and does a weighted combining after
     performing frame selection based on the Strehl and FWHM.
-
+    
     Each image must have an associated *.coo file which gives the rough
     position of the reference source.
-
-    @param files: List of integer file numbers to include in combine.
-    @type files: list of int
-    @param wave: Filter of observations (e.g. 'kp', 'lp', 'h')
-    @type wave: string
-    @param outroot: The output root name (e.g. '06jullgs'). The final combined
-        file names will be <outroot>_<field>_<wave>. The <field> keyword
-        is optional.
-
+    
+    Parameters
+    ----------
+    files : list of int
+        Integer list of the files to include in combine. Does not require
+        padded zeros.
+    wave : str
+        Name for the observation passband (e.g.: "kp", "lp", or "h"), used as
+        a wavelength suffix
+    outroot : str
+        The output root name (e.g. '06jullgs'). The final combined file names
+        will be <outroot>_<field>_<outSuffix>_<wave>.
+        The <field> and <outSuffix> keywords are optional.
+        
         Examples:
         06jullgs_kp for outroot='06jullgs' and wave='kp'
         06jullgs_arch_f1_kp for adding field='arch_f1'
-    @type outroot: string
-    @kwparam field: Optional field name used to get to clean directory and
-        also effects the final output file name.
-    @type field: string
-    @kwparam trim: Optional file trimming based on image quality. Default
-        is 0. Set to 1 to turn trimming on.
-    @kwparam outSuffix: Optional suffix used to modify final output file name.
-    @type outSuffix: string
-    @type trim: 0 or 1
-    @kwparam weight: Optional weighting based on Strehl. Set to 1 to
-        to turn file weighting on (default is 0).
-    @type weight: 0 or 1
-    @kwparam fwhm_max: The maximum allowed FWHM for keeping frames when
-        trimming is turned on.
-    @type fwhm_max: int
-    @kwparam submaps: Set to the number of submaps to be made (def=0).
-    @type submaps: int
-    @kwparam mask: Set to false for maser mosaics; 06maylgs1 is an exception
-    @type mask: Boolean
+    field : str, default=None
+        Optional field name. Used to get to clean directory and also affects
+        the final output file name.
+    outSuffix : str
+        Optional suffix used to modify final output file name.
+        Can use suffix to indicate a night of observation (e.g.: "nite1").
+    trim : bool, default=False
+        Optional file trimming based on image quality. Default
+        is False. Set to True to turn trimming on.
+    weight : str, default=None
+        Optional weighting. Set to 'strehl' to weight by Strehl, as found in
+        strehl_source.txt file.
+        OR set to a file name with the first column being the file name
+        (e.g., c0021.fits) and the second column being the weight. Weights will
+        be renormalized to sum to 1.0.
+        Default = None, no weighting.
+    fwhm_max : float, default=0
+        The maximum allowed FWHM for keeping frames when trimming is turned on.
+        If set to default=0 and trim=True, then we use FWHM < 1.25 * FWHM.min().
+    strehl_trim_min : float or None, default = None
+        The minimum strehl value allowed when trimming is turned on. When a value
+        is specified, both FWHM and strehl trimming are performed.
+        Recommended *ONLY* when AO performance is bad leading to a tight core, but
+        very poor PSF otherwise.
+        If None, then will not trim on strehl. 
+    submaps : int, default=0
+        Set to the number of submaps to be made (def=0).
+    fixDAR : boolean, default = True
+        Whether or not to calculate and apply DAR correction coefficients.
+    use_koa_weather : boolean, default = False
+        If calculating DAR correction, this keyword specifies if the atmosphere
+        conditions should be downloaded from the KOA weather data. If False,
+        atmosphere conditions are downloaded from the MKWC CFHT data.
+    mask : bool, default=True
+    clean_dirs : list of str, optional
+        List of directories where clean files are stored. Needs to be same
+        length as files list. If not specified, by default assumes that
+        clean files are stored in '../clean'.
+    combo_dir : str, optional
+        Directory where combo files will be stored. By default,
+        assumes that combo files will be stored in '../combo'
+    instrument : instruments object, optional
+        Instrument of data. Default is `instruments.default_inst`
     """
-    # Start out in something like '06maylgs1/reduce/kp/'
     # Setup some files and directories
     waveDir = util.getcwd()
-    redDir = util.trimdir( os.path.abspath(waveDir + '../') + '/')
+    redDir = util.getcwd()
     rootDir = util.trimdir( os.path.abspath(redDir + '../') + '/')
-    if (field != None):
-        cleanDir = util.trimdir( os.path.abspath(rootDir +
-                                                   'clean/' +field+
-                                                   '_' +wave) + '/')
+    
+    # Determine clean directory and add field and suffixes to outroot
+    cleanRoot = rootDir + 'clean/'
+    
+    if field is not None:
+        cleanDir = cleanRoot + field + '_' + wave + '/'
         outroot += '_' + field
     else:
-        cleanDir = util.trimdir( os.path.abspath(rootDir +
-                                                   'clean/' + wave) + '/')
-
+        cleanDir = cleanRoot + wave + '/'
+        
+    # If clean directories are specified for each file,
+    # first tack on the field and wave to each path
+    if clean_dirs is not None:
+        # If incorrect number of clean directories specified, raise ValueError
+        if len(clean_dirs) != len(files):
+            err_str = 'Length of clean_dirs needs to match number of files, '
+            err_str += str(len(files))
+            
+            raise ValueError(err_str)
+        
+        # Tack on field and wave to each path
+        for clean_dir_index in range(len(clean_dirs)):
+            cleanRoot = util.trimdir(
+                            os.path.abspath(clean_dirs[clean_dir_index] + '/'))
+            
+            if field is not None:
+                clean_dirs[clean_dir_index] = cleanRoot + '/' + field +\
+                                              '_' + wave + '/'
+            else:
+                clean_dirs[clean_dir_index] = cleanRoot + '/' + wave + '/'
+                
     if (outSuffix != None):
         outroot += outSuffix
 
-    # This is the final output directory
+    # Set up combo directory. This is the final output directory.
     comboDir = rootDir + 'combo/'
+    
+    if combo_dir is not None:
+        comboDir = util.trimdir(os.path.abspath(combo_dir) + '/')
+    
     util.mkdir(comboDir)
 
+    
     # Make strings out of all the filename roots.
-    roots = instrument.make_filenames(files, prefix='')
+    allroots = instrument.make_filenames(files, prefix='')
+    allroots = [aa.replace('.fits', '') for aa in allroots]
 
     # This is the output root filename
     _out = comboDir + 'mag' + outroot + '_' + wave
@@ -2355,7 +3374,7 @@ def mosaic(files, wave, outroot, field=None, outSuffix=None,
     # See if all images are at same PA, if not, rotate all to PA = 0
     # temporarily. This needs to be done to get correct shifts.
     print('Calling combine_rotation')
-    diffPA = combine_rotation(cleanDir, roots, instrument=instrument)
+    diffPA, phis = combine_rotation(cleanDir, roots, instrument=instrument)
 
     # Make a table of initial guesses for the shifts.
     # Use the header keywords AOTSX and AOTSY to get shifts.
@@ -2396,7 +3415,7 @@ def mosaic(files, wave, outroot, field=None, outSuffix=None,
 
 def mosaic_register(outroot, refImage, diffPA):
     """
-    Register images for a mosaic. This only calculates the exact
+    BROKEN Register images for a mosaic. This only calculates the exact
     shifts between each image... it doesn't do the combining.
 
     @param outroot: The root for the output image. The resulting
@@ -2405,6 +3424,8 @@ def mosaic_register(outroot, refImage, diffPA):
     @param refImage: The name of the reference image.
     @type refImage: string
     """
+    from pyraf import iraf as ir
+
     shiftFile = outroot + '.shifts'
     util.rmall([shiftFile])
 
@@ -2452,8 +3473,8 @@ def mosaic_size(shiftsTable, refImage, outroot, subroot, submaps):
     @param submaps:
     @type submaps:
     """
-    x_allShifts = shiftsTable['col1']
-    y_allShifts = shiftsTable['col2']
+    x_allShifts = shiftsTable['xshift']
+    y_allShifts = shiftsTable['yshift']
 
     xhi = abs(x_allShifts.max())
     xlo = abs(x_allShifts.min())
@@ -2498,3 +3519,106 @@ def mosaic_size(shiftsTable, refImage, outroot, subroot, submaps):
 
     return xysize
     
+
+def subpixel_windowed_pcc(ref_img, mov_img, window_radius=100, upsample_factor=10, alpha=0.5,
+                          plot_corr_map=False, plot_outfile=None):
+    """
+    Finds sub-pixel shifts restricted to a window_radius box.
+    """
+    shape = np.array(ref_img.shape)
+    
+    #### 1. Compute Cross-Correlation (Coarse)
+    src_freq = fftn(ref_img)
+    target_freq = fftn(mov_img)
+    cross_corr = ifftn(src_freq * target_freq.conj())
+    
+    #### 2. Apply Tukey Window to restrict the search area
+    cross_corr_centered = fftshift(cross_corr)
+    win_list = [windows.tukey(dim, alpha=alpha) for dim in shape]
+    
+    # (Simplified windowing: zeroing out anything beyond the window_radius)
+    mask = np.zeros(shape)
+    slices = tuple(slice(max(0, d//2 - window_radius), min(d, d//2 + window_radius)) for d in shape)
+    mask[slices] = 1.0
+    
+    # Create the tapered mask
+    full_window = np.ones(shape)
+    for i, w in enumerate(win_list):
+        slice_obj = [None] * len(shape)
+        slice_obj[i] = slice(None)
+        full_window *= w[tuple(slice_obj)]
+    
+    # Apply both the hard boundary and the taper
+    constrained_corr = ifftshift(cross_corr_centered * full_window * mask)
+
+    #### 3. Locate Coarse Peak
+    max_idx = np.unravel_index(np.argmax(np.abs(constrained_corr)), shape)
+    midpoints = shape // 2
+    # Convert to shift (handling wrap-around)
+    coarse_shift = np.array([i if i <= d // 2 else i - d for i, d in zip(max_idx, shape)])
+
+    #### 4. Sub-pixel Refinement (Upsampled DFT)
+    if upsample_factor > 1:
+        # We "zoom in" around the coarse_shift using a Matrix Multiply DFT
+        # This is the same math skimage uses for their sub-pixel refinement
+        # Define the sub-pixel grid around the coarse peak
+        upsampled_region_size = np.ceil(upsample_factor * 1.5).astype(int)
+        dft_shift = coarse_shift * upsample_factor
+        
+        # Run upsampled DFT at the specific coarse location
+        # (Simplified for brevity: we call the peak-finding logic on the small patch)
+        # In practice, you'd use skimage.registration._upsampled_dft
+        refined_shift = _upsampled_refinement(src_freq, target_freq, upsample_factor, coarse_shift)
+    else:
+        refined_shift = coarse_shift
+
+    if plot_corr_map and plot_outfile is not None:
+        # plot the correlation map.
+        plt.figure(2)
+        plt.clf()
+        plt.imshow(np.abs(fftshift(constrained_corr)), cmap="viridis")
+        # Plot center points (the 0.5 is just for plotting purposes.)
+        plt.scatter(shape[1]/2 + 0.5, shape[0]/2 + 0.5,
+                    color="green", marker="*", s=40, label="Coo Shift")
+        plt.scatter(shape[1]/2 + refined_shift[1] + 0.5, shape[0]/2 + refined_shift[0] + 0.5,
+                    color="red", marker="*", s=40, label="PCC Shift")
+        plt.legend()
+        plt.xlim(shape[1]/2 - window_radius/3, shape[1]/2 + window_radius/3)
+        plt.ylim(shape[0]/2 - window_radius/3, shape[0]/2 + window_radius/3)
+
+        plt.savefig(plot_outfile)
+        
+        
+    return refined_shift.astype(float)
+
+
+def _upsampled_refinement(src_freq, target_freq, upsample_factor, initial_shift):
+    """
+    Internal helper to perform the Matrix Multiply DFT centered on initial_shift.
+    """
+    # This mimics the core logic of skimage's subpixel refinement
+    # It essentially 'zooms' into the correlation map at the specific pixel
+    from skimage.registration._phase_cross_correlation import _upsampled_dft
+    
+    shape = src_freq.shape
+    upsample_factor = float(upsample_factor)
+    
+    # Center the upsampled DFT on the coarse shift
+    sample_region_offset = initial_shift * upsample_factor
+    
+    # Compute the cross-power spectrum in the zoomed region
+    image_product = src_freq * target_freq.conj()
+    
+    # Upsample by factor around the initial peak
+    upsampled_corr = _upsampled_dft(image_product, 
+                                    upsampled_region_size=1.5, 
+                                    upsample_factor=upsample_factor, 
+                                    axis_offsets=initial_shift)
+    
+    # Find peak in the zoomed-in array
+    max_idx = np.unravel_index(np.argmax(np.abs(upsampled_corr)), upsampled_corr.shape)
+    
+    # Adjust shift by the fractional amount
+    fractional_shift = (np.array(max_idx) - 0.75 * upsample_factor) / upsample_factor
+    
+    return initial_shift + fractional_shift

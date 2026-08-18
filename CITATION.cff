@@ -1,6 +1,11 @@
-cff-version: 1.1.0
+cff-version: 2.0.0
 message: "If you use this software, please cite it as below."
 authors:
+- family-names: "Abrams"
+  given-names: "Natasha S."
+  orcid: "https://orcid.org/0000-0002-0287-3783"
+  affiliation: "University of California, Berkeley"
+  email: nsabrams@berkeley.edu
 - family-names: "Lu"
   given-names: "Jessica R."
   orcid: "https://orcid.org/0000-0001-9611-0009"
@@ -22,7 +27,23 @@ authors:
   given-names: "Tuan"
   orcid: "https://orcid.org/0000-0001-9554-6062"
   affiliation: "University of California, Los Angeles"
-title: "Keck-DataReductionPipelines/KAI: v1.0.0 Release of KAI"
-version: v1.0.0
+- family-names: "Haggard"
+  given-names: "Zoë"
+  orcid: "https://orcid.org/0009-0004-0026-7757"
+  affiliation: "University of California, Los Angeles"
+- family-names: "Granados"
+  given-names: "Sean"
+  orcid: "https://orcid.org/0009-0005-0419-4038"
+  affiliation: "University of California, Los Angeles"
+- family-names: "Freeman"
+  given-names: "Matthew"
+  orcid: "https://orcid.org/0000-0001-6384-7450"
+  affiliation: "University of California, Berkeley"
+- family-names: "Zhang"
+  given-names: "Keming"
+  orcid: "https://orcid.org/0000-0002-9870-5695"
+  affiliation: "Massachusetts Institute of Technology"
+title: "Keck-DataReductionPipelines/KAI: v2.0.0 Release of KAI"
+version: v2.0.0
 DOI: 10.5281/zenodo.6522913
-date-released: 2021-03-10
+date-released: 2026-08-17

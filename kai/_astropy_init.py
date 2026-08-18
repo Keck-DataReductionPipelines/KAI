@@ -28,7 +28,7 @@ if not _ASTROPY_SETUP_:  # noqa
     import os
     from warnings import warn
     from astropy.config.configuration import (
-        update_default_config,
+        #update_default_config, #Deprecated as of Astropy 6.0.0 -SKT
         ConfigurationDefaultMissingError,
         ConfigurationDefaultMissingWarning)
 
